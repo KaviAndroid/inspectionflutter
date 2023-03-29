@@ -12,6 +12,7 @@
     String success="Success";
     String status="STATUS";
     String response="RESPONSE";
+    String message="MESSAGE";
     String json_data="JSON_DATA";
     String statecode="statecode";
     String scode="scode";
@@ -20,6 +21,8 @@
     String dname="dname";
     String bcode="bcode";
     String bname="bname";
+    String pvcode="pvcode";
+    String pvname="pvname";
     String name="name";
     String mobile="mobile";
     String gender="gender";
@@ -37,7 +40,9 @@
     String user_name="user_name";
     String user_pwd="user_pwd";
     String user_data="user_data";
+    String noRecord="NO_RECORD";
     String ok="OK";
+    String cancel="CANCEL";
     String key="KEY";
     String area_type="Area Type";
     String enc_data="enc_data";
@@ -48,6 +53,7 @@
     String action_taken_report="Action Taken Report";
     String sync_data_to_server="Sync Data To Server";
     String onOffType="onOffType";
+    String workType="workType";
     String online="Online";
     String offline="Offline";
     String go_online="Go Online";
@@ -68,15 +74,54 @@
     String total_inspection_done_by_you="Total inspection done by you";
     String data_content="data_content";
     String edit_profile="Edit Profile";
+    String over_all_inspection_report="View all inspected works";
     String user_name_empty="User Name is Empty";
     String password_empty="User Password is Empty";
     String software_designed_and="Software Designed & Developed By NIC";
     String otp_validation1="If you have not completed OTP verification due to some reason,";
     String otp_validation2=" Click here ";
     String otp_validation3="to regenerate New OTP for Completing Registration.";
-
-
-
+    String atr_report="View ATR submitted by you";
+    String view_inspected_work="View Inspected RDPR Work";
+    String view_inspected_other_work="View Inspected Other Work";
+    String change_password="Change Password";
+    String log_out="Log Out";
+    String refresh_work_stages_up_to_date="Refresh Work Stages Up to Date";
+    String get_village_list="Get Village List";
+    String village_list="Village List";
+    String click_here_to_get_villages="Click here to get villages located near by you";
+    String click_here_to_get_villages_through_selection="Click here to get villages through selection";
+    String enter_distance_in_km="Enter distance in km";
+    String latitude="latitude";
+    String longitude="longitude";
+    String distance="distance";
+    String no_village="No Villages Found";
+    String filter_worklist="Filter Work List";
+    String send_otp="Send OTP";
+    String otp="OTP";
+    String newpassword="New Password";
+    String confirmpassword="Confirm Password";
+    String mobileOTP="Mobile OTP";
+    String appcode="app_code";
+    String verify="Verify";
+    String resend_otp="(Resend OTP)";
+    String please_verify_otp="Please Verify OTP";
+    String otp_verification="OTP Verification";
+    String enter_a_valid_mobile_number="Enter a valid mobile number";
+    String mobile_number_must_be_of_10_digits="Mobile Number Must be of 10 digits";
+    String enter_registered_mobile_number_to_send_otp="Enter registered Mobile number to send OTP for Verification";
+    String regEdit = "Edit";
+    String regSave = "Register";
+    String regName = "Name";
+    String regNum = "Mobile Number (CUG)";
+    String regGender = "Gender";
+    String regLevel = "Level";
+    String regDesignation = "Designation";
+    String regDsitrict = "District";
+    String regBlock = "Block";
+    String regOffice = "Office Address";
+    String regEmail = "Email";
+    String registerFlag = "Registration_Flag";
 
 
 
@@ -88,3 +133,31 @@
     String key_district_list_all = "district_list_all";
     String key_block_list_all = "block_list_all";
     String key_work_inspection_profile_list = "work_inspection_profile_list";
+    String key_current_finyear_wise_status_count = "current_finyear_wise_status_count";
+    String key_photo_count = "photo_count";
+    String key_fin_year = "fin_year";
+    String key_inspection_status = "inspection_status";
+    String key_other_work_category_list = "other_work_category_list";
+    String key_townpanchayat_list_district_wise = "townpanchayat_list_district_wise";
+    String key_municipality_list_district_wise = "municipality_list_district_wise";
+    String key_corporation_list_district_wise = "corporation_list_district_wise";
+    String key_work_type_stage_link = "work_type_stage_link";
+    String key_get_calculate_distance = "get_calculate_distance";
+    String key_register = "register";
+    String key_block_list_district_wise = "block_list_district_wise";
+    String key_verify_mobile_number = "Verify_mobile_number";
+    String key_get_profile_level = "get_profile_level";
+    String key_get_mobile_designation = "get_mobile_designation";
+    String key_get_profile_gender = "get_profile_gender";
+
+
+    //Table Name
+    String table_District = "District";
+    String table_Block = "Block";
+    String table_FinancialYear = "FinancialYear";
+    String table_Status = "Status";
+    String table_OtherCategory = "OtherCategory";
+    String table_TownList = "TownList";
+    String table_Municipality = "Municipality";
+    String table_Corporation = "Corporation";
+    String table_WorkStages = "WorkStages";

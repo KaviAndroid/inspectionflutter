@@ -1,3 +1,12 @@
+
+
+
+//SSl Certificate path
+String certificate="assets/certificate/tnrdtngovin.pem";
+
+
+
+
 //png icons
 String tamilnadu_logo="assets/images/tamilnadu_logo.png";
 String inspect="assets/images/inspect.png";
@@ -15,6 +24,21 @@ String bg_curve="assets/images/bg_curve.png";
 String edit_user="assets/images/edit_user.png";
 String report_ic="assets/images/report_ic.png";
 String atr_logo="assets/images/atr_logo.png";
+String forgot_password="assets/images/forgot_password.png";
+String refresh="assets/images/refresh.png";
+String log_out_ic="assets/images/log_out_ic.png";
+String version_icon="assets/images/version_icon.png";
+String back="assets/images/back.png";
+String location="assets/images/location.png";
+String choice="assets/images/choice.png";
+String otp="assets/images/otp.png";
+String regUser = "assets/images/regUser.png";
+
+
+
+
+
+//jpg icons
 String inspection_ic="assets/images/inspection_ic.jpg";
 
 

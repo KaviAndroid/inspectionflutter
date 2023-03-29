@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
+// import 'package:dio/dio.dart';
+// import 'package:dio/io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/ForgotPassword.dart';
+import 'package:inspection_flutter_app/Activity/Registration.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -245,7 +252,7 @@ class LoginState extends State<Login> {
                                   horizontal: 10, vertical: 10),
                               child: InkWell(
                                 onTap: () {
-                                  utils.showToast(context, "click forgot");
+                                  Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  ForgotPassword()));
                                 }, // Handle your callback
                                 child: Text(
                                   s.forgot_password,
@@ -281,14 +288,15 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9080873403";
+                                user_name.text = "9750895078";
                                 String ss = new String.fromCharCodes(
                                     new Runes('\u0024'));
-                                user_password.text = "crd45#" + ss;
+                                user_password.text = "Test123#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
                                     if (await utils.isOnline()) {
+
                                       login(context);
                                     } else {
                                       utils.showAlert(context, s.no_internet);
@@ -332,7 +340,9 @@ class LoginState extends State<Login> {
                         ),
                         InkWell(
                           onTap: () {
-                            utils.showToast(context, "click register");
+                            Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  Registration(registerFlag:1)));
+
+                            // utils.showToast(context, "click register");
                           },
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -429,7 +439,11 @@ class LoginState extends State<Login> {
       s.user_name: user_name.text.trim(),
       s.user_pwd: utils.getSha256(random_char, user_password.text.trim())
     };
-    http.Response response = await http.post(url.login, body: request);
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.login, body: request);
+    // http.Response response = await http.post(url.login, body: request);
     print("login_url>>" + url.login.toString());
     print("login_request>>" + request.toString());
     if (response.statusCode == 200) {
@@ -498,6 +512,7 @@ class LoginState extends State<Login> {
           prefs.setString(s.bname, userData[s.bname]);
         }
         getProfileData();
+        getDashboardData();
 
         utils.gotoHomePage(context,"Login");
       } else {
@@ -512,21 +527,21 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getDistrictList() async {
-    late Map json_request;
-    if (prefs.getString(s.levels) as String == "S") {
-      json_request = {
-        s.scode: prefs.getString(s.scode) as String,
-        s.service_id: s.key_district_list_all,
-      };
-    }
+     Map json_request = {
+      s.scode: /*prefs.getString(s.scode) as String*/29,
+      s.service_id: s.key_district_list_all,
+    };
 
     Map encrpted_request = {
       s.user_name: prefs.getString(s.user_name),
       s.data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
-    http.Response response = await http.post(url.master_service,
-        body: json.encode(encrpted_request));
+     HttpClient _client = HttpClient(context:await utils.globalContext);
+     _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+     IOClient _ioClient = new IOClient(_client);
+     var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     print("districtList_url>>" + url.master_service.toString());
     print("districtList_request_json>>" + json_request.toString());
     print("districtList_request_encrpt>>" + encrpted_request.toString());
@@ -544,32 +559,32 @@ class LoginState extends State<Login> {
       if (status == s.ok && response_value == s.ok) {
         List<dynamic> res_jsonArray = userData[s.json_data];
         if (res_jsonArray.length > 0) {
-          await dbClient.execute("DELETE FROM District");
+          dbHelper.delete_table_District();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
-                'INSERT INTO District (dcode, dname) VALUES(' +
+                'INSERT INTO '+s.table_District +' (dcode, dname) VALUES(' +
                     res_jsonArray[i][s.dcode] +
                     ",'" +
                     res_jsonArray[i][s.dname] +
                     "')");
           }
-          List<Map> list = await dbClient.rawQuery('SELECT * FROM District');
-          print("list" + list.toString());
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_District);
+          print("table_District" + list.toString());
         }
       }
     }
   }
 
   Future<void> getBlockList() async {
-    late Map json_request;
+    Map json_request={};
 
-    if (prefs.getString(s.levels) as String == "D") {
+    if (prefs.getString(s.level) as String == "D") {
       json_request = {
         s.scode: prefs.getString(s.scode) as String,
         s.dcode: prefs.getString(s.dcode) as String,
         s.service_id: s.key_block_list_all,
       };
-    } else if (prefs.getString(s.levels) as String == "S") {
+    } else if (prefs.getString(s.level) as String == "S") {
       json_request = {
         s.scode: prefs.getString(s.scode) as String,
         s.service_id: s.key_block_list_all,
@@ -581,8 +596,11 @@ class LoginState extends State<Login> {
       s.data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
-    http.Response response = await http.post(url.master_service,
-        body: json.encode(encrpted_request));
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
     print("BlockList_url>>" + url.master_service.toString());
     print("BlockList_request_json>>" + json_request.toString());
     print("BlockList_request_encrpt>>" + encrpted_request.toString());
@@ -600,19 +618,19 @@ class LoginState extends State<Login> {
       if (status == s.ok && response_value == s.ok) {
         List<dynamic> res_jsonArray = userData[s.json_data];
         if (res_jsonArray.length > 0) {
-          await dbClient.execute("DELETE FROM Block");
+          dbHelper.delete_table_Block();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
-                'INSERT INTO Block (dcode, bcode, bname) VALUES(' +
+                'INSERT INTO '+s.table_Block+' (dcode, bcode, bname) VALUES(' +
                     res_jsonArray[i][s.dcode] +
-                    ",'" +
+                    "," +
                     res_jsonArray[i][s.bcode] +
                     ",'" +
                     res_jsonArray[i][s.bname] +
                     "')");
           }
-          List<Map> list = await dbClient.rawQuery('SELECT * FROM Block');
-          print("list >>" + list.toString());
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Block);
+          print("table_Block >>" + list.toString());
         }
       }
     }
@@ -630,8 +648,11 @@ class LoginState extends State<Login> {
       s.data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
-    http.Response response =
-        await http.post(url.main_service, body: json.encode(encrpted_request));
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
     print("ProfileData_url>>" + url.main_service.toString());
     print("ProfileData_request_json>>" + json_request.toString());
     print("ProfileData_request_encrpt>>" + encrpted_request.toString());
@@ -683,4 +704,76 @@ class LoginState extends State<Login> {
       }
     }
   }
+
+  Future<void> getDashboardData() async {
+    late Map json_request;
+    json_request = {
+      s.service_id: s.key_current_finyear_wise_status_count
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("DashboardData_url>>" + url.main_service.toString());
+    print("DashboardData_request_json>>" + json_request.toString());
+    print("DashboardData_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("DashboardData_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            String satisfied_count = res_jsonArray[i]["satisfied"].toString();
+            String un_satisfied_count = res_jsonArray[i]["unsatisfied"].toString();
+            String need_improvement_count = res_jsonArray[i]["need_improvement"].toString();
+            String fin_year = res_jsonArray[i]["fin_year"];
+            String inspection_type = res_jsonArray[i]["inspection_type"];
+            if(satisfied_count==("")){
+              satisfied_count="0";
+            } if(un_satisfied_count==("")){
+              un_satisfied_count="0";
+            } if(need_improvement_count==("")){
+              need_improvement_count="0";
+            }
+            int total_inspection_count = int.parse(satisfied_count)+int.parse(un_satisfied_count)+int.parse(need_improvement_count);
+
+            if(inspection_type == ("rdpr")){
+              prefs.setString(s.satisfied_count, satisfied_count);
+              prefs.setString(s.un_satisfied_count, un_satisfied_count);
+              prefs.setString(s.need_improvement_count, need_improvement_count);
+              prefs.setString(s.total_rdpr, total_inspection_count.toString());
+              prefs.setString(s.financial_year, fin_year);
+
+            }else {
+              prefs.setString(s.satisfied_count_other, satisfied_count);
+              prefs.setString(s.un_satisfied_count_other, un_satisfied_count);
+              prefs.setString(s.need_improvement_count_other, need_improvement_count);
+              prefs.setString(s.total_other, total_inspection_count.toString());
+              prefs.setString(s.financial_year, fin_year);
+            }
+          }
+
+        }
+
+      }
+    }
+  }
+
 }

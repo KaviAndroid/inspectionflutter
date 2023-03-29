@@ -5,8 +5,10 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import '../Activity/Home.dart';
+import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 
 class Utils {
   Future<bool> isOnline() async {
@@ -169,5 +171,12 @@ class Utils {
         );
       },
     );
+  }
+  Future<SecurityContext> get globalContext async {
+    final sslCert1 = await
+    rootBundle.load(imagePath.certificate);
+    SecurityContext sc = new SecurityContext(withTrustedRoots: false);
+    sc.setTrustedCertificatesBytes(sslCert1.buffer.asInt8List());
+    return sc;
   }
 }

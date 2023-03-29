@@ -1,17 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
+import 'package:inspection_flutter_app/Activity/RDPR_Online.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
+import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
-import '../Resources/ColorsValue.dart';
 import '../Utils/utils.dart';
 
 class Home extends StatefulWidget {
@@ -23,13 +27,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Utils utils = Utils();
-  SharedPreferences? prefs;
+  late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
   int flag = 0;
   String area_type="",name="",designation="",level="",level_head="",level_value="",profile_image="";
   String satisfied_count="",un_satisfied_count="",need_improvement_count="",total_rdpr="",fin_year="";
   String satisfied_count_other="",un_satisfied_count_other="",need_improvement_count_other="",total_other="";
+  bool atrFlag=false;
+  bool syncFlag=false;
   @override
   void initState() {
     super.initState();
@@ -41,51 +47,60 @@ class _HomeState extends State<Home> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
 
-    if (prefs?.getString(s.area_type) != null && prefs?.getString(s.area_type) != "" ) {
-      area_type=prefs!.getString(s.area_type)!;
+    if (prefs.getString(s.area_type) != null && prefs.getString(s.area_type) != "" ) {
+      area_type=prefs.getString(s.area_type)!;
     } else {
       area_type="";
     }
-    if (prefs?.getString(s.name) != null && prefs?.getString(s.name) != "" ) {
-      name=prefs!.getString(s.name)!;
+    if (prefs.getString(s.name) != null && prefs.getString(s.name) != "" ) {
+      name=prefs.getString(s.name)!;
     } else {
       name="";
     }
-    if (prefs?.getString(s.desig_name) != null && prefs?.getString(s.desig_name) != "" ) {
-      designation=prefs!.getString(s.desig_name)!;
+    if (prefs.getString(s.desig_name) != null && prefs.getString(s.desig_name) != "" ) {
+      designation=prefs.getString(s.desig_name)!;
     } else {
       designation="";
     }
-    if (prefs?.getString(s.level) != null && prefs?.getString(s.level) != "" ) {
-      level=prefs!.getString(s.level)!;
+    if (prefs.getString(s.level) != null && prefs.getString(s.level) != "" ) {
+      level=prefs.getString(s.level)!;
     } else {
       level="";
     }
-    if (prefs?.getString(s.profile_image) != null && prefs?.getString(s.profile_image) != "" ) {
-      profile_image=prefs!.getString(s.profile_image)!;
+    if (prefs.getString(s.profile_image) != null && prefs.getString(s.profile_image) != "" ) {
+      profile_image=prefs.getString(s.profile_image)!;
     } else {
       profile_image="";
     }
 
     if(level=="S"){
+      atrFlag=false;
       level_head="State : ";
-      if (prefs?.getString(s.stateName) != null && prefs?.getString(s.stateName) != "" ) {
-        level_value=prefs!.getString(s.stateName)!;
+      if (prefs.getString(s.stateName) != null && prefs.getString(s.stateName) != "" ) {
+        level_value=prefs.getString(s.stateName)!;
       } else {
         level_value="";
       }
     }else if(level=="D"){
+      atrFlag=false;
       level_head="District : ";
-      if (prefs?.getString(s.dname) != null && prefs?.getString(s.dname) != "" ) {
-        level_value=prefs!.getString(s.dname)!;
+      if (prefs.getString(s.dname) != null && prefs.getString(s.dname) != "" ) {
+        level_value=prefs.getString(s.dname)!;
       } else {
         level_value="";
       }
 
     }else if(level=="B"){
+
+      if (prefs.getString(s.role_code) != null && prefs.getString(s.role_code) != ""
+          && prefs.getString(s.role_code) == "9052" || prefs.getString(s.role_code) == "9042" ) {
+        atrFlag=true;
+      } else {
+        atrFlag=false;
+      }
       level_head="Block : ";
-      if (prefs?.getString(s.bname) != null && prefs?.getString(s.bname) != "" ) {
-        level_value=prefs!.getString(s.bname)!;
+      if (prefs.getString(s.bname) != null && prefs.getString(s.bname) != "" ) {
+        level_value=prefs.getString(s.bname)!;
       } else {
         level_value="";
       }
@@ -97,7 +112,12 @@ class _HomeState extends State<Home> {
       flag = 2;
     } else {
       flag = 1;
-      prefs?.setString(s.area_type, "R");
+      prefs.setString(s.area_type, "R");
+    }
+    if (await utils.isOnline()) {
+      getDashboardData();
+    } else {
+      utils.showAlert(context, s.no_internet);
     }
     if (widget.isLogin == "Login") {
       if (await utils.isOnline()) {
@@ -106,17 +126,17 @@ class _HomeState extends State<Home> {
         utils.showAlert(context, s.no_internet);
       }
     } else {}
-    if(!await utils.isOnline()){
-       satisfied_count = prefs!.getString(s.satisfied)!;
-       un_satisfied_count = prefs!.getString(s.un_satisfied)!;
-       need_improvement_count = prefs!.getString(s.need_improvement)!;
-       satisfied_count_other = prefs!.getString(s.satisfied_count_other)!;
-       un_satisfied_count_other = prefs!.getString(s.un_satisfied_count_other)!;
-       need_improvement_count_other = prefs!.getString(s.need_improvement_count_other)!;
-       total_rdpr = prefs!.getString(s.total_rdpr)!;
-       total_other = prefs!.getString(s.total_other)!;
-       fin_year = prefs!.getString(s.financial_year)!;
-    }
+
+       satisfied_count = prefs.getString(s.satisfied_count)!;
+       un_satisfied_count = prefs.getString(s.un_satisfied_count)!;
+       need_improvement_count = prefs.getString(s.need_improvement_count)!;
+       satisfied_count_other = prefs.getString(s.satisfied_count_other)!;
+       un_satisfied_count_other = prefs.getString(s.un_satisfied_count_other)!;
+       need_improvement_count_other = prefs.getString(s.need_improvement_count_other)!;
+       total_rdpr = prefs.getString(s.total_rdpr)!;
+       total_other = prefs.getString(s.total_other)!;
+       fin_year = prefs.getString(s.financial_year)!;
+
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     String appName = packageInfo.appName;
@@ -131,7 +151,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorPrimary,
+        backgroundColor: c.colorPrimary,
         centerTitle: true,
         elevation: 2,
         title: Center(
@@ -143,7 +163,7 @@ class _HomeState extends State<Home> {
                 child: Image.asset(
                   imagePath.menu_icon,
                   fit: BoxFit.contain,
-                  color: white,
+                  color: c.white,
                   height: 25,
                   width: 25,
                 ),
@@ -168,7 +188,7 @@ class _HomeState extends State<Home> {
                   height: 25,
                   width: 25,
                 ),
-                onTap: backPress(),
+                onTap: logout(),
               ),)
             ],
           ),
@@ -191,7 +211,7 @@ class _HomeState extends State<Home> {
                       Image.asset(
                         imagePath.bg_curve,
                         fit: BoxFit.fill,
-                        color: colorAccentveryverylight,
+                        color: c.colorAccentveryverylight,
                         height: 120,
                         width: MediaQuery.of(context).size.width,
                       ),
@@ -204,7 +224,7 @@ class _HomeState extends State<Home> {
                             name,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: grey_8,
+                                color: c.grey_8,
                                 fontSize: 15),
                             textAlign: TextAlign.left,
                           ),
@@ -217,7 +237,7 @@ class _HomeState extends State<Home> {
                             designation,
                             style: TextStyle(
                                 fontWeight: FontWeight.normal,
-                                color: grey_8,
+                                color: c.grey_8,
                                 fontSize: 13),
                             textAlign: TextAlign.left,
                           ),
@@ -230,7 +250,7 @@ class _HomeState extends State<Home> {
                             level_head+level_value,
                             style: TextStyle(
                                 fontWeight: FontWeight.normal,
-                                color: grey_8,
+                                color: c.grey_8,
                                 fontSize: 13),
                             textAlign: TextAlign.left,
                           ),
@@ -301,16 +321,16 @@ class _HomeState extends State<Home> {
                                   child: Text(
                                     s.financial_year,
                                     style: TextStyle(
-                                        color: grey_10,
+                                        color: c.grey_10,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13),
                                   ),
                                 ),
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                                  child: Text(fin_year!,
+                                  child: Text(fin_year,
                                       style: TextStyle(
-                                          color: primary_text_color,
+                                          color: c.primary_text_color,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13)),
                                 ),
@@ -325,7 +345,7 @@ class _HomeState extends State<Home> {
                                     child: Text(
                                       s.inspection_status,
                                       style: TextStyle(
-                                          color: grey_10,
+                                          color: c.grey_10,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13),
                                     ),
@@ -338,7 +358,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text("RDPR",
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13)),
                                   ),
@@ -350,7 +370,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text("OTHER",
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13)),
                                   ),
@@ -367,7 +387,7 @@ class _HomeState extends State<Home> {
                                     child: Text(
                                       s.total_inspection_done_by_you,
                                       style: TextStyle(
-                                          color: grey_10,
+                                          color: c.grey_10,
                                           fontWeight: FontWeight.normal,
                                           fontSize: 12),
                                     ),
@@ -378,9 +398,9 @@ class _HomeState extends State<Home> {
                                   child: Container(
                                     alignment: Alignment.center,
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                    child: Text(total_rdpr!,
+                                    child: Text(total_rdpr,
                                         style: TextStyle(
-                                            color: primary_text_color,
+                                            color: c.primary_text_color,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -390,9 +410,9 @@ class _HomeState extends State<Home> {
                                   child: Container(
                                     alignment: Alignment.center,
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                    child: Text(total_other!,
+                                    child: Text(total_other,
                                         style: TextStyle(
-                                            color: primary_text_color,
+                                            color: c.primary_text_color,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -407,7 +427,7 @@ class _HomeState extends State<Home> {
                                     Container(
                                       height: 12,
                                       width: 12,
-                                      color: account_status_green_color,
+                                      color: c.account_status_green_color,
                                       alignment: Alignment.centerLeft,
                                       margin: EdgeInsets.fromLTRB(0, 10, 4, 0),
                                       child: Text(""),
@@ -419,7 +439,7 @@ class _HomeState extends State<Home> {
                                       child: Text(
                                         s.satisfied,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12),
                                       ),
@@ -433,7 +453,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(satisfied_count,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -445,7 +465,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(satisfied_count_other,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -460,7 +480,7 @@ class _HomeState extends State<Home> {
                                     Container(
                                       height: 12,
                                       width: 12,
-                                      color: unsatisfied2,
+                                      color: c.unsatisfied2,
                                       alignment: Alignment.centerLeft,
                                       margin: EdgeInsets.fromLTRB(0, 10, 4, 0),
                                       child: Text(""),
@@ -472,7 +492,7 @@ class _HomeState extends State<Home> {
                                       child: Text(
                                         s.un_satisfied,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12),
                                       ),
@@ -486,7 +506,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(un_satisfied_count,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -498,7 +518,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(un_satisfied_count_other,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -513,7 +533,7 @@ class _HomeState extends State<Home> {
                                     Container(
                                       height: 12,
                                       width: 12,
-                                      color: need_improvement,
+                                      color: c.need_improvement,
                                       alignment: Alignment.centerLeft,
                                       margin: EdgeInsets.fromLTRB(0, 10, 4, 0),
                                       child: Text(""),
@@ -525,7 +545,7 @@ class _HomeState extends State<Home> {
                                       child: Text(
                                         s.need_improvement,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12),
                                       ),
@@ -539,7 +559,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(need_improvement_count,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -551,7 +571,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
                                     child: Text(need_improvement_count_other,
                                         style: TextStyle(
-                                            color: grey_10,
+                                            color: c.grey_10,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 12)),
                                   ),
@@ -559,7 +579,9 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            Container(
+                            Visibility(
+                              visible: true,
+                              child: Container(
                               margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                               child: Row(
                                 children: [
@@ -569,7 +591,7 @@ class _HomeState extends State<Home> {
                                       onTap: () {
                                         setState(() {
                                           flag = 1;
-                                          prefs?.setString(s.area_type, "R");
+                                          prefs.setString(s.area_type, "R");
                                         });
                                       },
                                       child: Row(
@@ -595,11 +617,11 @@ class _HomeState extends State<Home> {
                                                   .centerStart,
                                               decoration: new BoxDecoration(
                                                   color: flag == 1
-                                                      ? primary_text_color2
-                                                      : white,
+                                                      ? c.primary_text_color2
+                                                      : c.white,
                                                   border: Border.all(
                                                       color:
-                                                          primary_text_color2,
+                                                          c.primary_text_color2,
                                                       width: 2),
                                                   borderRadius:
                                                       new BorderRadius.only(
@@ -622,8 +644,8 @@ class _HomeState extends State<Home> {
                                                 s.rural_area,
                                                 style: TextStyle(
                                                     color: flag == 1
-                                                        ? white
-                                                        : primary_text_color2,
+                                                        ? c.white
+                                                        : c.primary_text_color2,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 13),
                                               ),
@@ -637,7 +659,7 @@ class _HomeState extends State<Home> {
                                       onTap: () {
                                         setState(() {
                                           flag = 2;
-                                          prefs?.setString(s.area_type, "U");
+                                          prefs.setString(s.area_type, "U");
                                         });
                                       },
                                       child: Row(
@@ -663,11 +685,11 @@ class _HomeState extends State<Home> {
                                                   .centerStart,
                                               decoration: new BoxDecoration(
                                                   color: flag == 2
-                                                      ? primary_text_color2
-                                                      : white,
+                                                      ? c.primary_text_color2
+                                                      : c.white,
                                                   border: Border.all(
                                                       color:
-                                                          primary_text_color2,
+                                                      c.primary_text_color2,
                                                       width: 2),
                                                   borderRadius:
                                                       new BorderRadius.only(
@@ -690,8 +712,8 @@ class _HomeState extends State<Home> {
                                                 s.urban_area,
                                                 style: TextStyle(
                                                     color: flag == 2
-                                                        ? white
-                                                        : primary_text_color2,
+                                                        ? c.white
+                                                        : c.primary_text_color2,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 13),
                                               ),
@@ -701,6 +723,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 ],
                               ),
+                            ),
                             ),
                           ]),
                     ),
@@ -725,9 +748,9 @@ class _HomeState extends State<Home> {
                                     width: MediaQuery.of(context).size.width,
                                     alignment: AlignmentDirectional.topCenter,
                                     decoration: new BoxDecoration(
-                                        color: colorAccent,
+                                        color: c.colorAccent,
                                         border: Border.all(
-                                            color: colorAccent, width: 2),
+                                            color: c.colorAccent, width: 2),
                                         borderRadius: new BorderRadius.only(
                                           topLeft: const Radius.circular(10),
                                           topRight: const Radius.circular(10),
@@ -740,7 +763,7 @@ class _HomeState extends State<Home> {
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: white),
+                                          color: c.white),
                                     ),
                                   ),
                                 ),
@@ -766,29 +789,35 @@ class _HomeState extends State<Home> {
                                         children: [
                                           InkWell(
                                             onTap: () {
-                                              prefs?.setString(
-                                                  s.onOffType, "online");
+                                              prefs.setString(s.onOffType, "online");
+                                              prefs.setString(s.workType, "rdpr");
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => RDPR_Online()));
+
                                             },
                                             child: Text(
                                               s.go_online,
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: darkblue),
+                                                  color: c.darkblue),
                                             ),
                                           ),
-                                          Divider(color: grey_6),
+                                          Divider(color: c.grey_6),
                                           InkWell(
                                             onTap: () {
-                                              prefs?.setString(
+                                              prefs.setString(
                                                   s.onOffType, "offline");
+                                              prefs.setString(s.workType, "rdpr");
+                                              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  RDPR_Offline()));
                                             },
                                             child: Text(
                                               s.go_offline,
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: darkblue),
+                                                  color: c.darkblue),
                                             ),
                                           ),
                                         ],
@@ -814,9 +843,9 @@ class _HomeState extends State<Home> {
                                     width: MediaQuery.of(context).size.width,
                                     alignment: AlignmentDirectional.topCenter,
                                     decoration: new BoxDecoration(
-                                        color: colorAccent,
+                                        color: c.colorAccent,
                                         border: Border.all(
-                                            color: colorAccent, width: 2),
+                                            color: c.colorAccent, width: 2),
                                         borderRadius: new BorderRadius.only(
                                           topLeft: const Radius.circular(10),
                                           topRight: const Radius.circular(10),
@@ -826,14 +855,14 @@ class _HomeState extends State<Home> {
                                         )),
                                     child: InkWell(
                                       onTap: () {
-                                        prefs?.setString(s.onOffType, "online");
+                                        prefs.setString(s.onOffType, "online");
                                       },
                                       child: Text(
                                         s.other_works,
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: white),
+                                            color: c.white),
                                       ),
                                     ),
                                   ),
@@ -863,7 +892,7 @@ class _HomeState extends State<Home> {
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
-                                                color: darkblue),
+                                                color: c.darkblue),
                                           ),
                                         ],
                                       ),
@@ -876,7 +905,9 @@ class _HomeState extends State<Home> {
                         )
                       ],
                     )),
-                Container(
+                Visibility(
+                  visible:atrFlag ,
+                  child: Container(
                     margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -898,9 +929,9 @@ class _HomeState extends State<Home> {
                                     width: 200,
                                     alignment: AlignmentDirectional.topCenter,
                                     decoration: new BoxDecoration(
-                                        color: colorAccent,
+                                        color: c.colorAccent,
                                         border: Border.all(
-                                            color: colorAccent, width: 2),
+                                            color: c.colorAccent, width: 2),
                                         borderRadius: new BorderRadius.only(
                                           topLeft: const Radius.circular(10),
                                           topRight: const Radius.circular(10),
@@ -913,7 +944,7 @@ class _HomeState extends State<Home> {
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: white),
+                                          color: c.white),
                                     ),
                                   ),
                                 ),
@@ -939,7 +970,7 @@ class _HomeState extends State<Home> {
                                         children: [
                                           InkWell(
                                             onTap: () {
-                                              prefs?.setString(
+                                              prefs.setString(
                                                   s.onOffType, "online");
                                             },
                                             child: Text(
@@ -947,13 +978,13 @@ class _HomeState extends State<Home> {
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: darkblue),
+                                                  color: c.darkblue),
                                             ),
                                           ),
-                                          Divider(color: grey_6),
+                                          Divider(color: c.grey_6),
                                           InkWell(
                                             onTap: () {
-                                              prefs?.setString(
+                                              prefs.setString(
                                                   s.onOffType, "offline");
                                             },
                                             child: Text(
@@ -961,7 +992,7 @@ class _HomeState extends State<Home> {
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: darkblue),
+                                                  color: c.darkblue),
                                             ),
                                           ),
                                         ],
@@ -974,11 +1005,13 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ],
-                    )),
+                    )),),
               ],
             )),
           ),
-          InkWell(
+          Visibility(
+            visible: syncFlag,
+            child: InkWell(
             onTap: () {
               openPendingScreen();
             },
@@ -986,8 +1019,8 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(15),
                 alignment: AlignmentDirectional.bottomCenter,
                 decoration: new BoxDecoration(
-                    color: colorAccent,
-                    border: Border.all(color: colorAccent, width: 2),
+                    color: c.colorAccent,
+                    border: Border.all(color: c.colorAccent, width: 2),
                     borderRadius: new BorderRadius.only(
                       topLeft: const Radius.circular(30),
                       topRight: const Radius.circular(30),
@@ -1002,7 +1035,7 @@ class _HomeState extends State<Home> {
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: white),
+                          color: c.white),
                     ),
                     SizedBox(
                       width: 10,
@@ -1010,21 +1043,581 @@ class _HomeState extends State<Home> {
                     Image.asset(
                       imagePath.upload_img,
                       fit: BoxFit.contain,
-                      color: white,
+                      color: c.white,
                       height: 18,
                       width: 18,
                     ),
                   ],
                 )),
-          )
+          ),)
         ],
       ),
     );
   }
 
-  backPress() {}
+  logout() {}
 
   void openPendingScreen() {}
 
-  void callApis() {}
+  Future<void> callApis() async {
+    getProfileData();
+    getPhotoCount();
+    getFinYearList();
+    getInspection_statusList();
+    getCategoryList();
+    if(prefs.getString(s.level) != "S"){
+      getTownList();
+      getMunicipalityList();
+      getCorporationList();
+    }
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_WorkStages);
+    print("table_WorkStages >>" + list.toString());
+    print("table_WorkStages_size >>" + list.length.toString());
+    if(list.length == 0){
+      getAll_Stage();
+    }
+  }
+
+  Future<void> getDashboardData() async {
+    late Map json_request;
+    json_request = {
+      s.service_id: s.key_current_finyear_wise_status_count
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("DashboardData_url>>" + url.main_service.toString());
+    print("DashboardData_request_json>>" + json_request.toString());
+    print("DashboardData_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("DashboardData_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            String satisfied_count = res_jsonArray[i]["satisfied"].toString();
+            String un_satisfied_count = res_jsonArray[i]["unsatisfied"].toString();
+            String need_improvement_count = res_jsonArray[i]["need_improvement"].toString();
+            String fin_year = res_jsonArray[i]["fin_year"];
+            String inspection_type = res_jsonArray[i]["inspection_type"];
+            if(satisfied_count==("")){
+              satisfied_count="0";
+            } if(un_satisfied_count==("")){
+              un_satisfied_count="0";
+            } if(need_improvement_count==("")){
+              need_improvement_count="0";
+            }
+            int total_inspection_count = int.parse(satisfied_count)+int.parse(un_satisfied_count)+int.parse(need_improvement_count);
+
+            if(inspection_type == ("rdpr")){
+              prefs.setString(s.satisfied_count, satisfied_count);
+              prefs.setString(s.un_satisfied_count, un_satisfied_count);
+              prefs.setString(s.need_improvement_count, need_improvement_count);
+              prefs.setString(s.total_rdpr, total_inspection_count.toString());
+              prefs.setString(s.financial_year, fin_year);
+
+            }else {
+              prefs.setString(s.satisfied_count_other, satisfied_count);
+              prefs.setString(s.un_satisfied_count_other, un_satisfied_count);
+              prefs.setString(s.need_improvement_count_other, need_improvement_count);
+              prefs.setString(s.total_other, total_inspection_count.toString());
+              prefs.setString(s.financial_year, fin_year);
+            }
+          }
+
+        }
+        setState(() {
+        });
+      }
+    }
+  }
+
+  Future<void> getProfileData() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_work_inspection_profile_list,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("ProfileData_url>>" + url.main_service.toString());
+    print("ProfileData_request_json>>" + json_request.toString());
+    print("ProfileData_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("ProfileData_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            String name = res_jsonArray[i][s.name];
+            String mobile = res_jsonArray[i][s.mobile];
+            String gender = res_jsonArray[i][s.gender];
+            String level = res_jsonArray[i][s.level];
+            String desig_code = res_jsonArray[i][s.desig_code].toString();
+            String desig_name = res_jsonArray[i][s.desig_name];
+            String dcode = res_jsonArray[i][s.dcode].toString();
+            String bcode = res_jsonArray[i][s.bcode].toString();
+            String office_address = res_jsonArray[i][s.office_address];
+            String email = res_jsonArray[i][s.email];
+            String profile_image = res_jsonArray[i][s.profile_image];
+            String role_code = res_jsonArray[i][s.role_code].toString();
+
+            if (!(profile_image == ("null") || profile_image == (""))) {
+              Uint8List bytes = Base64Codec().decode(profile_image);
+              prefs.setString(s.profile_image, profile_image);
+            } else {
+              prefs.setString(s.profile_image, "");
+            }
+
+            prefs.setString(s.desig_name, desig_name);
+            prefs.setString(s.desig_code, desig_code);
+            prefs.setString(s.name, name);
+            prefs.setString(s.role_code, role_code);
+            prefs.setString(s.level, level);
+            prefs.setString(s.dcode, dcode);
+            prefs.setString(s.bcode, bcode);
+
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> getPhotoCount() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_photo_count,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("photo_count_url>>" + url.main_service.toString());
+    print("photo_count_request_json>>" + json_request.toString());
+    print("photo_count_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("photo_count_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        prefs.setString(s.key_photo_count,userData["COUNT"].toString());
+      }
+    }
+  }
+
+  Future<void> getFinYearList() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_fin_year,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("fin_year_url>>" + url.main_service.toString());
+    print("fin_year_request_json>>" + json_request.toString());
+    print("fin_year_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("fin_year_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_FinancialYear();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_FinancialYear+' (fin_year) VALUES(' +"'"+
+                    res_jsonArray[i][s.key_fin_year] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_FinancialYear);
+          print("table_FinancialYear >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getInspection_statusList() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_inspection_status,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    print("inspection_status_url>>" + url.master_service.toString());
+    print("inspection_status_request_json>>" + json_request.toString());
+    print("inspection_status_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("inspection_status_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Status();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_Status+' (status_id  , work_status) VALUES(' +
+                    res_jsonArray[i]["status_id"] +
+                    ",'"+
+                    res_jsonArray[i]["status"] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Status);
+          print("table_Status >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getCategoryList() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_other_work_category_list,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("other_work_category_list_url>>" + url.main_service.toString());
+    print("other_work_category_list_request_json>>" + json_request.toString());
+    print("other_work_category_list_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("other_work_category_list_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_OtherCategory();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_OtherCategory+' (other_work_category_id  , other_work_category_name) VALUES(' +
+                    "'"+
+                    res_jsonArray[i]["other_work_category_id"].toString() +
+                    "' , '"+
+                    res_jsonArray[i]["other_work_category_name"] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_OtherCategory);
+          print("table_OtherCategory >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getTownList() async {
+     Map json_request = {
+      s.service_id: s.key_townpanchayat_list_district_wise,
+      s.dcode: prefs.getString(s.dcode),
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    print("TownList_url>>" + url.master_service.toString());
+    print("TownList_request_json>>" + json_request.toString());
+    print("TownList_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("TownList_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_TownList();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_TownList+' (dcode  , townpanchayat_id , townpanchayat_name) VALUES(' +
+                    "'"+
+                    res_jsonArray[i]["dcode"].toString() +
+                    "' , '"+
+                    res_jsonArray[i]["townpanchayat_id"] +
+                    "' , '"+
+                    res_jsonArray[i]["townpanchayat_name"] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_TownList);
+          print("table_TownList >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getMunicipalityList() async {
+    Map json_request = {
+      s.service_id: s.key_municipality_list_district_wise,
+      s.dcode: prefs.getString(s.dcode),
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    print("MunicipalityList_url>>" + url.master_service.toString());
+    print("MunicipalityList_request_json>>" + json_request.toString());
+    print("MunicipalityList_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("MunicipalityList_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Municipality();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_Municipality+' (dcode  , municipality_id , municipality_name) VALUES(' +
+                    "'"+
+                    res_jsonArray[i]["dcode"].toString() +
+                    "' , '"+
+                    res_jsonArray[i]["municipality_id"] +
+                    "' , '"+
+                    res_jsonArray[i]["municipality_name"] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Municipality);
+          print("table_Municipality >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getCorporationList() async {
+     Map json_request = {
+      s.service_id: s.key_corporation_list_district_wise,
+      s.dcode: prefs.getString(s.dcode),
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    print("CorporationList_url>>" + url.master_service.toString());
+    print("CorporationList_request_json>>" + json_request.toString());
+    print("CorporationList_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("CorporationList_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Corporation();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_Corporation+' (dcode  , corporation_id , corporation_name) VALUES(' +
+                    "'"+
+                    res_jsonArray[i]["dcode"].toString() +
+                    "' , '"+
+                    res_jsonArray[i]["corporation_id"] +
+                    "' , '"+
+                    res_jsonArray[i]["corporation_name"] +
+                    "')");
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Corporation);
+          print("table_Corporation >>" + list.toString());
+        }
+      }
+    }
+  }
+
+  Future<void> getAll_Stage() async {
+    late Map json_request;
+
+    json_request = {
+      s.service_id: s.key_work_type_stage_link,
+    };
+
+    Map encrpted_request = {
+      s.user_name: prefs.getString(s.user_name),
+      s.data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context:await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    print("WorkStages_url>>" + url.main_service.toString());
+    print("WorkStages_request_json>>" + json_request.toString());
+    print("WorkStages_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("WorkStages_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.enc_data];
+      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.status];
+      var response_value = userData[s.response];
+      if (status == s.ok && response_value == s.ok) {
+        List<dynamic> res_jsonArray = userData[s.json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_WorkStages();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert(
+                'INSERT INTO '+s.table_WorkStages+' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
+                    res_jsonArray[i]["work_group_id"].toString() +
+                    ','+
+                    res_jsonArray[i]["work_type_id"].toString() +
+                    ','+
+                    res_jsonArray[i]["work_stage_order"].toString()  +
+                    ','+
+                    res_jsonArray[i]["work_stage_code"] .toString() +
+                    ",'"+
+                    res_jsonArray[i]["work_stage_name"] +
+                    "')");
+
+          }
+          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_WorkStages);
+          print("table_WorkStages >>" + list.toString());
+        }
+      }
+    }
+  }
+
+
+
 }

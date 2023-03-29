@@ -13,7 +13,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
-import '../Resources/ColorsValue.dart';
 import '../Utils/utils.dart';
 
 class DrawerApp extends StatefulWidget {
@@ -25,7 +24,7 @@ class _DrawerAppState extends State<DrawerApp> {
 
   Utils utils = Utils();
   SharedPreferences? prefs;
-  String name="",designation="",level="",level_head="",level_value="",profile_image="";
+  String name="",designation="",level="",level_head="",level_value="",profile_image="",area_type="",version="";
   @override
   void initState() {
     super.initState();
@@ -78,13 +77,31 @@ class _DrawerAppState extends State<DrawerApp> {
       }
 
     }
+    if (prefs?.getString(s.area_type) != null && prefs?.getString(s.area_type) != "" && prefs?.getString(s.area_type) == "R" ) {
+      area_type=s.rural_area;
+    } else if (prefs?.getString(s.area_type) != null && prefs?.getString(s.area_type) != "" && prefs?.getString(s.area_type) == "U" ) {
+      area_type=s.urban_area;
+    }
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+     version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    print("app>>"+appName+" >>"+packageName+" >>"+version+" >>"+buildNumber );
+    setState(() {
+
+    });
   }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Drawer(
         child: Container(
-          child:Column(children: [
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
             Container(
               padding: EdgeInsets.only(top: 22),
               width:MediaQuery.of(context).size.width,
@@ -92,8 +109,8 @@ class _DrawerAppState extends State<DrawerApp> {
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                       colors: [
-                        colorAccentlight,
-                        colorPrimaryDark,
+                        c.colorAccentlight,
+                        c.colorPrimaryDark,
                       ],
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight
@@ -111,9 +128,9 @@ class _DrawerAppState extends State<DrawerApp> {
                 width:120,
                   height: 120,
                   decoration: new BoxDecoration(
-                      color: white,
+                      color: c.white,
                       border: Border.all(
-                          color: white, width: 2),
+                          color: c.white, width: 2),
                       borderRadius: new BorderRadius.only(
                         topLeft: const Radius.circular(0),
                         topRight: const Radius.circular(0),
@@ -130,8 +147,8 @@ class _DrawerAppState extends State<DrawerApp> {
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                             colors: [
-                              colorPrimaryDark,
-                              colorAccentlight,
+                              c.colorPrimaryDark,
+                              c.colorAccentlight,
                             ],
                             begin: Alignment.bottomLeft,
                             end: Alignment.topRight
@@ -171,11 +188,11 @@ class _DrawerAppState extends State<DrawerApp> {
                       alignment: Alignment.topRight,
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
-                        designation,
+                        area_type,
                         style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: white,
-                            fontSize: 11),
+                            fontWeight: FontWeight.bold,
+                            color: c.white,
+                            fontSize: 13),
                         textAlign: TextAlign.left,
                       ),
                     ),
@@ -191,7 +208,7 @@ class _DrawerAppState extends State<DrawerApp> {
                       name,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: white,
+                          color: c.white,
                           fontSize: 13),
                       textAlign: TextAlign.left,
                     ),
@@ -204,7 +221,7 @@ class _DrawerAppState extends State<DrawerApp> {
                       designation,
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: white,
+                          color: c.white,
                           fontSize: 11),
                       textAlign: TextAlign.left,
                     ),
@@ -217,7 +234,7 @@ class _DrawerAppState extends State<DrawerApp> {
                       level_head+level_value,
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: white,
+                          color: c.white,
                           fontSize: 11),
                       textAlign: TextAlign.left,
                     ),
@@ -225,38 +242,252 @@ class _DrawerAppState extends State<DrawerApp> {
                 ]),
               ])),
 
-        SingleChildScrollView(
+        Expanded(child: SingleChildScrollView(
+
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
     children: [
     Container(
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: Row(
+      margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
+      child:InkWell(
+        onTap: (){
+
+        },
+        child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Image.asset(
         imagePath.edit_user,
-        height: 30,
-        width: 30,
+        height: 25,
+        width: 25,
       ),
       SizedBox(width: 10,),
       Text(
         s.edit_profile,
         style: TextStyle(
             fontWeight: FontWeight.normal,
-            color: darkblue,
+            color: c.darkblue,
             fontSize: 13),
         textAlign: TextAlign.center,
       ),
-    ])
+    ]),)
     ),
-      Divider(color: grey_6),
+      Divider(color: c.grey_6),
+      Container(
+      margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+        child:InkWell(
+            onTap: (){
+
+            },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.report_ic,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.over_all_inspection_report,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+      Container(
+          margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+        child:InkWell(
+            onTap: (){
+
+            },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.atr_logo,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.atr_report,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+      Container(
+          margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+        child:InkWell(
+            onTap: (){
+
+            },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.inspection_ic,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.view_inspected_work,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+
+ Container(
+     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+   child:InkWell(
+       onTap: (){
+
+       },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.infrastructure,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.view_inspected_other_work,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+Container(
+    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+  child:InkWell(
+      onTap: (){
+
+      },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.forgot_password,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.change_password,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+Container(
+    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+  child:InkWell(
+      onTap: (){
+
+      },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.refresh,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.refresh_work_stages_up_to_date,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
+Container(
+    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+  child:InkWell(
+      onTap: (){
+
+      },child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        imagePath.log_out_ic,
+        height: 25,
+        width: 25,
+      ),
+      SizedBox(width: 10,),
+      Text(
+        s.log_out,
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: c.darkblue,
+            fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    ]),)
+    ),
+      Divider(color: c.grey_6),
 
 
     ],
-    )),
+    )),),
+            Container(
+                alignment: Alignment.center,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 5, 5),
+                    child: Image.asset(
+                      imagePath.version_icon,
+                      fit: BoxFit.fill,
+                      color: c.primary_text_color2,
+                      height: 20,
+                      width: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    child: Text(
+                      s.version+" "+version,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.grey_8,
+                          fontSize: 15),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ]))
 
           ],)),
     );

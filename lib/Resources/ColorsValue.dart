@@ -31,6 +31,7 @@ Color followingBg = Color(0xFF45c240);
 Color light_green = Color(0xFFf3fff3);
 
 Color white = Color(0xFFFFFFFF);
+Color bg = Color(0xFFF5F5F5);
 Color pink = Color(0xFFbf63f9);
 Color pink_light = Color(0xFFdaa6fd);
 Color pink_very_light = Color(0xFFf5e7ff);

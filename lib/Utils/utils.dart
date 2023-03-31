@@ -32,7 +32,7 @@ class Utils {
 
   bool isEmailValid(value) {
     return RegExp(
-      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
     ).hasMatch(value);
   }
 
@@ -172,9 +172,9 @@ class Utils {
       },
     );
   }
+
   Future<SecurityContext> get globalContext async {
-    final sslCert1 = await
-    rootBundle.load(imagePath.certificate);
+    final sslCert1 = await rootBundle.load(imagePath.certificate);
     SecurityContext sc = new SecurityContext(withTrustedRoots: false);
     sc.setTrustedCertificatesBytes(sslCert1.buffer.asInt8List());
     return sc;

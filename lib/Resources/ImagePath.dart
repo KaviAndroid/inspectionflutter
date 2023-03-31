@@ -34,6 +34,7 @@ String choice="assets/images/choice.png";
 String otp="assets/images/otp.png";
 String regUser = "assets/images/regUser.png";
 String action = "assets/images/action.png";
+String arrow_down_icon = "assets/images/arrow_down_icon.png";
 
 
 

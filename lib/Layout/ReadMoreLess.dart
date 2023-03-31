@@ -70,6 +70,7 @@ class ExpandableTextState extends State<ExpandableText> {
                 : widget.text,
             style: TextStyle(
               color: widgetColor,
+                fontSize: 13
             ),
             children: <TextSpan>[link],
           );
@@ -78,6 +79,7 @@ class ExpandableTextState extends State<ExpandableText> {
             text: widget.text,
             style: TextStyle(
               color: widgetColor,
+              fontSize: 13
             ),
           );
         }

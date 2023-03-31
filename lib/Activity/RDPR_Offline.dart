@@ -11,5 +11,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
+
   }
 }

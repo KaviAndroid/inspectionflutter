@@ -52,23 +52,23 @@ class _HomeState extends State<Home> {
     } else {
       area_type="";
     }
-    if (prefs.getString(s.name) != null && prefs.getString(s.name) != "" ) {
-      name=prefs.getString(s.name)!;
+    if (prefs.getString(s.key_name) != null && prefs.getString(s.key_name) != "" ) {
+      name=prefs.getString(s.key_name)!;
     } else {
       name="";
     }
-    if (prefs.getString(s.desig_name) != null && prefs.getString(s.desig_name) != "" ) {
-      designation=prefs.getString(s.desig_name)!;
+    if (prefs.getString(s.key_desig_name) != null && prefs.getString(s.key_desig_name) != "" ) {
+      designation=prefs.getString(s.key_desig_name)!;
     } else {
       designation="";
     }
-    if (prefs.getString(s.level) != null && prefs.getString(s.level) != "" ) {
-      level=prefs.getString(s.level)!;
+    if (prefs.getString(s.key_level) != null && prefs.getString(s.key_level) != "" ) {
+      level=prefs.getString(s.key_level)!;
     } else {
       level="";
     }
-    if (prefs.getString(s.profile_image) != null && prefs.getString(s.profile_image) != "" ) {
-      profile_image=prefs.getString(s.profile_image)!;
+    if (prefs.getString(s.key_profile_image) != null && prefs.getString(s.key_profile_image) != "" ) {
+      profile_image=prefs.getString(s.key_profile_image)!;
     } else {
       profile_image="";
     }
@@ -76,31 +76,31 @@ class _HomeState extends State<Home> {
     if(level=="S"){
       atrFlag=false;
       level_head="State : ";
-      if (prefs.getString(s.stateName) != null && prefs.getString(s.stateName) != "" ) {
-        level_value=prefs.getString(s.stateName)!;
+      if (prefs.getString(s.key_stateName) != null && prefs.getString(s.key_stateName) != "" ) {
+        level_value=prefs.getString(s.key_stateName)!;
       } else {
         level_value="";
       }
     }else if(level=="D"){
       atrFlag=false;
       level_head="District : ";
-      if (prefs.getString(s.dname) != null && prefs.getString(s.dname) != "" ) {
-        level_value=prefs.getString(s.dname)!;
+      if (prefs.getString(s.key_dname) != null && prefs.getString(s.key_dname) != "" ) {
+        level_value=prefs.getString(s.key_dname)!;
       } else {
         level_value="";
       }
 
     }else if(level=="B"){
 
-      if (prefs.getString(s.role_code) != null && prefs.getString(s.role_code) != ""
-          && prefs.getString(s.role_code) == "9052" || prefs.getString(s.role_code) == "9042" ) {
+      if (prefs.getString(s.key_role_code) != null && prefs.getString(s.key_role_code) != ""
+          && prefs.getString(s.key_role_code) == "9052" || prefs.getString(s.key_role_code) == "9042" ) {
         atrFlag=true;
       } else {
         atrFlag=false;
       }
       level_head="Block : ";
-      if (prefs.getString(s.bname) != null && prefs.getString(s.bname) != "" ) {
-        level_value=prefs.getString(s.bname)!;
+      if (prefs.getString(s.key_bname) != null && prefs.getString(s.key_bname) != "" ) {
+        level_value=prefs.getString(s.key_bname)!;
       } else {
         level_value="";
       }
@@ -1065,7 +1065,7 @@ class _HomeState extends State<Home> {
     getFinYearList();
     getInspection_statusList();
     getCategoryList();
-    if(prefs.getString(s.level) != "S"){
+    if(prefs.getString(s.key_level) != "S"){
       getTownList();
       getMunicipalityList();
       getCorporationList();
@@ -1081,12 +1081,12 @@ class _HomeState extends State<Home> {
   Future<void> getDashboardData() async {
     late Map json_request;
     json_request = {
-      s.service_id: s.key_current_finyear_wise_status_count
+      s.key_service_id: s.sevice_key_current_finyear_wise_status_count
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1103,21 +1103,21 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("DashboardData_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
 
           for (int i = 0; i < res_jsonArray.length; i++) {
-            String satisfied_count = res_jsonArray[i]["satisfied"].toString();
-            String un_satisfied_count = res_jsonArray[i]["unsatisfied"].toString();
-            String need_improvement_count = res_jsonArray[i]["need_improvement"].toString();
-            String fin_year = res_jsonArray[i]["fin_year"];
-            String inspection_type = res_jsonArray[i]["inspection_type"];
+            String satisfied_count = res_jsonArray[i][s.key_satisfied].toString();
+            String un_satisfied_count = res_jsonArray[i][s.key_unsatisfied].toString();
+            String need_improvement_count = res_jsonArray[i][s.key_need_improvement].toString();
+            String fin_year = res_jsonArray[i][s.key_fin_year];
+            String inspection_type = res_jsonArray[i][s.key_inspection_type];
             if(satisfied_count==("")){
               satisfied_count="0";
             } if(un_satisfied_count==("")){
@@ -1154,12 +1154,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_work_inspection_profile_list,
+      s.key_service_id: s.sevice_key_work_inspection_profile_list,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1176,42 +1176,42 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("ProfileData_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           for (int i = 0; i < res_jsonArray.length; i++) {
-            String name = res_jsonArray[i][s.name];
-            String mobile = res_jsonArray[i][s.mobile];
-            String gender = res_jsonArray[i][s.gender];
-            String level = res_jsonArray[i][s.level];
-            String desig_code = res_jsonArray[i][s.desig_code].toString();
-            String desig_name = res_jsonArray[i][s.desig_name];
-            String dcode = res_jsonArray[i][s.dcode].toString();
-            String bcode = res_jsonArray[i][s.bcode].toString();
-            String office_address = res_jsonArray[i][s.office_address];
-            String email = res_jsonArray[i][s.email];
-            String profile_image = res_jsonArray[i][s.profile_image];
-            String role_code = res_jsonArray[i][s.role_code].toString();
+            String name = res_jsonArray[i][s.key_name];
+            String mobile = res_jsonArray[i][s.key_mobile];
+            String gender = res_jsonArray[i][s.key_gender];
+            String level = res_jsonArray[i][s.key_level];
+            String desig_code = res_jsonArray[i][s.key_desig_code].toString();
+            String desig_name = res_jsonArray[i][s.key_desig_name];
+            String dcode = res_jsonArray[i][s.key_dcode].toString();
+            String bcode = res_jsonArray[i][s.key_bcode].toString();
+            String office_address = res_jsonArray[i][s.key_office_address];
+            String email = res_jsonArray[i][s.key_email];
+            String profile_image = res_jsonArray[i][s.key_profile_image];
+            String role_code = res_jsonArray[i][s.key_role_code].toString();
 
             if (!(profile_image == ("null") || profile_image == (""))) {
               Uint8List bytes = Base64Codec().decode(profile_image);
-              prefs.setString(s.profile_image, profile_image);
+              prefs.setString(s.key_profile_image, profile_image);
             } else {
-              prefs.setString(s.profile_image, "");
+              prefs.setString(s.key_profile_image, "");
             }
 
-            prefs.setString(s.desig_name, desig_name);
-            prefs.setString(s.desig_code, desig_code);
-            prefs.setString(s.name, name);
-            prefs.setString(s.role_code, role_code);
-            prefs.setString(s.level, level);
-            prefs.setString(s.dcode, dcode);
-            prefs.setString(s.bcode, bcode);
+            prefs.setString(s.key_desig_name, desig_name);
+            prefs.setString(s.key_desig_code, desig_code);
+            prefs.setString(s.key_name, name);
+            prefs.setString(s.key_role_code, role_code);
+            prefs.setString(s.key_level, level);
+            prefs.setString(s.key_dcode, dcode);
+            prefs.setString(s.key_bcode, bcode);
 
           }
         }
@@ -1223,12 +1223,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_photo_count,
+      s.key_service_id: s.sevice_key_photo_count,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1245,13 +1245,13 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("photo_count_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        prefs.setString(s.key_photo_count,userData["COUNT"].toString());
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        prefs.setString(s.sevice_key_photo_count,userData[s.key_COUNT].toString());
       }
     }
   }
@@ -1260,12 +1260,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_fin_year,
+      s.key_service_id: s.sevice_key_fin_year,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1282,19 +1282,19 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("fin_year_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_FinancialYear();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_FinancialYear+' (fin_year) VALUES(' +"'"+
-                    res_jsonArray[i][s.key_fin_year] +
+                    res_jsonArray[i][s.sevice_key_fin_year] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_FinancialYear);
@@ -1308,12 +1308,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_inspection_status,
+      s.key_service_id: s.sevice_key_inspection_status,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -1330,21 +1330,21 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("inspection_status_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Status();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
-                'INSERT INTO '+s.table_Status+' (status_id  , work_status) VALUES(' +
-                    res_jsonArray[i]["status_id"] +
+                'INSERT INTO '+s.table_Status+' (status_id  , status) VALUES(' +
+                    res_jsonArray[i][s.key_status_id] +
                     ",'"+
-                    res_jsonArray[i]["status"] +
+                    res_jsonArray[i][s.key_status_name] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Status);
@@ -1358,12 +1358,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_other_work_category_list,
+      s.key_service_id: s.sevice_key_other_work_category_list,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1380,22 +1380,22 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("other_work_category_list_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_OtherCategory();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_OtherCategory+' (other_work_category_id  , other_work_category_name) VALUES(' +
                     "'"+
-                    res_jsonArray[i]["other_work_category_id"].toString() +
+                    res_jsonArray[i][s.key_other_work_category_id].toString() +
                     "' , '"+
-                    res_jsonArray[i]["other_work_category_name"] +
+                    res_jsonArray[i][s.key_other_work_category_name] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_OtherCategory);
@@ -1407,13 +1407,13 @@ class _HomeState extends State<Home> {
 
   Future<void> getTownList() async {
      Map json_request = {
-      s.service_id: s.key_townpanchayat_list_district_wise,
-      s.dcode: prefs.getString(s.dcode),
+      s.key_service_id: s.sevice_key_townpanchayat_list_district_wise,
+      s.key_dcode: prefs.getString(s.key_dcode),
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -1430,24 +1430,24 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("TownList_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_TownList();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_TownList+' (dcode  , townpanchayat_id , townpanchayat_name) VALUES(' +
                     "'"+
-                    res_jsonArray[i]["dcode"].toString() +
+                    res_jsonArray[i][s.key_dcode].toString() +
                     "' , '"+
-                    res_jsonArray[i]["townpanchayat_id"] +
+                    res_jsonArray[i][s.key_townpanchayat_id] +
                     "' , '"+
-                    res_jsonArray[i]["townpanchayat_name"] +
+                    res_jsonArray[i][s.key_townpanchayat_name] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_TownList);
@@ -1459,13 +1459,13 @@ class _HomeState extends State<Home> {
 
   Future<void> getMunicipalityList() async {
     Map json_request = {
-      s.service_id: s.key_municipality_list_district_wise,
-      s.dcode: prefs.getString(s.dcode),
+      s.key_service_id: s.sevice_key_municipality_list_district_wise,
+      s.key_dcode: prefs.getString(s.key_dcode),
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -1482,24 +1482,24 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("MunicipalityList_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Municipality();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_Municipality+' (dcode  , municipality_id , municipality_name) VALUES(' +
                     "'"+
-                    res_jsonArray[i]["dcode"].toString() +
+                    res_jsonArray[i][s.key_dcode].toString() +
                     "' , '"+
-                    res_jsonArray[i]["municipality_id"] +
+                    res_jsonArray[i][s.key_municipality_id] +
                     "' , '"+
-                    res_jsonArray[i]["municipality_name"] +
+                    res_jsonArray[i][s.key_municipality_name] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Municipality);
@@ -1511,13 +1511,13 @@ class _HomeState extends State<Home> {
 
   Future<void> getCorporationList() async {
      Map json_request = {
-      s.service_id: s.key_corporation_list_district_wise,
-      s.dcode: prefs.getString(s.dcode),
+      s.key_service_id: s.sevice_key_corporation_list_district_wise,
+      s.key_dcode: prefs.getString(s.key_dcode),
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -1534,24 +1534,24 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("CorporationList_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Corporation();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_Corporation+' (dcode  , corporation_id , corporation_name) VALUES(' +
                     "'"+
-                    res_jsonArray[i]["dcode"].toString() +
+                    res_jsonArray[i][s.key_dcode].toString() +
                     "' , '"+
-                    res_jsonArray[i]["corporation_id"] +
+                    res_jsonArray[i][s.key_corporation_id] +
                     "' , '"+
-                    res_jsonArray[i]["corporation_name"] +
+                    res_jsonArray[i][s.key_corporation_name] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Corporation);
@@ -1565,12 +1565,12 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_work_type_stage_link,
+      s.key_service_id: s.sevice_key_work_type_stage_link,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -1587,27 +1587,27 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("WorkStages_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_WorkStages();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_WorkStages+' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
-                    res_jsonArray[i]["work_group_id"].toString() +
+                    res_jsonArray[i][s.key_work_group_id].toString() +
                     ','+
-                    res_jsonArray[i]["work_type_id"].toString() +
+                    res_jsonArray[i][s.key_work_type_id].toString() +
                     ','+
-                    res_jsonArray[i]["work_stage_order"].toString()  +
+                    res_jsonArray[i][s.key_work_stage_order].toString()  +
                     ','+
-                    res_jsonArray[i]["work_stage_code"] .toString() +
+                    res_jsonArray[i][s.key_work_stage_code] .toString() +
                     ",'"+
-                    res_jsonArray[i]["work_stage_name"] +
+                    res_jsonArray[i][s.key_work_stage_name] +
                     "')");
 
           }

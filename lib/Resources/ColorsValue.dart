@@ -15,6 +15,7 @@ Color ca3 = Color(0xFFcdefed);
 Color ca4 = Color(0xFFb9e9e5);
 Color colorAccent2 = Color(0xFFeafcff);
 Color colorAccent3 = Color(0xFF9ef1ff);
+Color bg_screen= Color(0xFF1E07B3A5);
 
 Color address = Color(0xFF2F7092);
 Color followers = Color(0xFF0D5D98);

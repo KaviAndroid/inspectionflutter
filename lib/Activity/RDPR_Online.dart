@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/RdprOnlineWorkList.dart';
+import 'package:inspection_flutter_app/Activity/RdprOnlineWorkListFromFilter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -16,7 +16,7 @@ import '../Utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import 'VillageListFromGeoLocation.dart';
+import 'RdprOnlineWorkListFromGeoLocation.dart';
 
 class RDPR_Online extends StatefulWidget {
   @override
@@ -289,15 +289,15 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_get_calculate_distance,
-      s.latitude: latitude,
-      s.longitude: longitude,
-      s.distance: distance.text,
+      s.key_service_id: s.sevice_key_get_calculate_distance,
+      s.key_latitude: latitude,
+      s.key_longitude: longitude,
+      s.key_distance: distance.text,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context:await utils.globalContext);
@@ -314,15 +314,15 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
       String data = response.body;
       print("VillageListOfLocation_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => VillageListFromGeoLocation(villageList: userData[s.json_data],)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => VillageListFromGeoLocation(villageList: userData[s.key_json_data],)));
         }else{
           utils.showAlert(context, s.no_village);
         }

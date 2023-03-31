@@ -488,7 +488,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS")
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS")
       {
         String mask=mobile_number.text.replaceAll("\\w(?=\\w{4})", "*");
         mobile_number.text=mask;
@@ -511,7 +511,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       var decodedData = json.decode(data);
       var STATUS = decodedData[s.status];
       var RESPONSE = decodedData[s.response];
-      if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS")
+      if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS")
       {
           mobile_number.text="";
       }
@@ -534,7 +534,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS")
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS")
     {
       tcVisibility = !tcVisibility;
       visibility = visibility;
@@ -550,7 +550,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.service_id: "sendOTP_for_forgot_password",
       s.mobileNumber: mobile_number.text,
-      s.appcode:"WI",
+      s.key_appcode:"WI",
     };
     print(mobile_number.text);
     http.Response response = await http.post(url.open_service, body: jsonEncode(request));
@@ -561,7 +561,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS") {
       tcVisibility = !tcVisibility;
       visibility = !visibility;
       mobilenumber=mobile_number.text.toString();
@@ -573,7 +573,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request={
         s.service_id:"ResendOtpForgotPassword",
         s.mobileNumber: mobile_number.toString(),
-        s.appcode:"WI",
+        s.key_appcode:"WI",
     };
     print("Resend_Otp"+request.toString());
     http.Response response = await http.post(url.open_service, body: jsonEncode(request));
@@ -585,7 +585,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
     var KEY;
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS") {
       otp.text="";
     }
     else
@@ -598,7 +598,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       s.service_id:"ForgotPasswordVerifyOtp",
       s.mobileNumber: mobile_number.toString(),
       s.mobileOTP:otp.text,
-      s.appcode:"WI",
+      s.key_appcode:"WI",
     };
     print("FORGOT_PASSWORD_OTP"+request.toString());
     http.Response response = await http.post(url.open_service, body: jsonEncode(request));
@@ -610,7 +610,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
     var KEY;
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS") {
             mobilenumber=mobile_number.text.toString();
             Otp=otp.text.toString();
             tcVisibility = !tcVisibility;
@@ -628,7 +628,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       s.service_id:"ForgotPassword",
       s.mobileNumber: mobile_number.toString(),
       s.mobileOTP:otp.text,
-      s.appcode:"WI",
+      s.key_appcode:"WI",
     };
     print("forgot_password"+request.toString());
     http.Response response = await http.post(url.open_service, body: jsonEncode(request));
@@ -640,7 +640,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
     var KEY;
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS") {
       mobilenumber=mobile_number.text.toString();
       Otp=otp.text.toString();
     }
@@ -668,12 +668,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       print("change_password_send_otp_request_json>>" + json_request.toString());
       print("change_password_send_otp_request_encrypt>>" + encrypted_request.toString());
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrypt_data = utils.decryption(enc_data, userDecryptKey);
       var userData = jsonDecode(decrypt_data);
       var status = userData[s.status];
       var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
+      if (status == s.key_ok && response_value == s.key_ok) {
         mobilenumber=mobile_number.text.toString();
         String mask=mobile_number.text.replaceAll("\\w(?=\\w{4})", "*");
         mobile_number.text=mask;
@@ -702,12 +702,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("change_password_Resend_otp_request_json>>" + json_request.toString());
     print("change_password_Resend_otp_request_encrypt>>" + encrypted_request.toString());
     var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.enc_data];
+    var enc_data = jsonData[s.key_enc_data];
     var decrpt_data = utils.decryption(enc_data, userDecryptKey);
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.status];
     var response_value = userData[s.response];
-    if (status == s.ok && response_value == s.ok) {
+    if (status == s.key_ok && response_value == s.key_ok) {
       utils.showToast(context, "SUCCESS");
     }
     else
@@ -735,12 +735,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("change_password_send_otp_request_json>>" + json_request.toString());
     print("change_password_send_otp_request_encrypt>>" + encrypted_request.toString());
     var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.enc_data];
+    var enc_data = jsonData[s.key_enc_data];
     var decrpt_data = utils.decryption(enc_data, userDecryptKey);
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.status];
     var response_value = userData[s.response];
-    if (status == s.ok && response_value == s.ok) {
+    if (status == s.key_ok && response_value == s.key_ok) {
       utils.showToast(context, "SUCCESS");
       tcVisibility = !tcVisibility;
       visibility = visibility;
@@ -770,7 +770,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.status];
     var RESPONSE = decodedData[s.response];
     var KEY;
-    if (STATUS.toString() == s.ok && RESPONSE.toString() == "SUCCESS") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "SUCCESS") {
      utils.showToast(context, "SUCCESS");
     }
     else

@@ -32,46 +32,46 @@ class _DrawerAppState extends State<DrawerApp> {
   }
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
-    if (prefs?.getString(s.name) != null && prefs?.getString(s.name) != "" ) {
-      name=prefs!.getString(s.name)!;
+    if (prefs?.getString(s.key_name) != null && prefs?.getString(s.key_name) != "" ) {
+      name=prefs!.getString(s.key_name)!;
     } else {
       name="";
     }
-    if (prefs?.getString(s.desig_name) != null && prefs?.getString(s.desig_name) != "" ) {
-      designation=prefs!.getString(s.desig_name)!;
+    if (prefs?.getString(s.key_desig_name) != null && prefs?.getString(s.key_desig_name) != "" ) {
+      designation=prefs!.getString(s.key_desig_name)!;
     } else {
       designation="";
     }
-    if (prefs?.getString(s.level) != null && prefs?.getString(s.level) != "" ) {
-      level=prefs!.getString(s.level)!;
+    if (prefs?.getString(s.key_level) != null && prefs?.getString(s.key_level) != "" ) {
+      level=prefs!.getString(s.key_level)!;
     } else {
       level="";
     }
-    if (prefs?.getString(s.profile_image) != null && prefs?.getString(s.profile_image) != "" ) {
-      profile_image=prefs!.getString(s.profile_image)!;
+    if (prefs?.getString(s.key_profile_image) != null && prefs?.getString(s.key_profile_image) != "" ) {
+      profile_image=prefs!.getString(s.key_profile_image)!;
     } else {
       profile_image="";
     }
 
     if(level=="S"){
       level_head="State : ";
-      if (prefs?.getString(s.stateName) != null && prefs?.getString(s.stateName) != "" ) {
-        level_value=prefs!.getString(s.stateName)!;
+      if (prefs?.getString(s.key_stateName) != null && prefs?.getString(s.key_stateName) != "" ) {
+        level_value=prefs!.getString(s.key_stateName)!;
       } else {
         level_value="";
       }
     }else if(level=="D"){
       level_head="District : ";
-      if (prefs?.getString(s.dname) != null && prefs?.getString(s.dname) != "" ) {
-        level_value=prefs!.getString(s.dname)!;
+      if (prefs?.getString(s.key_dname) != null && prefs?.getString(s.key_dname) != "" ) {
+        level_value=prefs!.getString(s.key_dname)!;
       } else {
         level_value="";
       }
 
     }else if(level=="B"){
       level_head="Block : ";
-      if (prefs?.getString(s.bname) != null && prefs?.getString(s.bname) != "" ) {
-        level_value=prefs!.getString(s.bname)!;
+      if (prefs?.getString(s.key_bname) != null && prefs?.getString(s.key_bname) != "" ) {
+        level_value=prefs!.getString(s.key_bname)!;
       } else {
         level_value="";
       }

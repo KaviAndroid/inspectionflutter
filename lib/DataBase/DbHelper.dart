@@ -39,7 +39,7 @@ class DbHelper{
      await db.execute(
          "CREATE TABLE $table_FinancialYear ( fin_year TEXT )");
      await db.execute(
-         "CREATE TABLE $table_Status ( status_id TEXT , work_status TEXT )");
+         "CREATE TABLE $table_Status ( status_id TEXT , status TEXT )");
      await db.execute(
          "CREATE TABLE $table_OtherCategory ( other_work_category_id TEXT , other_work_category_name TEXT )");
      await db.execute(

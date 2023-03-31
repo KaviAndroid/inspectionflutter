@@ -252,7 +252,7 @@ class LoginState extends State<Login> {
                                   horizontal: 10, vertical: 10),
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  ForgotPassword()));
+                                  Navigator.push(context,MaterialPageRoute(builder:(context) =>  ForgotPassword()));
                                 }, // Handle your callback
                                 child: Text(
                                   s.forgot_password,
@@ -288,10 +288,10 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9750895078";
+                                user_name.text = "7877979787";
                                 String ss = new String.fromCharCodes(
                                     new Runes('\u0024'));
-                                user_password.text = "Test123#" + ss;
+                                user_password.text = "Crd123#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
@@ -434,10 +434,10 @@ class LoginState extends State<Login> {
   Future<dynamic> login(BuildContext context) async {
     String random_char = utils.generateRandomString(15);
     var request = {
-      s.service_id: s.key_login,
-      s.user_login_key: random_char,
-      s.user_name: user_name.text.trim(),
-      s.user_pwd: utils.getSha256(random_char, user_password.text.trim())
+      s.key_service_id: s.sevice_key_login,
+      s.key_user_login_key: random_char,
+      s.key_user_name: user_name.text.trim(),
+      s.key_user_pwd: utils.getSha256(random_char, user_password.text.trim())
     };
     HttpClient _client = HttpClient(context:await utils.globalContext);
     _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
@@ -453,15 +453,15 @@ class LoginState extends State<Login> {
       print("login_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
-      var STATUS = decodedData[s.status];
-      var RESPONSE = decodedData[s.response];
+      var STATUS = decodedData[s.key_status];
+      var RESPONSE = decodedData[s.key_response];
       var KEY;
       var user_data;
       String decryptedKey;
       String userDataDecrypt;
-      if (STATUS.toString() == s.ok && RESPONSE.toString() == "LOGIN_SUCCESS") {
-        KEY = decodedData[s.key];
-        user_data = decodedData[s.user_data];
+      if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "LOGIN_SUCCESS") {
+        KEY = decodedData[s.key_key];
+        user_data = decodedData[s.key_user_data];
 
         userPassKey = utils.textToMd5(user_password.text);
         decryptedKey = utils.decryption(KEY, userPassKey);
@@ -471,45 +471,45 @@ class LoginState extends State<Login> {
         userDataDecrypt = utils.decryption(user_data, userPassKey);
         var userData = jsonDecode(userDataDecrypt);
 
-        prefs.setString(s.name, userData[s.name]);
-        prefs.setString(s.user_name, user_name.text.trim());
+        prefs.setString(s.key_name, userData[s.key_name]);
+        prefs.setString(s.key_user_name, user_name.text.trim());
         prefs.setString(s.password, user_password.text.trim());
         prefs.setString(s.userPassKey, decryptedKey);
-        prefs.setString(s.desig_name, userData[s.desig_name]);
-        prefs.setString(s.desig_code, userData[s.desig_code]);
-        prefs.setString(s.level, userData[s.levels]);
+        prefs.setString(s.key_desig_name, userData[s.key_desig_name]);
+        prefs.setString(s.key_desig_code, userData[s.key_desig_code]);
+        prefs.setString(s.key_level, userData[s.key_levels]);
 
         if (userData['profile_image_found'] == 'Y') {
-          if (!(userData[s.profile_image].toString() == ("null") ||
-              userData[s.profile_image].toString() == (""))) {
+          if (!(userData[s.key_profile_image].toString() == ("null") ||
+              userData[s.key_profile_image].toString() == (""))) {
             Uint8List bytes =
-                Base64Codec().decode(userData[s.profile_image].toString());
+                Base64Codec().decode(userData[s.key_profile_image].toString());
             prefs.setString(
-                s.profile_image, userData[s.profile_image].toString());
+                s.key_profile_image, userData[s.key_profile_image].toString());
           }
         } else {
-          prefs.setString(s.profile_image, "");
+          prefs.setString(s.key_profile_image, "");
         }
 
-        if (userData[s.levels] == ("S")) {
-          prefs.setString(s.scode, userData[s.statecode]);
-          prefs.setString(s.stateName, "Tamil Nadu");
-          prefs.setString(s.dcode, "");
-          prefs.setString(s.bcode, "");
+        if (userData[s.key_levels] == ("S")) {
+          prefs.setString(s.key_scode, userData[s.key_statecode]);
+          prefs.setString(s.key_stateName, "Tamil Nadu");
+          prefs.setString(s.key_dcode, "");
+          prefs.setString(s.key_bcode, "");
           getDistrictList();
           getBlockList();
-        } else if (userData[s.levels] == ("D")) {
-          prefs.setString(s.scode, userData[s.statecode]);
-          prefs.setString(s.dcode, userData[s.dcode]);
-          prefs.setString(s.dname, userData[s.dname]);
-          prefs.setString(s.bcode, "");
+        } else if (userData[s.key_levels] == ("D")) {
+          prefs.setString(s.key_scode, userData[s.key_statecode]);
+          prefs.setString(s.key_dcode, userData[s.key_dcode]);
+          prefs.setString(s.key_dname, userData[s.key_dname]);
+          prefs.setString(s.key_bcode, "");
           getBlockList();
-        } else if (userData[s.levels] == ("B")) {
-          prefs.setString(s.scode, userData[s.statecode]);
-          prefs.setString(s.dcode, userData[s.dcode]);
-          prefs.setString(s.dname, userData[s.dname]);
-          prefs.setString(s.bcode, userData[s.bcode]);
-          prefs.setString(s.bname, userData[s.bname]);
+        } else if (userData[s.key_levels] == ("B")) {
+          prefs.setString(s.key_scode, userData[s.key_statecode]);
+          prefs.setString(s.key_dcode, userData[s.key_dcode]);
+          prefs.setString(s.key_dname, userData[s.key_dname]);
+          prefs.setString(s.key_bcode, userData[s.key_bcode]);
+          prefs.setString(s.key_bname, userData[s.key_bname]);
         }
         getProfileData();
         getDashboardData();
@@ -528,13 +528,13 @@ class LoginState extends State<Login> {
 
   Future<void> getDistrictList() async {
      Map json_request = {
-      s.scode: /*prefs.getString(s.scode) as String*/29,
-      s.service_id: s.key_district_list_all,
+      s.key_scode: /*prefs.getString(s.scode) as String*/29,
+      s.key_service_id: s.sevice_key_district_list_all,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
      HttpClient _client = HttpClient(context:await utils.globalContext);
@@ -551,21 +551,21 @@ class LoginState extends State<Login> {
       String data = response.body;
       print("districtList_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, userDecriptKey);
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_District();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_District +' (dcode, dname) VALUES(' +
-                    res_jsonArray[i][s.dcode] +
+                    res_jsonArray[i][s.key_dcode] +
                     ",'" +
-                    res_jsonArray[i][s.dname] +
+                    res_jsonArray[i][s.key_dname] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_District);
@@ -578,22 +578,22 @@ class LoginState extends State<Login> {
   Future<void> getBlockList() async {
     Map json_request={};
 
-    if (prefs.getString(s.level) as String == "D") {
+    if (prefs.getString(s.key_level) as String == "D") {
       json_request = {
-        s.scode: prefs.getString(s.scode) as String,
-        s.dcode: prefs.getString(s.dcode) as String,
-        s.service_id: s.key_block_list_all,
+        s.key_scode: prefs.getString(s.key_scode) as String,
+        s.key_dcode: prefs.getString(s.key_dcode) as String,
+        s.key_service_id: s.sevice_key_block_list_all,
       };
-    } else if (prefs.getString(s.level) as String == "S") {
+    } else if (prefs.getString(s.key_level) as String == "S") {
       json_request = {
-        s.scode: prefs.getString(s.scode) as String,
-        s.service_id: s.key_block_list_all,
+        s.key_scode: prefs.getString(s.key_scode) as String,
+        s.key_service_id: s.sevice_key_block_list_all,
       };
     }
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -610,23 +610,23 @@ class LoginState extends State<Login> {
       String data = response.body;
       print("BlockList_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, userDecriptKey);
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Block();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_Block+' (dcode, bcode, bname) VALUES(' +
-                    res_jsonArray[i][s.dcode] +
+                    res_jsonArray[i][s.key_dcode] +
                     "," +
-                    res_jsonArray[i][s.bcode] +
+                    res_jsonArray[i][s.key_bcode] +
                     ",'" +
-                    res_jsonArray[i][s.bname] +
+                    res_jsonArray[i][s.key_bname] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Block);
@@ -640,12 +640,12 @@ class LoginState extends State<Login> {
     late Map json_request;
 
     json_request = {
-      s.service_id: s.key_work_inspection_profile_list,
+      s.key_service_id: s.sevice_key_work_inspection_profile_list,
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -662,42 +662,42 @@ class LoginState extends State<Login> {
       String data = response.body;
       print("ProfileData_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, userDecriptKey);
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
           for (int i = 0; i < res_jsonArray.length; i++) {
-            String name = res_jsonArray[i][s.name];
-            String mobile = res_jsonArray[i][s.mobile];
-            String gender = res_jsonArray[i][s.gender];
-            String level = res_jsonArray[i][s.level];
-            String desig_code = res_jsonArray[i][s.desig_code].toString();
-            String desig_name = res_jsonArray[i][s.desig_name];
-            String dcode = res_jsonArray[i][s.dcode].toString();
-            String bcode = res_jsonArray[i][s.bcode].toString();
-            String office_address = res_jsonArray[i][s.office_address];
-            String email = res_jsonArray[i][s.email];
-            String profile_image = res_jsonArray[i][s.profile_image];
-            String role_code = res_jsonArray[i][s.role_code].toString();
+            String name = res_jsonArray[i][s.key_name];
+            String mobile = res_jsonArray[i][s.key_mobile];
+            String gender = res_jsonArray[i][s.key_gender];
+            String level = res_jsonArray[i][s.key_level];
+            String desig_code = res_jsonArray[i][s.key_desig_code].toString();
+            String desig_name = res_jsonArray[i][s.key_desig_name];
+            String dcode = res_jsonArray[i][s.key_dcode].toString();
+            String bcode = res_jsonArray[i][s.key_bcode].toString();
+            String office_address = res_jsonArray[i][s.key_office_address];
+            String email = res_jsonArray[i][s.key_email];
+            String profile_image = res_jsonArray[i][s.key_profile_image];
+            String role_code = res_jsonArray[i][s.key_role_code].toString();
 
             if (!(profile_image == ("null") || profile_image == (""))) {
               Uint8List bytes = Base64Codec().decode(profile_image);
-              prefs.setString(s.profile_image, profile_image);
+              prefs.setString(s.key_profile_image, profile_image);
             } else {
-              prefs.setString(s.profile_image, "");
+              prefs.setString(s.key_profile_image, "");
             }
 
-            prefs.setString(s.desig_name, desig_name);
-            prefs.setString(s.desig_code, desig_code);
-            prefs.setString(s.name, name);
-            prefs.setString(s.role_code, role_code);
-            prefs.setString(s.level, level);
-            prefs.setString(s.dcode, dcode);
-            prefs.setString(s.bcode, bcode);
+            prefs.setString(s.key_desig_name, desig_name);
+            prefs.setString(s.key_desig_code, desig_code);
+            prefs.setString(s.key_name, name);
+            prefs.setString(s.key_role_code, role_code);
+            prefs.setString(s.key_level, level);
+            prefs.setString(s.key_dcode, dcode);
+            prefs.setString(s.key_bcode, bcode);
 
           }
         }
@@ -708,12 +708,12 @@ class LoginState extends State<Login> {
   Future<void> getDashboardData() async {
     late Map json_request;
     json_request = {
-      s.service_id: s.key_current_finyear_wise_status_count
+      s.key_service_id: s.sevice_key_current_finyear_wise_status_count
     };
 
     Map encrpted_request = {
-      s.user_name: prefs.getString(s.user_name),
-      s.data_content:
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
       utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
@@ -730,21 +730,21 @@ class LoginState extends State<Login> {
       String data = response.body;
       print("DashboardData_response>>" + data);
       var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.enc_data];
+      var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
-      var status = userData[s.status];
-      var response_value = userData[s.response];
-      if (status == s.ok && response_value == s.ok) {
-        List<dynamic> res_jsonArray = userData[s.json_data];
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
 
           for (int i = 0; i < res_jsonArray.length; i++) {
-            String satisfied_count = res_jsonArray[i]["satisfied"].toString();
-            String un_satisfied_count = res_jsonArray[i]["unsatisfied"].toString();
-            String need_improvement_count = res_jsonArray[i]["need_improvement"].toString();
-            String fin_year = res_jsonArray[i]["fin_year"];
-            String inspection_type = res_jsonArray[i]["inspection_type"];
+            String satisfied_count = res_jsonArray[i][s.key_satisfied].toString();
+            String un_satisfied_count = res_jsonArray[i][s.key_unsatisfied].toString();
+            String need_improvement_count = res_jsonArray[i][s.key_need_improvement].toString();
+            String fin_year = res_jsonArray[i][s.key_fin_year];
+            String inspection_type = res_jsonArray[i][s.key_inspection_type];
             if(satisfied_count==("")){
               satisfied_count="0";
             } if(un_satisfied_count==("")){

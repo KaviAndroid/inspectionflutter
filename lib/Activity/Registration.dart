@@ -1160,51 +1160,43 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Mobile Verification API *****************************/
 
   Future<void> validateMobile() async {
-    setState(() {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => OTPVerification(
-                    Flag: "register",
-                  )),
-          (route) => false);
-    });
-    // Map jsonRequest;
-    // jsonRequest = {
-    //   s.key_service_id: s.sevice_key_verify_mobile_number,
-    //   "mobile_number": mobileController.text
-    // };
-    // print("Open_url>>${url.open_service}");
-    // print("Mobile_verification_request_json>>$jsonRequest");
+    Map jsonRequest;
+    jsonRequest = {
+      s.key_service_id: s.sevice_key_verify_mobile_number,
+      "mobile_number": mobileController.text
+    };
+    print("Open_url>>${url.open_service}");
+    print("Mobile_verification_request_json>>$jsonRequest");
 
-    // HttpClient _client = HttpClient(context: await Utils().globalContext);
-    // _client.badCertificateCallback =
-    //     (X509Certificate cert, String host, int port) => false;
-    // IOClient _ioClient = new IOClient(_client);
-    // var response =
-    //     await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
+    HttpClient _client = HttpClient(context: await Utils().globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response =
+        await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
 
-    // if (response.statusCode == 200) {
-    //   // If the server did return a 201 CREATED response,
-    //   // then parse the JSON.
-    //   String data = response.body;
-    //   print("Validation_response>>$data");
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("Validation_response>>$data");
 
-    //   var userData = jsonDecode(data);
+      var userData = jsonDecode(data);
 
-    //   var status = userData[s.key_status];
-    //   var responseValue = userData[s.key_response];
-    //   var message = userData[s.key_message];
-    //   if (status == s.key_ok && responseValue == s.key_ok) {
-    //     Utils().showAlert(context, message);
-    //     cugValid = true;
-    //     __initializeBodyUI();
-    //     // Visible Gone
-    //   } else {
-    //     isLoadingCUG = false;
-    //     Utils().showAlert(context, message);
-    //     setState(() {});
-    //   }
-    // }
+      var status = userData[s.key_status];
+      var responseValue = userData[s.key_response];
+      var message = userData[s.key_message];
+      if (status == s.key_ok && responseValue == s.key_ok) {
+        Utils().showAlert(context, message);
+        cugValid = true;
+        __initializeBodyUI();
+        // Visible Gone
+      } else {
+        isLoadingCUG = false;
+        Utils().showAlert(context, message);
+        setState(() {});
+      }
+    }
   }
 
   /// ************************** Gender API *****************************/

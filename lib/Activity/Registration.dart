@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, file_names, unrelated_type_equality_isSpinnerLoadings
+// ignore_for_file: avoid_print, file_names, unrelated_type_equality_isSpinnerLoadings, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/OTP_Verification.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:google_fonts/google_fonts.dart';
@@ -30,7 +31,6 @@ class Registration extends StatefulWidget {
 class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
   var dbHelper = DbHelper();
-  var dbClient;
   ScrollController scrollController = ScrollController();
 
   //ImagePickers
@@ -109,8 +109,6 @@ class _RegistrationState extends State<Registration> {
   }
 
   Future<void> initialize() async {
-    prefs = await SharedPreferences.getInstance();
-    dbClient = await dbHelper.db;
     setState(() {});
   }
 
@@ -1162,43 +1160,52 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Mobile Verification API *****************************/
 
   Future<void> validateMobile() async {
-    Map jsonRequest;
-    jsonRequest = {
-      s.key_service_id: s.sevice_key_verify_mobile_number,
-      "mobile_number": mobileController.text
-    };
-    print("Open_url>>${url.open_service}");
-    print("Mobile_verification_request_json>>$jsonRequest");
+    setState(() {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => OTPVerification(
+                    Flag: "OTP",
+                  )),
+          (route) => false);
+    });
 
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response =
-        await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
+    // Map jsonRequest;
+    // jsonRequest = {
+    //   s.key_service_id: s.sevice_key_verify_mobile_number,
+    //   "mobile_number": mobileController.text
+    // };
+    // print("Open_url>>${url.open_service}");
+    // print("Mobile_verification_request_json>>$jsonRequest");
 
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("Validation_response>>$data");
+    // HttpClient _client = HttpClient(context: await Utils().globalContext);
+    // _client.badCertificateCallback =
+    //     (X509Certificate cert, String host, int port) => false;
+    // IOClient _ioClient = new IOClient(_client);
+    // var response =
+    //     await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
 
-      var userData = jsonDecode(data);
+    // if (response.statusCode == 200) {
+    //   // If the server did return a 201 CREATED response,
+    //   // then parse the JSON.
+    //   String data = response.body;
+    //   print("Validation_response>>$data");
 
-      var status = userData[s.key_status];
-      var responseValue = userData[s.key_response];
-      var message = userData[s.key_message];
-      if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().showAlert(context, message);
-        cugValid = true;
-        __initializeBodyUI();
-        // Visible Gone
-      } else {
-        isLoadingCUG = false;
-        Utils().showAlert(context, message);
-        setState(() {});
-      }
-    }
+    //   var userData = jsonDecode(data);
+
+    //   var status = userData[s.key_status];
+    //   var responseValue = userData[s.key_response];
+    //   var message = userData[s.key_message];
+    //   if (status == s.key_ok && responseValue == s.key_ok) {
+    //     Utils().showAlert(context, message);
+    //     cugValid = true;
+    //     __initializeBodyUI();
+    //     // Visible Gone
+    //   } else {
+    //     isLoadingCUG = false;
+    //     Utils().showAlert(context, message);
+    //     setState(() {});
+    //   }
+    // }
   }
 
   /// ************************** Gender API *****************************/
@@ -1434,6 +1441,15 @@ class _RegistrationState extends State<Registration> {
 
       if (status == s.key_ok && responseValue == s.key_ok) {
         Utils().showAlert(context, message);
+
+        setState(() {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => OTPVerification(
+                        Flag: "register",
+                      )),
+              (route) => false);
+        });
       } else if (status == s.key_ok && responseValue == s.key_fail) {
         Utils().showAlert(context, message);
       }

@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/ForgotPassword.dart';
+import 'package:inspection_flutter_app/Activity/OTP_Verification.dart';
 import 'package:inspection_flutter_app/Activity/Registration.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
@@ -252,7 +253,13 @@ class LoginState extends State<Login> {
                                   horizontal: 10, vertical: 10),
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.push(context,MaterialPageRoute(builder:(context) =>  ForgotPassword(isForgotPassword: "forgot_password",)));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ForgotPassword(
+                                                isForgotPassword:
+                                                    "forgot_password",
+                                              )));
                                 }, // Handle your callback
                                 child: Text(
                                   s.forgot_password,
@@ -296,7 +303,6 @@ class LoginState extends State<Login> {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
                                     if (await utils.isOnline()) {
-
                                       login(context);
                                     } else {
                                       utils.showAlert(context, s.no_internet);
@@ -340,7 +346,11 @@ class LoginState extends State<Login> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  Registration(registerFlag:1)));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Registration(registerFlag: 1)));
 
                             // utils.showToast(context, "click register");
                           },
@@ -358,41 +368,42 @@ class LoginState extends State<Login> {
                         ),
                       ]),
                 ),
-                InkWell(
-                  onTap: () {
-                    utils.showToast(context, "click Here");
-                  }, // Handle your callback
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(fontSize: 15, color: c.d_grey3),
-                          children: [
-                            TextSpan(
-                              text: s.otp_validation1,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Handle the tap event
-                                },
-                              text: s.otp_validation2,
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold), //<-- SEE HERE
-                            ),
-                            TextSpan(
-                              text: s.otp_validation3,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(fontSize: 15, color: c.d_grey3),
+                        children: [
+                          TextSpan(
+                            text: s.otp_validation1,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // Handle the tap event
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => OTPVerification(
+                                            Flag: "register",
+                                          )),
+                                );
+                              },
+                            text: s.otp_validation2,
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold), //<-- SEE HERE
+                          ),
+                          TextSpan(
+                            text: s.otp_validation3,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -439,8 +450,9 @@ class LoginState extends State<Login> {
       s.key_user_name: user_name.text.trim(),
       s.key_user_pwd: utils.getSha256(random_char, user_password.text.trim())
     };
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.login, body: request);
     // http.Response response = await http.post(url.login, body: request);
@@ -459,7 +471,8 @@ class LoginState extends State<Login> {
       var user_data;
       String decryptedKey;
       String userDataDecrypt;
-      if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "LOGIN_SUCCESS") {
+      if (STATUS.toString() == s.key_ok &&
+          RESPONSE.toString() == "LOGIN_SUCCESS") {
         KEY = decodedData[s.key_key];
         user_data = decodedData[s.key_user_data];
 
@@ -514,7 +527,7 @@ class LoginState extends State<Login> {
         getProfileData();
         getDashboardData();
 
-        utils.gotoHomePage(context,"Login");
+        utils.gotoHomePage(context, "Login");
       } else {
         utils.showToast(context, "Failed");
       }
@@ -527,8 +540,8 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getDistrictList() async {
-     Map json_request = {
-      s.key_scode: /*prefs.getString(s.scode) as String*/29,
+    Map json_request = {
+      s.key_scode: /*prefs.getString(s.scode) as String*/ 29,
       s.key_service_id: s.sevice_key_district_list_all,
     };
 
@@ -537,10 +550,12 @@ class LoginState extends State<Login> {
       s.key_data_content:
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
-     HttpClient _client = HttpClient(context:await utils.globalContext);
-     _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-     IOClient _ioClient = new IOClient(_client);
-     var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     print("districtList_url>>" + url.master_service.toString());
     print("districtList_request_json>>" + json_request.toString());
@@ -561,14 +576,16 @@ class LoginState extends State<Login> {
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_District();
           for (int i = 0; i < res_jsonArray.length; i++) {
-            await dbClient.rawInsert(
-                'INSERT INTO '+s.table_District +' (dcode, dname) VALUES(' +
-                    res_jsonArray[i][s.key_dcode] +
-                    ",'" +
-                    res_jsonArray[i][s.key_dname] +
-                    "')");
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_District +
+                ' (dcode, dname) VALUES(' +
+                res_jsonArray[i][s.key_dcode] +
+                ",'" +
+                res_jsonArray[i][s.key_dname] +
+                "')");
           }
-          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_District);
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
           print("table_District" + list.toString());
         }
       }
@@ -576,7 +593,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getBlockList() async {
-    Map json_request={};
+    Map json_request = {};
 
     if (prefs.getString(s.key_level) as String == "D") {
       json_request = {
@@ -597,10 +614,12 @@ class LoginState extends State<Login> {
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("BlockList_url>>" + url.master_service.toString());
     print("BlockList_request_json>>" + json_request.toString());
     print("BlockList_request_encrpt>>" + encrpted_request.toString());
@@ -620,16 +639,18 @@ class LoginState extends State<Login> {
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Block();
           for (int i = 0; i < res_jsonArray.length; i++) {
-            await dbClient.rawInsert(
-                'INSERT INTO '+s.table_Block+' (dcode, bcode, bname) VALUES(' +
-                    res_jsonArray[i][s.key_dcode] +
-                    "," +
-                    res_jsonArray[i][s.key_bcode] +
-                    ",'" +
-                    res_jsonArray[i][s.key_bname] +
-                    "')");
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_Block +
+                ' (dcode, bcode, bname) VALUES(' +
+                res_jsonArray[i][s.key_dcode] +
+                "," +
+                res_jsonArray[i][s.key_bcode] +
+                ",'" +
+                res_jsonArray[i][s.key_bname] +
+                "')");
           }
-          List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_Block);
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
           print("table_Block >>" + list.toString());
         }
       }
@@ -649,10 +670,12 @@ class LoginState extends State<Login> {
           utils.encryption(jsonEncode(json_request), userDecriptKey),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
     print("ProfileData_url>>" + url.main_service.toString());
     print("ProfileData_request_json>>" + json_request.toString());
     print("ProfileData_request_encrpt>>" + encrpted_request.toString());
@@ -698,7 +721,6 @@ class LoginState extends State<Login> {
             prefs.setString(s.key_level, level);
             prefs.setString(s.key_dcode, dcode);
             prefs.setString(s.key_bcode, bcode);
-
           }
         }
       }
@@ -713,14 +735,16 @@ class LoginState extends State<Login> {
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
     print("DashboardData_url>>" + url.main_service.toString());
     print("DashboardData_request_json>>" + json_request.toString());
     print("DashboardData_request_encrpt>>" + encrpted_request.toString());
@@ -731,49 +755,53 @@ class LoginState extends State<Login> {
       print("DashboardData_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
-
           for (int i = 0; i < res_jsonArray.length; i++) {
-            String satisfied_count = res_jsonArray[i][s.key_satisfied].toString();
-            String un_satisfied_count = res_jsonArray[i][s.key_unsatisfied].toString();
-            String need_improvement_count = res_jsonArray[i][s.key_need_improvement].toString();
+            String satisfied_count =
+                res_jsonArray[i][s.key_satisfied].toString();
+            String un_satisfied_count =
+                res_jsonArray[i][s.key_unsatisfied].toString();
+            String need_improvement_count =
+                res_jsonArray[i][s.key_need_improvement].toString();
             String fin_year = res_jsonArray[i][s.key_fin_year];
             String inspection_type = res_jsonArray[i][s.key_inspection_type];
-            if(satisfied_count==("")){
-              satisfied_count="0";
-            } if(un_satisfied_count==("")){
-              un_satisfied_count="0";
-            } if(need_improvement_count==("")){
-              need_improvement_count="0";
+            if (satisfied_count == ("")) {
+              satisfied_count = "0";
             }
-            int total_inspection_count = int.parse(satisfied_count)+int.parse(un_satisfied_count)+int.parse(need_improvement_count);
+            if (un_satisfied_count == ("")) {
+              un_satisfied_count = "0";
+            }
+            if (need_improvement_count == ("")) {
+              need_improvement_count = "0";
+            }
+            int total_inspection_count = int.parse(satisfied_count) +
+                int.parse(un_satisfied_count) +
+                int.parse(need_improvement_count);
 
-            if(inspection_type == ("rdpr")){
+            if (inspection_type == ("rdpr")) {
               prefs.setString(s.satisfied_count, satisfied_count);
               prefs.setString(s.un_satisfied_count, un_satisfied_count);
               prefs.setString(s.need_improvement_count, need_improvement_count);
               prefs.setString(s.total_rdpr, total_inspection_count.toString());
               prefs.setString(s.financial_year, fin_year);
-
-            }else {
+            } else {
               prefs.setString(s.satisfied_count_other, satisfied_count);
               prefs.setString(s.un_satisfied_count_other, un_satisfied_count);
-              prefs.setString(s.need_improvement_count_other, need_improvement_count);
+              prefs.setString(
+                  s.need_improvement_count_other, need_improvement_count);
               prefs.setString(s.total_other, total_inspection_count.toString());
               prefs.setString(s.financial_year, fin_year);
             }
           }
-
         }
-
       }
     }
   }
-
 }

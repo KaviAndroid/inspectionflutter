@@ -252,7 +252,7 @@ class LoginState extends State<Login> {
                                   horizontal: 10, vertical: 10),
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.push(context,MaterialPageRoute(builder:(context) =>  ForgotPassword()));
+                                  Navigator.push(context,MaterialPageRoute(builder:(context) =>  ForgotPassword(isForgotPassword: "forgot_password",)));
                                 }, // Handle your callback
                                 child: Text(
                                   s.forgot_password,

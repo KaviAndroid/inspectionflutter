@@ -39,11 +39,16 @@ class Utils {
   bool isNumberValid(value) {
     return RegExp(r'^[6789]\d{9}$').hasMatch(value);
   }
-
+  bool isOtpValid(value) {
+    return RegExp(r'^[0123456789]\d{5}').hasMatch(value);
+  }
   bool isNameValid(value) {
     return RegExp(r"([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}").hasMatch(value);
   }
-
+bool isPasswordValid(value)
+{
+  return RegExp("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#%^&+=])(?=\\S+).{4,}").hasMatch(value);
+}
   void gotoHomePage(BuildContext context, String s) {
     Timer(
         const Duration(seconds: 2),

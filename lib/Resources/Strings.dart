@@ -78,6 +78,9 @@ String mobile_number_must_be_of_10_digits =
     "Mobile Number Must be of 10 digits";
 String enter_registered_mobile_number_to_send_otp =
     "Enter registered Mobile number to send OTP for Verification";
+String enter_a_valid_otp="Enter a Valid OTP";
+String enter_a_valid_password="Enter a Valid Password";
+String enter_a_otp="Please Enter a OTP";
 String regEdit = "Edit";
 String regSave = "Register";
 String regName = "Name";
@@ -229,8 +232,10 @@ String sevice_key_get_mobile_designation = "get_mobile_designation";
 String sevice_key_get_profile_gender = "get_profile_gender";
 String sevice_key_get_village_pending_works = "get_village_pending_works";
 String sevice_key_resend_otp = "ResendOtp";
-String sevice_key_resend_otp_forgot_password = "ResendOtpForgotPassword";
+String service_key_resend_otp_forgot_password = "ResendOtpForgotPassword";
 String sevice_key_send_otp_for_forgot_password = "sendOTP_for_forgot_password";
+String service_key_mobile_number = "mobile_number";
+String service_key_forgot_password_verify_otp = "ForgotPasswordVerifyOtp";
 
 //Table Name
 String table_District = "District";

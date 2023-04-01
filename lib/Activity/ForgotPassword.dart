@@ -88,10 +88,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           controller: mobile_number,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) => value!.isEmpty
-                              ? 'Please Enter Mobile'
+                              ? s.mobile_number_must_be_of_10_digits
                               : Utils().isNumberValid(value)
                                   ? null
-                                  : 'Please Enter Valid Number',
+                                  : s.enter_a_valid_mobile_number,
                           maxLength: 10,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
@@ -168,8 +168,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     s.mobile_number_must_be_of_10_digits);
                               } else {
                                 // print("Isforgotpassword"+widget.isForgotPassword);
-                                if (widget.isForgotPassword ==
-                                    "forgot_password") {
+                                if (widget.isForgotPassword == "forgot_password") {
                                   print("Isforgotpassword   " +
                                       widget.isForgotPassword);
                                   FORGOT_PASSWORD_send_otp();
@@ -180,18 +179,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   sendOtp(mobile_number.text.toString());
                                 }
                               }
-
-                              /*if(mobile_number.text.length!=10)
-                                          {
-                                            utils.showToast(context,'Mobile Number must be of 10 digit');
-                                          }
-                                        else
-                                          {
-                                            print('SEND OTP');
-                                            tcVisibility=!tcVisibility;
-                                            visibility=!visibility;
-                                          }*/
-
                             } else {
                               utils.showAlert(
                                   context, s.enter_a_valid_mobile_number);
@@ -231,26 +218,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: Container(
-                        height: 45,
-                        decoration: new BoxDecoration(
-                            color: c.ca2,
-                            border: Border.all(color: c.ca2, width: 2),
-                            borderRadius: new BorderRadius.only(
-                              topLeft: const Radius.circular(10),
-                              topRight: const Radius.circular(10),
-                              bottomLeft: const Radius.circular(10),
-                              bottomRight: const Radius.circular(10),
-                            )),
+                        height: 55,
                         child: TextFormField(
                           controller: otp,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) => value!.isEmpty
-                              ? 'Please Enter otp'
-                              : Utils().isNumberValid(value)
-                                  ? null
-                                  : 'Please Enter Valid OTP',
+                              ? s.enter_a_otp
+                              : Utils().isOtpValid(value)
+                              ? null
+                              : s.enter_a_valid_otp,
                           maxLength: 6,
                           decoration: InputDecoration(
+                            hintText: 'OTP',
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
                             filled: true,
@@ -258,7 +237,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             enabledBorder: OutlineInputBorder(
                                 borderSide:
                                     BorderSide(width: 0.1, color: c.ca1),
-                                borderRadius: BorderRadius.only(
+                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10),
                                     bottomLeft: Radius.circular(10),
@@ -273,23 +252,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                         )
-                        /*child: TextField(
-                          maxLength: 6,
-                          controller: otp,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          textAlign: TextAlign.start,
-                          decoration: InputDecoration(
-                            // suffixIcon: Icon(Icons.visibility_off_outlined),
-                              contentPadding: EdgeInsets.only(
-                                  top: 45, left: 15),
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: s.otp
-                          ),
-                        )*/
                         ),
                   ),
                 ),
@@ -307,21 +269,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           style: TextStyle(color: c.colorAccent, fontSize: 13),
                           textAlign: TextAlign.end,
                         ),
-                        /*style: ButtonStyle(
-                                  padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
-                                  backgroundColor: MaterialStateProperty.all<Color>(c.colorPrimary),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(25),
-                                            topRight: Radius.circular(25),
-                                            bottomLeft: Radius.circular(25),
-                                            bottomRight: Radius.circular(25),
-                                          ),
-                                          side: BorderSide(color: Colors.cyan)
-                                      )
-                                  )
-                              ),*/
                         onPressed: () {
                           if (widget.isForgotPassword == "forgot_password") {
                             ResendOtpForgotPasswordParams();
@@ -341,7 +288,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: SizedBox(
-                      height: 50,
+                      height: 37,
                       width: double.infinity,
                       child: Container(
                           child: TextButton(
@@ -349,7 +296,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             style: TextStyle(color: c.white, fontSize: 13)),
                         style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.all(15)),
+                                EdgeInsets.all(10)),
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 c.colorPrimary),
                             shape: MaterialStateProperty
@@ -363,7 +310,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                         ),
                                         side: BorderSide(color: Colors.cyan)))),
                         onPressed: () {
-                          setState(() {
                             if (!otp.text.isEmpty) {
                               if (otp.text.length == 6) {
                                 if (widget.isForgotPassword ==
@@ -382,7 +328,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             } else {
                               utils.showToast(context, s.otp_mus_be_filled);
                             }
-                          });
                         },
                       )),
                     ),
@@ -414,30 +359,39 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 Visibility(
                   visible: tvisibility,
                   child: Padding(
-                    padding: EdgeInsets.only(top: 20),
+                    padding: EdgeInsets.only(top: 15),
                     child: Container(
-                        height: 50,
-                        decoration: new BoxDecoration(
-                            color: c.ca2,
-                            border: Border.all(color: c.ca2, width: 2),
-                            borderRadius: new BorderRadius.only(
-                              topLeft: const Radius.circular(10),
-                              topRight: const Radius.circular(10),
-                              bottomLeft: const Radius.circular(10),
-                              bottomRight: const Radius.circular(10),
-                            )),
-                        child: TextField(
-                          maxLength: 15,
+                        height: 55,
+                        child: TextFormField(
                           controller: new_password,
-                          textAlign: TextAlign.start,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) => value!.isEmpty
+                              ? s.please_enter_new_password_and_confirm_password
+                              : Utils().isPasswordValid(value)
+                              ? null
+                              : s.enter_a_valid_password,
+                          maxLength: 15,
                           decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.visibility_off_outlined),
-                              contentPadding:
-                                  EdgeInsets.only(top: 35, left: 15),
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: s.enter_new_password),
-                        )),
+                            hintText: 'Enter New Password',
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            filled: true,
+                            fillColor: c.ca1,
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                BorderSide(width: 0.1, color: c.ca1),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                BorderSide(width: 1, color: c.colorPrimary),
+                                borderRadius: BorderRadius.circular(10.0)),
+                          ),
+                        )
+                    ),
                   ),
                 ),
                 Visibility(
@@ -445,28 +399,37 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 25.0),
                     child: Container(
-                        height: 50,
-                        decoration: new BoxDecoration(
-                            color: c.ca2,
-                            border: Border.all(color: c.ca2, width: 2),
-                            borderRadius: new BorderRadius.only(
-                              topLeft: const Radius.circular(10),
-                              topRight: const Radius.circular(10),
-                              bottomLeft: const Radius.circular(10),
-                              bottomRight: const Radius.circular(10),
-                            )),
-                        child: TextField(
-                          maxLength: 15,
+                        height: 55,
+                        child: TextFormField(
                           controller: confirm_password,
-                          textAlign: TextAlign.start,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) => value!.isEmpty
+                              ? s.please_enter_new_password_and_confirm_password
+                              : Utils().isPasswordValid(value)
+                              ? null
+                              : s.enter_a_valid_password,
+                          maxLength: 15,
                           decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.visibility_off_outlined),
-                              contentPadding:
-                                  EdgeInsets.only(top: 35, left: 15),
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: s.enter_confirm_password),
-                        )),
+                            hintText: 'Enter Confirm Password',
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            filled: true,
+                            fillColor: c.ca1,
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                BorderSide(width: 0.1, color: c.ca1),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                BorderSide(width: 1, color: c.colorPrimary),
+                                borderRadius: BorderRadius.circular(10.0)),
+                          ),
+                        )
+                    ),
                   ),
                 ),
                 Visibility(
@@ -497,8 +460,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                         side: BorderSide(color: Colors.cyan)))),
                         onPressed: () {
                           ValidatePassword();
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Login()));
                         },
                       )),
                     ),
@@ -508,11 +469,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             )));
   }
 
-  Future<RegExp> ValidatePassword() async {
+  Future<dynamic> ValidatePassword() async {
     if (new_password.text.length & confirm_password.text.length != 0) {
       if (new_password.text.length & confirm_password.text.length >= 8) {
-        return RegExp(
-            '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#%^&+=])(?=\S+).{4,}');
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Login()));
         if (await utils.isOnline()) {
           if (widget.isForgotPassword == "forgot_password") {
             forgot_password_Params(context);
@@ -537,7 +498,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<dynamic> sendOtp(String mobile_number) async {
     Map request = {
       s.key_service_id: s.resend_otp,
-      s.mobileNumber: mobile_number,
+      s.service_key_mobile_number: mobile_number,
     };
     // print(""+mobile_number.text);
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -565,7 +526,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> resend_otp(BuildContext context) async {
     Map request = {
       s.key_service_id: "ResendOtp",
-      s.mobileNumber: mobile_number.text,
+      s.service_key_mobile_number: mobile_number.text,
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
@@ -592,7 +553,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.key_service_id: "VerifyOtp",
       s.key_mobile_otp: otp.text,
-      s.mobileNumber: mobile_number.text,
+      s.service_key_mobile_number: mobile_number.text,
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
@@ -623,7 +584,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<dynamic> FORGOT_PASSWORD_send_otp() async {
     Map request = {
       s.key_service_id: s.sevice_key_send_otp_for_forgot_password,
-      s.mobileNumber: mobile_number.text,
+      s.service_key_mobile_number: mobile_number.text,
       s.key_appcode: "WI",
     };
 
@@ -657,8 +618,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<void> ResendOtpForgotPasswordParams() async {
     Map request = {
-      s.key_service_id: s.sevice_key_resend_otp_forgot_password,
-      s.mobileNumber: mobile_number.text.toString(),
+      s.key_service_id: s.service_key_resend_otp_forgot_password,
+      s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_appcode: "WI",
     };
     print("Mobile_number" + mobile_number.text);
@@ -667,10 +628,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.open_service, body: request);
+    var response = await _ioClient.post(url.open_service, body: json.encode(request));
     // http.Response response = await http.post(url.open_service, body:jsonEncode(request));
-    print("Resend_forgot_password_url>>" + url.open_service.toString());
-    print("Resend_forgot_password_request>>" + request.toString());
+    print("Resend_otp_forgot_password_url>>" + url.open_service.toString());
+    print("Resend_otp_forgot_password_request>>" + request.toString());
     String data = response.body;
     print("Resend_forgot_password_response>>" + data);
     var decodedData = json.decode(data);
@@ -687,7 +648,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> FORGOT_PASSWORD_OTP_Params() async {
     Map request = {
       s.key_service_id: "ForgotPasswordVerifyOtp",
-      s.mobileNumber: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_mobile_otp: otp.text,
       s.key_appcode: "WI",
     };
@@ -722,7 +683,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> forgot_password_Params(BuildContext context) async {
     Map request = {
       s.key_service_id: "ForgotPassword",
-      s.mobileNumber: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_mobile_otp: otp.text,
       s.key_appcode: "WI",
     };
@@ -754,7 +715,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     late Map json_request;
     json_request = {
       s.key_service_id: "sendOTP_for_change_password",
-      s.mobileNumber: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text.toString(),
     };
 
     Map encrypted_request = {
@@ -793,7 +754,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     late Map json_request;
     json_request = {
       s.key_service_id: "ResendOtpChangePassword",
-      s.mobileNumber: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text.toString(),
     };
 
     Map encrypted_request = {
@@ -831,7 +792,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     late Map json_request;
     json_request = {
       s.key_service_id: "ChangePasswordVerifyOtp",
-      s.mobileNumber: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_mobile_otp: otp.text.toString(),
     };
 
@@ -873,7 +834,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> changepassword(BuildContext context) async {
     Map request = {
       s.key_service_id: "ChangePassword",
-      s.mobileNumber: mobilenumber,
+      s.service_key_mobile_number: mobilenumber,
       s.key_mobile_otp: Otp,
       s.newpassword: "new_password",
       s.confirmpassword: "confirm_password"

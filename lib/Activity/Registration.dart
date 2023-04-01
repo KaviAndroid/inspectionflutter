@@ -1171,7 +1171,7 @@ class _RegistrationState extends State<Registration> {
 
     // Map jsonRequest;
     // jsonRequest = {
-    //   s.key_service_id: s.sevice_key_verify_mobile_number,
+    //   s.key_service_id: s.service_key_verify_mobile_number,
     //   "mobile_number": mobileController.text
     // };
     // print("Open_url>>${url.open_service}");
@@ -1213,7 +1213,7 @@ class _RegistrationState extends State<Registration> {
   Future<void> getGenderList() async {
     Map jsonRequest;
     jsonRequest = {
-      s.key_service_id: s.sevice_key_get_profile_gender,
+      s.key_service_id: s.service_key_get_profile_gender,
     };
     print(url.open_service);
     //Old Way
@@ -1249,7 +1249,7 @@ class _RegistrationState extends State<Registration> {
   Future<void> getStageLevelList() async {
     Map jsonRequest;
     jsonRequest = {
-      s.key_service_id: s.sevice_key_get_profile_level,
+      s.key_service_id: s.service_key_get_profile_level,
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
@@ -1279,7 +1279,7 @@ class _RegistrationState extends State<Registration> {
   Future<void> getDesignationList(String selectedLevel) async {
     Map jsonRequest;
     jsonRequest = {
-      s.key_service_id: s.sevice_key_get_mobile_designation,
+      s.key_service_id: s.service_key_get_mobile_designation,
       "level_id": selectedLevel,
     };
 
@@ -1314,7 +1314,7 @@ class _RegistrationState extends State<Registration> {
   Future<void> getDistrictList() async {
     Map jsonRequest;
     jsonRequest = {
-      s.key_service_id: s.sevice_key_district_list_all,
+      s.key_service_id: s.service_key_district_list_all,
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
@@ -1346,7 +1346,7 @@ class _RegistrationState extends State<Registration> {
   Future<void> getBlockList(String dcode) async {
     Map jsonRequest;
     jsonRequest = {
-      s.key_service_id: s.sevice_key_block_list_district_wise,
+      s.key_service_id: s.service_key_block_list_district_wise,
       s.key_dcode: dcode,
     };
 
@@ -1396,7 +1396,7 @@ class _RegistrationState extends State<Registration> {
     Map jsonRequest, reqBlock, reqDist;
 
     jsonRequest = {
-      s.key_service_id: s.sevice_key_register,
+      s.key_service_id: s.service_key_register,
       s.key_profile_image: profileImage,
       s.key_name: nameController.text.trim(),
       "mobile_number": mobileController.text,

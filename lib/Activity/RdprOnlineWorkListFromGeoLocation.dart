@@ -84,10 +84,13 @@ class _VillageListFromGeoLocationState
               ),
             ),
           ),
-          body: Stack(children: [
+          body: Container(
+            color: c.white,
+            child:Stack(children: [
             Visibility(
               visible: villageListFlag,
               child: Container(
+                color: c.white,
                 margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: ListView.builder(
                   itemCount: widget.villageList == null
@@ -176,7 +179,7 @@ class _VillageListFromGeoLocationState
                 ),
               ),
             )
-          ]),
+          ]),),
         ));
   }
 
@@ -190,7 +193,7 @@ class _VillageListFromGeoLocationState
       s.key_pvcode: [pvcode],
     };
     json_request = {
-      s.key_service_id: s.sevice_key_get_village_pending_works,
+      s.key_service_id: s.service_key_get_village_pending_works,
       s.key_inspection_work_details: work_detail,
     };
 

@@ -195,7 +195,9 @@ class _HomeState extends State<Home> {
         ),
       ),
       drawer: DrawerApp(),
-      body: Column(
+      body: Container(
+        color: c.white,
+        child:Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
@@ -1051,7 +1053,7 @@ class _HomeState extends State<Home> {
                 )),
           ),)
         ],
-      ),
+      ),),
     );
   }
 
@@ -1081,7 +1083,7 @@ class _HomeState extends State<Home> {
   Future<void> getDashboardData() async {
     late Map json_request;
     json_request = {
-      s.key_service_id: s.sevice_key_current_finyear_wise_status_count
+      s.key_service_id: s.service_key_current_finyear_wise_status_count
     };
 
     Map encrpted_request = {
@@ -1154,7 +1156,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_work_inspection_profile_list,
+      s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
     Map encrpted_request = {
@@ -1223,7 +1225,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_photo_count,
+      s.key_service_id: s.service_key_photo_count,
     };
 
     Map encrpted_request = {
@@ -1251,7 +1253,7 @@ class _HomeState extends State<Home> {
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
-        prefs.setString(s.sevice_key_photo_count,userData[s.key_COUNT].toString());
+        prefs.setString(s.service_key_photo_count,userData[s.key_COUNT].toString());
       }
     }
   }
@@ -1260,7 +1262,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_fin_year,
+      s.key_service_id: s.service_key_fin_year,
     };
 
     Map encrpted_request = {
@@ -1294,7 +1296,7 @@ class _HomeState extends State<Home> {
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_FinancialYear+' (fin_year) VALUES(' +"'"+
-                    res_jsonArray[i][s.sevice_key_fin_year] +
+                    res_jsonArray[i][s.service_key_fin_year] +
                     "')");
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_FinancialYear);
@@ -1308,7 +1310,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_inspection_status,
+      s.key_service_id: s.service_key_inspection_status,
     };
 
     Map encrpted_request = {
@@ -1358,7 +1360,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_other_work_category_list,
+      s.key_service_id: s.service_key_other_work_category_list,
     };
 
     Map encrpted_request = {
@@ -1407,7 +1409,7 @@ class _HomeState extends State<Home> {
 
   Future<void> getTownList() async {
      Map json_request = {
-      s.key_service_id: s.sevice_key_townpanchayat_list_district_wise,
+      s.key_service_id: s.service_key_townpanchayat_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
@@ -1459,7 +1461,7 @@ class _HomeState extends State<Home> {
 
   Future<void> getMunicipalityList() async {
     Map json_request = {
-      s.key_service_id: s.sevice_key_municipality_list_district_wise,
+      s.key_service_id: s.service_key_municipality_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
@@ -1511,7 +1513,7 @@ class _HomeState extends State<Home> {
 
   Future<void> getCorporationList() async {
      Map json_request = {
-      s.key_service_id: s.sevice_key_corporation_list_district_wise,
+      s.key_service_id: s.service_key_corporation_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
@@ -1565,7 +1567,7 @@ class _HomeState extends State<Home> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_work_type_stage_link,
+      s.key_service_id: s.service_key_work_type_stage_link,
     };
 
     Map encrpted_request = {

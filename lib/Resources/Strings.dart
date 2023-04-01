@@ -36,6 +36,7 @@ String satisfied_count_other = "Satisfied Count Other";
 String un_satisfied_count_other = "Un Satisfied Count Other";
 String need_improvement_count_other = "Need Improvement Count Other";
 String financial_year = "Financial Year";
+String select_financial_year = "Select Financial Year";
 String inspection_status = "Inspection Status";
 String total_inspection_done_by_you = "Total inspection done by you";
 String edit_profile = "Edit Profile";
@@ -63,7 +64,6 @@ String click_here_to_get_villages_through_selection =
 String enter_distance_in_km = "Enter distance in km";
 String no_village = "No Villages Found!";
 String no_data = "No Data Found!";
-String filter_worklist = "Filter Work List";
 String send_otp = "Send OTP";
 String otp = "OTP";
 String newpassword = "New Password";
@@ -126,6 +126,8 @@ String new_password_and_confirm_password_must_be_same =
 String password_changed_successfully = "Password Changed Successfully";
 String password_field_must_not_be_empty = "Password Field Must not be Empty";
 String failed = "Failed";
+String filter_work_list = "Filter Work List";
+
 
 // Key
 String key_service_id = "service_id";
@@ -207,38 +209,42 @@ String key_mobile_otp = "mobile_otp";
 String key_tpcode = "tpcode";
 String key_muncode = "muncode";
 String key_corcode = "corcode";
+String key_otp = "otp";
+String key_new_password = "new_password";
+String key_confirm_password = "confirm_password";
 
 // Service Key
-String sevice_key_login = "login";
-String sevice_key_district_list_all = "district_list_all";
-String sevice_key_block_list_all = "block_list_all";
-String sevice_key_work_inspection_profile_list = "work_inspection_profile_list";
-String sevice_key_current_finyear_wise_status_count =
+String service_key_login = "login";
+String service_key_district_list_all = "district_list_all";
+String service_key_block_list_all = "block_list_all";
+String service_key_work_inspection_profile_list = "work_inspection_profile_list";
+String service_key_current_finyear_wise_status_count =
     "current_finyear_wise_status_count";
-String sevice_key_photo_count = "photo_count";
-String sevice_key_fin_year = "fin_year";
-String sevice_key_inspection_status = "inspection_status";
-String sevice_key_other_work_category_list = "other_work_category_list";
-String sevice_key_townpanchayat_list_district_wise =
+String service_key_photo_count = "photo_count";
+String service_key_fin_year = "fin_year";
+String service_key_inspection_status = "inspection_status";
+String service_key_other_work_category_list = "other_work_category_list";
+String service_key_townpanchayat_list_district_wise =
     "townpanchayat_list_district_wise";
-String sevice_key_municipality_list_district_wise =
+String service_key_municipality_list_district_wise =
     "municipality_list_district_wise";
-String sevice_key_corporation_list_district_wise =
+String service_key_corporation_list_district_wise =
     "corporation_list_district_wise";
-String sevice_key_work_type_stage_link = "work_type_stage_link";
-String sevice_key_get_calculate_distance = "get_calculate_distance";
-String sevice_key_register = "register";
-String sevice_key_block_list_district_wise = "block_list_district_wise";
-String sevice_key_verify_mobile_number = "Verify_mobile_number";
-String sevice_key_get_profile_level = "get_profile_level";
-String sevice_key_get_mobile_designation = "get_mobile_designation";
-String sevice_key_get_profile_gender = "get_profile_gender";
-String sevice_key_get_village_pending_works = "get_village_pending_works";
-String sevice_key_resend_otp = "ResendOtp";
+String service_key_work_type_stage_link = "work_type_stage_link";
+String service_key_get_calculate_distance = "get_calculate_distance";
+String service_key_register = "register";
+String service_key_block_list_district_wise = "block_list_district_wise";
+String service_key_verify_mobile_number = "Verify_mobile_number";
+String service_key_get_profile_level = "get_profile_level";
+String service_key_get_mobile_designation = "get_mobile_designation";
+String service_key_get_profile_gender = "get_profile_gender";
+String service_key_get_village_pending_works = "get_village_pending_works";
+String service_key_resend_otp = "ResendOtp";
 String service_key_resend_otp_forgot_password = "ResendOtpForgotPassword";
-String sevice_key_send_otp_for_forgot_password = "sendOTP_for_forgot_password";
+String service_key_send_otp_for_forgot_password = "sendOTP_for_forgot_password";
 String service_key_mobile_number = "mobile_number";
 String service_key_forgot_password_verify_otp = "ForgotPasswordVerifyOtp";
+String service_key_verify_otp = "VerifyOtp";
 
 //Table Name
 String table_District = "District";

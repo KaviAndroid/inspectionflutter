@@ -581,7 +581,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<dynamic> FORGOT_PASSWORD_send_otp() async {
     Map request = {
-      s.key_service_id: s.sevice_key_send_otp_for_forgot_password,
+      s.key_service_id: s.service_key_send_otp_for_forgot_password,
       s.service_key_mobile_number: mobile_number.text,
       s.key_appcode: "WI",
     };

@@ -48,6 +48,7 @@ Color grey_8 = Color(0xFF706e6b);
 Color grey_9 = Color(0xFF514f4d);
 Color grey_10 = Color(0xFF3e3e3c);
 Color greyed_out = Color(0xFFc7c7c7);
+Color grey_out = Color(0xFFF5F5F5);
 
 Color black = Color(0xFF000000);
 Color yellow = Color(0xFFF5F504);

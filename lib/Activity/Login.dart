@@ -445,7 +445,7 @@ class LoginState extends State<Login> {
   Future<dynamic> login(BuildContext context) async {
     String random_char = utils.generateRandomString(15);
     var request = {
-      s.key_service_id: s.sevice_key_login,
+      s.key_service_id: s.service_key_login,
       s.key_user_login_key: random_char,
       s.key_user_name: user_name.text.trim(),
       s.key_user_pwd: utils.getSha256(random_char, user_password.text.trim())
@@ -542,7 +542,7 @@ class LoginState extends State<Login> {
   Future<void> getDistrictList() async {
     Map json_request = {
       s.key_scode: /*prefs.getString(s.scode) as String*/ 29,
-      s.key_service_id: s.sevice_key_district_list_all,
+      s.key_service_id: s.service_key_district_list_all,
     };
 
     Map encrpted_request = {
@@ -599,12 +599,12 @@ class LoginState extends State<Login> {
       json_request = {
         s.key_scode: prefs.getString(s.key_scode) as String,
         s.key_dcode: prefs.getString(s.key_dcode) as String,
-        s.key_service_id: s.sevice_key_block_list_all,
+        s.key_service_id: s.service_key_block_list_all,
       };
     } else if (prefs.getString(s.key_level) as String == "S") {
       json_request = {
         s.key_scode: prefs.getString(s.key_scode) as String,
-        s.key_service_id: s.sevice_key_block_list_all,
+        s.key_service_id: s.service_key_block_list_all,
       };
     }
 
@@ -661,7 +661,7 @@ class LoginState extends State<Login> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_work_inspection_profile_list,
+      s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
     Map encrpted_request = {
@@ -730,7 +730,7 @@ class LoginState extends State<Login> {
   Future<void> getDashboardData() async {
     late Map json_request;
     json_request = {
-      s.key_service_id: s.sevice_key_current_finyear_wise_status_count
+      s.key_service_id: s.service_key_current_finyear_wise_status_count
     };
 
     Map encrpted_request = {

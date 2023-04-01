@@ -91,7 +91,9 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           ),
         ),
       ),
-        body: Column(
+        body: Container(
+          color: c.white,
+            child:Column(
         mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
@@ -117,7 +119,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                     child: Align(
                       alignment: Alignment.bottomRight,
                       child:
-                    Ink(
+                    Container(
                       padding: EdgeInsets.all(9.0),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -212,7 +214,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
         Align(
         alignment: Alignment.center,
           child:
-          Ink(
+          Container(
             padding: EdgeInsets.all(1.0),
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -241,7 +243,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           ]),)
 
     ])
-    ),);
+    ),),);
   }
   Future<void> getLocation() async {
     final hasPermission = await _handleLocationPermission();
@@ -289,7 +291,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
     late Map json_request;
 
     json_request = {
-      s.key_service_id: s.sevice_key_get_calculate_distance,
+      s.key_service_id: s.service_key_get_calculate_distance,
       s.key_latitude: latitude,
       s.key_longitude: longitude,
       s.key_distance: distance.text,

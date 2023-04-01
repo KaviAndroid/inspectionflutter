@@ -77,10 +77,10 @@ String enter_a_valid_mobile_number = "Enter a valid mobile number";
 String mobile_number_must_be_of_10_digits =
     "Mobile Number Must be of 10 digits";
 String enter_registered_mobile_number_to_send_otp =
-    "Enter registered Mobile number to send OTP for Verification";
-String enter_a_valid_otp="Enter a Valid OTP";
-String enter_a_valid_password="Enter a Valid Password";
-String enter_a_otp="Please Enter a OTP";
+    "Enter registered CUG Mobile number to send OTP for Verification";
+String enter_a_valid_otp = "Enter a Valid OTP";
+String enter_a_valid_password = "Enter a Valid Password";
+String enter_a_otp = "Please Enter a OTP";
 String regEdit = "Edit";
 String regSave = "Register";
 String regName = "Name";
@@ -204,6 +204,9 @@ String key_as_date = "as_date";
 String key_ts_date = "ts_date";
 String key_work_order_date = "work_order_date";
 String key_mobile_otp = "mobile_otp";
+String key_tpcode = "tpcode";
+String key_muncode = "muncode";
+String key_corcode = "corcode";
 
 // Service Key
 String sevice_key_login = "login";

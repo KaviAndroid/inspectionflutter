@@ -368,46 +368,42 @@ class LoginState extends State<Login> {
                         ),
                       ]),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OTPVerification(
-                                  Flag: "OTP",
-                                )));
-                  }, // Handle your callback
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(fontSize: 15, color: c.d_grey3),
-                          children: [
-                            TextSpan(
-                              text: s.otp_validation1,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Handle the tap event
-                                },
-                              text: s.otp_validation2,
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold), //<-- SEE HERE
-                            ),
-                            TextSpan(
-                              text: s.otp_validation3,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(fontSize: 15, color: c.d_grey3),
+                        children: [
+                          TextSpan(
+                            text: s.otp_validation1,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // Handle the tap event
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => OTPVerification(
+                                            Flag: "register",
+                                          )),
+                                );
+                              },
+                            text: s.otp_validation2,
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold), //<-- SEE HERE
+                          ),
+                          TextSpan(
+                            text: s.otp_validation3,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
                       ),
                     ),
                   ),

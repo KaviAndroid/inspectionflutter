@@ -372,7 +372,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               : s.enter_a_valid_password,
                           maxLength: 15,
                           decoration: InputDecoration(
-                            hintText: 'Enter New Password',
+                            hintText: s.enter_new_password,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
                             filled: true,
@@ -410,7 +410,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               : s.enter_a_valid_password,
                           maxLength: 15,
                           decoration: InputDecoration(
-                            hintText: 'Enter Confirm Password',
+                            hintText: s.enter_confirm_password,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
                             filled: true,
@@ -472,8 +472,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<dynamic> ValidatePassword() async {
     if (new_password.text.length & confirm_password.text.length != 0) {
       if (new_password.text.length & confirm_password.text.length >= 8) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Login()));
         if (await utils.isOnline()) {
           if (widget.isForgotPassword == "forgot_password") {
             forgot_password_Params(context);
@@ -551,7 +549,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<dynamic> otp_params() async {
     Map request = {
-      s.key_service_id: "VerifyOtp",
+      s.key_service_id: s.service_key_verify_otp,
       s.key_mobile_otp: otp.text,
       s.service_key_mobile_number: mobile_number.text,
     };
@@ -588,8 +586,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       s.key_appcode: "WI",
     };
 
-    print("mobile_number     " + mobile_number.text);
-    print("forgot_password_request  " + request.toString());
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
@@ -684,7 +680,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.key_service_id: "ForgotPassword",
       s.service_key_mobile_number: mobile_number.text.toString(),
-      s.key_mobile_otp: otp.text,
+      s.key_otp: otp.text,
+      s.key_new_password:new_password.text,
+      s.key_confirm_password:confirm_password.text,
       s.key_appcode: "WI",
     };
     print("forgot_password" + request.toString());
@@ -704,8 +702,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var RESPONSE = decodedData[s.key_response];
     var KEY;
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
-      mobilenumber = mobile_number.text.toString();
-      Otp = otp.text.toString();
+      utils.showAlert(context, 'Password Changed Successfully');
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Login()));
+     /* mobilenumber = mobile_number.text.toString();
+      Otp = otp.text.toString();*/
     } else {
       utils.showToast(context, s.failed);
     }
@@ -835,7 +836,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.key_service_id: "ChangePassword",
       s.service_key_mobile_number: mobilenumber,
-      s.key_mobile_otp: Otp,
+      s.key_otp:otp.text,
       s.newpassword: "new_password",
       s.confirmpassword: "confirm_password"
     };

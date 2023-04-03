@@ -140,7 +140,7 @@ String please_enter_office_address = "Please Enter Office Address";
 String please_enter_email = "Please Enter Email";
 String please_upload_image = "Please Upload Profile Image";
 String remark = "Remark";
-
+String work_details = "Work Details";
 //Validation
 String please_enter_valid_name = "Please Enter Valid Name";
 String please_enter_valid_num = "Please Enter Valid Number";

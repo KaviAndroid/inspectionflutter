@@ -229,7 +229,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               : s.enter_a_valid_otp,
                           maxLength: 6,
                           decoration: InputDecoration(
-                            hintText: 'OTP',
+                            hintText: s.key_otp,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
                             filled: true,
@@ -513,7 +513,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       String mask = mobile_number.replaceAll("\\w(?=\\w{4})", "*");
       mobile_number = mask;
     } else {
@@ -523,7 +523,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<void> resend_otp(BuildContext context) async {
     Map request = {
-      s.key_service_id: "ResendOtp",
+      s.key_service_id: s.service_key_resend_otp,
       s.service_key_mobile_number: mobile_number.text,
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -540,7 +540,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       mobile_number.text = "";
     } else {
       utils.showToast(context, s.failed);
@@ -567,8 +567,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
-      utils.showToast(context, "SUCCESS");
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
+      utils.showToast(context, s.success);
       setState(() {
         tcVisibility = !tcVisibility;
         visibility = visibility;
@@ -583,7 +583,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.key_service_id: s.service_key_send_otp_for_forgot_password,
       s.service_key_mobile_number: mobile_number.text,
-      s.key_appcode: "WI",
+      s.key_appcode: s.service_key_appcode,
     };
 
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -600,7 +600,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       mobilenumber = mobile_number.text.toString();
       String mask = mobile_number.text.replaceAll("\\w(?=\\w{4})", "*");
       print("Mask" + mask);
@@ -616,7 +616,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map request = {
       s.key_service_id: s.service_key_resend_otp_forgot_password,
       s.service_key_mobile_number: mobile_number.text.toString(),
-      s.key_appcode: "WI",
+      s.key_appcode: s.service_key_appcode,
     };
     print("Mobile_number" + mobile_number.text);
     print("Resend_Otp" + request.toString());
@@ -634,7 +634,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
     var KEY;
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       otp.text = "";
     } else {
       utils.showToast(context, s.failed);
@@ -643,10 +643,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<void> FORGOT_PASSWORD_OTP_Params() async {
     Map request = {
-      s.key_service_id: "ForgotPasswordVerifyOtp",
+      s.key_service_id: s.service_key_forgotpassword_verify_otp,
       s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_mobile_otp: otp.text,
-      s.key_appcode: "WI",
+      s.key_appcode: s.service_key_appcode,
     };
     print("FORGOT_PASSWORD_OTP>>>>>>>>>>" + request.toString());
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -663,7 +663,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
     var KEY;
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       mobilenumber = mobile_number.text.toString();
       Otp = otp.text.toString();
       setState(() {
@@ -678,12 +678,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<void> forgot_password_Params(BuildContext context) async {
     Map request = {
-      s.key_service_id: "ForgotPassword",
+      s.key_service_id: s.service_key_forgotpassword,
       s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_otp: otp.text,
       s.key_new_password:new_password.text,
       s.key_confirm_password:confirm_password.text,
-      s.key_appcode: "WI",
+      s.key_appcode: s.service_key_appcode,
     };
     print("forgot_password" + request.toString());
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -701,7 +701,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
     var KEY;
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       utils.showAlert(context, 'Password Changed Successfully');
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => Login()));
@@ -715,7 +715,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> change_password_send_otpParams() async {
     late Map json_request;
     json_request = {
-      s.key_service_id: "sendOTP_for_change_password",
+      s.key_service_id: s.service_key_send_otp_changepassword,
       s.service_key_mobile_number: mobile_number.text.toString(),
     };
 
@@ -754,7 +754,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> change_password_Resend_otpParams(BuildContext context) async {
     late Map json_request;
     json_request = {
-      s.key_service_id: "ResendOtpChangePassword",
+      s.key_service_id: s.service_key_resend_otp_changepassword,
       s.service_key_mobile_number: mobile_number.text.toString(),
     };
 
@@ -783,7 +783,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
-      utils.showToast(context, "SUCCESS");
+      utils.showToast(context, s.success);
     } else {
       utils.showToast(context, s.failed);
     }
@@ -792,7 +792,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> change_password_OTP_Params() async {
     late Map json_request;
     json_request = {
-      s.key_service_id: "ChangePasswordVerifyOtp",
+      s.key_service_id: s.service_key_change_password_verify_otp,
       s.service_key_mobile_number: mobile_number.text.toString(),
       s.key_mobile_otp: otp.text.toString(),
     };
@@ -821,7 +821,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
-      utils.showToast(context, "SUCCESS");
+      utils.showToast(context, s.success);
       setState(() {
         tcVisibility = !tcVisibility;
         visibility = visibility;
@@ -834,11 +834,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future<void> changepassword(BuildContext context) async {
     Map request = {
-      s.key_service_id: "ChangePassword",
+      s.key_service_id: s.service_key_change_password,
       s.service_key_mobile_number: mobilenumber,
       s.key_otp:otp.text,
-      s.newpassword: "new_password",
-      s.confirmpassword: "confirm_password"
+      s.newpassword: s.service_key_new_password,
+      s.confirmpassword: s.service_key_confirm_password
     };
     print("changepassword" + request.toString());
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -855,10 +855,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
     var KEY;
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == "OK") {
-      utils.showToast(context, "SUCCESS");
+    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
+      utils.showToast(context, s.success);
     } else {
-      utils.showToast(context, "FAILED");
+      utils.showToast(context, s.failed);
     }
   }
 

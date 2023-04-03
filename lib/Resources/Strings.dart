@@ -127,7 +127,23 @@ String password_changed_successfully = "Password Changed Successfully";
 String password_field_must_not_be_empty = "Password Field Must not be Empty";
 String failed = "Failed";
 String filter_work_list = "Filter Work List";
+String selectDesignation = "Select Designation";
+String selectBlock = "Select Block";
+String selectDistrict = "Select District";
+String please_enter_name = "Please Enter Name";
+String please_enter_num = "Please Enter Mobile";
+String please_enter_level = "Please Select Level";
+String please_enter_desig = "Please Select Designation";
+String please_enter_district = "Please Select District";
+String please_enter_block = "Please Select Block";
+String please_enter_office_address = "Please Enter Office Address";
+String please_enter_email = "Please Enter Email";
+String please_upload_image = "Please Upload Profile Image";
+String remark = "Remark";
 
+//Validation
+String please_enter_valid_name = "Please Enter Valid Name";
+String please_enter_valid_num = "Please Enter Valid Number";
 
 // Key
 String key_service_id = "service_id";
@@ -163,6 +179,10 @@ String key_distance = "distance";
 String key_inspection_work_details = "inspection_work_details";
 String key_desig_name = "desig_name";
 String key_desig_code = "desig_code";
+String key_localbody_code = "localbody_code";
+String key_localbody_name = "localbody_name";
+String key_gender_code = "gender_code";
+String key_gender_name_en = "gender_name_en";
 String key_levels = "levels";
 String key_profile_image = "profile_image";
 String key_noRecord = "NO_RECORD";
@@ -212,12 +232,22 @@ String key_corcode = "corcode";
 String key_otp = "otp";
 String key_new_password = "new_password";
 String key_confirm_password = "confirm_password";
+String service_key_change_password_verify_otp = "ChangePasswordVerifyOtp";
+String service_key_change_password = "ChangePassword";
+String service_key_new_password = "new_password";
+String service_key_confirm_password = "confirm_password";
+String service_key_resend_otp_changepassword = "ResendOtpChangePassword";
+String service_key_send_otp_changepassword = "sendOTP_for_change_password";
+String service_key_forgotpassword = "ForgotPassword";
+String service_key_forgotpassword_verify_otp = "ForgotPasswordVerifyOtp";
+String service_key_appcode = "WI";
 
 // Service Key
 String service_key_login = "login";
 String service_key_district_list_all = "district_list_all";
 String service_key_block_list_all = "block_list_all";
-String service_key_work_inspection_profile_list = "work_inspection_profile_list";
+String service_key_work_inspection_profile_list =
+    "work_inspection_profile_list";
 String service_key_current_finyear_wise_status_count =
     "current_finyear_wise_status_count";
 String service_key_photo_count = "photo_count";

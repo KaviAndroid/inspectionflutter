@@ -386,7 +386,8 @@ class LoginState extends State<Login> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 // Handle the tap event
-                                Navigator.of(context).push(
+                                Navigator.push(
+                                  context,
                                   MaterialPageRoute(
                                       builder: (context) => OTPVerification(
                                             Flag: "register",

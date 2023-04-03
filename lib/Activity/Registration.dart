@@ -79,16 +79,16 @@ class _RegistrationState extends State<Registration> {
   //default Values
 
   Map<String, String> defaultSelectedDesignation = {
-    "desig_code": "0",
-    "desig_name": "Select Designation"
+    s.key_desig_code: "0",
+    s.key_desig_name: s.selectDesignation
   };
   Map<String, String> defaultSelectedBlock = {
-    "bcode": "0",
-    "bname": "Select Block"
+    s.key_bcode: "0",
+    s.key_bname: s.selectBlock
   };
   Map<String, String> defaultSelectedDistrict = {
-    "dcode": "0",
-    "dname": "Select District"
+    s.key_dcode: "0",
+    s.key_dname: s.selectDistrict
   };
 
   @override
@@ -203,9 +203,9 @@ class _RegistrationState extends State<Registration> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               validator: (value) => value!.isEmpty
-                                  ? 'Please Enter Name'
+                                  ? s.please_enter_name
                                   : !Utils().isNameValid(value)
-                                      ? 'Please Enter Valid Name'
+                                      ? s.please_enter_valid_name
                                       : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
@@ -254,10 +254,10 @@ class _RegistrationState extends State<Registration> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               validator: (value) => value!.isEmpty
-                                  ? 'Please Enter Mobile'
+                                  ? s.please_enter_num
                                   : Utils().isNumberValid(value)
                                       ? null
-                                      : 'Please Enter Valid Number',
+                                      : s.please_enter_valid_num,
                               maxLength: 10,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
@@ -274,7 +274,7 @@ class _RegistrationState extends State<Registration> {
                                             setState(() {});
                                           } else {
                                             Utils().showToast(context,
-                                                "Please Enter Valid Number");
+                                                s.please_enter_valid_num);
                                           }
                                         } else {
                                           Utils().showAlert(
@@ -348,10 +348,10 @@ class _RegistrationState extends State<Registration> {
                                         ? genderItems
                                             .map((item) =>
                                                 DropdownMenuItem<String>(
-                                                  value: item['gender_code']
+                                                  value: item[s.key_gender_code]
                                                       .toString(),
                                                   child: Text(
-                                                    item['gender_name_en']
+                                                    item[s.key_gender_name_en]
                                                         .toString(),
                                                     style: const TextStyle(
                                                       fontSize: 14,
@@ -436,11 +436,11 @@ class _RegistrationState extends State<Registration> {
                                           ? levelItems
                                               .map((item) =>
                                                   DropdownMenuItem<String>(
-                                                    value:
-                                                        item['localbody_code']
-                                                            .toString(),
+                                                    value: item[s
+                                                            .key_localbody_code]
+                                                        .toString(),
                                                     child: Text(
-                                                      item['localbody_name']
+                                                      item[s.key_localbody_name]
                                                           .toString(),
                                                       style: const TextStyle(
                                                         fontSize: 14,
@@ -488,7 +488,7 @@ class _RegistrationState extends State<Registration> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Please Select Level',
+                                    s.please_enter_level,
                                     // state.hasError ? state.errorText : '',
                                     style: TextStyle(
                                         color: Colors.redAccent.shade700,
@@ -532,10 +532,11 @@ class _RegistrationState extends State<Registration> {
                                             .map(
                                               (item) =>
                                                   DropdownMenuItem<String>(
-                                                value: item['desig_code']
+                                                value: item[s.key_desig_code]
                                                     .toString(),
                                                 child: Text(
-                                                  item['desig_name'].toString(),
+                                                  item[s.key_desig_name]
+                                                      .toString(),
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                   ),
@@ -579,7 +580,7 @@ class _RegistrationState extends State<Registration> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Please Select Designation',
+                                    s.please_enter_desig,
                                     // state.hasError ? state.errorText : '',
                                     style: TextStyle(
                                         color: Colors.redAccent.shade700,
@@ -627,9 +628,10 @@ class _RegistrationState extends State<Registration> {
                                       items: districtItems
                                           .map((item) =>
                                               DropdownMenuItem<String>(
-                                                value: item['dcode'].toString(),
+                                                value: item[s.key_dcode]
+                                                    .toString(),
                                                 child: Text(
-                                                  item['dname'].toString(),
+                                                  item[s.key_dname].toString(),
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                   ),
@@ -683,7 +685,7 @@ class _RegistrationState extends State<Registration> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Please Select District',
+                                    s.please_enter_district,
                                     // state.hasError ? state.errorText : '',
                                     style: TextStyle(
                                         color: Colors.redAccent.shade700,
@@ -726,10 +728,11 @@ class _RegistrationState extends State<Registration> {
                                         ? blockItems
                                             .map((item) =>
                                                 DropdownMenuItem<String>(
-                                                  value:
-                                                      item['bcode'].toString(),
+                                                  value: item[s.key_bcode]
+                                                      .toString(),
                                                   child: Text(
-                                                    item['bname'].toString(),
+                                                    item[s.key_bname]
+                                                        .toString(),
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                     ),
@@ -773,7 +776,7 @@ class _RegistrationState extends State<Registration> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Please Select Block',
+                                    s.please_enter_block,
                                     // state.hasError ? state.errorText : '',
                                     style: TextStyle(
                                         color: Colors.redAccent.shade700,
@@ -805,7 +808,7 @@ class _RegistrationState extends State<Registration> {
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: (value) => value!.isEmpty
-                                    ? 'Please Enter Office Address'
+                                    ? s.please_enter_office_address
                                     : null,
                                 maxLines: 3,
                                 decoration: InputDecoration(
@@ -864,10 +867,10 @@ class _RegistrationState extends State<Registration> {
                                 ],
                                 validator: (value) =>
                                     value == null || value.isEmpty
-                                        ? 'Please Enter Email'
+                                        ? s.please_enter_email
                                         : Utils().isEmailValid(value)
                                             ? null
-                                            : 'Please Enter Valid Email',
+                                            : s.please_enter_email,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 15),
@@ -918,8 +921,8 @@ class _RegistrationState extends State<Registration> {
                                   if (_formKey.currentState!.validate()) {
                                     boolFlag
                                         ? profileImage == null
-                                            ? Utils().showAlert(context,
-                                                "Please Upload Profile Image")
+                                            ? Utils().showAlert(
+                                                context, s.please_upload_image)
                                             : widget.registerFlag == 1
                                                 ? goToSave()
                                                 : goToEdit()
@@ -1164,7 +1167,7 @@ class _RegistrationState extends State<Registration> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => OTPVerification(
-                    Flag: "OTP",
+                    Flag: "register",
                   )),
           (route) => false);
     });

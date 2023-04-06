@@ -474,9 +474,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       if (new_password.text.length & confirm_password.text.length >= 8) {
         if (await utils.isOnline()) {
           if (widget.isForgotPassword == "forgot_password") {
-            forgot_password_Params(context);
-          } else if (widget.isForgotPassword == "Change_password") {
-            changepassword(context);
+            forgot_password_Params();
+          } else if (widget.isForgotPassword == "change_password") {
+            changepassword_params();
           }
         }
       } else {
@@ -676,7 +676,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-  Future<void> forgot_password_Params(BuildContext context) async {
+  Future<void> forgot_password_Params() async {
     Map request = {
       s.key_service_id: s.service_key_forgotpassword,
       s.service_key_mobile_number: mobile_number.text.toString(),
@@ -716,13 +716,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_send_otp_changepassword,
-      s.service_key_mobile_number: mobile_number.text.toString(),
+      s.service_key_mobile_number: mobile_number.text,
     };
-
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-          utils.encryption(jsonEncode(json_request), userDecryptKey),
+          utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
@@ -738,14 +737,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         encrypted_request.toString());
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data = utils.decryption(enc_data, userDecryptKey);
-    var userData = jsonDecode(decrypt_data);
+    var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
       mobilenumber = mobile_number.text.toString();
       String mask = mobile_number.text.replaceAll("\\w(?=\\w{4})", "*");
       mobile_number.text = mask;
+      setState(() {
+        tcVisibility = !tcVisibility;
+        visibility = !visibility;
+      });
     } else {
       utils.showToast(context, s.failed);
     }
@@ -761,14 +764,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-          utils.encryption(jsonEncode(json_request), userDecryptKey),
+          utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrypted_request));
     String data = response.body;
     print("Change_password_Resend_otp" + data);
     print("change_password_Resend_otp_url>>" + url.main_service.toString());
@@ -778,8 +780,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         encrypted_request.toString());
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
-    var decrpt_data = utils.decryption(enc_data, userDecryptKey);
-    var userData = jsonDecode(decrpt_data);
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
@@ -800,7 +802,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-          utils.encryption(jsonEncode(json_request), userDecryptKey),
+          utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
@@ -816,8 +818,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         encrypted_request.toString());
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
-    var decrpt_data = utils.decryption(enc_data, userDecryptKey);
-    var userData = jsonDecode(decrpt_data);
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
@@ -831,37 +833,44 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       utils.showToast(context, s.failed);
     }
   }
-
-  Future<void> changepassword(BuildContext context) async {
-    Map request = {
+  Future<void> changepassword_params()async
+  {
+    late Map json_request;
+    json_request = {
       s.key_service_id: s.service_key_change_password,
-      s.service_key_mobile_number: mobilenumber,
+      s.service_key_mobile_number: mobile_number.text,
       s.key_otp:otp.text,
-      s.newpassword: s.service_key_new_password,
-      s.confirmpassword: s.service_key_confirm_password
+      s.key_new_password:new_password.text,
+      s.key_confirm_password:confirm_password.text
     };
-    print("changepassword" + request.toString());
+    print("JSON_REQUEST>>>"+json_request.toString());
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
+      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    print("ENCRYPTED_REQUEST>>>"+encrypted_request.toString());
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response =
-        await _ioClient.post(url.open_service, body: json.encode(request));
-    print("changepassword_url>>" + url.open_service.toString());
-    print("changepassword_request>>" + request.toString());
+    var response = await _ioClient.post(url.main_service, body: json.encode(encrypted_request));
+    print("ChangePassword_url>>" + url.main_service.toString());
+    print("ChangePassword_request_json>>" + json_request.toString());
+    print("ChangePassword_request_encrypt>>" + encrypted_request.toString());
     String data = response.body;
-    print("changepassword_response>>" + data);
-    var decodedData = json.decode(data);
-    var STATUS = decodedData[s.key_status];
-    var RESPONSE = decodedData[s.key_response];
-    var KEY;
-    if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
-      utils.showToast(context, s.success);
-    } else {
-      utils.showToast(context, s.failed);
+    print("ChangePassword_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data,prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    if (status == s.key_ok && response_value == s.key_ok) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Login()));
     }
   }
-
   Widget showButton() {
     return Container(
       child: Visibility(

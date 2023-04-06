@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
 import 'package:inspection_flutter_app/Activity/OTP_Verification.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -50,6 +51,19 @@ class _RegistrationState extends State<Registration> {
   String? selectedBlock;
   String? selectedDesignation;
   String? profileImage;
+
+  //edit values
+  String? edit_name;
+  String? edit_mobile;
+  String? edit_gender;
+  String? edit_level;
+  String? edit_desig_code;
+  String? edit_desig_name;
+  String? edit_dcode;
+  String? edit_bcode;
+  String? edit_office_address;
+  String? edit_email;
+  Uint8List? edit_profile_image;
 
   // onResponce Variables
   bool cugValid = false;
@@ -109,7 +123,8 @@ class _RegistrationState extends State<Registration> {
   }
 
   Future<void> initialize() async {
-    setState(() {});
+    prefs = await SharedPreferences.getInstance();
+    widget.registerFlag == 2 ? await getProfileList() : setState(() {});
   }
 
   @override
@@ -264,23 +279,28 @@ class _RegistrationState extends State<Registration> {
                                     vertical: 10, horizontal: 15),
                                 suffixIcon: IconButton(
                                     onPressed: () async {
-                                      if (!cugValid) {
-                                        if (await Utils().isOnline()) {
-                                          mobileController.text = '9025878965';
-                                          if (Utils().isNumberValid(
-                                              mobileController.text)) {
-                                            isLoadingCUG = true;
-                                            validateMobile();
-                                            setState(() {});
-                                          } else {
-                                            Utils().showToast(context,
-                                                s.please_enter_valid_num);
-                                          }
-                                        } else {
-                                          Utils().showAlert(
-                                              context, s.no_internet);
-                                        }
-                                      }
+                                      // if (!cugValid) {
+                                      //   if (await Utils().isOnline()) {
+                                      //     mobileController.text = '7877979787';
+                                      //     if (Utils().isNumberValid(
+                                      //         mobileController.text)) {
+                                      //       isLoadingCUG = true;
+                                      //       validateMobile();
+                                      //       setState(() {});
+                                      //     } else {
+                                      //       Utils().showToast(context,
+                                      //           s.please_enter_valid_num);
+                                      //     }
+                                      //   } else {
+                                      //     Utils().showAlert(
+                                      //         context, s.no_internet);
+                                      //   }
+                                      // }
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ATR_Worklist()),
+                                      );
                                     },
                                     icon: isLoadingCUG
                                         ? SpinKitCircle(
@@ -293,8 +313,10 @@ class _RegistrationState extends State<Registration> {
                                             widget.registerFlag == 1 && cugValid
                                                 ? Icons
                                                     .check_circle_outline_rounded
-                                                : Icons
-                                                    .arrow_circle_right_outlined,
+                                                : widget.registerFlag == 2
+                                                    ? null
+                                                    : Icons
+                                                        .arrow_circle_right_outlined,
                                             color: c.colorPrimaryDark,
                                             size: 28,
                                           )),
@@ -317,7 +339,9 @@ class _RegistrationState extends State<Registration> {
                           ],
                         ),
                         Visibility(
-                          visible: cugValid ? true : false,
+                          visible: cugValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -344,7 +368,7 @@ class _RegistrationState extends State<Registration> {
                                     value: selectedGender,
                                     style: const TextStyle(color: Colors.black),
                                     isExpanded: true,
-                                    items: cugValid
+                                    items: cugValid || widget.registerFlag == 2
                                         ? genderItems
                                             .map((item) =>
                                                 DropdownMenuItem<String>(
@@ -402,7 +426,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: cugValid ? true : false,
+                          visible: cugValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -432,7 +458,8 @@ class _RegistrationState extends State<Registration> {
                                           const TextStyle(color: Colors.black),
                                       value: selectedLevel,
                                       isExpanded: true,
-                                      items: cugValid
+                                      items: cugValid ||
+                                              widget.registerFlag == 2
                                           ? levelItems
                                               .map((item) =>
                                                   DropdownMenuItem<String>(
@@ -500,7 +527,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: islevelValid ? true : false,
+                          visible: islevelValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -527,7 +556,8 @@ class _RegistrationState extends State<Registration> {
                                     value: selectedDesignation,
                                     style: const TextStyle(color: Colors.black),
                                     isExpanded: true,
-                                    items: islevelValid
+                                    items: islevelValid ||
+                                            widget.registerFlag == 2
                                         ? designationItems
                                             .map(
                                               (item) =>
@@ -592,7 +622,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: cugValid && selectedLevel == "D" ||
+                          visible: edit_level == "D" ||
+                                  edit_level == "B" ||
+                                  cugValid && selectedLevel == "D" ||
                                   selectedLevel == "B"
                               ? true
                               : false,
@@ -697,7 +729,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: selectedLevel == "B" ? true : false,
+                          visible: selectedLevel == "B" || edit_level == "B"
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -788,7 +822,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: cugValid ? true : false,
+                          visible: cugValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -842,7 +878,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: cugValid ? true : false,
+                          visible: cugValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -902,7 +940,9 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: cugValid ? true : false,
+                          visible: cugValid || widget.registerFlag == 2
+                              ? true
+                              : false,
                           child: Container(
                             margin: const EdgeInsets.only(top: 20, bottom: 20),
                             child: Center(
@@ -944,60 +984,64 @@ class _RegistrationState extends State<Registration> {
                         )
                       ]),
                     ),
-                    Center(
-                      child: isSpinnerLoading
-                          ? Column(
-                              children: [
-                                Container(
-                                  height: sceenHeight * 0.15,
-                                  width: screenWidth * 0.35,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(80.0),
-                                      color: c.grey_7,
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          offset: Offset(0.0, 1.0), //(x,y)
-                                          blurRadius: 6.0,
-                                        ),
-                                      ]),
-                                  child: Stack(
-                                    children: [
-                                      SpinKitDualRing(
-                                        color: c.grey_8,
-                                        duration: const Duration(
-                                            seconds: 1, milliseconds: 500),
-                                        size: 125,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SpinKitPouringHourGlassRefined(
-                                            color: c.white,
-                                            duration: const Duration(
-                                                seconds: 1, milliseconds: 500),
-                                            size: 50,
-                                          ),
-                                          const SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text("Processing...",
-                                              style: GoogleFonts.raleway()
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      fontSize: 15,
-                                                      color: c.white))
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          : null,
-                    ),
+                    Visibility(
+                      visible: isSpinnerLoading ? true : false,
+                      child: Center(child: Utils().showSpinner("message")),
+                    )
+                    // Center(
+                    //   child: isSpinnerLoading
+                    //       ? Column(
+                    //           children: [
+                    //             Container(
+                    //               height: 150,
+                    //               width: 150,
+                    //               decoration: BoxDecoration(
+                    //                   borderRadius: BorderRadius.circular(80.0),
+                    //                   color: c.grey_7,
+                    //                   boxShadow: const [
+                    //                     BoxShadow(
+                    //                       color: Colors.grey,
+                    //                       offset: Offset(0.0, 1.0), //(x,y)
+                    //                       blurRadius: 6.0,
+                    //                     ),
+                    //                   ]),
+                    //               child: Stack(
+                    //                 children: [
+                    //                   SpinKitDualRing(
+                    //                     color: c.grey_8,
+                    //                     duration: const Duration(
+                    //                         seconds: 1, milliseconds: 500),
+                    //                     size: 140,
+                    //                   ),
+                    //                   Column(
+                    //                     mainAxisAlignment:
+                    //                         MainAxisAlignment.center,
+                    //                     children: [
+                    //                       SpinKitPouringHourGlassRefined(
+                    //                         color: c.white,
+                    //                         duration: const Duration(
+                    //                             seconds: 1, milliseconds: 500),
+                    //                         size: 50,
+                    //                       ),
+                    //                       const SizedBox(
+                    //                         height: 15,
+                    //                       ),
+                    //                       Text("Processing...",
+                    //                           style: GoogleFonts.raleway()
+                    //                               .copyWith(
+                    //                                   fontWeight:
+                    //                                       FontWeight.w800,
+                    //                                   fontSize: 15,
+                    //                                   color: c.white))
+                    //                     ],
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         )
+                    //       : null,
+                    // ),
                   ],
                 ),
               ),
@@ -1017,12 +1061,19 @@ class _RegistrationState extends State<Registration> {
         children: <Widget>[
           Container(
             alignment: Alignment.topCenter,
-            child: Image.asset(
-              imagePath.bg_curve,
-              width: screenWidth,
-              height: screenWidth * 0.3,
-              fit: BoxFit.fill,
-            ),
+            child: edit_profile_image != null
+                ? Image.memory(
+                    base64.decode(edit_profile_image.toString()),
+                    width: screenWidth,
+                    height: screenWidth * 0.3,
+                    fit: BoxFit.fitWidth,
+                  )
+                : Image.asset(
+                    imagePath.bg_curve,
+                    width: screenWidth,
+                    height: screenWidth * 0.3,
+                    fit: BoxFit.fill,
+                  ),
           ),
           Align(
               alignment: Alignment.bottomCenter,
@@ -1109,20 +1160,26 @@ class _RegistrationState extends State<Registration> {
 
   /// ************************** Registration UI *****************************/
 
-  void __initializeBodyUI() async {
+  Future<void> __initializeBodyUI() async {
     // API call For LEVEL etc...
 
     if (widget.registerFlag == 1 && cugValid) {
       // Call Other Open Services for New Entry
       await getGenderList();
       await getStageLevelList();
-    } else {
-      // Call Profile Data for edit
-      await getProfileList();
+    } else if (widget.registerFlag == 2) {
+      await mapEditedValues();
     }
 
     setState(() {
       isLoadingCUG = false;
+      if (widget.registerFlag == 2) {
+        selectedGender = edit_gender;
+        selectedDesignation = edit_desig_code;
+        selectedLevel = edit_level;
+        if (edit_level == "D") {
+        } else if (edit_level == "B") {}
+      }
     });
   }
 
@@ -1163,52 +1220,43 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Mobile Verification API *****************************/
 
   Future<void> validateMobile() async {
-    setState(() {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => OTPVerification(
-                    Flag: "register",
-                  )),
-          (route) => false);
-    });
+    Map jsonRequest;
+    jsonRequest = {
+      s.key_service_id: s.service_key_verify_mobile_number,
+      "mobile_number": mobileController.text
+    };
+    print("Open_url>>${url.open_service}");
+    print("Mobile_verification_request_json>>$jsonRequest");
 
-    // Map jsonRequest;
-    // jsonRequest = {
-    //   s.key_service_id: s.service_key_verify_mobile_number,
-    //   "mobile_number": mobileController.text
-    // };
-    // print("Open_url>>${url.open_service}");
-    // print("Mobile_verification_request_json>>$jsonRequest");
+    HttpClient _client = HttpClient(context: await Utils().globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response =
+        await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
 
-    // HttpClient _client = HttpClient(context: await Utils().globalContext);
-    // _client.badCertificateCallback =
-    //     (X509Certificate cert, String host, int port) => false;
-    // IOClient _ioClient = new IOClient(_client);
-    // var response =
-    //     await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("Validation_response>>$data");
 
-    // if (response.statusCode == 200) {
-    //   // If the server did return a 201 CREATED response,
-    //   // then parse the JSON.
-    //   String data = response.body;
-    //   print("Validation_response>>$data");
+      var userData = jsonDecode(data);
 
-    //   var userData = jsonDecode(data);
-
-    //   var status = userData[s.key_status];
-    //   var responseValue = userData[s.key_response];
-    //   var message = userData[s.key_message];
-    //   if (status == s.key_ok && responseValue == s.key_ok) {
-    //     Utils().showAlert(context, message);
-    //     cugValid = true;
-    //     __initializeBodyUI();
-    //     // Visible Gone
-    //   } else {
-    //     isLoadingCUG = false;
-    //     Utils().showAlert(context, message);
-    //     setState(() {});
-    //   }
-    // }
+      var status = userData[s.key_status];
+      var responseValue = userData[s.key_response];
+      var message = userData[s.key_message];
+      if (status == s.key_ok && responseValue == s.key_ok) {
+        Utils().showAlert(context, message);
+        cugValid = true;
+        __initializeBodyUI();
+        // Visible Gone
+      } else {
+        isLoadingCUG = false;
+        Utils().showAlert(context, message);
+        setState(() {});
+      }
+    }
   }
 
   /// ************************** Gender API *****************************/
@@ -1267,7 +1315,7 @@ class _RegistrationState extends State<Registration> {
       // then parse the JSON.
       var responseData = response.body;
       var data = jsonDecode(responseData);
-
+      print(data);
       var status = data[s.key_status];
       var responseValue = data[s.key_response];
 
@@ -1298,7 +1346,7 @@ class _RegistrationState extends State<Registration> {
       // then parse the JSON.
       var responseData = response.body;
       var data = jsonDecode(responseData);
-
+      print(data);
       var status = data[s.key_status];
       var responseValue = data[s.key_response];
 
@@ -1383,11 +1431,149 @@ class _RegistrationState extends State<Registration> {
 
   /// ************************** Profile API *****************************/
 
-  Future<void> getProfileList() async {}
+  Future<void> getProfileList() async {
+    setState(() {
+      isSpinnerLoading = true;
+    });
+
+    var userPassKey = prefs!.getString(s.userPassKey);
+
+    Map jsonRequest = {
+      s.key_service_id: s.service_key_work_inspection_profile_list,
+    };
+
+    Map encrpted_request = {
+      s.key_user_name: prefs?.getString(s.key_user_name),
+      s.key_data_content:
+          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+    };
+
+    print(json.encode(encrpted_request));
+
+    HttpClient _client = HttpClient(context: await Utils().globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
+
+    setState(() {
+      isSpinnerLoading = false;
+    });
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String responseData = response.body;
+
+      var jsonData = jsonDecode(responseData);
+
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+
+      print(status);
+      print(response_value);
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        if (res_jsonArray.length > 0) {
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            edit_name = res_jsonArray[i][s.key_name];
+            edit_mobile = res_jsonArray[i][s.key_mobile];
+            edit_gender = res_jsonArray[i][s.key_gender];
+            edit_level = res_jsonArray[i][s.key_level];
+            edit_desig_code = res_jsonArray[i][s.key_desig_code].toString();
+            edit_dcode = res_jsonArray[i][s.key_dcode].toString();
+            edit_bcode = res_jsonArray[i][s.key_bcode].toString();
+            edit_office_address = res_jsonArray[i][s.key_office_address];
+            edit_email = res_jsonArray[i][s.key_email];
+            String profile_image = res_jsonArray[i][s.key_profile_image];
+
+            if (!(profile_image == ("null") || profile_image == (""))) {
+              edit_profile_image = Base64Codec().decode(profile_image);
+            }
+          }
+          await __initializeBodyUI();
+          setState(() {
+            nameController.text = edit_name!;
+            emailController.text = edit_email!;
+            officeController.text = edit_office_address!;
+            mobileController.text = edit_mobile!;
+          });
+        }
+      }
+    }
+  }
 
   /// ************************** Edit API *****************************/
 
-  Future<void> goToEdit() async {}
+  Future<void> goToEdit() async {
+    setState(() {
+      isSpinnerLoading = true;
+      gotToTop();
+    });
+    var userPassKey = prefs!.getString(s.userPassKey);
+
+    Map jsonRequest, reqBlock, reqDist;
+
+    jsonRequest = {
+      s.key_service_id: s.service_key_Update_work_inspection_profile,
+      s.key_profile_image: profileImage,
+      s.key_name: nameController.text.trim(),
+      s.service_key_mobile_number: mobileController.text,
+      s.key_gender: selectedGender.toString(),
+      s.key_level: selectedLevel,
+      s.key_designation: selectedDesignation,
+      s.key_office_address: officeController.text.trim(),
+      s.key_email: emailController.text.trim(),
+    };
+
+    if (selectedLevel == "B") {
+      reqBlock = {s.key_dcode: selectedDistrict, s.key_bcode: selectedBlock};
+      jsonRequest.addAll(reqBlock);
+    } else if (selectedLevel == "D") {
+      reqDist = {s.key_dcode: selectedDistrict};
+      jsonRequest.addAll(reqDist);
+    }
+
+    Map encrpted_request = {
+      s.key_user_name: prefs?.getString(s.key_user_name),
+      s.key_data_content:
+          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+    };
+
+    print(json.encode(encrpted_request));
+
+    HttpClient _client = HttpClient(context: await Utils().globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
+
+    setState(() {
+      isSpinnerLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String responseData = response.body;
+
+      print(responseData);
+      var jsonData = jsonDecode(responseData);
+
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+
+      print(status);
+      print(response_value);
+    }
+  }
 
   // ************************** Save API *****************************/
 
@@ -1402,11 +1588,11 @@ class _RegistrationState extends State<Registration> {
       s.key_service_id: s.service_key_register,
       s.key_profile_image: profileImage,
       s.key_name: nameController.text.trim(),
-      "mobile_number": mobileController.text,
+      s.service_key_mobile_number: mobileController.text,
       s.key_gender: selectedGender.toString(),
       s.key_level: selectedLevel,
-      "designation": selectedDesignation,
-      "office_address": officeController.text.trim(),
+      s.key_designation: selectedDesignation,
+      s.key_office_address: officeController.text.trim(),
       s.key_email: emailController.text.trim(),
     };
 
@@ -1449,7 +1635,7 @@ class _RegistrationState extends State<Registration> {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) => OTPVerification(
-                        Flag: "register",
+                        Flag: "OTP",
                       )),
               (route) => false);
         });
@@ -1496,8 +1682,6 @@ class _RegistrationState extends State<Registration> {
           ? boolFlag = false
           : boolFlag = true;
     }
-    print("&&&&&&&&&&&&&&&&");
-    print(boolFlag);
     setState(() {});
   }
 
@@ -1510,5 +1694,20 @@ class _RegistrationState extends State<Registration> {
         duration: Duration(milliseconds: 500), //duration of scroll
         curve: Curves.fastOutSlowIn //scroll type
         );
+  }
+
+  /// ************************** Registration UI *****************************/
+
+  Future<void> mapEditedValues() async {
+    await getGenderList();
+    await getStageLevelList();
+    await getDesignationList(edit_level.toString());
+
+    if (edit_level == "D") {
+      await getDistrictList();
+    } else if (edit_level == "B") {
+      await getDistrictList();
+      await getBlockList(edit_dcode.toString());
+    }
   }
 }

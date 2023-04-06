@@ -37,6 +37,8 @@ class DbHelper{
      await db.execute(
          "CREATE TABLE $table_Block ( dcode TEXT, bcode TEXT, bname TEXT )");
      await db.execute(
+         "CREATE TABLE $table_Village ( dcode TEXT, bcode TEXT, pvcode TEXT, pvname TEXT )");
+     await db.execute(
          "CREATE TABLE $table_FinancialYear ( fin_year TEXT )");
      await db.execute(
          "CREATE TABLE $table_Status ( status_id TEXT , status TEXT )");
@@ -65,6 +67,11 @@ class DbHelper{
   void delete_table_Block() {
     // you can execute drop table and create table
     myDb?.execute("DELETE FROM $table_Block");
+
+  }
+  void delete_table_Village() {
+    // you can execute drop table and create table
+    myDb?.execute("DELETE FROM $table_Village");
 
   }
   void delete_table_FinancialYear() {
@@ -99,6 +106,7 @@ class DbHelper{
   void deleteAll() {
     delete_table_District();
     delete_table_Block();
+    delete_table_Village();
     delete_table_FinancialYear();
     delete_table_Status();
     delete_table_OtherCategory();
@@ -112,6 +120,7 @@ class DbHelper{
     // you can execute drop table and create table
     db.execute('DROP TABLE IF EXISTS $table_District');
     db.execute('DROP TABLE IF EXISTS $table_Block');
+    db.execute('DROP TABLE IF EXISTS $table_Village');
     db.execute('DROP TABLE IF EXISTS $table_FinancialYear');
     db.execute('DROP TABLE IF EXISTS $table_Status');
     db.execute('DROP TABLE IF EXISTS $table_OtherCategory');

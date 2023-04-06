@@ -295,10 +295,10 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "7877979787";
+                                user_name.text = "9080873403";
                                 String ss = new String.fromCharCodes(
                                     new Runes('\u0024'));
-                                user_password.text = "Crd123#" + ss;
+                                user_password.text = "crd45#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
@@ -390,7 +390,7 @@ class LoginState extends State<Login> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => OTPVerification(
-                                            Flag: "register",
+                                            Flag: "login",
                                           )),
                                 );
                               },
@@ -510,23 +510,24 @@ class LoginState extends State<Login> {
           prefs.setString(s.key_stateName, "Tamil Nadu");
           prefs.setString(s.key_dcode, "");
           prefs.setString(s.key_bcode, "");
-          getDistrictList();
-          getBlockList();
+          await getDistrictList();
+          await getBlockList();
         } else if (userData[s.key_levels] == ("D")) {
           prefs.setString(s.key_scode, userData[s.key_statecode]);
           prefs.setString(s.key_dcode, userData[s.key_dcode]);
           prefs.setString(s.key_dname, userData[s.key_dname]);
           prefs.setString(s.key_bcode, "");
-          getBlockList();
+          await getBlockList();
         } else if (userData[s.key_levels] == ("B")) {
           prefs.setString(s.key_scode, userData[s.key_statecode]);
           prefs.setString(s.key_dcode, userData[s.key_dcode]);
           prefs.setString(s.key_dname, userData[s.key_dname]);
           prefs.setString(s.key_bcode, userData[s.key_bcode]);
           prefs.setString(s.key_bname, userData[s.key_bname]);
+          await getVillageList();
         }
-        getProfileData();
-        getDashboardData();
+        await getProfileData();
+        await getDashboardData();
 
         utils.gotoHomePage(context, "Login");
       } else {
@@ -598,9 +599,8 @@ class LoginState extends State<Login> {
 
     if (prefs.getString(s.key_level) as String == "D") {
       json_request = {
-        s.key_scode: prefs.getString(s.key_scode) as String,
         s.key_dcode: prefs.getString(s.key_dcode) as String,
-        s.key_service_id: s.service_key_block_list_all,
+        s.key_service_id: s.service_key_block_list_district_wise_master,
       };
     } else if (prefs.getString(s.key_level) as String == "S") {
       json_request = {
@@ -653,6 +653,66 @@ class LoginState extends State<Login> {
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
           print("table_Block >>" + list.toString());
+        }
+      }
+    }
+  }
+  Future<void> getVillageList() async {
+    Map json_request = {};
+
+    json_request = {
+      s.key_dcode: prefs.getString(s.key_dcode) as String,
+      s.key_bcode: prefs.getString(s.key_bcode) as String,
+      s.key_service_id: s.service_key_village_list_district_block_wise,
+    };
+
+
+    Map encrpted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content:
+          utils.encryption(jsonEncode(json_request), userDecriptKey),
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
+    print("VillageList_url>>" + url.master_service.toString());
+    print("VillageList_request_json>>" + json_request.toString());
+    print("VillageList_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("VillageList_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data = utils.decryption(enc_data, userDecriptKey);
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Village();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_Village +
+                ' (dcode, bcode, pvcode, pvname) VALUES(' +
+                res_jsonArray[i][s.key_dcode] +
+                "," +
+                res_jsonArray[i][s.key_bcode] +
+                "," +
+                res_jsonArray[i][s.key_pvcode] +
+                ",'" +
+                res_jsonArray[i][s.key_pvname] +
+                "')");
+          }
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_Village);
+          print("table_Village >>" + list.toString());
         }
       }
     }

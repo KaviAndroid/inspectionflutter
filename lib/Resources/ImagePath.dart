@@ -35,6 +35,10 @@ String otp="assets/images/otp.png";
 String regUser = "assets/images/regUser.png";
 String action = "assets/images/action.png";
 String arrow_down_icon = "assets/images/arrow_down_icon.png";
+String camera = "assets/images/camera.png";
+String mic = "assets/images/mic.png";
+String date_picker_icon = "assets/images/datepicker_icon.png";
+String arrow_icon = "assets/images/arrow.png";
 
 
 
@@ -50,3 +54,4 @@ String inspection_ic="assets/images/inspection_ic.jpg";
 String wave="assets/svg_icons/wave.svg";
 String ic_user="assets/svg_icons/ic_user.svg";
 String user="assets/svg_icons/user.svg";
+String mic_loading="assets/svg_icons/mic_loading.gif";

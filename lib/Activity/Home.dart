@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/OtherWorkOnline.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Online.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
@@ -36,9 +37,12 @@ class _HomeState extends State<Home> {
   String satisfied_count_other="",un_satisfied_count_other="",need_improvement_count_other="",total_other="";
   bool atrFlag=false;
   bool syncFlag=false;
+  String isLogin='';
+
   @override
   void initState() {
     super.initState();
+    isLogin=widget.isLogin;
     initialize();
   }
 
@@ -119,7 +123,7 @@ class _HomeState extends State<Home> {
     } else {
       utils.showAlert(context, s.no_internet);
     }
-    if (widget.isLogin == "Login") {
+    if (isLogin == "Login") {
       if (await utils.isOnline()) {
         callApis();
       } else {
@@ -149,6 +153,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: c.colorPrimary,
@@ -793,9 +798,19 @@ class _HomeState extends State<Home> {
                                             onTap: () {
                                               prefs.setString(s.onOffType, "online");
                                               prefs.setString(s.workType, "rdpr");
-                                              Navigator.push(
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) => RDPR_Online(),
+                                              ))
+                                                  .then((value) {
+                                                    isLogin="RDPR";
+                                                    initialize();
+                                                // you can do what you need here
+                                                // setState etc.
+                                              });
+                                             /* Navigator.push(
                                                   context,
-                                                  MaterialPageRoute(builder: (context) => RDPR_Online()));
+                                                  MaterialPageRoute(builder: (context) => RDPR_Online()));*/
 
                                             },
                                             child: Text(
@@ -858,6 +873,21 @@ class _HomeState extends State<Home> {
                                     child: InkWell(
                                       onTap: () {
                                         prefs.setString(s.onOffType, "online");
+                                        prefs.setString(s.workType, "other");
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) => OtherWorkOnline(),
+                                        ))
+                                            .then((value) {
+                                          isLogin="OTHER";
+                                          initialize();
+                                          // you can do what you need here
+                                          // setState etc.
+                                        });
+                                        /* Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => RDPR_Online()));*/
+
                                       },
                                       child: Text(
                                         s.other_works,

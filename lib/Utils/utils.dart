@@ -6,9 +6,16 @@ import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:location/location.dart' as loc;
+import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+
+
 
 class Utils {
   Future<bool> isOnline() async {
@@ -184,4 +191,86 @@ bool isPasswordValid(value)
     sc.setTrustedCertificatesBytes(sslCert1.buffer.asInt8List());
     return sc;
   }
+
+  Future<bool> handleLocationPermission(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    var location = loc.Location();
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (!await location.serviceEnabled()) {
+        location.requestService();
+      }
+/*      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));*/
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Widget showSpinner(String message) {
+    return Column(
+      children: [
+        Container(
+          height: 150,
+          width: 150,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(80.0),
+              color: c.grey_7,
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(0.0, 1.0), //(x,y)
+                  blurRadius: 6.0,
+                ),
+              ]),
+          child: Stack(
+            children: [
+              SpinKitDualRing(
+                color: c.grey_8,
+                duration: const Duration(seconds: 1, milliseconds: 500),
+                size: 140,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitPouringHourGlassRefined(
+                    color: c.white,
+                    duration: const Duration(seconds: 1, milliseconds: 500),
+                    size: 50,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(message,
+                      style: GoogleFonts.raleway().copyWith(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                          color: c.white))
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
 }

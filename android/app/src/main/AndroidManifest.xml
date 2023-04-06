@@ -3,6 +3,13 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 1. Permission -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 2. To overcome bind to recognition service failed issue -->
+    <queries>
+        <package android:name="com.google.android.googlequicksearchbox"/>
+    </queries>
     <application
         android:label="inspection_flutter_app"
         android:name="${applicationName}"

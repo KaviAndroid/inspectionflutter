@@ -352,7 +352,10 @@ class _DrawerAppState extends State<DrawerApp> {
           margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
         child:InkWell(
             onTap: (){
-              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context)=>ViewSavedRDPR()));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                builder: (context) => ViewSavedRDPR(),
+              ));
             },child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -579,14 +582,14 @@ class _DrawerAppState extends State<DrawerApp> {
     _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service, body: json.encode(encrypted_request));
-    print("WorkStages_url>>" + url.main_service.toString());
-    print("WorkStages_request_json>>" + json_request.toString());
-    print("WorkStages_request_encrpt>>" + encrypted_request.toString());
+    print("RefreshWorkStages_url>>" + url.main_service.toString());
+    print("RefreshWorkStages_request_json>>" + json_request.toString());
+    print("RefreshWorkStages_request_encrpt>>" + encrypted_request.toString());
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
-      print("WorkStages_response>>" + data);
+      print("RefreshWorkStages_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
       var decrptData = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());

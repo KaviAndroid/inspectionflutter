@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/WorkList.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -99,10 +100,14 @@ class _VillageListFromGeoLocationState
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        getWorkListByVillage(
-                            widget.villageList[index][s.key_dcode].toString(),
-                            widget.villageList[index][s.key_bcode].toString(),
-                            widget.villageList[index][s.key_pvcode].toString());
+                        List schemeItems = [];
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WorkList(
+                                  schemeList: schemeItems,finYear:'',dcode: widget.villageList[index][s.key_dcode].toString(),bcode: widget.villageList[index][s.key_bcode].toString(),
+                                  pvcode:widget.villageList[index][s.key_pvcode].toString(),scheme:  '',flag: 'geo',
+                                )));
                       },
                       child: Card(
                         elevation: 2,
@@ -183,77 +188,9 @@ class _VillageListFromGeoLocationState
         ));
   }
 
-  Future<void> getWorkListByVillage(
-      String dcode, String bcode, String pvcode) async {
-    late Map json_request;
-
-    Map work_detail = {
-      s.key_dcode: dcode,
-      s.key_bcode: bcode,
-      s.key_pvcode: [pvcode],
-    };
-    json_request = {
-      s.key_service_id: s.service_key_get_village_pending_works,
-      s.key_inspection_work_details: work_detail,
-    };
-
-    Map encrpted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    print("WorkListByVillage_url>>" + url.main_service.toString());
-    print("WorkListByVillage_request_json>>" + json_request.toString());
-    print("WorkListByVillage_request_encrpt>>" + encrpted_request.toString());
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("WorkListByVillage_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data =
-          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        if (res_jsonArray.length > 0) {
-          List ongoingWorkList = [];
-          List completedWorkList = [];
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            if (res_jsonArray[i][s.key_current_stage_of_work] == 11) {
-              completedWorkList.add(res_jsonArray[i]);
-            } else {
-              ongoingWorkList.add(res_jsonArray[i]);
-            }
-          }
-
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => WorkListFromGeoLocation(
-                        completedWorkList: completedWorkList,
-                        ongoingWorkList: ongoingWorkList,
-                      )));
-        } else {
-          utils.showAlert(context, s.no_village);
-        }
-      } else {
-        utils.showAlert(context, s.no_village);
-      }
-    }
-  }
 }
 
+/*
 class WorkListFromGeoLocation extends StatefulWidget {
   final completedWorkList;
   final ongoingWorkList;
@@ -346,6 +283,8 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       flex: 1,
@@ -366,8 +305,9 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
                           });
                         },
                         child: Container(
+                          height: 40,
                           margin: EdgeInsets.fromLTRB(20, 20, 0, 0),
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(5),
                           width: MediaQuery.of(context).size.width,
                           alignment: AlignmentDirectional.center,
                           decoration: new BoxDecoration(
@@ -379,9 +319,10 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
                                 bottomRight: const Radius.circular(0),
                               )),
                           child: Text(
-                            s.ongoing_works,
+                            s.ongoing_works+' ('+widget.ongoingWorkList.length.toString()+') ',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: flag == 1 ? c.white : c.grey_8,
                             ),
@@ -409,7 +350,8 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
                         },
                         child: Container(
                           margin: EdgeInsets.fromLTRB(0, 20, 20, 0),
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(5),
+                          height: 40,
                           width: MediaQuery.of(context).size.width,
                           alignment: AlignmentDirectional.center,
                           decoration: new BoxDecoration(
@@ -419,11 +361,12 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
                                 topRight: const Radius.circular(30),
                                 bottomLeft: const Radius.circular(0),
                                 bottomRight: const Radius.circular(30),
-                              )),
-                          child: Text(
-                            s.completed_works,
+                              )), // Align however you like (i.e .centerRight, centerLeft)
+                            child:Text(
+                            s.completed_works+' ('+widget.completedWorkList.length.toString()+') ',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: flag == 2 ? c.white : c.grey_8,
                             ),
@@ -1579,3 +1522,4 @@ class _WorkListFromGeoLocationState extends State<WorkListFromGeoLocation> {
         ));
   }
 }
+*/

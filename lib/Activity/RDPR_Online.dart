@@ -292,6 +292,9 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_pvname].compareTo(b[s.key_pvname]);
+        });
         if (res_jsonArray.length > 0) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => VillageListFromGeoLocation(villageList: userData[s.key_json_data],)));
         }else{

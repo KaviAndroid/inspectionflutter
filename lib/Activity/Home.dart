@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/OtherWorkOnline.dart';
+import 'package:inspection_flutter_app/Activity/RDPRUrbanWorks.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Online.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
@@ -18,6 +19,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
+import 'package:inspection_flutter_app/Activity/ATR_Offline.dart';
+import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
+
 
 class Home extends StatefulWidget {
   final isLogin;
@@ -798,16 +802,30 @@ class _HomeState extends State<Home> {
                                             onTap: () {
                                               prefs.setString(s.onOffType, "online");
                                               prefs.setString(s.workType, "rdpr");
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) => RDPR_Online(),
-                                              ))
-                                                  .then((value) {
-                                                    isLogin="RDPR";
-                                                    initialize();
-                                                // you can do what you need here
-                                                // setState etc.
-                                              });
+                                              if(prefs.getString(s.area_type) =='R'){
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => RDPR_Online(),
+                                                ))
+                                                    .then((value) {
+                                                  isLogin="RDPR";
+                                                  initialize();
+                                                  // you can do what you need here
+                                                  // setState etc.
+                                                });
+                                              }else{
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => RDPRUrbanWorks(),
+                                                ))
+                                                    .then((value) {
+                                                  isLogin="RDPR";
+                                                  initialize();
+                                                  // you can do what you need here
+                                                  // setState etc.
+                                                });
+                                              }
+
                                              /* Navigator.push(
                                                   context,
                                                   MaterialPageRoute(builder: (context) => RDPR_Online()));*/
@@ -1004,6 +1022,23 @@ class _HomeState extends State<Home> {
                                             onTap: () {
                                               prefs.setString(
                                                   s.onOffType, "online");
+                                              prefs.setString(
+                                                  s.workType, "atr");
+                                              String? area_type = prefs
+                                                  .getString(s.area_type);
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ATR_Worklist(
+                                                      Flag: area_type,
+                                                    ),
+                                              ))
+                                                  .then((value) {
+                                                isLogin = "ATR";
+                                                initialize();
+                                                // you can do what you need here
+                                                // setState etc.
+                                              });
                                             },
                                             child: Text(
                                               s.go_online,
@@ -1018,6 +1053,23 @@ class _HomeState extends State<Home> {
                                             onTap: () {
                                               prefs.setString(
                                                   s.onOffType, "offline");
+                                              prefs.setString(
+                                                  s.workType, "atr");
+                                              String? area_type = prefs
+                                                  .getString(s.area_type);
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ATR_Offline_worklist(
+                                                      Flag: area_type,
+                                                    ),
+                                              ))
+                                                  .then((value) {
+                                                isLogin = "ATR";
+                                                initialize();
+                                                // you can do what you need here
+                                                // setState etc.
+                                              });
                                             },
                                             child: Text(
                                               s.go_offline,
@@ -1419,6 +1471,9 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_other_work_category_name].toLowerCase().compareTo(b[s.key_other_work_category_name].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_OtherCategory();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1469,6 +1524,9 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_townpanchayat_name].toLowerCase().compareTo(b[s.key_townpanchayat_name].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_TownList();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1521,6 +1579,9 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_municipality_name].toLowerCase().compareTo(b[s.key_municipality_name].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Municipality();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1573,6 +1634,9 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_corporation_name].toLowerCase().compareTo(b[s.key_corporation_name].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Corporation();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1626,6 +1690,9 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_work_stage_code].compareTo(b[s.key_work_stage_code]);
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_WorkStages();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1645,6 +1712,7 @@ class _HomeState extends State<Home> {
           }
           List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_WorkStages);
           print("table_WorkStages >>" + list.toString());
+          print("table_WorkStages size >>" + res_jsonArray.length.toString());
         }
       }
     }

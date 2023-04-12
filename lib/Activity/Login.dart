@@ -295,10 +295,10 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9080873403";
+                                user_name.text = "9751337424";
                                 String ss = new String.fromCharCodes(
                                     new Runes('\u0024'));
-                                user_password.text = "crd45#" + ss;
+                                user_password.text = "Test88#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
@@ -575,6 +575,9 @@ class LoginState extends State<Login> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_dname].toLowerCase().compareTo(b[s.key_dname].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_District();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -637,6 +640,9 @@ class LoginState extends State<Login> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_bname].toLowerCase().compareTo(b[s.key_bname].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Block();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -695,6 +701,9 @@ class LoginState extends State<Login> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_pvname].toLowerCase().compareTo(b[s.key_pvname].toLowerCase());
+        });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Village();
           for (int i = 0; i < res_jsonArray.length; i++) {

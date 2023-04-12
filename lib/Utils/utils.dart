@@ -10,12 +10,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
+import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
-
-
 
 class Utils {
   Future<bool> isOnline() async {
@@ -46,16 +45,21 @@ class Utils {
   bool isNumberValid(value) {
     return RegExp(r'^[6789]\d{9}$').hasMatch(value);
   }
+
   bool isOtpValid(value) {
     return RegExp(r'^[0123456789]\d{5}').hasMatch(value);
   }
+
   bool isNameValid(value) {
     return RegExp(r"([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}").hasMatch(value);
   }
-bool isPasswordValid(value)
-{
-  return RegExp("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#%^&+=])(?=\\S+).{4,}").hasMatch(value);
-}
+
+  bool isPasswordValid(value) {
+    return RegExp(
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#%^&+=])(?=\\S+).{4,}")
+        .hasMatch(value);
+  }
+
   void gotoHomePage(BuildContext context, String s) {
     Timer(
         const Duration(seconds: 2),
@@ -227,13 +231,14 @@ bool isPasswordValid(value)
 
   Widget showSpinner(String message) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          height: 150,
-          width: 150,
+          height: 100,
+          width: 100,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(80.0),
-              color: c.grey_7,
+              color: c.grey_6,
               boxShadow: const [
                 BoxShadow(
                   color: Colors.grey,
@@ -244,9 +249,10 @@ bool isPasswordValid(value)
           child: Stack(
             children: [
               SpinKitDualRing(
-                color: c.grey_8,
+                lineWidth: 5,
+                color: c.grey_7,
                 duration: const Duration(seconds: 1, milliseconds: 500),
-                size: 140,
+                size: 100,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -260,9 +266,9 @@ bool isPasswordValid(value)
                     height: 15,
                   ),
                   Text(message,
-                      style: GoogleFonts.raleway().copyWith(
+                      style: GoogleFonts.getFont('Raleway',
                           fontWeight: FontWeight.w800,
-                          fontSize: 15,
+                          fontSize: 10,
                           color: c.white))
                 ],
               ),
@@ -272,5 +278,4 @@ bool isPasswordValid(value)
       ],
     );
   }
-
 }

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -28,10 +27,16 @@ class WorkList extends StatefulWidget {
   final scheme;
   final flag;
 
-  WorkList({this.schemeList, this.finYear, this.dcode, this.bcode, this.pvcode, this.scheme, this.flag});
+  WorkList(
+      {this.schemeList,
+      this.finYear,
+      this.dcode,
+      this.bcode,
+      this.pvcode,
+      this.scheme,
+      this.flag});
   @override
-  State<WorkList> createState() =>
-      _WorkListState();
+  State<WorkList> createState() => _WorkListState();
 }
 
 class _WorkListState extends State<WorkList> {
@@ -41,14 +46,14 @@ class _WorkListState extends State<WorkList> {
   var dbClient;
   bool noDataFlag = false;
   bool workListFlag = false;
-  List<bool> showFlag=[];
+  List<bool> showFlag = [];
   int flag = 1;
   List workList = [];
   List ongoingWorkList = [];
   List completedWorkList = [];
   List selectedworkList = [];
   List schemeItems = [];
-  String selectedScheme="";
+  String selectedScheme = "";
   bool isLoadingScheme = false;
   bool schemeError = false;
   bool schemeFlag = false;
@@ -67,15 +72,15 @@ class _WorkListState extends State<WorkList> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     schemeItems.addAll(widget.schemeList);
-    if(widget.flag=='filter'){
-      selectedScheme=widget.scheme;
-      schemeFlag=true;
-      await getWorkList(widget.finYear,widget.dcode,widget.bcode,widget.pvcode,widget.scheme);
-    }else{
-      schemeFlag=false;
-      await getWorkListByVillage(widget.dcode, widget.bcode,widget.pvcode);
+    if (widget.flag == 'filter') {
+      selectedScheme = widget.scheme;
+      schemeFlag = true;
+      await getWorkList(widget.finYear, widget.dcode, widget.bcode,
+          widget.pvcode, widget.scheme);
+    } else {
+      schemeFlag = false;
+      await getWorkListByVillage(widget.dcode, widget.bcode, widget.pvcode);
     }
-
 
     setState(() {});
   }
@@ -119,20 +124,17 @@ class _WorkListState extends State<WorkList> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-
                 Visibility(
-                  visible: schemeFlag
-                      ? true
-                      : false,
+                  visible: schemeFlag ? true : false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding:
-                        const EdgeInsets.only(top: 15, bottom: 15,left: 20,right: 20),
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 20, right: 20),
                         child: Text(
                           s.select_scheme,
-                          style: GoogleFonts.raleway().copyWith(
+                          style: GoogleFonts.getFont('Raleway',
                               fontWeight: FontWeight.w800,
                               fontSize: 12,
                               color: c.grey_8),
@@ -150,28 +152,30 @@ class _WorkListState extends State<WorkList> {
                           ignoring: isLoadingScheme ? true : false,
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton2(
-                              style:
-                              const TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               value: selectedScheme,
                               isExpanded: true,
                               items: schemeItems
-                                  .map((item) =>
-                                  DropdownMenuItem<String>(
-                                    value: item[s.key_scheme_id]
-                                        .toString(),
-                                    child: Text(
-                                      item[s.key_scheme_name].toString(),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ))
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item[s.key_scheme_id].toString(),
+                                        child: Text(
+                                          item[s.key_scheme_name].toString(),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ))
                                   .toList(),
                               onChanged: (value) {
                                 if (value != "0") {
-                                  isLoadingScheme= true;
+                                  isLoadingScheme = true;
                                   selectedScheme = value.toString();
-                                  getWorkList(widget.finYear,widget.dcode,widget.bcode,widget.pvcode,selectedScheme);
+                                  getWorkList(
+                                      widget.finYear,
+                                      widget.dcode,
+                                      widget.bcode,
+                                      widget.pvcode,
+                                      selectedScheme);
                                   setState(() {});
                                 } else {
                                   setState(() {
@@ -187,21 +191,20 @@ class _WorkListState extends State<WorkList> {
                               iconStyleData: IconStyleData(
                                 icon: isLoadingScheme
                                     ? SpinKitCircle(
-                                  color: c.colorPrimary,
-                                  size: 30,
-                                  duration: const Duration(
-                                      milliseconds: 1200),
-                                )
+                                        color: c.colorPrimary,
+                                        size: 30,
+                                        duration:
+                                            const Duration(milliseconds: 1200),
+                                      )
                                     : const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
                                 iconSize: 30,
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                               ),
                             ),
@@ -260,7 +263,10 @@ class _WorkListState extends State<WorkList> {
                                 bottomRight: const Radius.circular(0),
                               )),
                           child: Text(
-                            s.ongoing_works+' ('+ongoingWorkList.length.toString()+') ',
+                            s.ongoing_works +
+                                ' (' +
+                                ongoingWorkList.length.toString() +
+                                ') ',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
@@ -304,7 +310,10 @@ class _WorkListState extends State<WorkList> {
                                 bottomRight: const Radius.circular(30),
                               )),
                           child: Text(
-                            s.completed_works+' ('+completedWorkList.length.toString()+') ',
+                            s.completed_works +
+                                ' (' +
+                                completedWorkList.length.toString() +
+                                ') ',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
@@ -326,13 +335,12 @@ class _WorkListState extends State<WorkList> {
                         child: ListView.builder(
                           itemCount: workList == null ? 0 : workList.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return                              InkWell(
+                            return InkWell(
                                 onTap: () {},
                                 child: Card(
                                     elevation: 2,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
-
                                     ),
 
                                     // clipBehavior is necessary because, without it, the InkWell's animation
@@ -341,16 +349,20 @@ class _WorkListState extends State<WorkList> {
                                     // unless you need it.
                                     clipBehavior: Clip.hardEdge,
                                     margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                    child:  ClipPath(
+                                    child: ClipPath(
                                       clipper: ShapeBorderClipper(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(3))),
+                                              borderRadius:
+                                                  BorderRadius.circular(3))),
                                       child: Container(
                                           width: 10,
-                                          padding: EdgeInsets.fromLTRB(10,5,5,5),
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 5, 5, 5),
                                           decoration: BoxDecoration(
                                             border: Border(
-                                              left: BorderSide(color: c.colorAccent, width: 5),
+                                              left: BorderSide(
+                                                  color: c.colorAccent,
+                                                  width: 5),
                                             ),
                                           ),
                                           child: Container(
@@ -358,24 +370,33 @@ class _WorkListState extends State<WorkList> {
                                               Container(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                                      CrossAxisAlignment.end,
                                                   children: [
                                                     InkWell(
                                                       onTap: () {
-                                                        selectedworkList.clear();
-                                                        selectedworkList.add(workList[index]);
-                                                        print('selectedworkList>>'+selectedworkList.toString());
+                                                        selectedworkList
+                                                            .clear();
+                                                        selectedworkList.add(
+                                                            workList[index]);
+                                                        print(
+                                                            'selectedworkList>>' +
+                                                                selectedworkList
+                                                                    .toString());
 
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
-                                                                builder: (context) => SaveWorkDetails(
-                                                                  selectedworkList: selectedworkList,
-                                                                )));
+                                                                builder:
+                                                                    (context) =>
+                                                                        SaveWorkDetails(
+                                                                          selectedworkList:
+                                                                              selectedworkList,
+                                                                        )));
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.fromLTRB(
-                                                            10, 5, 10, 0),
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                10, 5, 10, 0),
                                                         child: Image.asset(
                                                           imagePath.action,
                                                           height: 35,
@@ -385,9 +406,11 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
@@ -396,10 +419,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -411,10 +437,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -422,16 +451,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 3,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 10, 0),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    10, 0),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_work_id]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_work_id]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -444,9 +474,11 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
@@ -455,10 +487,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -470,10 +505,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -481,16 +519,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 3,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 5, 0),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    5, 0),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_work_name]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_work_name]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -503,9 +542,11 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
@@ -514,10 +555,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -529,10 +573,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -540,16 +587,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 3,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 5, 0),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    5, 0),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_stage_name]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_stage_name]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -562,9 +610,11 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
@@ -573,10 +623,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -588,10 +641,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -599,16 +655,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 3,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 10, 0),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    10, 0),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_work_type_name]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_work_type_name]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -621,9 +678,11 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
@@ -632,10 +691,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -647,10 +709,13 @@ class _WorkListState extends State<WorkList> {
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: c.grey_8),
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    c.grey_8),
                                                             overflow:
-                                                            TextOverflow.clip,
+                                                                TextOverflow
+                                                                    .clip,
                                                             maxLines: 1,
                                                             softWrap: true,
                                                           ),
@@ -658,16 +723,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 3,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 10, 0),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    10, 0),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_scheme_name]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_scheme_name]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -680,25 +746,30 @@ class _WorkListState extends State<WorkList> {
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Expanded(
                                                           flex: 2,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 10, 0, 10),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(0, 10,
+                                                                    0, 10),
                                                             child: Text(
                                                               s.financial_year,
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color: c.grey_8),
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      c.grey_8),
                                                               overflow:
-                                                              TextOverflow.clip,
+                                                                  TextOverflow
+                                                                      .clip,
                                                               maxLines: 1,
                                                               softWrap: true,
                                                             ),
@@ -707,18 +778,21 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 0,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 10, 0, 10),
-                                                            child:Text(
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(0, 10,
+                                                                    0, 10),
+                                                            child: Text(
                                                               ' : ',
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   fontWeight:
-                                                                  FontWeight.bold,
-                                                                  color: c.grey_8),
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      c.grey_8),
                                                               overflow:
-                                                              TextOverflow.clip,
+                                                                  TextOverflow
+                                                                      .clip,
                                                               maxLines: 1,
                                                               softWrap: true,
                                                             ),
@@ -727,16 +801,17 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 2,
                                                           child: Container(
-                                                            margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 10, 10, 10),
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10,
+                                                                    10, 10, 10),
                                                             child: Align(
                                                               alignment:
-                                                              AlignmentDirectional
-                                                                  .topStart,
+                                                                  AlignmentDirectional
+                                                                      .topStart,
                                                               child: ExpandableText(
-                                                                  workList[index][s
-                                                                      .key_fin_year]
+                                                                  workList[index]
+                                                                          [
+                                                                          s.key_fin_year]
                                                                       .toString(),
                                                                   trimLines: 2),
                                                             ),
@@ -745,22 +820,27 @@ class _WorkListState extends State<WorkList> {
                                                         Expanded(
                                                           flex: 1,
                                                           child: InkWell(
-                                                            onTap: (){
+                                                            onTap: () {
                                                               setState(() {
-                                                                showFlag[index]=!showFlag[index];
+                                                                showFlag[
+                                                                        index] =
+                                                                    !showFlag[
+                                                                        index];
                                                               });
-
                                                             },
-                                                            child:Container(
+                                                            child: Container(
                                                               alignment:
-                                                              Alignment.topLeft,
-                                                              margin:
-                                                              EdgeInsets.fromLTRB(
-                                                                  10, 0, 10, 0),
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              margin: EdgeInsets
+                                                                  .fromLTRB(10,
+                                                                      0, 10, 0),
                                                               child: Align(
                                                                 alignment:
-                                                                Alignment.topLeft,
-                                                                child: Image.asset(
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child:
+                                                                    Image.asset(
                                                                   imagePath
                                                                       .arrow_down_icon,
                                                                   color: c
@@ -782,666 +862,844 @@ class _WorkListState extends State<WorkList> {
                                               Visibility(
                                                 visible: showFlag[index],
                                                 child: AnimatedSwitcher(
-                                                  duration: Duration(seconds: 5),
-                                                  child:showFlag[index] ? Container(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.district,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                  duration:
+                                                      Duration(seconds: 5),
+                                                  child: showFlag[index]
+                                                      ? Container(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.district,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_dname]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_dname]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.block,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              5,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_bname]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.block,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.village,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              5,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_pvname]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 5, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_bname]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.village,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.town_panchayat,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_townpanchayat_name]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 5, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_pvname]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.municipality,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_municipality_name]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.town_panchayat,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.corporation,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_corporation_name]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_townpanchayat_name]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.municipality,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.as_value,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_as_value]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_municipality_name]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.ts_value,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_ts_value]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.corporation,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.agreement_work_orderdate,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_work_order_date]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_corporation_name]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ), Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.as_value,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.as_date,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_as_value]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_as_value]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child: Text(
+                                                                      s.ts_date,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 0,
+                                                                    child: Text(
+                                                                      ' : ',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              c.grey_8),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                      maxLines:
+                                                                          1,
+                                                                      softWrap:
+                                                                          true,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets
+                                                                          .fromLTRB(
+                                                                              10,
+                                                                              0,
+                                                                              10,
+                                                                              0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            AlignmentDirectional.topStart,
+                                                                        child: ExpandableText(
+                                                                            workList[index][s.key_ts_date]
+                                                                                .toString(),
+                                                                            trimLines:
+                                                                                2),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ), Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.ts_value,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
+                                                              SizedBox(
+                                                                height: 10,
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_ts_value]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ), Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.agreement_work_orderdate,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_work_order_date]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ), Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.as_date,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_as_value]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ), Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Text(
-                                                                s.ts_date,
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ' : ',
-                                                                style: TextStyle(
-                                                                    fontSize: 13,
-                                                                    fontWeight:
-                                                                    FontWeight.bold,
-                                                                    color: c.grey_8),
-                                                                overflow:
-                                                                TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Container(
-                                                                margin:
-                                                                EdgeInsets.fromLTRB(
-                                                                    10, 0, 10, 0),
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: ExpandableText(
-                                                                      workList[index][s
-                                                                          .key_ts_date]
-                                                                          .toString(),
-                                                                      trimLines: 2),
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-
-                                                  ): SizedBox(),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      : SizedBox(),
                                                 ),
                                               ),
                                             ]),
@@ -1472,7 +1730,8 @@ class _WorkListState extends State<WorkList> {
         ));
   }
 
-  Future<void> getWorkList(String finYear,String dcode, String bcode, String pvcode, String scheme) async {
+  Future<void> getWorkList(String finYear, String dcode, String bcode,
+      String pvcode, String scheme) async {
     late Map json_request;
 
     Map work_detail = {
@@ -1510,7 +1769,7 @@ class _WorkListState extends State<WorkList> {
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
       var decrpt_data =
-      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
@@ -1521,8 +1780,8 @@ class _WorkListState extends State<WorkList> {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         if (res_jsonArray.length > 0) {
-           ongoingWorkList = [];
-           completedWorkList = [];
+          ongoingWorkList = [];
+          completedWorkList = [];
           for (int i = 0; i < res_jsonArray.length; i++) {
             if (res_jsonArray[i][s.key_current_stage_of_work] == 11) {
               completedWorkList.add(res_jsonArray[i]);
@@ -1531,28 +1790,28 @@ class _WorkListState extends State<WorkList> {
             }
           }
 
-           if (ongoingWorkList.length > 0) {
-             workList = [];
-             workList.addAll(ongoingWorkList);
-             flag = 1;
-             noDataFlag = false;
-             workListFlag = true;
-           } else if (completedWorkList.length > 0) {
-             workList = [];
-             workList.addAll(completedWorkList);
-             flag = 2;
-             noDataFlag = false;
-             workListFlag = true;
-           } else {
-             workList = [];
-             flag = 1;
-             noDataFlag = true;
-             workListFlag = false;
-           }
-           showFlag=[];
-           for(int i=0;i<workList.length;i++){
-             showFlag.add(false);
-           }
+          if (ongoingWorkList.length > 0) {
+            workList = [];
+            workList.addAll(ongoingWorkList);
+            flag = 1;
+            noDataFlag = false;
+            workListFlag = true;
+          } else if (completedWorkList.length > 0) {
+            workList = [];
+            workList.addAll(completedWorkList);
+            flag = 2;
+            noDataFlag = false;
+            workListFlag = true;
+          } else {
+            workList = [];
+            flag = 1;
+            noDataFlag = true;
+            workListFlag = false;
+          }
+          showFlag = [];
+          for (int i = 0; i < workList.length; i++) {
+            showFlag.add(false);
+          }
         } else {
           utils.showAlert(context, s.no_data);
         }
@@ -1560,10 +1819,11 @@ class _WorkListState extends State<WorkList> {
         utils.showAlert(context, s.no_data);
       }
       setState(() {
-        isLoadingScheme= false;
+        isLoadingScheme = false;
       });
     }
   }
+
   Future<void> getWorkListByVillage(
       String dcode, String bcode, String pvcode) async {
     late Map json_request;
@@ -1601,7 +1861,7 @@ class _WorkListState extends State<WorkList> {
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
       var decrpt_data =
-      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
@@ -1611,8 +1871,8 @@ class _WorkListState extends State<WorkList> {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         if (res_jsonArray.length > 0) {
-           ongoingWorkList = [];
-           completedWorkList = [];
+          ongoingWorkList = [];
+          completedWorkList = [];
           for (int i = 0; i < res_jsonArray.length; i++) {
             if (res_jsonArray[i][s.key_current_stage_of_work] == 11) {
               completedWorkList.add(res_jsonArray[i]);
@@ -1638,8 +1898,8 @@ class _WorkListState extends State<WorkList> {
             noDataFlag = true;
             workListFlag = false;
           }
-          showFlag=[];
-          for(int i=0;i<workList.length;i++){
+          showFlag = [];
+          for (int i = 0; i < workList.length; i++) {
             showFlag.add(false);
           }
         } else {
@@ -1650,5 +1910,4 @@ class _WorkListState extends State<WorkList> {
       }
     }
   }
-
 }

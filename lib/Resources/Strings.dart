@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 String appName = "TNRD Work Inspection";
 String signIN = "SignIN";
 String password = "Password";
@@ -159,6 +161,21 @@ String enter_work_id = "Enter Work Id";
 String logout_msg = "Logging out while offline may leads to loss of data!";
 String total_inspection_works = "Total Inspected Works - ";
 String select_from_to_date = "Select Form and To Date";
+String inspected_by = "Inspected By";
+String inspected_date = "Inspected Date";
+String status = "Status";
+String download_text = "Click here to download inspected works… ";
+String inspection_by_officer_designation = "inspection_by_officer_designation";
+String inspection_by_officer = "inspection_by_officer";
+String atr_date = "atr_date";
+String select_tmc = "Select Town Panchayat/Muncipality/Corporation";
+String select_town = "Select Town Panchayat";
+String select_municipality = "Select Municipality";
+String select_corporation = "Select Corporation";
+String from_date = "from_date";
+String to_date = "to_date";
+String category_name = "Category Name";
+
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
 String please_enter_valid_name = "Please Enter Valid Name";
@@ -257,6 +274,17 @@ String key_otp = "otp";
 String key_new_password = "new_password";
 String key_confirm_password = "confirm_password";
 String key_designation = "designation";
+String key_from_date = "from_date";
+String key_to_date = "to_date";
+String key_rural_urban = "rural_urban";
+String key_inspection_details = "inspection_details";
+String key_inspection_id = "inspection_id";
+String key_inspection_date = "inspection_date";
+String key_description = "description";
+String key_town_type = "town_type";
+String key_hab_code = "hab_code";
+String key_area_type = "rural_urban";
+String key_type = "type";
 
 // Service Key
 String service_key_login = "login";
@@ -264,7 +292,8 @@ String service_key_scheme_list = "scheme_list";
 String service_key_district_list_all = "district_list_all";
 String service_key_block_list_all = "block_list_all";
 String service_key_block_list_district_wise_master = "block_list_district_wise";
-String service_key_village_list_district_block_wise = "village_list_district_block_wise";
+String service_key_village_list_district_block_wise =
+    "village_list_district_block_wise";
 String service_key_work_inspection_profile_list =
     "work_inspection_profile_list";
 String service_key_current_finyear_wise_status_count =
@@ -295,7 +324,7 @@ String service_key_send_otp_for_forgot_password = "sendOTP_for_forgot_password";
 String service_key_mobile_number = "mobile_number";
 String service_key_forgot_password_verify_otp = "ForgotPasswordVerifyOtp";
 String service_key_verify_otp = "VerifyOtp";
-String service_key_stage_list= "work_type_stage_link";
+String service_key_stage_list = "work_type_stage_link";
 String service_key_change_password_verify_otp = "ChangePasswordVerifyOtp";
 String service_key_change_password = "ChangePassword";
 String service_key_new_password = "new_password";
@@ -305,6 +334,17 @@ String service_key_send_otp_changepassword = "sendOTP_for_change_password";
 String service_key_forgotpassword = "ForgotPassword";
 String service_key_forgotpassword_verify_otp = "ForgotPasswordVerifyOtp";
 String service_key_appcode = "WI";
+String service_key_get_pdf = "get_pdf";
+String service_key_get_inspection_details_for_atr =
+    "get_inspection_details_for_atr";
+String service_key_Update_work_inspection_profile =
+    "Update_work_inspection_profile";
+String service_key_work_inspection_details_save =
+    "work_inspection_details_save";
+String service_key_work_id_wise_inspection_details_view =
+    "work_id_wise_inspection_details_view";
+String service_key_date_wise_inspection_details_view =
+    "date_wise_inspection_details_view";
 
 //Table Name
 String table_District = "District";
@@ -317,3 +357,4 @@ String table_TownList = "TownList";
 String table_Municipality = "Municipality";
 String table_Corporation = "Corporation";
 String table_WorkStages = "WorkStages";
+String table_AtrWorkList = "atr_work_list";

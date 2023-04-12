@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c ;
+import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import '../Resources/global.dart';
 import '../Utils/utils.dart';
 
 class Splash extends StatefulWidget {
@@ -12,17 +12,22 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  Utils utils=Utils();
+  Utils utils = Utils();
 
   @override
   void initState() {
     super.initState();
     utils.gotoLoginPageFromSplash(context);
-
   }
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    screenWidth = width;
+    sceenHeight = height;
+
     return Scaffold(
       body: InkWell(
         child: Container(
@@ -50,7 +55,10 @@ class _SplashState extends State<Splash> {
                           alignment: AlignmentDirectional.topCenter,
                           child: Text(
                             s.appName,
-                            style: TextStyle(color: c.grey_9, fontSize: 15,fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: c.grey_9,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -83,5 +91,4 @@ class _SplashState extends State<Splash> {
       ),
     );
   }
-
 }

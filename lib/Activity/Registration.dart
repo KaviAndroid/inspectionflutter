@@ -179,7 +179,7 @@ class _RegistrationState extends State<Registration> {
                     ),
                     label: Text(
                       s.regEdit,
-                      style: GoogleFonts.raleway().copyWith(
+                      style: GoogleFonts.getFont('Raleway',
                           fontWeight: FontWeight.w800,
                           fontSize: 15,
                           color: c.colorPrimaryDark),
@@ -197,7 +197,7 @@ class _RegistrationState extends State<Registration> {
                 child: Stack(
                   children: [
                     IgnorePointer(
-                      ignoring: isSpinnerLoading ? true : false,
+                      ignoring: isSpinnerLoading,
                       child: Column(children: <Widget>[
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +207,7 @@ class _RegistrationState extends State<Registration> {
                                   const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.regName,
-                                style: GoogleFonts.raleway().copyWith(
+                                style: GoogleFonts.getFont('Raleway',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                     color: Colors.black),
@@ -255,7 +255,7 @@ class _RegistrationState extends State<Registration> {
                                   const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.regNum,
-                                style: GoogleFonts.raleway().copyWith(
+                                style: GoogleFonts.getFont('Raleway',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                     color: Colors.black),
@@ -298,8 +298,9 @@ class _RegistrationState extends State<Registration> {
                                       // }
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                ATR_Worklist()),
+                                            builder: (context) => ATR_Worklist(
+                                                  Flag: "",
+                                                )),
                                       );
                                     },
                                     icon: isLoadingCUG
@@ -350,7 +351,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 10, bottom: 15),
                                 child: Text(
                                   s.regGender,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -411,7 +412,7 @@ class _RegistrationState extends State<Registration> {
                               ),
                               const SizedBox(height: 8.0),
                               Visibility(
-                                visible: genderError ? true : false,
+                                visible: genderError,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
@@ -437,7 +438,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regLevel,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -511,7 +512,7 @@ class _RegistrationState extends State<Registration> {
                               ),
                               const SizedBox(height: 8.0),
                               Visibility(
-                                visible: levelError ? true : false,
+                                visible: levelError,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
@@ -538,7 +539,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regDesignation,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -606,7 +607,7 @@ class _RegistrationState extends State<Registration> {
                               ),
                               const SizedBox(height: 8.0),
                               Visibility(
-                                visible: desigError ? true : false,
+                                visible: desigError,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
@@ -636,7 +637,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regDsitrict,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -713,7 +714,7 @@ class _RegistrationState extends State<Registration> {
                               ),
                               const SizedBox(height: 8.0),
                               Visibility(
-                                visible: districtError ? true : false,
+                                visible: districtError,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
@@ -740,7 +741,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regBlock,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -806,7 +807,7 @@ class _RegistrationState extends State<Registration> {
                               ),
                               const SizedBox(height: 8.0),
                               Visibility(
-                                visible: blockError ? true : false,
+                                visible: blockError,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
@@ -833,7 +834,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regOffice,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -889,7 +890,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regEmail,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -973,7 +974,7 @@ class _RegistrationState extends State<Registration> {
                                   widget.registerFlag == 1
                                       ? s.regSave
                                       : s.regEdit,
-                                  style: GoogleFonts.raleway().copyWith(
+                                  style: GoogleFonts.getFont('Raleway',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 15,
                                       color: c.white),
@@ -985,63 +986,10 @@ class _RegistrationState extends State<Registration> {
                       ]),
                     ),
                     Visibility(
-                      visible: isSpinnerLoading ? true : false,
-                      child: Center(child: Utils().showSpinner("message")),
+                      visible: isSpinnerLoading,
+                      child:
+                          Center(child: Utils().showSpinner("Processing...")),
                     )
-                    // Center(
-                    //   child: isSpinnerLoading
-                    //       ? Column(
-                    //           children: [
-                    //             Container(
-                    //               height: 150,
-                    //               width: 150,
-                    //               decoration: BoxDecoration(
-                    //                   borderRadius: BorderRadius.circular(80.0),
-                    //                   color: c.grey_7,
-                    //                   boxShadow: const [
-                    //                     BoxShadow(
-                    //                       color: Colors.grey,
-                    //                       offset: Offset(0.0, 1.0), //(x,y)
-                    //                       blurRadius: 6.0,
-                    //                     ),
-                    //                   ]),
-                    //               child: Stack(
-                    //                 children: [
-                    //                   SpinKitDualRing(
-                    //                     color: c.grey_8,
-                    //                     duration: const Duration(
-                    //                         seconds: 1, milliseconds: 500),
-                    //                     size: 140,
-                    //                   ),
-                    //                   Column(
-                    //                     mainAxisAlignment:
-                    //                         MainAxisAlignment.center,
-                    //                     children: [
-                    //                       SpinKitPouringHourGlassRefined(
-                    //                         color: c.white,
-                    //                         duration: const Duration(
-                    //                             seconds: 1, milliseconds: 500),
-                    //                         size: 50,
-                    //                       ),
-                    //                       const SizedBox(
-                    //                         height: 15,
-                    //                       ),
-                    //                       Text("Processing...",
-                    //                           style: GoogleFonts.raleway()
-                    //                               .copyWith(
-                    //                                   fontWeight:
-                    //                                       FontWeight.w800,
-                    //                                   fontSize: 15,
-                    //                                   color: c.white))
-                    //                     ],
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         )
-                    //       : null,
-                    // ),
                   ],
                 ),
               ),
@@ -1178,7 +1126,11 @@ class _RegistrationState extends State<Registration> {
         selectedDesignation = edit_desig_code;
         selectedLevel = edit_level;
         if (edit_level == "D") {
-        } else if (edit_level == "B") {}
+          selectedDistrict = edit_dcode;
+        } else if (edit_level == "B") {
+          selectedDistrict = edit_dcode;
+          selectedBlock = edit_bcode;
+        }
       }
     });
   }

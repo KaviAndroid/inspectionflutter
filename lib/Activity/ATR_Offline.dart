@@ -2,32 +2,37 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
+import 'package:flutter/services.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Resources/global.dart';
-import 'package:inspection_flutter_app/Utils/utils.dart';
+import 'package:inspection_flutter_app/DataBase/DbHelper.dart';
 import 'package:intl/intl.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import '../Utils/utils.dart';
+import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import 'package:flutter/services.dart';
 
-class ATR_Worklist extends StatefulWidget {
+import 'Pdf_Viewer.dart';
+
+class ATR_Offline_worklist extends StatefulWidget {
   final Flag;
-  ATR_Worklist({this.Flag});
+  ATR_Offline_worklist({this.Flag});
   @override
-  State<ATR_Worklist> createState() => _ATR_WorklistState();
+  State<ATR_Offline_worklist> createState() => _ATR_Offline_worklistState();
 }
 
-class _ATR_WorklistState extends State<ATR_Worklist> {
+class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
+    with TickerProviderStateMixin {
   Utils utils = Utils();
   late SharedPreferences prefs;
+  var dbHelper = DbHelper();
+  var dbClient;
 
   //Date Time
   List<DateTime>? selectedDateRange;
@@ -47,101 +52,133 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   String usCount = "0";
   String town_type = "T";
 
-  //BoolVariabless
+  // Bool Variables
   bool isSpinnerLoading = true;
+  bool isWorklistAvailable = false;
   bool isNeedImprovementActive = false;
   bool isUnSatisfiedActive = false;
-  bool isWorklistAvailable = false;
-  bool townActive = true;
+  bool townActive = false;
   bool munActive = false;
   bool corpActive = false;
 
   //pdf
   Uint8List? pdf;
 
+  late AnimationController controller;
+
   @override
   void initState() {
-    dateController.text = ""; //set the initial value of text field
     super.initState();
+
+    controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    controller.repeat(reverse: true);
     initialize();
+  }
+
+  @override
+  void dispose() {
+    controller.reset();
+    controller.dispose();
+    super.dispose();
   }
 
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
-    await Initial_UI_Design();
+    dbClient = await dbHelper.db;
 
+    prefs.getString(s.atr_date) != null
+        ? dateController.text = prefs.getString(s.atr_date).toString()
+        : s.select_from_to_date;
+    fetchOfflineWorklist();
     setState(() {});
-  }
-
-  Future<void> Initial_UI_Design() async {
-    await LoadATRDesign();
-  }
-
-  Future<void> LoadATRDesign() async {
-    final fromDate = DateTime.now();
-    final endDate = fromDate.subtract(const Duration(days: 60));
-
-    String toDate = DateFormat('dd-MM-yyyy').format(fromDate);
-    String startDate = DateFormat('dd-MM-yyyy').format(endDate);
-
-    dateController.text = "$startDate to $toDate";
-    if (await utils.isOnline()) {
-      // API Call
-      await fetchOnlineATRWroklist(startDate, toDate);
-    }
-    setState(() {
-      SDBText = "Block - ${prefs.getString(s.key_bname)}";
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: c.colorPrimary,
-          leading: IconButton(
+      appBar: AppBar(
+        backgroundColor: c.colorPrimary,
+        leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () =>
-                Navigator.of(context, rootNavigator: true).pop(context),
+            onPressed: () => {
+                  controller.reset(),
+                  Navigator.of(context, rootNavigator: true).pop(context)
+                }),
+        title: Text(s.work_list),
+        centerTitle: true, // like this!
+      ),
+      body: Container(
+          color: c.colorAccentverylight,
+          constraints: BoxConstraints(
+            minWidth: screenWidth,
+            minHeight: sceenHeight - 100.0,
           ),
-          title: Text(s.work_list),
-          centerTitle: true, // like this!
-        ),
-        body: Container(
-            color: c.colorAccentverylight,
-            constraints: BoxConstraints(
-              minWidth: screenWidth,
-              minHeight: sceenHeight - 100.0,
-            ),
-            child: Stack(
-              children: [
-                IgnorePointer(
-                  ignoring: isSpinnerLoading,
-                  child: Column(
-                    children: [
-                      widget.Flag == "U"
-                          ? __Urban_design()
-                          : const SizedBox(
-                              height: 10,
-                            ),
-                      __ATR_Dashboard_Design(),
-                      __ATR_WorkList_Loader(),
-                    ],
-                  ),
+          child: Stack(
+            children: [
+              IgnorePointer(
+                ignoring: isSpinnerLoading,
+                child: Column(
+                  children: [
+                    // Download Text Icon
+                    FadeTransition(
+                      opacity: controller,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: GestureDetector(
+                          onTap: () => selectDateFunc(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                imagePath.download,
+                                width: 20,
+                                height: 20,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(s.download_text,
+                                  style: GoogleFonts.getFont('Roboto',
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w900,
+                                      color: c.primary_text_color2))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    widget.Flag == "U"
+                        ? __Urban_design()
+                        : const SizedBox(
+                            height: 10,
+                          ),
+
+                    // Dashboard
+                    __ATR_Dashboard_Design(),
+
+                    // Worklist Design
+                    __ATR_WorkList_Loader(),
+                  ],
                 ),
-                Visibility(
-                  visible: isSpinnerLoading,
-                  child: SizedBox(
-                      height: sceenHeight - 100,
-                      child: Center(
-                        child: utils.showSpinner("Loading..."),
-                      )),
-                )
-              ],
-            )));
+              ),
+              Visibility(
+                visible: isSpinnerLoading,
+                child: SizedBox(
+                    height: sceenHeight - 100,
+                    child: Center(
+                      child: utils.showSpinner("Loading..."),
+                    )),
+              )
+            ],
+          )),
+    );
   }
 
-  // *************************** API call Starts here *************************** //
+  // *************************** API Call starts  Here  *************************** //
 
   Future<void> fetchOnlineATRWroklist(String fromDate, String toDate) async {
     setState(() {
@@ -151,34 +188,20 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       isUnSatisfiedActive = false;
     });
 
-    //Empty the Worklist
-    defaultWorklist = [];
-    unSatisfiedWorkList = [];
-    needImprovementWorkList = [];
-
     var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_get_inspection_details_for_atr,
       s.key_from_date: fromDate,
       s.key_to_date: toDate,
-      s.key_rural_urban: widget.Flag,
+      s.key_rural_urban: prefs.getString(s.area_type)
     };
-
-    if (widget.Flag == "U") {
-      Map urbanRequest = {s.key_town_type: town_type};
-
-      jsonRequest.addAll(urbanRequest);
-    }
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
           Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
     };
-
-    print(jsonRequest);
-    print(encrpted_request);
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
@@ -198,39 +221,74 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       var response_value = userData[s.key_response];
 
       if (status == s.key_ok && response_value == s.key_ok) {
+        prefs.setString(s.atr_date, dateController.text);
         Map res_jsonArray = userData[s.key_json_data];
         List<dynamic> inspection_details =
             res_jsonArray[s.key_inspection_details];
 
         if (inspection_details.isNotEmpty) {
+          dbHelper.delete_table_AtrWorkList('R');
           for (int i = 0; i < inspection_details.length; i++) {
-            if (inspection_details[i][s.key_status_id] == 3) {
-              needImprovementWorkList.add(inspection_details[i]);
-            } else if (inspection_details[i][s.key_status_id] == 2) {
-              unSatisfiedWorkList.add(inspection_details[i]);
-            }
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_AtrWorkList +
+                ' (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES(' +
+                "'" +
+                inspection_details[i][s.key_dcode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_bcode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_pvcode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_inspection_id].toString() +
+                "' , '" +
+                inspection_details[i][s.key_inspection_date] +
+                "' , '" +
+                inspection_details[i][s.key_status_id].toString() +
+                "' , '" +
+                inspection_details[i][s.key_status_name] +
+                "' , '" +
+                inspection_details[i][s.key_description] +
+                "' , '" +
+                inspection_details[i][s.key_work_id].toString() +
+                "' , '" +
+                inspection_details[i][s.key_work_name] +
+                "' , '" +
+                inspection_details[i][s.key_name] +
+                "' , '" +
+                inspection_details[i][s.key_desig_name] +
+                "' , '" +
+                inspection_details[i][s.key_work_type_name] +
+                "' , '" +
+                inspection_details[i][s.key_dname] +
+                "' , '" +
+                inspection_details[i][s.key_bname] +
+                "' , '" +
+                inspection_details[i][s.key_pvname] +
+                "' , '" +
+                inspection_details[i][s.key_rural_urban] +
+                "' , '" +
+                inspection_details[i][s.key_town_type] +
+                "' , '" +
+                inspection_details[i][s.key_tpcode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_townpanchayat_name] +
+                "' , '" +
+                inspection_details[i][s.key_muncode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_municipality_name] +
+                "' , '" +
+                inspection_details[i][s.key_corcode].toString() +
+                "' , '" +
+                inspection_details[i][s.key_corporation_name] +
+                "')");
           }
+          fetchOfflineWorklist();
         }
-        totalWorksCount = inspection_details.length.toString();
-        usCount = unSatisfiedWorkList.length.toString();
-        npCount = needImprovementWorkList.length.toString();
-        setState(() {
-          if (needImprovementWorkList.isNotEmpty) {
-            isNeedImprovementActive = true;
-            defaultWorklist = needImprovementWorkList;
-          } else if (unSatisfiedWorkList.isNotEmpty) {
-            isUnSatisfiedActive = true;
-            defaultWorklist = unSatisfiedWorkList;
-          } else {
-            defaultWorklist = [];
-          }
-          isSpinnerLoading = false;
-          isWorklistAvailable = true;
-        });
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        utils.showAlert(context, s.no_data);
         setState(() {
+          utils.showAlert(context, s.no_data);
           isSpinnerLoading = false;
+          isWorklistAvailable = false;
           totalWorksCount = "0";
           npCount = "0";
           usCount = "0";
@@ -240,58 +298,126 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
-    setState(() {
-      isSpinnerLoading = true;
-    });
+    if (await utils.isOnline()) {
+      setState(() {
+        isSpinnerLoading = true;
+      });
 
-    var userPassKey = prefs.getString(s.userPassKey);
+      var userPassKey = prefs.getString(s.userPassKey);
 
-    Map jsonRequest = {
-      s.key_service_id: s.service_key_get_pdf,
-      s.key_work_id: work_id,
-      s.key_inspection_id: inspection_id,
-    };
+      Map jsonRequest = {
+        s.key_service_id: s.service_key_get_pdf,
+        s.key_work_id: work_id,
+        s.key_inspection_id: inspection_id,
+      };
 
-    Map encrpted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-    };
+      Map encrpted_request = {
+        s.key_user_name: prefs.getString(s.key_user_name),
+        s.key_data_content:
+            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      };
 
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+      HttpClient _client = HttpClient(context: await Utils().globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service,
+          body: json.encode(encrpted_request));
 
-    if (response.statusCode == 200) {
-      String responseData = response.body;
+      if (response.statusCode == 200) {
+        String responseData = response.body;
 
-      var jsonData = jsonDecode(responseData);
+        var jsonData = jsonDecode(responseData);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+        var enc_data = jsonData[s.key_enc_data];
+        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
+        var userData = jsonDecode(decrpt_data);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        var pdftoString = userData[s.key_json_data];
-        pdf = const Base64Codec().decode(pdftoString['pdf_string']);
-        setState(() {
-          isSpinnerLoading = false;
-        });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => PDF_Viewer(
-                    pdfBytes: pdf,
-                  )),
-        );
+        if (status == s.key_ok && response_value == s.key_ok) {
+          var pdftoString = userData[s.key_json_data];
+          pdf = const Base64Codec().decode(pdftoString['pdf_string']);
+          setState(() {
+            isSpinnerLoading = false;
+          });
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PDF_Viewer(
+                      pdfBytes: pdf,
+                    )),
+          );
+        }
       }
+    } else {
+      setState(() {
+        isSpinnerLoading = false;
+      });
+      utils.showAlert(context, "asd");
     }
   }
-  // *************************** API call Ends here *************************** //
+
+  // *************************** API Call Ends  Here  *************************** //
+
+  // *************************** Fetch Offline Worklist starts  Here  *************************** //
+
+  Future<void> fetchOfflineWorklist() async {
+    List<Map> list = await dbClient.rawQuery(
+        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' ");
+
+    if (list.isEmpty) {
+      isSpinnerLoading = false;
+      isWorklistAvailable = false;
+    } else {
+      totalWorksCount = list.length.toString();
+
+      //Empty the Worklist
+      defaultWorklist = [];
+      unSatisfiedWorkList = [];
+      needImprovementWorkList = [];
+
+      for (int i = 0; i < list.length; i++) {
+        if (list[i][s.key_status_id] == "3") {
+          needImprovementWorkList.add(list[i]);
+        } else if (list[i][s.key_status_id] == "2") {
+          unSatisfiedWorkList.add(list[i]);
+        }
+      }
+
+      usCount = unSatisfiedWorkList.length.toString();
+      npCount = needImprovementWorkList.length.toString();
+
+      if (needImprovementWorkList.isNotEmpty) {
+        isNeedImprovementActive = true;
+        defaultWorklist = needImprovementWorkList;
+      } else if (unSatisfiedWorkList.isNotEmpty) {
+        isUnSatisfiedActive = true;
+        isNeedImprovementActive = false;
+        defaultWorklist = unSatisfiedWorkList;
+      }
+
+      if (prefs.getString(s.onOffType) == "offline" &&
+          prefs.getString(s.area_type) == "U") {
+        if (list[0][s.key_town_type] == "T") {
+          townActive = true;
+        } else if (list[0][s.key_town_type] == "M") {
+          munActive = true;
+        } else if (list[0][s.key_town_type] == "C") {
+          corpActive = true;
+        }
+      }
+
+      setState(() {
+        isSpinnerLoading = false;
+        isWorklistAvailable = true;
+      });
+    }
+    setState(() {
+      SDBText = "Block - ${prefs.getString(s.key_bname)}";
+    });
+  }
+
+  // *************************** Fetch Offline Worklist ends  Here  *************************** //
 
   // *************************** Date  Functions Starts here *************************** //
 
@@ -350,13 +476,11 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
   // *************************** Date  Functions Ends here *************************** //
 
-  // *************************** Design Starts Here  *************************** //
-
   // *************************** ATR DASHBOARD Starts here *************************** //
 
   __ATR_Dashboard_Design() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 0),
+      margin: const EdgeInsets.only(top: 5, bottom: 0),
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
@@ -365,7 +489,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
             height: 200,
             margin:
                 const EdgeInsets.only(top: 25, bottom: 10, left: 20, right: 20),
-            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+            padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
             decoration: BoxDecoration(
                 color: c.white,
                 borderRadius: BorderRadius.circular(20),
@@ -384,13 +508,13 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                   padding: EdgeInsets.only(top: 10),
                   child: Text(SDBText,
                       style: GoogleFonts.getFont('Montserrat',
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                           fontSize: 13,
                           color: c.text_color)),
                 ),
                 Text(s.total_inspection_works + totalWorksCount,
                     style: GoogleFonts.getFont('Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         fontSize: 13,
                         color: c.text_color)),
                 Row(
@@ -557,174 +681,13 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
   // *************************** ATR DASHBOARD Ends here *************************** //
 
-  // *************************** ATR Urban starts here *************************** //
-
-  __Urban_design() {
-    return Container(
-      margin: EdgeInsets.only(top: 5, bottom: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(5),
-            padding: const EdgeInsets.all(3),
-            child: Text(s.select_tmc,
-                style: GoogleFonts.getFont('Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                    color: c.grey_10)),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    townActive = true;
-                    town_type = "T";
-                    munActive = false;
-                    corpActive = false;
-                    refresh();
-                    setState(() {});
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                          color: townActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: townActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: townActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text("Town Pancha...",
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                    color: townActive ? c.white : c.grey_6)),
-                          ])),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    town_type = "M";
-                    townActive = false;
-                    munActive = true;
-                    corpActive = false;
-                    refresh();
-                    setState(() {});
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                          color: munActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: munActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: munActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text(s.municipality,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                    color: munActive ? c.white : c.grey_6)),
-                          ])),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    town_type = "C";
-                    townActive = false;
-                    munActive = false;
-                    corpActive = true;
-                    refresh();
-                    setState(() {});
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                          color: corpActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: corpActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: corpActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text(s.corporation,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                    color: corpActive ? c.white : c.grey_6)),
-                          ])),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // *************************** ATR Urban Ends here *************************** //
-
   // *************************** ATR Worklist Starts Here  *************************** //
 
   __ATR_WorkList_Loader() {
     return SingleChildScrollView(
       child: Container(
         margin: const EdgeInsets.only(top: 0),
-        height: widget.Flag == "U" ? sceenHeight - 435 : sceenHeight - 350,
+        height: widget.Flag == "U" ? sceenHeight - 465 : sceenHeight - 405,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -743,7 +706,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                           itemBuilder: (context, index) {
                             return Card(
                               margin: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 0),
+                                  vertical: 10, horizontal: 0),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -775,7 +738,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                             width: 5,
                                           ),
                                           Text(
-                                            defaultWorklist[index][s.key_name],
+                                            defaultWorklist[index]
+                                                [s.inspection_by_officer],
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -796,7 +760,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "${"( " + defaultWorklist[index][s.key_desig_name]} )",
+                                            "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1135,8 +1099,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                         alignment: Alignment.center,
                         child: Text(
                           s.no_data,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w800),
+                          style: const TextStyle(fontSize: 15),
                         ),
                       ),
                     ),
@@ -1152,13 +1115,201 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
   // *************************** ATR Worklist Ends Here  *************************** //
 
-  // *************************** Design Ends  Here  *************************** //
+  // *************************** ATR Urban starts here *************************** //
+
+  __Urban_design() {
+    return Container(
+      margin: const EdgeInsets.only(top: 5, bottom: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(3),
+            child: Text(s.select_tmc,
+                style: GoogleFonts.getFont('Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                    color: c.grey_10)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    townActive = true;
+                    town_type = "T";
+                    munActive = false;
+                    corpActive = false;
+                    refresh();
+                    setState(() {});
+                  },
+                  child: Container(
+                      height: 35,
+                      margin: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                          color: townActive ? c.colorAccentlight : c.white,
+                          border: Border.all(
+                              width: townActive ? 0 : 2, color: c.colorPrimary),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 5.0,
+                            ),
+                          ]),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Image.asset(
+                              imagePath.radio,
+                              color: townActive ? c.white : c.grey_5,
+                              width: 17,
+                              height: 17,
+                            ),
+                            Text("Town Pancha...",
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                    color: townActive ? c.white : c.grey_6)),
+                          ])),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    town_type = "M";
+                    townActive = false;
+                    munActive = true;
+                    corpActive = false;
+                    refresh();
+                    setState(() {});
+                  },
+                  child: Container(
+                      height: 35,
+                      margin: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                          color: munActive ? c.colorAccentlight : c.white,
+                          border: Border.all(
+                              width: munActive ? 0 : 2, color: c.colorPrimary),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 5.0,
+                            ),
+                          ]),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Image.asset(
+                              imagePath.radio,
+                              color: munActive ? c.white : c.grey_5,
+                              width: 17,
+                              height: 17,
+                            ),
+                            Text(s.municipality,
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                    color: munActive ? c.white : c.grey_6)),
+                          ])),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    town_type = "C";
+                    townActive = false;
+                    munActive = false;
+                    corpActive = true;
+                    refresh();
+                    setState(() {});
+                  },
+                  child: Container(
+                      height: 35,
+                      margin: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                          color: corpActive ? c.colorAccentlight : c.white,
+                          border: Border.all(
+                              width: corpActive ? 0 : 2, color: c.colorPrimary),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 5.0,
+                            ),
+                          ]),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Image.asset(
+                              imagePath.radio,
+                              color: corpActive ? c.white : c.grey_5,
+                              width: 17,
+                              height: 17,
+                            ),
+                            Text(s.corporation,
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                    color: corpActive ? c.white : c.grey_6)),
+                          ])),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // *************************** ATR Urban Ends here *************************** //
 
   // *************************** Refresh Starts  Here  *************************** //
 
   void refresh() {
+    if (prefs.getString(s.onOffType) == "offline") {
+      if (defaultWorklist.isNotEmpty) {
+        if (defaultWorklist[0][s.key_town_type] == "T") {
+          if (townActive) {
+            fetchOfflineWorklist();
+          } else {
+            emptyDatas();
+          }
+        } else if (defaultWorklist[0][s.key_town_type] == "M") {
+          if (munActive) {
+            fetchOfflineWorklist();
+          } else {
+            emptyDatas();
+          }
+        } else if (defaultWorklist[0][s.key_town_type] == "C") {
+          if (corpActive) {
+            fetchOfflineWorklist();
+          } else {
+            emptyDatas();
+          }
+        }
+      }
+    }
+  }
+
+  // *************************** Refresh Ends  Here  *************************** //
+
+  // *************************** Empty Data Starts  Here  *************************** //
+
+  void emptyDatas() {
     //Empty the Worklist
-    defaultWorklist = [];
     unSatisfiedWorkList = [];
     needImprovementWorkList = [];
 
@@ -1171,5 +1322,5 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     dateController.text = s.select_from_to_date;
   }
 
-  // *************************** Refresh Ends  Here  *************************** //
+  // *************************** Empty Data Ends  Here  *************************** //
 }

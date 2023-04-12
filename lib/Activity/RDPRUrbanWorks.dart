@@ -30,13 +30,13 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
-  List finYearItems=[];
+  List finYearItems = [];
   List districtItems = [];
   List schemeItems = [];
   List tmcItems = [];
-  String selectedLevel="";
-  String selectedDistrict="";
-  String selectedTMC="";
+  String selectedLevel = "";
+  String selectedDistrict = "";
+  String selectedTMC = "";
   bool submitFlag = false;
 
   bool districtError = false;
@@ -69,35 +69,37 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_FinancialYear);
+    List<Map> list =
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     print(list.toString());
     finYearItems.addAll(list);
-    selectedLevel=prefs.getString(s.key_level)!;
+    selectedLevel = prefs.getString(s.key_level)!;
     print(finYearItems.toString());
-    if(selectedLevel=='S'){
-      districtFlag=true;
-      List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_District);
+    if (selectedLevel == 'S') {
+      districtFlag = true;
+      List<Map> list =
+          await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
       print(list.toString());
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
-    }else {
-      districtFlag=true;
+    } else {
+      districtFlag = true;
     }
 
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child:Scaffold(
+      child: Scaffold(
         appBar: AppBar(
           backgroundColor: c.colorPrimary,
           centerTitle: true,
@@ -109,7 +111,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
               children: [
                 Align(
                   alignment: AlignmentDirectional.center,
-                  child:Container(
+                  child: Container(
                     transform: Matrix4.translationValues(-30.0, 0.0, 0.0),
                     alignment: Alignment.center,
                     child: Text(
@@ -122,11 +124,11 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
             ),
           ),
         ),
-        body:Container(
+        body: Container(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           color: c.white,
           height: MediaQuery.of(context).size.height,
-          child:SingleChildScrollView(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -136,18 +138,16 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Visibility(
-                        visible: districtFlag
-                            ? true
-                            : false,
+                        visible: districtFlag ? true : false,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding:
-                              const EdgeInsets.only(top: 15, bottom: 15),
+                                  const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.selectDistrict,
-                                style: GoogleFonts.raleway().copyWith(
+                                style: GoogleFonts.getFont('Raleway',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                     color: c.grey_8),
@@ -164,32 +164,30 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                 ignoring: isLoadingD ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2(
-                                    style:
-                                    const TextStyle(color: Colors.black),
+                                    style: const TextStyle(color: Colors.black),
                                     value: selectedDistrict,
                                     isExpanded: true,
                                     items: districtItems
-                                        .map((item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item[s.key_dcode]
-                                              .toString(),
-                                          child: Text(
-                                            item[s.key_dname].toString(),
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ))
+                                        .map((item) => DropdownMenuItem<String>(
+                                              value:
+                                                  item[s.key_dcode].toString(),
+                                              child: Text(
+                                                item[s.key_dname].toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ))
                                         .toList(),
                                     onChanged: (value) {
                                       if (value != "0") {
-                                        submitFlag=false;
-                                        isLoadingD= true;
+                                        submitFlag = false;
+                                        isLoadingD = true;
                                         loadTMCBlock(value.toString());
                                         setState(() {});
                                       } else {
                                         setState(() {
-                                          submitFlag=false;
+                                          submitFlag = false;
                                           selectedDistrict = value.toString();
                                           districtError = true;
                                         });
@@ -202,21 +200,20 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                     iconStyleData: IconStyleData(
                                       icon: isLoadingD
                                           ? SpinKitCircle(
-                                        color: c.colorPrimary,
-                                        size: 30,
-                                        duration: const Duration(
-                                            milliseconds: 1200),
-                                      )
+                                              color: c.colorPrimary,
+                                              size: 30,
+                                              duration: const Duration(
+                                                  milliseconds: 1200),
+                                            )
                                           : const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black45,
+                                            ),
                                       iconSize: 30,
                                     ),
                                     dropdownStyleData: DropdownStyleData(
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
                                     ),
                                   ),
@@ -241,105 +238,101 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                         ),
                       ),
                       Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                              const EdgeInsets.only(top: 15, bottom: 15),
-                              child: Text(
-                                s.select_tmc,
-                                style: GoogleFonts.raleway().copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 12,
-                                    color: c.grey_8),
-                              ),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 15),
+                            child: Text(
+                              s.select_tmc,
+                              style: GoogleFonts.getFont('Raleway',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: c.grey_8),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: c.grey_out,
-                                  border: Border.all(
-                                      width: tmcError ? 1 : 0.1,
-                                      color: tmcError ? c.red : c.grey_10),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: IgnorePointer(
-                                ignoring: isLoadingTMC ? true : false,
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton2(
-                                    style:
-                                    const TextStyle(color: Colors.black),
-                                    value: selectedTMC,
-                                    isExpanded: true,
-                                    items: tmcItems
-                                        .map((item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item[s.key_scheme_id]
-                                              .toString(),
-                                          child: Text(
-                                            item[s.key_scheme_name].toString(),
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: c.grey_out,
+                                border: Border.all(
+                                    width: tmcError ? 1 : 0.1,
+                                    color: tmcError ? c.red : c.grey_10),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: IgnorePointer(
+                              ignoring: isLoadingTMC ? true : false,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2(
+                                  style: const TextStyle(color: Colors.black),
+                                  value: selectedTMC,
+                                  isExpanded: true,
+                                  items: tmcItems
+                                      .map((item) => DropdownMenuItem<String>(
+                                            value: item[s.key_scheme_id]
+                                                .toString(),
+                                            child: Text(
+                                              item[s.key_scheme_name]
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
                                             ),
-                                          ),
-                                        ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      if (value != "0") {
-                                        isLoadingTMC= true;
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    if (value != "0") {
+                                      isLoadingTMC = true;
+                                      selectedTMC = value.toString();
+                                      setState(() {});
+                                    } else {
+                                      setState(() {
+                                        submitFlag = false;
                                         selectedTMC = value.toString();
-                                        setState(() {});
-                                      } else {
-                                        setState(() {
-                                          submitFlag=false;
-                                          selectedTMC = value.toString();
-                                          tmcError = true;
-                                        });
-                                      }
-                                    },
-                                    buttonStyleData: const ButtonStyleData(
-                                      height: 45,
-                                      padding: EdgeInsets.only(right: 10),
-                                    ),
-                                    iconStyleData: IconStyleData(
-                                      icon: isLoadingTMC
-                                          ? SpinKitCircle(
-                                        color: c.colorPrimary,
-                                        size: 30,
-                                        duration: const Duration(
-                                            milliseconds: 1200),
-                                      )
-                                          : const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
-                                      iconSize: 30,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(15),
-                                      ),
+                                        tmcError = true;
+                                      });
+                                    }
+                                  },
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 45,
+                                    padding: EdgeInsets.only(right: 10),
+                                  ),
+                                  iconStyleData: IconStyleData(
+                                    icon: isLoadingTMC
+                                        ? SpinKitCircle(
+                                            color: c.colorPrimary,
+                                            size: 30,
+                                            duration: const Duration(
+                                                milliseconds: 1200),
+                                          )
+                                        : const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.black45,
+                                          ),
+                                    iconSize: 30,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8.0),
-                            Visibility(
-                              visible: tmcError ? true : false,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Text(
-                                  s.select_tmc,
-                                  // state.hasError ? state.errorText : '',
-                                  style: TextStyle(
-                                      color: Colors.redAccent.shade700,
-                                      fontSize: 12.0),
-                                ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: tmcError ? true : false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                s.select_tmc,
+                                // state.hasError ? state.errorText : '',
+                                style: TextStyle(
+                                    color: Colors.redAccent.shade700,
+                                    fontSize: 12.0),
                               ),
                             ),
-                          ],
-                        ),
-
+                          ),
+                        ],
+                      ),
                       Visibility(
                         visible: submitFlag,
                         child: Container(
@@ -348,18 +341,17 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                             child: ElevatedButton(
                               style: ButtonStyle(
                                   backgroundColor:
-                                  MaterialStateProperty.all<Color>(
-                                      c.colorPrimary),
+                                      MaterialStateProperty.all<Color>(
+                                          c.colorPrimary),
                                   shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
+                                          RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                              onPressed: () {
-
-                              },
-                              child: Text(s.submit,
-                                style: GoogleFonts.raleway().copyWith(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ))),
+                              onPressed: () {},
+                              child: Text(
+                                s.submit,
+                                style: GoogleFonts.getFont('Raleway',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 15,
                                     color: c.white),
@@ -375,11 +367,9 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
             ),
           ),
         ),
-
-      ),);
+      ),
+    );
   }
 
-  void loadTMCBlock(String string) {
-
-  }
+  void loadTMCBlock(String string) {}
 }

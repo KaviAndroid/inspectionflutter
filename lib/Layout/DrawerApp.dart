@@ -354,8 +354,9 @@ class _DrawerAppState extends State<DrawerApp> {
             onTap: (){
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                builder: (context) => ViewSavedRDPR(),
+                builder: (context) => ViewSavedRDPR(Flag: area_type),
               ));
+              print("FLAG####"+area_type);
             },child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

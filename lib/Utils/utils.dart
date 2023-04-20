@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
+import 'package:intl/intl.dart';
 import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
@@ -61,14 +62,25 @@ class Utils {
   }
 
   void gotoHomePage(BuildContext context, String s) {
-    Timer(
-        const Duration(seconds: 2),
-        () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Home(
-                      isLogin: s,
-                    ))));
+    if(s=="Login"){
+      Timer(
+          const Duration(seconds: 2),
+              () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Home(
+                    isLogin: s,
+                  ))));
+    }else{
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Home(
+                isLogin: s,
+              )));
+
+    }
+
   }
 
   Future<void> gotoLoginPageFromSplash(BuildContext context) async {
@@ -76,6 +88,31 @@ class Utils {
         const Duration(seconds: 2),
         () => Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Login())));
+  }
+  Future<void> hideSoftKeyBoard(BuildContext context) async {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+  Future<bool> delayHours(BuildContext context,String upDate,int month) async {
+    DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+    DateTime dateTimeLup = inputFormat.parse(upDate);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-MM-yyyy').format(now);
+    DateTime dateTimeNow = inputFormat.parse(formattedDate);
+    bool flag=false;
+    double  hoursOfMonth=month*30*24;
+    // DateTime dateTimeNow = DateTime.now();
+
+    final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
+    print('days>>'+'$differenceInDays');
+
+    final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
+    print('hours>>'+'$differenceInHours');
+    if(differenceInHours >= hoursOfMonth){
+      flag=true;
+    }else {
+      flag=false;
+    }
+    return flag;
   }
 
   String encryption(String plainText, String ENCRYPTION_KEY) {
@@ -165,7 +202,7 @@ class Utils {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('AlertDialog Title'),
+          title: const Text('Alert'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -278,4 +315,28 @@ class Utils {
       ],
     );
   }
+  Future<bool> editdelayHours(String myDate) async {
+    DateFormat inputFormat = DateFormat('dd-MM-yyyy hh:mm:ss');
+    DateTime dateTimeLup = inputFormat.parse(myDate);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
+    DateTime dateTimeNow = inputFormat.parse(formattedDate);
+    bool  flag=false;
+    // double  hoursOfMonth=month*30*24;
+    // DateTime dateTimeNow = DateTime.now();
+
+    final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
+    print('days>>'+'$differenceInDays');
+
+    final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
+    print('hours>>'+'$differenceInHours');
+    if(differenceInHours < 48){
+      flag=true;
+    }else {
+      flag=false;
+    }
+    return flag;
+  }
+
+
 }

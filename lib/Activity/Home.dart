@@ -845,7 +845,30 @@ class _HomeState extends State<Home> {
                                               prefs.setString(
                                                   s.onOffType, "offline");
                                               prefs.setString(s.workType, "rdpr");
-                                              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context) =>  RDPR_Offline()));
+                                              if(prefs.getString(s.area_type) =='R'){
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => RDPR_Offline(),
+                                                ))
+                                                    .then((value) {
+                                                  isLogin="RDPR";
+                                                  initialize();
+                                                  // you can do what you need here
+                                                  // setState etc.
+                                                });
+                                              }else{
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => RDPRUrbanWorks(),
+                                                ))
+                                                    .then((value) {
+                                                  isLogin="RDPR";
+                                                  initialize();
+                                                  // you can do what you need here
+                                                  // setState etc.
+                                                });
+                                              }
+
                                             },
                                             child: Text(
                                               s.go_offline,

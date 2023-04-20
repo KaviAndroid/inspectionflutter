@@ -105,8 +105,15 @@ class _VillageListFromGeoLocationState
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WorkList(
-                                  schemeList: schemeItems,finYear:'',dcode: widget.villageList[index][s.key_dcode].toString(),bcode: widget.villageList[index][s.key_bcode].toString(),
-                                  pvcode:widget.villageList[index][s.key_pvcode].toString(),scheme:  '',flag: 'geo',
+                                  schemeList: schemeItems,
+                                  finYear:'',
+                                  dcode: widget.villageList[index][s.key_dcode].toString(),
+                                  bcode: widget.villageList[index][s.key_bcode].toString(),
+                                  pvcode:widget.villageList[index][s.key_pvcode].toString(),
+                                  scheme:  '',
+                                  tmccode: '',
+                                  townType: '',
+                                  flag: 'geo',
                                 )));
                       },
                       child: Card(

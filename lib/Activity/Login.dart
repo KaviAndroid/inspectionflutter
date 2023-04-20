@@ -17,6 +17,7 @@ import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
@@ -33,6 +34,7 @@ class LoginState extends State<Login> {
   TextEditingController user_password = TextEditingController();
   String userPassKey = "";
   String userDecriptKey = "";
+  String version = "";
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
@@ -47,6 +49,16 @@ class LoginState extends State<Login> {
     _passwordVisible = false;
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    print("app>>"+appName+" >>"+packageName+" >>"+version+" >>"+buildNumber );
+    setState(() {
+
+    });
   }
 
   @override
@@ -295,10 +307,10 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9751337424";
+                                user_name.text = "9080873403";
                                 String ss = new String.fromCharCodes(
                                     new Runes('\u0024'));
-                                user_password.text = "Test88#" + ss;
+                                user_password.text = "crd45#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
                                     // utils.showToast(context, string.success);
@@ -416,7 +428,7 @@ class LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text(
-                        s.version,
+                        s.version+" "+version,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: c.d_grey2,

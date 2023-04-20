@@ -714,6 +714,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               bcode: selectedBlock,
                                               pvcode: selectedVillage,
                                               scheme: selectedScheme,
+                                          tmccode: '',
+                                          townType: '',
                                               flag: 'filter',
                                             )));
                               },

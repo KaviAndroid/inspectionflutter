@@ -39,7 +39,14 @@ String download = "assets/images/download.png";
 String radio = "assets/images/radio.png";
 String mic_mute_icon = "assets/images/mic_mute_icon.png";
 String pdf_icon = "assets/images/pdf.png";
-String edit_icon = "assets/images/ic_edit.png";
+String rising = "assets/images/rising.png";
+String card = "assets/images/card.png";
+String circle = "assets/images/circle.png";
+String arrow_up = "assets/images/arrow_up.png";
+String arrow_up_icon = "assets/images/arrow_up_icon.png";
+String tick = "assets/images/tick.png";
+String edit_icon = "assets/images/edit_icon.png";
+String search_icon = "assets/images/search.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

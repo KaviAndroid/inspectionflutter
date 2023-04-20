@@ -13,7 +13,6 @@ import 'package:inspection_flutter_app/Layout/ReadMoreLess.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart' as loc;
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:inspection_flutter_app/Activity/ATR_Save.dart';
 import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   List needImprovementWorkList = [];
   List unSatisfiedWorkList = [];
   List defaultWorklist = [];
+  List selectedWorklist = [];
 
   // Controller Text
   TextEditingController dateController = TextEditingController();
@@ -1077,23 +1079,39 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                 ),
                                 Align(
                                   alignment: AlignmentDirectional.topEnd,
-                                  child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    decoration: BoxDecoration(
-                                        color: c.colorPrimary,
-                                        borderRadius: const BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(50))),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 5, bottom: 5),
-                                        child: Image.asset(
-                                          imagePath.forword,
-                                          width: 25,
-                                          height: 25,
-                                          color: c.white,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      selectedWorklist.clear();
+                                      selectedWorklist
+                                          .add(defaultWorklist[index]);
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => ATR_Save(
+                                          area_type: widget.Flag,
+                                          onoff_type:
+                                              prefs.getString(s.onOffType),
+                                          selectedWorklist: selectedWorklist,
+                                        ),
+                                      ));
+                                    },
+                                    child: Container(
+                                      height: 55,
+                                      width: 55,
+                                      decoration: BoxDecoration(
+                                          color: c.colorPrimary,
+                                          borderRadius: const BorderRadius.only(
+                                              topRight: Radius.circular(10.0),
+                                              bottomLeft: Radius.circular(50))),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5, bottom: 5),
+                                          child: Image.asset(
+                                            imagePath.forword,
+                                            width: 25,
+                                            height: 25,
+                                            color: c.white,
+                                          ),
                                         ),
                                       ),
                                     ),

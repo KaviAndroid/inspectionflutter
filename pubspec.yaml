@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^2.2.5
   path_provider: ^2.0.13
+  permission_handler: ^9.2.0
   crypto: ^3.0.0
   flutter_aes_ecb_pkcs5_fork: ^0.1.4
   http: ^0.13.5
@@ -54,6 +55,8 @@ dependencies:
   intl: ^0.17.0
   omni_datetime_picker: ^1.0.0
   syncfusion_flutter_pdfviewer: ^21.1.38
+  syncfusion_flutter_charts: ^21.1.41
+  pie_chart: ^3.1.1
 
 
 

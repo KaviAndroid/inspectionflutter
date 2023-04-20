@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:inspection_flutter_app/Activity/ATR_Save.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,6 +42,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   List needImprovementWorkList = [];
   List unSatisfiedWorkList = [];
   List defaultWorklist = [];
+  List selectedWorklist = [];
 
   // Controller Text
   TextEditingController dateController = TextEditingController();
@@ -89,9 +91,16 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
 
-    prefs.getString(s.atr_date) != null
-        ? dateController.text = prefs.getString(s.atr_date).toString()
-        : s.select_from_to_date;
+    widget.Flag == "U"
+        ? prefs.getString(s.atr_date_u) != null
+            ? dateController.text = prefs.getString(s.atr_date_u).toString()
+            : s.select_from_to_date
+        : widget.Flag == "R"
+            ? prefs.getString(s.atr_date_r) != null
+                ? dateController.text = prefs.getString(s.atr_date_r).toString()
+                : s.select_from_to_date
+            : null;
+
     fetchOfflineWorklist();
     setState(() {});
   }
@@ -197,6 +206,12 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       s.key_rural_urban: prefs.getString(s.area_type)
     };
 
+    if (widget.Flag == "U") {
+      Map urbanRequest = {s.key_town_type: town_type};
+
+      jsonRequest.addAll(urbanRequest);
+    }
+
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
@@ -221,13 +236,19 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       var response_value = userData[s.key_response];
 
       if (status == s.key_ok && response_value == s.key_ok) {
-        prefs.setString(s.atr_date, dateController.text);
+        widget.Flag == "U"
+            ? prefs.setString(s.atr_date_u, dateController.text)
+            : prefs.setString(s.atr_date_r, dateController.text);
         Map res_jsonArray = userData[s.key_json_data];
         List<dynamic> inspection_details =
             res_jsonArray[s.key_inspection_details];
 
         if (inspection_details.isNotEmpty) {
-          dbHelper.delete_table_AtrWorkList('R');
+          if (widget.Flag == "U") {
+            dbHelper.delete_table_AtrWorkList('U');
+          } else if (widget.Flag == "R") {
+            dbHelper.delete_table_AtrWorkList('R');
+          }
           for (int i = 0; i < inspection_details.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_AtrWorkList +
@@ -389,6 +410,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
       if (needImprovementWorkList.isNotEmpty) {
         isNeedImprovementActive = true;
+        isUnSatisfiedActive = false;
         defaultWorklist = needImprovementWorkList;
       } else if (unSatisfiedWorkList.isNotEmpty) {
         isUnSatisfiedActive = true;
@@ -396,8 +418,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         defaultWorklist = unSatisfiedWorkList;
       }
 
-      if (prefs.getString(s.onOffType) == "offline" &&
-          prefs.getString(s.area_type) == "U") {
+      if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
         if (list[0][s.key_town_type] == "T") {
           townActive = true;
         } else if (list[0][s.key_town_type] == "M") {
@@ -547,20 +568,21 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                   ),
                                 ]),
                             child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(s.need_improvement,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: 13,
+                                          fontSize: 12,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
                                   Text(npCount,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: 13,
+                                          fontSize: 12,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
@@ -1041,23 +1063,39 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                 ),
                                 Align(
                                   alignment: AlignmentDirectional.topEnd,
-                                  child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    decoration: BoxDecoration(
-                                        color: c.colorPrimary,
-                                        borderRadius: const BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(50))),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 5, bottom: 5),
-                                        child: Image.asset(
-                                          imagePath.forword,
-                                          width: 25,
-                                          height: 25,
-                                          color: c.white,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      selectedWorklist.clear();
+                                      selectedWorklist
+                                          .add(defaultWorklist[index]);
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => ATR_Save(
+                                          area_type: widget.Flag,
+                                          onoff_type:
+                                              prefs.getString(s.onOffType),
+                                          selectedWorklist: selectedWorklist,
+                                        ),
+                                      ));
+                                    },
+                                    child: Container(
+                                      height: 55,
+                                      width: 55,
+                                      decoration: BoxDecoration(
+                                          color: c.colorPrimary,
+                                          borderRadius: const BorderRadius.only(
+                                              topRight: Radius.circular(10.0),
+                                              bottomLeft: Radius.circular(50))),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5, bottom: 5),
+                                          child: Image.asset(
+                                            imagePath.forword,
+                                            width: 25,
+                                            height: 25,
+                                            color: c.white,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1171,11 +1209,15 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                               width: 17,
                               height: 17,
                             ),
-                            Text("Town Pancha...",
+                            Expanded(
+                              child: Text(
+                                "Town Panch...",
                                 style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 13,
-                                    color: townActive ? c.white : c.grey_6)),
+                                    color: townActive ? c.white : c.grey_6),
+                              ),
+                            ),
                           ])),
                 ),
               ),

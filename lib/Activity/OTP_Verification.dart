@@ -80,7 +80,7 @@ class _OTPVerificationState extends State<OTPVerification> {
                                       color: c.black)),
                               const SizedBox(height: 30),
                               Text(s.please_verify_otp,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w400,
                                       fontSize: 15,
                                       color: c.black)),
@@ -94,7 +94,7 @@ class _OTPVerificationState extends State<OTPVerification> {
                             child: Text(
                                 s.enter_registered_mobile_number_to_send_otp,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.getFont('Raleway',
+                                style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 15,
                                     color: c.black)),
@@ -174,7 +174,7 @@ class _OTPVerificationState extends State<OTPVerification> {
                                     design_flag == "OTP"
                                         ? "{ Resend OTP }"
                                         : '',
-                                    style: GoogleFonts.getFont('Raleway',
+                                    style: GoogleFonts.getFont('Roboto',
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
                                         color: c.red)),
@@ -210,7 +210,7 @@ class _OTPVerificationState extends State<OTPVerification> {
                                         design_flag == "OTP"
                                             ? s.verify
                                             : 'Send OTP',
-                                        style: GoogleFonts.getFont('Raleway',
+                                        style: GoogleFonts.getFont('Roboto',
                                             fontWeight: FontWeight.w800,
                                             fontSize: 15,
                                             color: c.white),

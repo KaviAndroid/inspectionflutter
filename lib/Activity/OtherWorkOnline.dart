@@ -112,7 +112,7 @@ class _OtherWorkOnlineState extends State<OtherWorkOnline> {
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
                             child: Text(
                               s.select_financial_year,
-                              style: GoogleFonts.getFont('Raleway',
+                              style: GoogleFonts.getFont('Roboto',
                                   fontWeight: FontWeight.w800,
                                   fontSize: 12,
                                   color: c.grey_8),
@@ -213,7 +213,7 @@ class _OtherWorkOnlineState extends State<OtherWorkOnline> {
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
                             child: Text(
                               s.selectDistrict,
-                              style: GoogleFonts.getFont('Raleway',
+                              style: GoogleFonts.getFont('Roboto',
                                   fontWeight: FontWeight.w800,
                                   fontSize: 12,
                                   color: c.grey_8),

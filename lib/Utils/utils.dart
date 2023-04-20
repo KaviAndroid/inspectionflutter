@@ -62,25 +62,23 @@ class Utils {
   }
 
   void gotoHomePage(BuildContext context, String s) {
-    if(s=="Login"){
+    if (s == "Login") {
       Timer(
           const Duration(seconds: 2),
-              () => Navigator.pushReplacement(
+          () => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => Home(
-                    isLogin: s,
-                  ))));
-    }else{
+                        isLogin: s,
+                      ))));
+    } else {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => Home(
-                isLogin: s,
-              )));
-
+                    isLogin: s,
+                  )));
     }
-
   }
 
   Future<void> gotoLoginPageFromSplash(BuildContext context) async {
@@ -89,28 +87,31 @@ class Utils {
         () => Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Login())));
   }
+
   Future<void> hideSoftKeyBoard(BuildContext context) async {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
-  Future<bool> delayHours(BuildContext context,String upDate,int month) async {
+
+  Future<bool> delayHours(
+      BuildContext context, String upDate, int month) async {
     DateFormat inputFormat = DateFormat('dd-MM-yyyy');
     DateTime dateTimeLup = inputFormat.parse(upDate);
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
     DateTime dateTimeNow = inputFormat.parse(formattedDate);
-    bool flag=false;
-    double  hoursOfMonth=month*30*24;
+    bool flag = false;
+    double hoursOfMonth = month * 30 * 24;
     // DateTime dateTimeNow = DateTime.now();
 
     final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
-    print('days>>'+'$differenceInDays');
+    print('days>>' + '$differenceInDays');
 
     final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
-    print('hours>>'+'$differenceInHours');
-    if(differenceInHours >= hoursOfMonth){
-      flag=true;
-    }else {
-      flag=false;
+    print('hours>>' + '$differenceInHours');
+    if (differenceInHours >= hoursOfMonth) {
+      flag = true;
+    } else {
+      flag = false;
     }
     return flag;
   }
@@ -303,7 +304,7 @@ class Utils {
                     height: 15,
                   ),
                   Text(message,
-                      style: GoogleFonts.getFont('Raleway',
+                      style: GoogleFonts.getFont('Roboto',
                           fontWeight: FontWeight.w800,
                           fontSize: 10,
                           color: c.white))
@@ -315,28 +316,27 @@ class Utils {
       ],
     );
   }
+
   Future<bool> editdelayHours(String myDate) async {
     DateFormat inputFormat = DateFormat('dd-MM-yyyy hh:mm:ss');
     DateTime dateTimeLup = inputFormat.parse(myDate);
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
     DateTime dateTimeNow = inputFormat.parse(formattedDate);
-    bool  flag=false;
+    bool flag = false;
     // double  hoursOfMonth=month*30*24;
     // DateTime dateTimeNow = DateTime.now();
 
     final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
-    print('days>>'+'$differenceInDays');
+    print('days>>' + '$differenceInDays');
 
     final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
-    print('hours>>'+'$differenceInHours');
-    if(differenceInHours < 48){
-      flag=true;
-    }else {
-      flag=false;
+    print('hours>>' + '$differenceInHours');
+    if (differenceInHours < 48) {
+      flag = true;
+    } else {
+      flag = false;
     }
     return flag;
   }
-
-
 }

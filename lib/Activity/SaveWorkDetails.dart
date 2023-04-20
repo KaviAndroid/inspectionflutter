@@ -780,7 +780,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
           padding: const EdgeInsets.only(top: 15, bottom: 15),
           child: Text(
             s.select_stage,
-            style: GoogleFonts.getFont('Raleway',
+            style: GoogleFonts.getFont('Roboto',
                 fontWeight: FontWeight.w800, fontSize: 12, color: c.grey_8),
           ),
         ),
@@ -855,7 +855,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
           padding: const EdgeInsets.only(top: 15, bottom: 15),
           child: Text(
             s.select_status,
-            style: GoogleFonts.getFont('Raleway',
+            style: GoogleFonts.getFont('Roboto',
                 fontWeight: FontWeight.w800, fontSize: 12, color: c.grey_8),
           ),
         ),

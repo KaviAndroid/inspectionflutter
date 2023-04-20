@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, file_names, unrelated_type_equality_isSpinnerLoadings, use_build_context_synchronously
+// ignore_for_file: avoid_print, file_names, unrelated_type_equality_isSpinnerLoadings, use_build_context_synchronously, non_constant_identifier_names
 
 import 'dart:convert';
 import 'dart:io';
@@ -21,6 +21,7 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import '../Utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Registration extends StatefulWidget {
   final registerFlag;
@@ -32,6 +33,7 @@ class Registration extends StatefulWidget {
 class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
   var dbHelper = DbHelper();
+  late PermissionStatus cameraPermission;
   ScrollController scrollController = ScrollController();
 
   //ImagePickers
@@ -179,7 +181,7 @@ class _RegistrationState extends State<Registration> {
                     ),
                     label: Text(
                       s.regEdit,
-                      style: GoogleFonts.getFont('Raleway',
+                      style: GoogleFonts.getFont('Roboto',
                           fontWeight: FontWeight.w800,
                           fontSize: 15,
                           color: c.colorPrimaryDark),
@@ -207,7 +209,7 @@ class _RegistrationState extends State<Registration> {
                                   const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.regName,
-                                style: GoogleFonts.getFont('Raleway',
+                                style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                     color: Colors.black),
@@ -255,7 +257,7 @@ class _RegistrationState extends State<Registration> {
                                   const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.regNum,
-                                style: GoogleFonts.getFont('Raleway',
+                                style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                     color: Colors.black),
@@ -279,29 +281,23 @@ class _RegistrationState extends State<Registration> {
                                     vertical: 10, horizontal: 15),
                                 suffixIcon: IconButton(
                                     onPressed: () async {
-                                      // if (!cugValid) {
-                                      //   if (await Utils().isOnline()) {
-                                      //     mobileController.text = '7877979787';
-                                      //     if (Utils().isNumberValid(
-                                      //         mobileController.text)) {
-                                      //       isLoadingCUG = true;
-                                      //       validateMobile();
-                                      //       setState(() {});
-                                      //     } else {
-                                      //       Utils().showToast(context,
-                                      //           s.please_enter_valid_num);
-                                      //     }
-                                      //   } else {
-                                      //     Utils().showAlert(
-                                      //         context, s.no_internet);
-                                      //   }
-                                      // }
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => ATR_Worklist(
-                                                  Flag: "",
-                                                )),
-                                      );
+                                      if (!cugValid) {
+                                        if (await Utils().isOnline()) {
+                                          mobileController.text = '7877979787';
+                                          if (Utils().isNumberValid(
+                                              mobileController.text)) {
+                                            isLoadingCUG = true;
+                                            validateMobile();
+                                            setState(() {});
+                                          } else {
+                                            Utils().showToast(context,
+                                                s.please_enter_valid_num);
+                                          }
+                                        } else {
+                                          Utils().showAlert(
+                                              context, s.no_internet);
+                                        }
+                                      }
                                     },
                                     icon: isLoadingCUG
                                         ? SpinKitCircle(
@@ -351,7 +347,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 10, bottom: 15),
                                 child: Text(
                                   s.regGender,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -438,7 +434,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regLevel,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -539,7 +535,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regDesignation,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -637,7 +633,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regDsitrict,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -741,7 +737,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regBlock,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -834,7 +830,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regOffice,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -890,7 +886,7 @@ class _RegistrationState extends State<Registration> {
                                     const EdgeInsets.only(top: 15, bottom: 15),
                                 child: Text(
                                   s.regEmail,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 12,
                                       color: Colors.black),
@@ -974,7 +970,7 @@ class _RegistrationState extends State<Registration> {
                                   widget.registerFlag == 1
                                       ? s.regSave
                                       : s.regEdit,
-                                  style: GoogleFonts.getFont('Raleway',
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w800,
                                       fontSize: 15,
                                       color: c.white),
@@ -1090,20 +1086,28 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Image Picker *****************************/
 
   Future<void> TakePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    cameraPermission = await Permission.camera.status;
+    if (await Permission.camera.request().isGranted) {
+      final pickedFile = await _picker.pickImage(source: source);
 
-    if (pickedFile == null) {
+      if (pickedFile == null) {
+        Navigator.pop(context);
+
+        Utils().showAlert(context, "User Canceled operation");
+      } else {
+        List<int> imageBytes = await pickedFile.readAsBytes();
+        profileImage = base64Encode(imageBytes);
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
       Navigator.pop(context);
-
-      Utils().showAlert(context, "User Canceled operation");
-    } else {
-      List<int> imageBytes = await pickedFile.readAsBytes();
-      profileImage = base64Encode(imageBytes);
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
     }
-    Navigator.pop(context);
+    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
+      Utils().showAlert(context,
+          "Kindly please allow Camera Permission to take picture and Upload it");
+      openAppSettings().timeout(const Duration(seconds: 3));
+    }
   }
 
   /// ************************** Registration UI *****************************/
@@ -1303,9 +1307,13 @@ class _RegistrationState extends State<Registration> {
       var responseValue = data[s.key_response];
 
       if (status == s.key_ok && responseValue == s.key_ok) {
+        List<dynamic> sort_desig = data[s.key_json_data];
+        sort_desig.sort((a, b) {
+          return a[s.key_desig_name].compareTo(b[s.key_desig_name]);
+        });
         designationItems = [];
         designationItems.add(defaultSelectedDesignation);
-        designationItems.addAll(data[s.key_json_data]);
+        designationItems.addAll(sort_desig);
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Designation Found");
       }
@@ -1337,9 +1345,13 @@ class _RegistrationState extends State<Registration> {
       var responseValue = data[s.key_response];
 
       if (status == s.key_ok && responseValue == s.key_ok) {
+        List<dynamic> sort_dist = data[s.key_json_data];
+        sort_dist.sort((a, b) {
+          return a[s.key_dname].compareTo(b[s.key_dname]);
+        });
         districtItems = [];
         districtItems.add(defaultSelectedDistrict);
-        districtItems.addAll(data[s.key_json_data]);
+        districtItems.addAll(sort_dist);
       }
     }
   }
@@ -1371,9 +1383,13 @@ class _RegistrationState extends State<Registration> {
 
       if (status == s.key_ok && responseValue == s.key_ok) {
         if (data[s.key_json_data].length > 0) {
+          List<dynamic> sort_block = data[s.key_json_data];
+          sort_block.sort((a, b) {
+            return a[s.key_bname].compareTo(b[s.key_bname]);
+          });
           blockItems = [];
           blockItems.add(defaultSelectedBlock);
-          blockItems.addAll(data[s.key_json_data]);
+          blockItems.addAll(sort_block);
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Block Found");

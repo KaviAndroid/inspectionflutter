@@ -56,7 +56,7 @@ dependencies:
   omni_datetime_picker: ^1.0.0
   syncfusion_flutter_pdfviewer: ^21.1.38
   syncfusion_flutter_charts: ^21.1.41
-  pie_chart: ^3.1.1
+
 
 
 

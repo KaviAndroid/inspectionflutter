@@ -105,3 +105,6 @@ Color unsatisfied1 = Color(0xFFffe4b2);
 Color need_improvement1 = Color(0xFFD2E9FF);
 Color dot_dark_screen5 = Color(0xFF3797CF);
 Color calender_color = Color(0xFFe74c3c);
+Color need_improvement_color = Color(0xFF1E90FF);
+Color unsatisfied_color = Color(0xFFFFA500);
+Color satisfied_color = Color(0xFF00FA9A);

@@ -20,6 +20,7 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../ModelClass/ModelClass.dart';
+import '../Resources/ColorsValue.dart';
 import '../Resources/ImagePath.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
@@ -82,10 +83,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   TextEditingController search = TextEditingController();
   @override
   void initState() {
+    super.initState();
     data = [
-      ChartData('Jan', 35),
-      ChartData('Feb', 28),
-      ChartData('Mar', 38),
+      ChartData('Need Improvement', 35,need_improvement_color),
+      ChartData('Satisfied', 38, satisfied_color),
+      ChartData('UnSatisfied', 25,unsatisfied_color),
     ];
     super.initState();
 
@@ -488,24 +490,62 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   _Piechart()
   {
     return Container(
-      height: 85,
-      child: Padding(padding: EdgeInsets.only(top: 75),
-        child:  SfCircularChart(
-        series: <DoughnutSeries<ChartData, String>>[
-          DoughnutSeries<ChartData, String>(
-            radius:"85",
-            dataSource:data,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.y,
-            dataLabelSettings:  DataLabelSettings(isVisible: true),)
-        ],),),
+      width: 370,
+      height: 250,
+      child: Card(
+        color: c.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(15),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        )),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 105,
+             child:Padding(padding: EdgeInsets.only(top: 10),
+               child: Align(
+                 alignment: AlignmentDirectional.topCenter,
+                 child:Text(
+                   s.total_inspected_works,
+                   style: TextStyle(color: c.grey_9,fontSize: 15,),
+                 ),
+               ),)
+            ),
+            Container(
+              height: 30,
+              child: Padding(padding: EdgeInsets.only(top:0,bottom: 15),
+                child:  SfCircularChart(
+                    legend: Legend(isVisible: true,alignment: ChartAlignment.near,orientation: LegendItemOrientation.vertical,position: LegendPosition.left,),
+                    series: <DoughnutSeries<ChartData, String>>[
+                      DoughnutSeries<ChartData,String>(
+                        radius:"65",
+                        dataSource:data,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper: (ChartData data, _) => data.y,
+                        dataLabelSettings:  DataLabelSettings(isVisible: true,labelPosition:ChartDataLabelPosition.outside,connectorLineSettings: ConnectorLineSettings(color: Colors.black)),
+                        pointColorMapper: (ChartData data, _) => data.color,
+                        explode: true,
+                        enableTooltip: true,
+                        explodeOffset: '10%',
+                        innerRadius:'50%',
+                      )
+                    ]),),
+            )
+          ],
+        ),
+      ),
     );
   }
   _WorkList() {
     return SingleChildScrollView(
         child: Container(
-          height: 450,
-         child:Padding(padding: EdgeInsets.only(top: 60),
+          height: 550,
+         child:Padding(padding: EdgeInsets.only(top: 0),
            child: Stack(children: [
              Visibility(
                visible: isWorklistAvailable,
@@ -1171,9 +1211,10 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   // }
 }
 class ChartData {
-  ChartData(this.x, this.y);
+  ChartData(this.x, this.y,this.color);
   final String x;
   final double y;
+  final Color color;
 }
 
 

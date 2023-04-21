@@ -54,18 +54,15 @@ class DbHelper {
         "CREATE TABLE $table_AtrWorkList ( rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, work_name TEXT, inspection_id TEXT, inspection_date TEXT, status_id TEXT, status TEXT, description TEXT, inspection_by_officer TEXT, inspection_by_officer_designation TEXT, work_type_name TEXT, dname TEXT, bname TEXT, pvname TEXT, action_status TEXT, action_taken_id TEXT, reported_by TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT, townpanchayat_name TEXT, municipality_name TEXT, corporation_name TEXT )");
     await db.execute(
         "CREATE TABLE $table_RdprWorkList ( rural_urban TEXT ,town_type TEXT , dcode TEXT, dname TEXT , bcode TEXT, bname TEXT, pvcode TEXT, pvname TEXT, hab_code TEXT, scheme_group_id TEXT, scheme_id TEXT, scheme_name TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_id TEXT,"
-            " work_name TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, stage_name TEXT, as_date TEXT, "
-            "ts_date TEXT, work_order_date TEXT, work_type_name TEXT, tpcode TEXT, townpanchayat_name TEXT, muncode TEXT, municipality_name TEXT, corcode TEXT, corporation_name TEXT, upd_date TEXT )");
+        " work_name TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, stage_name TEXT, as_date TEXT, "
+        "ts_date TEXT, work_order_date TEXT, work_type_name TEXT, tpcode TEXT, townpanchayat_name TEXT, muncode TEXT, municipality_name TEXT, corcode TEXT, corporation_name TEXT, upd_date TEXT )");
 
     await db.execute(
         "CREATE TABLE $table_SchemeList ( rural_urban TEXT , scheme_id TEXT, scheme_name TEXT )");
     await db.execute(
         "CREATE TABLE $table_save_atr_work_details ( rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
     await db.execute(
-        "CREATE TABLE $table_save_images ( atr_flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image TEXT, image_path TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
-
-
-
+        "CREATE TABLE $table_save_images ( atr_flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
   }
 
   Future close() async {
@@ -131,6 +128,7 @@ class DbHelper {
         myDb?.execute(
             "DELETE FROM $table_AtrWorkList where rural_urban = '$type'");
   }
+
   void delete_table_RdprWorkList(String type) {
     type == "ALL"
         ? myDb?.execute("DELETE FROM $table_RdprWorkList")
@@ -139,6 +137,7 @@ class DbHelper {
         myDb?.execute(
             "DELETE FROM $table_RdprWorkList where rural_urban = '$type'");
   }
+
   void delete_table_SchemeList(String type) {
     type == "ALL"
         ? myDb?.execute("DELETE FROM $table_SchemeList")

@@ -16,6 +16,7 @@ import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:permission_handler/permission_handler.dart';
 
 class Utils {
   Future<bool> isOnline() async {
@@ -28,12 +29,6 @@ class Utils {
       online = false;
       print('No internet!');
     }
-    /*  bool result = await InternetConnectionChecker().hasConnection;
-    if(result == true) {
-      print('Connection Available!');
-    } else {
-      print('No internet!');
-    }*/
     return online;
   }
 
@@ -197,6 +192,26 @@ class Utils {
     ));
   }
 
+  Future<void> showAppSettings(BuildContext context, String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(msg),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Allow Permission'),
+              onPressed: () {
+                openAppSettings();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> showAlert(BuildContext context, String msg) async {
     return showDialog<void>(
       context: context,
@@ -244,9 +259,6 @@ class Utils {
       if (!await location.serviceEnabled()) {
         location.requestService();
       }
-/*      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));*/
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -267,11 +279,11 @@ class Utils {
     return true;
   }
 
-  Widget showSpinner(String message) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
+  Widget showSpinner(BuildContext context, String message) {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Center(
+        child: Container(
           height: 100,
           width: 100,
           decoration: BoxDecoration(
@@ -306,6 +318,7 @@ class Utils {
                   Text(message,
                       style: GoogleFonts.getFont('Roboto',
                           fontWeight: FontWeight.w800,
+                          decoration: TextDecoration.none,
                           fontSize: 10,
                           color: c.white))
                 ],
@@ -313,7 +326,7 @@ class Utils {
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 

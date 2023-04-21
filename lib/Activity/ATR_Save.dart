@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -19,6 +20,7 @@ import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:http/io_client.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ATR_Save extends StatefulWidget {
   final area_type, onoff_type, selectedWorklist;
@@ -38,6 +40,8 @@ class _ATR_SaveState extends State<ATR_Save> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController remark = TextEditingController();
   SpeechToText _speechToText = SpeechToText();
+
+  late PermissionStatus cameraPermission, speechPermission;
 
   //image
   final _picker = ImagePicker();
@@ -66,7 +70,6 @@ class _ATR_SaveState extends State<ATR_Save> {
   @override
   void initState() {
     initialize();
-    _initSpeech();
   }
 
   Future<void> initialize() async {
@@ -104,23 +107,23 @@ class _ATR_SaveState extends State<ATR_Save> {
   void _initSpeech() async {
     speechEnabled = false;
     _speechToText.initialize();
-    setState(() {
-      descriptionview();
-    });
   }
 
   /// Each time to start a speech recognition session
   void _startListening(String txt) async {
-    speechEnabled = false;
-    _lastWords = txt;
-    await _speechToText.listen(
-        onResult: _onSpeechResult,
-        localeId: lang,
-        listenFor: Duration(minutes: 10));
-    print("start");
-    setState(() {
-      descriptionview();
-    });
+    _initSpeech();
+    if (await goToSpeechPermission()) {
+      speechEnabled = false;
+      _lastWords = txt;
+      await _speechToText.listen(
+          onResult: _onSpeechResult,
+          localeId: lang,
+          listenFor: Duration(minutes: 10));
+      print("start");
+      setState(() {
+        descriptionview();
+      });
+    }
   }
 
   /// Manually stop the active speech recognition session
@@ -199,10 +202,8 @@ class _ATR_SaveState extends State<ATR_Save> {
                       ]),
                 ),
                 Visibility(
-                  visible: isSpinnerLoading,
-                  child:
-                      Center(child: Utils().showSpinner("Data uploading...")),
-                )
+                    visible: isSpinnerLoading,
+                    child: Utils().showSpinner(context, "Processing"))
               ],
             )));
   }
@@ -646,7 +647,6 @@ class _ATR_SaveState extends State<ATR_Save> {
 
   Future<void> goToCameraScreen(int i) async {
     final hasPermission = await utils.handleLocationPermission(context);
-    print("pos - $i");
 
     if (!hasPermission) return;
     Position position = await Geolocator.getCurrentPosition(
@@ -661,28 +661,29 @@ class _ATR_SaveState extends State<ATR_Save> {
   }
 
   Future<void> TakePhoto(int i, String latitude, String longitude) async {
-    final pickedFile = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 75,
-        maxHeight: 400,
-        maxWidth: 400);
-    if (pickedFile == null) {
-      Navigator.pop(context);
-
-      Utils().showAlert(context, "User Canceled operation");
-    } else {
-      List<int> imageBytes = await pickedFile.readAsBytes();
-      workmage = base64Encode(imageBytes);
-      img_jsonArray[i].update(s.key_latitude, (value) => latitude);
-      img_jsonArray[i].update(s.key_longitude, (value) => longitude);
-      img_jsonArray[i].update(s.key_image, (value) => workmage);
-      img_jsonArray[i]
-          .update(s.key_image_path, (value) => pickedFile.path.toString());
-      setState(() {
-        _imageFile = File(pickedFile.path);
-        listview();
-      });
+    if (await goToCameraPermission()) {
+      final pickedFile = await _picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 75,
+          maxHeight: 400,
+          maxWidth: 400);
+      if (pickedFile == null) {
+        Utils().showAlert(context, "User Canceled operation");
+      } else {
+        List<int> imageBytes = await pickedFile.readAsBytes();
+        workmage = base64Encode(imageBytes);
+        img_jsonArray[i].update(s.key_latitude, (value) => latitude);
+        img_jsonArray[i].update(s.key_longitude, (value) => longitude);
+        img_jsonArray[i].update(s.key_image, (value) => workmage);
+        img_jsonArray[i]
+            .update(s.key_image_path, (value) => pickedFile.path.toString());
+        setState(() {
+          _imageFile = File(pickedFile.path);
+          listview();
+        });
+      }
     }
+
     // Navigator.pop(context);
   }
 
@@ -789,11 +790,14 @@ class _ATR_SaveState extends State<ATR_Save> {
       var msg = userData[s.key_message];
       if (status == s.key_ok && response_value == s.key_ok) {
         showSuccessAlert(context, "Your Data is Synchronized to the server!");
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ATR_Worklist(
-            Flag: widget.area_type,
-          ),
-        ));
+
+        Timer(Duration(seconds: 3), () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ATR_Worklist(
+              Flag: widget.area_type,
+            ),
+          ));
+        });
       } else {
         utils.showAlert(context, msg);
       }
@@ -873,13 +877,11 @@ class _ATR_SaveState extends State<ATR_Save> {
 
         var imageExists = await dbClient.rawQuery(
             "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}' and serial_no='${serial_count.toString()}'");
-        print(
-            "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}' and serial_no='${serial_count.toString()}'");
 
         if (imageExists.length > 0) {
-          print("img upd");
-
-          await File(imageExists[0][s.key_image_path]).delete();
+          await File(imageExists[0][s.key_image_path]).exists()
+              ? await File(imageExists[0][s.key_image_path]).delete()
+              : null;
 
           imageCount = await dbClient.rawInsert(" UPDATE " +
               s.table_save_images +
@@ -908,6 +910,8 @@ class _ATR_SaveState extends State<ATR_Save> {
               "'");
         } else {
           print("img ins");
+
+          print(img_jsonArray_val[i][s.key_image_path].toString());
           imageCount = await dbClient.rawInsert('INSERT INTO ' +
               s.table_save_images +
               ' (atr_flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
@@ -952,11 +956,13 @@ class _ATR_SaveState extends State<ATR_Save> {
 
     if (count > 0 && imageCount > 0) {
       utils.showAlert(context, "Success");
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ATR_Offline_worklist(
-          Flag: widget.area_type,
-        ),
-      ));
+      Timer(Duration(seconds: 3), () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ATR_Offline_worklist(
+            Flag: widget.area_type,
+          ),
+        ));
+      });
     } else {
       utils.showAlert(context, "Fail");
     }
@@ -978,6 +984,8 @@ class _ATR_SaveState extends State<ATR_Save> {
             .update(s.key_latitude, (value) => imageExists[i][s.key_latitude]);
         img_jsonArray[i].update(
             s.key_longitude, (value) => imageExists[i][s.key_longitude]);
+        img_jsonArray[i].update(
+            s.key_image_path, (value) => imageExists[i][s.key_image_path]);
         img_jsonArray[i]
             .update(s.key_image, (value) => imageExists[i][s.key_image]);
         img_jsonArray[i].update(s.key_image_description,
@@ -992,4 +1000,38 @@ class _ATR_SaveState extends State<ATR_Save> {
   }
 
   // *************************** Check DATA Ends here *************************** //
+
+  /// ************************** Check Camera Permission *****************************/
+
+  Future<bool> goToCameraPermission() async {
+    cameraPermission = await Permission.camera.status;
+    print("object$cameraPermission");
+
+    bool flag = false;
+    if (await Permission.camera.request().isGranted) {
+      cameraPermission = await Permission.camera.status;
+      flag = true;
+      print("object$cameraPermission");
+    }
+    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
+      Utils().showAppSettings(context, s.cam_permission);
+    }
+    return flag;
+  }
+
+  /// ************************** Check Speech Permission *****************************/
+
+  Future<bool> goToSpeechPermission() async {
+    speechPermission = await Permission.speech.status;
+
+    bool flag = false;
+    if (await Permission.speech.request().isGranted) {
+      speechPermission = await Permission.speech.status;
+      flag = true;
+    }
+    if (speechPermission.isDenied || speechPermission.isPermanentlyDenied) {
+      Utils().showAppSettings(context, s.speech_permission);
+    }
+    return flag;
+  }
 }

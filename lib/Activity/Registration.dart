@@ -33,7 +33,7 @@ class Registration extends StatefulWidget {
 class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
   var dbHelper = DbHelper();
-  late PermissionStatus cameraPermission;
+  late PermissionStatus cameraPermission, storagePermission;
   ScrollController scrollController = ScrollController();
 
   //ImagePickers
@@ -76,7 +76,7 @@ class _RegistrationState extends State<Registration> {
   bool isLoadingCUG = false;
   bool isLoadingLevel = false;
   bool isLoadingDcode = false;
-  bool isSpinnerLoading = false;
+  bool isSpinnerLoading = true;
 
   List genderItems = [];
   List levelItems = [];
@@ -136,6 +136,10 @@ class _RegistrationState extends State<Registration> {
 
     screenWidth = width;
     sceenHeight = height;
+
+    // if (isSpinnerLoading) {
+    //   Utils().showSpinner(context, "message", isSpinnerLoading);
+    // }
 
     return Scaffold(
       backgroundColor: c.d_grey,
@@ -982,10 +986,8 @@ class _RegistrationState extends State<Registration> {
                       ]),
                     ),
                     Visibility(
-                      visible: isSpinnerLoading,
-                      child:
-                          Center(child: Utils().showSpinner("Processing...")),
-                    )
+                        visible: isSpinnerLoading,
+                        child: Utils().showSpinner(context, "Processing"))
                   ],
                 ),
               ),
@@ -1083,30 +1085,78 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
+  /// ************************** Check Camera Permission *****************************/
+
+  Future<bool> gotoCamera() async {
+    cameraPermission = await Permission.camera.status;
+    print("object$cameraPermission");
+
+    bool flag = false;
+    if (await Permission.camera.request().isGranted) {
+      cameraPermission = await Permission.camera.status;
+      flag = true;
+      print("object$cameraPermission");
+    }
+    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
+      Utils().showAppSettings(context, s.cam_permission);
+    }
+    return flag;
+  }
+
+  /// ************************** Check Storage Permission *****************************/
+
+  Future<bool> gotoStorage() async {
+    storagePermission = await Permission.storage.status;
+
+    bool flag = false;
+    if (await Permission.storage.request().isGranted) {
+      storagePermission = await Permission.storage.status;
+      flag = true;
+    }
+    if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
+      await Utils().showAppSettings(context, s.storage_permission);
+      storagePermission = await Permission.storage.status;
+    }
+    return flag;
+  }
+
   /// ************************** Image Picker *****************************/
 
   Future<void> TakePhoto(ImageSource source) async {
-    cameraPermission = await Permission.camera.status;
-    if (await Permission.camera.request().isGranted) {
-      final pickedFile = await _picker.pickImage(source: source);
+    if (source == ImageSource.camera) {
+      if (await gotoCamera()) {
+        final pickedFile = await _picker.pickImage(source: source);
 
-      if (pickedFile == null) {
-        Navigator.pop(context);
+        if (pickedFile == null) {
+          Navigator.pop(context);
 
-        Utils().showAlert(context, "User Canceled operation");
-      } else {
-        List<int> imageBytes = await pickedFile.readAsBytes();
-        profileImage = base64Encode(imageBytes);
-        setState(() {
-          _imageFile = File(pickedFile.path);
-        });
+          Utils().showAlert(context, "User Canceled operation");
+        } else {
+          List<int> imageBytes = await pickedFile.readAsBytes();
+          profileImage = base64Encode(imageBytes);
+          setState(() {
+            _imageFile = File(pickedFile.path);
+          });
+          Navigator.pop(context);
+        }
       }
-      Navigator.pop(context);
-    }
-    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
-      Utils().showAlert(context,
-          "Kindly please allow Camera Permission to take picture and Upload it");
-      openAppSettings().timeout(const Duration(seconds: 3));
+    } else {
+      if (await gotoStorage()) {
+        final pickedFile = await _picker.pickImage(source: source);
+
+        if (pickedFile == null) {
+          Navigator.pop(context);
+
+          Utils().showAlert(context, "User Canceled operation");
+        } else {
+          List<int> imageBytes = await pickedFile.readAsBytes();
+          profileImage = base64Encode(imageBytes);
+          setState(() {
+            _imageFile = File(pickedFile.path);
+          });
+          Navigator.pop(context);
+        }
+      }
     }
   }
 

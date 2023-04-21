@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously, avoid_unnecessary_containers
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -55,10 +57,15 @@ class LoginState extends State<Login> {
     String packageName = packageInfo.packageName;
     version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
-    print("app>>"+appName+" >>"+packageName+" >>"+version+" >>"+buildNumber );
-    setState(() {
-
-    });
+    print("app>>" +
+        appName +
+        " >>" +
+        packageName +
+        " >>" +
+        version +
+        " >>" +
+        buildNumber);
+    setState(() {});
   }
 
   @override
@@ -163,10 +170,10 @@ class LoginState extends State<Login> {
                                 )),
                             Container(
                               height: 40,
-                              decoration: new BoxDecoration(
+                              decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(color: c.grey_3, width: 2),
-                                  borderRadius: new BorderRadius.only(
+                                  borderRadius: BorderRadius.only(
                                     topLeft: const Radius.circular(15),
                                     topRight: const Radius.circular(15),
                                     bottomLeft: const Radius.circular(15),
@@ -208,10 +215,10 @@ class LoginState extends State<Login> {
                                 )),
                             Container(
                               height: 40,
-                              decoration: new BoxDecoration(
+                              decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(color: c.grey_3, width: 2),
-                                  borderRadius: new BorderRadius.only(
+                                  borderRadius: BorderRadius.only(
                                     topLeft: const Radius.circular(15),
                                     topRight: const Radius.circular(15),
                                     bottomLeft: const Radius.circular(15),
@@ -308,8 +315,8 @@ class LoginState extends State<Login> {
                             child: InkWell(
                               onTap: () async {
                                 user_name.text = "9080873403";
-                                String ss = new String.fromCharCodes(
-                                    new Runes('\u0024'));
+                                String ss =
+                                    String.fromCharCodes(Runes('\u0024'));
                                 user_password.text = "crd45#" + ss;
                                 if (!user_name.text.isEmpty) {
                                   if (!user_password.text.isEmpty) {
@@ -428,7 +435,7 @@ class LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text(
-                        s.version+" "+version,
+                        s.version + " " + version,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: c.d_grey2,
@@ -466,7 +473,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.login, body: request);
     // http.Response response = await http.post(url.login, body: request);
     print("login_url>>" + url.login.toString());
@@ -555,7 +562,7 @@ class LoginState extends State<Login> {
 
   Future<void> getDistrictList() async {
     Map json_request = {
-      s.key_scode: /*prefs.getString(s.scode) as String*/ 29,
+      s.key_scode: prefs.getString(s.key_dcode) as String,
       s.key_service_id: s.service_key_district_list_all,
     };
 
@@ -567,7 +574,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.master_service,
         body: json.encode(encrpted_request));
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
@@ -588,9 +595,11 @@ class LoginState extends State<Login> {
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_dname].toLowerCase().compareTo(b[s.key_dname].toLowerCase());
+          return a[s.key_dname]
+              .toLowerCase()
+              .compareTo(b[s.key_dname].toLowerCase());
         });
-        if (res_jsonArray.length > 0) {
+        if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_District();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
@@ -633,7 +642,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.master_service,
         body: json.encode(encrpted_request));
     print("BlockList_url>>" + url.master_service.toString());
@@ -653,9 +662,11 @@ class LoginState extends State<Login> {
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_bname].toLowerCase().compareTo(b[s.key_bname].toLowerCase());
+          return a[s.key_bname]
+              .toLowerCase()
+              .compareTo(b[s.key_bname].toLowerCase());
         });
-        if (res_jsonArray.length > 0) {
+        if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_Block();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
@@ -675,6 +686,7 @@ class LoginState extends State<Login> {
       }
     }
   }
+
   Future<void> getVillageList() async {
     Map json_request = {};
 
@@ -683,7 +695,6 @@ class LoginState extends State<Login> {
       s.key_bcode: prefs.getString(s.key_bcode) as String,
       s.key_service_id: s.service_key_village_list_district_block_wise,
     };
-
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
@@ -694,7 +705,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.master_service,
         body: json.encode(encrpted_request));
     print("VillageList_url>>" + url.master_service.toString());
@@ -714,9 +725,11 @@ class LoginState extends State<Login> {
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_pvname].toLowerCase().compareTo(b[s.key_pvname].toLowerCase());
+          return a[s.key_pvname]
+              .toLowerCase()
+              .compareTo(b[s.key_pvname].toLowerCase());
         });
-        if (res_jsonArray.length > 0) {
+        if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_Village();
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
@@ -755,7 +768,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrpted_request));
     print("ProfileData_url>>" + url.main_service.toString());
@@ -824,7 +837,7 @@ class LoginState extends State<Login> {
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrpted_request));
     print("DashboardData_url>>" + url.main_service.toString());

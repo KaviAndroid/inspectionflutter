@@ -175,13 +175,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 ),
               ),
               Visibility(
-                visible: isSpinnerLoading,
-                child: SizedBox(
-                    height: sceenHeight - 100,
-                    child: Center(
-                      child: utils.showSpinner("Loading..."),
-                    )),
-              )
+                  visible: isSpinnerLoading,
+                  child: Utils().showSpinner(context, "Processing"))
             ],
           )),
     );

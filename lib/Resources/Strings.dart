@@ -189,7 +189,7 @@ String cam_permission =
 String storage_permission =
     "Kindly please allow Storage Permission to read your internal Storage";
 String speech_permission =
-    "Kindly please allow Record Permission to use Speech Recoginization";
+    "Kindly please allow Microphone Permission to use Speech Recoginization";
 String selected_financial_year = "Selected Financial Year";
 String select = "SELECT";
 String download_work_list = "Download Work List";
@@ -199,6 +199,9 @@ String selectedDistrict = "Selected District";
 String selected_village = "Selected Village";
 String selected_scheme = "Selected Scheme";
 String total_inspected_works = "Total Inspected Works()";
+String save_success = "Your Data Save Successfully!";
+String logout_message = "Please Sync the Data before Logout";
+String pending_list = "Pending List";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";

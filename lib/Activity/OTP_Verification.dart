@@ -200,6 +200,9 @@ class _OTPVerificationState extends State<OTPVerification> {
                                                 BorderRadius.circular(15),
                                           ))),
                                       onPressed: () {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+
                                         design_flag == "login"
                                             ? send_OTP()
                                             : design_flag == "OTP"

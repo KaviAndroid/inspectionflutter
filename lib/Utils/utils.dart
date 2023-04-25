@@ -198,10 +198,16 @@ class Utils {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(msg),
+          title: Text(msg,
+              style: GoogleFonts.getFont('Roboto',
+                  fontSize: 15, fontWeight: FontWeight.w800, color: c.black)),
           actions: <Widget>[
             TextButton(
-              child: const Text('Allow Permission'),
+              child: Text('Allow Permission',
+                  style: GoogleFonts.getFont('Roboto',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: c.primary_text_color2)),
               onPressed: () {
                 openAppSettings();
               },

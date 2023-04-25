@@ -291,6 +291,9 @@ class _RegistrationState extends State<Registration> {
                                           if (Utils().isNumberValid(
                                               mobileController.text)) {
                                             isLoadingCUG = true;
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
+
                                             validateMobile();
                                             setState(() {});
                                           } else {
@@ -960,6 +963,9 @@ class _RegistrationState extends State<Registration> {
                                 onPressed: () {
                                   dropDownValidation();
                                   if (_formKey.currentState!.validate()) {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+
                                     boolFlag
                                         ? profileImage == null
                                             ? Utils().showAlert(

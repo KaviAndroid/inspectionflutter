@@ -1,9 +1,8 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously, unnecessary_null_comparison
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,6 +68,7 @@ class _ATR_SaveState extends State<ATR_Save> {
 
   @override
   void initState() {
+    super.initState();
     initialize();
   }
 
@@ -92,7 +92,7 @@ class _ATR_SaveState extends State<ATR_Save> {
       mymap["image"] = '0'; // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
-    if (img_jsonArray.length > 0) {
+    if (img_jsonArray.isNotEmpty) {
       noDataFlag = false;
       imageListFlag = true;
     } else {
@@ -103,16 +103,15 @@ class _ATR_SaveState extends State<ATR_Save> {
     setState(() {});
   }
 
-  /// This has to happen only once per app
-  void _initSpeech() async {
-    speechEnabled = false;
-    _speechToText.initialize();
-  }
-
   /// Each time to start a speech recognition session
   void _startListening(String txt) async {
-    _initSpeech();
-    if (await goToSpeechPermission()) {
+    speechPermission = await Permission.speech.status;
+    if (await Permission.speech.request().isGranted) {
+      speechPermission = await Permission.speech.status;
+    }
+    print("Speech check $speechPermission");
+    if (speechPermission.isGranted || speechPermission.isLimited) {
+      await _speechToText.initialize();
       speechEnabled = false;
       _lastWords = txt;
       await _speechToText.listen(
@@ -123,6 +122,10 @@ class _ATR_SaveState extends State<ATR_Save> {
       setState(() {
         descriptionview();
       });
+    } else if (speechPermission.isDenied ||
+        speechPermission.isPermanentlyDenied ||
+        speechPermission.isRestricted) {
+      Utils().showAppSettings(context, s.speech_permission);
     }
   }
 
@@ -525,6 +528,7 @@ class _ATR_SaveState extends State<ATR_Save> {
             setState(() {
               isSpinnerLoading = true;
             });
+            FocusManager.instance.primaryFocus?.unfocus();
             validate();
           } else {
             utils.showAlert(context, s.no_internet);
@@ -813,12 +817,12 @@ class _ATR_SaveState extends State<ATR_Save> {
     var imageCount = 0;
 
     var isExists = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_save_atr_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
+        "SELECT count(1) as cnt  FROM ${s.table_save_atr_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
 
     // print(isExists);
     // print(imageExists);
 
-    if (isExists.length > 0) {
+    if (isExists[0]['cnt'] > 0) {
       print("Edit>>>>");
 
       for (int i = 0; i < selectedwork.length; i++) {
@@ -955,16 +959,10 @@ class _ATR_SaveState extends State<ATR_Save> {
     });
 
     if (count > 0 && imageCount > 0) {
-      utils.showAlert(context, "Success");
+      utils.showAlert(context, s.save_success);
       Timer(Duration(seconds: 3), () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ATR_Offline_worklist(
-            Flag: widget.area_type,
-          ),
-        ));
+        Navigator.pop(context);
       });
-    } else {
-      utils.showAlert(context, "Fail");
     }
   }
 
@@ -1015,22 +1013,6 @@ class _ATR_SaveState extends State<ATR_Save> {
     }
     if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
       Utils().showAppSettings(context, s.cam_permission);
-    }
-    return flag;
-  }
-
-  /// ************************** Check Speech Permission *****************************/
-
-  Future<bool> goToSpeechPermission() async {
-    speechPermission = await Permission.speech.status;
-
-    bool flag = false;
-    if (await Permission.speech.request().isGranted) {
-      speechPermission = await Permission.speech.status;
-      flag = true;
-    }
-    if (speechPermission.isDenied || speechPermission.isPermanentlyDenied) {
-      Utils().showAppSettings(context, s.speech_permission);
     }
     return flag;
   }

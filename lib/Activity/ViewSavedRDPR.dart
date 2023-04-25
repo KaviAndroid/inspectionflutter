@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -22,6 +23,7 @@ import '../DataBase/DbHelper.dart';
 import '../ModelClass/ModelClass.dart';
 import '../Resources/ColorsValue.dart';
 import '../Resources/ImagePath.dart';
+import '../Resources/Strings.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +50,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   List TownWorkList = [];
   List MunicipalityWorkList = [];
   List corporationWorklist = [];
+  List needImprovementWorkList = [];
+  List unSatisfiedWorkList = [];
+  List satisfiedWorkList=[];
   late List<ChartData> data;
   Utils utils = Utils();
   late SharedPreferences prefs;
@@ -66,10 +71,15 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   String work_id = "";
   String town_type = "T";
   String inspection_id="";
-      String area_type="";
-          String flag_town_type="";
-          String inspection_date="";
+  String area_type="";
+  String flag_town_type="";
+  String inspection_date="";
   String flag_tmc_id="";
+  String totalWorksCount = "";
+  String nimpCount = "";
+  String usCount = "";
+  String sCount = "";
+  String tappedValue = '';
   //bool Values
   bool isSpinnerLoading = true;
   bool townActive = true;
@@ -84,13 +94,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   @override
   void initState() {
     super.initState();
-    data = [
-      ChartData('Need Improvement', 35,need_improvement_color),
-      ChartData('Satisfied', 38, satisfied_color),
-      ChartData('UnSatisfied', 25,unsatisfied_color),
-    ];
-    super.initState();
-
+    /*data = [
+      ChartData('Need Improvement', nimpCount.length,need_improvement_color),
+      ChartData('Satisfied', sCount.length, satisfied_color),
+      ChartData('UnSatisfied', usCount.length,unsatisfied_color),
+    ];*/
     initialize();
   }
   Future<void> initialize() async {
@@ -374,7 +382,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   _DatePicker() {
     return Container(
       child: Container(
-        height:70,
         child: Padding(
           padding: EdgeInsets.only(top:3,bottom:2,left: 5, right: 5),
           child: TextField(
@@ -439,8 +446,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   _Workid() {
     return Container(
         child: Container(
-            height: 45,
-          child: Padding(padding: EdgeInsets.only(bottom:8,left: 5,right: 5),child: TextField(
+
+          child: Padding(padding: EdgeInsets.only(top:2,bottom:8,left: 5,right: 5),child: TextField(
             controller: workid,
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -490,55 +497,69 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   _Piechart()
   {
     return Container(
-      width: 370,
-      height: 250,
-      child: Card(
-        color: c.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(15),
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        )),
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 105,
-             child:Padding(padding: EdgeInsets.only(top: 10),
-               child: Align(
-                 alignment: AlignmentDirectional.topCenter,
-                 child:Text(
-                   s.total_inspected_works,
-                   style: TextStyle(color: c.grey_9,fontSize: 15,),
-                 ),
-               ),)
-            ),
-            Container(
-              height: 30,
-              child: Padding(padding: EdgeInsets.only(top:0,bottom: 15),
+      width: 380,
+        child: Card(
+          color: c.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(15),
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          )),
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  child:Padding(padding: EdgeInsets.only(top: 2),
+                    child: Align(
+                      alignment: AlignmentDirectional.topCenter,
+                      child:Text(
+                        s.total_inspected_works="Total Inspected Works("+totalWorksCount+")",
+                        style: TextStyle(color: c.grey_9,fontSize: 15,),
+                      ),
+                    ),)
+              ),
+              Container(
                 child:  SfCircularChart(
-                    legend: Legend(isVisible: true,alignment: ChartAlignment.near,orientation: LegendItemOrientation.vertical,position: LegendPosition.left,),
-                    series: <DoughnutSeries<ChartData, String>>[
-                      DoughnutSeries<ChartData,String>(
+                  legend: Legend(isVisible: true,alignment: ChartAlignment.near,orientation: LegendItemOrientation.horizontal,position: LegendPosition.bottom,),
+                  series: <DoughnutSeries<ChartData, String>>[
+                    DoughnutSeries<ChartData,String>(
                         radius:"65",
-                        dataSource:data,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y,
-                        dataLabelSettings:  DataLabelSettings(isVisible: true,labelPosition:ChartDataLabelPosition.outside,connectorLineSettings: ConnectorLineSettings(color: Colors.black)),
+                        dataSource:[
+                          ChartData('Need Improvement',nimpCount,need_improvement_color),
+                          ChartData('Satisfied', sCount, satisfied_color),
+                          ChartData('UnSatisfied', usCount,unsatisfied_color),
+                        ],
+                        xValueMapper: (ChartData data, _) => data.status,
+                        yValueMapper: (ChartData data, _) => data.count.length,
+                        legendIconType: LegendIconType.circle,
+                        dataLabelSettings:DataLabelSettings(isVisible: true,labelPosition:ChartDataLabelPosition.outside,connectorLineSettings: ConnectorLineSettings(color: Colors.black),),
                         pointColorMapper: (ChartData data, _) => data.color,
-                        explode: true,
-                        enableTooltip: true,
-                        explodeOffset: '10%',
-                        innerRadius:'50%',
-                      )
-                    ]),),
-            )
-          ],
-        ),
-      ),
+                        explode:true ,
+                        onPointTap: (ChartData)
+                        {
+                          tappedValue = [ChartData.pointIndex!].toString();
+                          print("Tappedvalue1>>>>"+tappedValue);
+                          print("Tappedvalue1>>>>"+nimpCount);
+                          print("Tappedvalue1>>>>"+sCount);
+                          print("Tappedvalue1>>>>"+usCount);
+                        }
+                      /*onPointTap: (pointInteractionDetails) {
+                        tappedValue = [pointInteractionDetails.seriesIndex!].toString();
+                        print("Tappedvalue>>>>"+tappedValue);
+                        setState(() {});
+                      },*/
+
+                      /* onPointDoubleTap: (ChartPointDetails) {
+                          print(ChartPointDetails.seriesIndex);
+                        }*/
+                    )
+                  ],),
+              )
+            ],
+          ),
+        )
     );
   }
   _WorkList() {
@@ -644,9 +665,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
                                                                s.work_id,
                                                                style: TextStyle(
                                                                    fontSize: 15,
-                                                                   fontWeight:
-                                                                   FontWeight
-                                                                       .normal,
+                                                                   fontWeight: FontWeight.normal,
                                                                    color: c
                                                                        .white),
                                                                overflow:
@@ -843,12 +862,13 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
                                                        ),
                                                        Column(
                                                          children: [
-                                                           Row(
+                                                           Visibility(
+                                                             visible: editdelayHours(workList[index][s.key_inspection_date]) ,
+                                                             child: Row(
                                                              children: [
                                                                Expanded(
                                                                    flex: 1,
                                                                    child:Visibility(
-                                                                     visible:editvisibility,
                                                                      child: Align(
                                                                        alignment: AlignmentDirectional.bottomEnd,
                                                                        child: Container(
@@ -911,7 +931,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
                                                                      ),
                                                                    )
                                                                ),
-                                                             ],),],)]
+                                                             ],),)],)]
                                                  )),),]),)
                                ),)),);},)),),
              Visibility(
@@ -1047,6 +1067,16 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
         }
       }*/
       if (RdprWorkList.length > 0) {
+        for (int i = 0; i < RdprWorkList.length; i++) {
+          if (RdprWorkList[i][s.key_status_name]=="Satisfied") {
+            satisfiedWorkList.add(RdprWorkList[i][s.key_status_name]);
+          } else if (RdprWorkList[i][s.key_status_name]=="Unsatisfied") {
+            unSatisfiedWorkList.add(RdprWorkList[i][s.key_status_name]);
+          }
+          else if (RdprWorkList[i][s.key_status_name]=="Need Improvement") {
+            needImprovementWorkList.add(RdprWorkList[i][s.key_status_name]);
+          }
+        }
         workList=[];
         RdprWorkList.sort((a,b)
         {
@@ -1055,6 +1085,14 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
         workList.addAll(RdprWorkList);
         print("WORKLIST"+workList.toString());
       }
+      totalWorksCount=workList.length.toString();
+      print("TOTAL_COUNT>>>"+totalWorksCount);
+      sCount=satisfiedWorkList.length.toString();
+      print("SATISFIED_COUNT>>>"+sCount);
+      usCount = unSatisfiedWorkList.length.toString();
+      print("UNSATISFIED_COUNT>>>"+usCount);
+      nimpCount = needImprovementWorkList.length.toString();
+      print("NEEDIMPROVEMENT_COUNT>>>"+nimpCount);
     }
     setState(() {
       _WorkList();
@@ -1183,6 +1221,26 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
       }
     }
   }
+  bool editdelayHours(String myDate){
+    DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+    DateTime dateTimeLup = inputFormat.parse(myDate);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
+    DateTime dateTimeNow = inputFormat.parse(formattedDate);
+    bool flag = false;
+    final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
+    final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
+    print('days>>' + '$differenceInDays');
+    print('hours>>' + '$differenceInHours');
+    if (differenceInHours < 48) {
+      flag = true;
+      editvisibility=!editvisibility;
+    } else {
+      flag = false;
+      editvisibility=editvisibility;
+    }
+    return flag;
+  }
   void refresh() {
     TownWorkList = [];
     MunicipalityWorkList = [];
@@ -1211,9 +1269,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPR> {
   // }
 }
 class ChartData {
-  ChartData(this.x, this.y,this.color);
-  final String x;
-  final double y;
+  ChartData(this.status, this.count,this.color);
+  final String status;
+  final String count;
   final Color color;
 }
 

@@ -980,6 +980,11 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
     town_type = "T";
     munActive = false;
     corpActive = false;
+    isLoadingD = false;
+    await loadTMC();
+    setState(() {
+
+    });
   }
   Future<void> getTownList() async {
     Map json_request = {
@@ -1011,13 +1016,13 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
+      townList=[];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
           return a[s.key_townpanchayat_name].toLowerCase().compareTo(b[s.key_townpanchayat_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-         townList=[];
           for (int i = 0; i < res_jsonArray.length; i++) {
             townList.add(res_jsonArray[i]);
           }
@@ -1057,13 +1062,14 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
+      municipalityList=[];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
           return a[s.key_municipality_name].toLowerCase().compareTo(b[s.key_municipality_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-          municipalityList=[];
+
           for (int i = 0; i < res_jsonArray.length; i++) {
             municipalityList.add(res_jsonArray[i]);
           }
@@ -1103,13 +1109,14 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
+      corporationList=[];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
           return a[s.key_corporation_name].toLowerCase().compareTo(b[s.key_corporation_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-          corporationList=[];
+
           for (int i = 0; i < res_jsonArray.length; i++) {
             corporationList.add(res_jsonArray[i]);
           }
@@ -1175,6 +1182,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var responseValue = userData[s.key_response];
+      schemeList = [];
       if (status == s.key_ok && responseValue == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
@@ -1183,7 +1191,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
               .compareTo(b[s.key_scheme_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-          schemeList = [];
+
           for (int i = 0; i < res_jsonArray.length; i++) {
             Map<String, String> map = {
               s.flag: "0",

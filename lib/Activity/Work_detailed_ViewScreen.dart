@@ -40,10 +40,17 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   late SharedPreferences prefs;
   Utils utils = Utils();
   List workList = [];
+  List ImageList = [];
   String town_type = "T";
+  String inspection_id="";
+  String work_id="";
+  String action_taken_id="";
+  String other_work_inspection_id="";
+  String type="";
   @override
   void initState() {
     super.initState();
+    getWorkDetails();
   }
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
@@ -125,6 +132,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                     itemCount: 1,
                    itemBuilder: (BuildContext context,int index)
             {
+              inspection_id=widget.selectedworkList[index][s.key_inspection_id].toString();
             return InkWell(
             child:Card(
             elevation: 5,
@@ -189,7 +197,8 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             ),
             Expanded(
             flex: 1,
-            child: Text(widget.selectedworkList[index][s.key_work_id].toString(),
+            child: Text(
+                work_id=widget.selectedworkList[index][s.key_work_id].toString(),
             style: TextStyle(
             color: c.black),
             maxLines: 1),
@@ -427,18 +436,30 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   Future<void> getWorkDetails() async {
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
-    work_id = s.key_work_id;
-    if (!work_id.isEmpty) {
-      json_request = {
-        s.key_work_id: work_id,
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.area_type),
-        s.key_type: 1
-      };
-    }
-    if (widget.Flag == "Urban Area") {
-      Map urbanRequest = {s.key_town_type: town_type};
+    prefs.getString(s.key_rural_urban);
+    json_request={
+     s.key_inspection_id:inspection_id,
+      s.key_work_id:work_id,
+    };
+    print("Workid>>>>"+work_id);
+    print("inspection>>>>"+inspection_id);
+    if(type=="atr")
+      {
+        json_request = {
+          s.key_service_id: s.service_key_date_wise_inspection_details_view,
+          s.key_action_taken_id:s.service_key_work_id_wise_inspection_details_view
+        };
+      }
+    else
+      {
+        json_request = {
+          s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+        };
+      }
+    if (s.key_rural_urban=="U") {
+      Map urbanRequest = {s.key_town_type:town_type};
       json_request.addAll(urbanRequest);
+      print("REQUEST>>>>>>"+json_request.toString());
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
@@ -462,39 +483,14 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
-      isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];
       List<dynamic> RdprWorkList = res_jsonArray[s.key_inspection_details];
       if (RdprWorkList.isNotEmpty) {
-
-        RdprWorkList.sort((a, b) {
-          return a[s.key_work_id].compareTo(b[s.key_work_id]);
-        });
         for (int i = 0; i < RdprWorkList.length; i++) {
-          if(RdprWorkList[i][s.key_rural_urban]=="U")
-          {
-            workList.add(RdprWorkList[i]);
-            if([s.key_town_type]=="T")
-            {
 
-            }
-            else if([s.key_town_type]=="M")
-            {
-
-            }
-            else if([s.key_town_type]=="C")
-            {
-
-            }
-          }
-          else
-          {
-            workList.add(RdprWorkList[i]);
-          }
         }
       }
       setState(() {
-        isWorklistAvailable=true;
       });
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {

@@ -84,6 +84,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   String munCount = "";
   String corpCount = "";
   String tappedValue = "";
+  String inspectionid="";
   //bool Values
   bool isSpinnerLoading = true;
   bool isPiechartLoading = true;
@@ -1152,11 +1153,12 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         satisfiedWorkList=[];
         unSatisfiedWorkList=[];
         needImprovementWorkList=[];
-
         RdprWorkList.sort((a, b) {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         for (int i = 0; i < RdprWorkList.length; i++) {
+          inspectionid=RdprWorkList[i][s.key_inspection_id].toString();
+          print("inspectionid>>>>"+inspectionid);
           if (RdprWorkList[i][s.key_status_id]==1) {
             satisfiedWorkList.add(RdprWorkList[i]);
           } else if (RdprWorkList[i][s.key_status_id]==2) {

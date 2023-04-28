@@ -102,7 +102,7 @@ class _WorkListState extends State<WorkList> {
     dbClient = await dbHelper.db;
     schemeItems.addAll(widget.schemeList);
     all = true;
-    areaType = prefs.getString(s.area_type)!;
+    areaType = prefs.getString(s.key_rural_urban)!;
     if (areaType == 'R') {
       flagB = true;
       flagV = true;

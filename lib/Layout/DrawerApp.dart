@@ -95,9 +95,9 @@ class _DrawerAppState extends State<DrawerApp> {
       }
 
     }
-    if (prefs?.getString(s.area_type) != null && prefs?.getString(s.area_type) != "" && prefs?.getString(s.area_type) == "R" ) {
+    if (prefs?.getString(s.key_rural_urban) != null && prefs?.getString(s.key_rural_urban) != "" && prefs?.getString(s.key_rural_urban) == "R" ) {
       area_type=s.rural_area;
-    } else if (prefs?.getString(s.area_type) != null && prefs?.getString(s.area_type) != "" && prefs?.getString(s.area_type) == "U" ) {
+    } else if (prefs?.getString(s.key_rural_urban) != null && prefs?.getString(s.key_rural_urban) != "" && prefs?.getString(s.key_rural_urban) == "U" ) {
       area_type=s.urban_area;
     }
     PackageInfo packageInfo = await PackageInfo.fromPlatform();

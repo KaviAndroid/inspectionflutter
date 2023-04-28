@@ -89,7 +89,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
     onOffType=prefs.getString(s.onOffType)!;
 
     List<Map> list_urban =  await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${prefs.getString(s.area_type)}' ");
+        "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${prefs.getString(s.key_rural_urban)}' ");
     list_urban.length>0 && onOffType =="offline" ?skipFlag = true:skipFlag = false;
 
     if(onOffType=="online"){

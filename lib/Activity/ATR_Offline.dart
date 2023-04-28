@@ -198,7 +198,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       s.key_service_id: s.service_key_get_inspection_details_for_atr,
       s.key_from_date: fromDate,
       s.key_to_date: toDate,
-      s.key_rural_urban: prefs.getString(s.area_type)
+      s.key_rural_urban: prefs.getString(s.key_rural_urban)
     };
 
     if (widget.Flag == "U") {

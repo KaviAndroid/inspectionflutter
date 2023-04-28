@@ -11,7 +11,6 @@ String register = "REGISTER";
 String version = "Version";
 String success = "Success";
 String userPassKey = "userPassKey";
-String area_type = "Area Type";
 String rural_area = "Rural Area";
 String urban_area = "Urban Area";
 String rdpr_works = "RDPR Works";
@@ -212,6 +211,8 @@ String upload_local_data_msg = "Are you sure to upload data into server ?";
 String delete_local_data_msg_success = "Data Deleted Successfully!";
 String online_data_save_success = "Your Data is Synchronized to Server!";
 String description = "Description";
+String please_enter_category = "Please Select Category";
+String select_other = "Select Category";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -244,6 +245,7 @@ String key_gender = "gender";
 String key_level = "level";
 String key_office_address = "office_address";
 String key_email = "email";
+String key_action_taken_id = "action_taken_id";
 String key_role_code = "role_code";
 String key_data_content = "data_content";
 String key_image_description = "image_description";
@@ -321,7 +323,6 @@ String key_inspection_date = "inspection_date";
 String key_description = "description";
 String key_town_type = "town_type";
 String key_hab_code = "hab_code";
-String key_area_type = "rural_urban";
 String key_type = "type";
 String key_date = "date";
 String key_days = "days";
@@ -402,6 +403,8 @@ String service_key_work_id_wise_inspection_details_view =
 String service_key_date_wise_inspection_details_view =
     "date_wise_inspection_details_view";
 String service_key_action_taken_details_save = "action_taken_details_save";
+String service_key_work_id_wise_inspection_action_taken_details_view = "work_id_wise_inspection_action_taken_details_view";
+
 
 //Table Name
 String table_District = "District";

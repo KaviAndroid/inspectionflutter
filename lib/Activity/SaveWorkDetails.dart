@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -41,6 +42,8 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
   TextEditingController descriptionController = TextEditingController();
   String selectedStatus = "";
   String selectedStage = "";
+  String selectedStatusName = "";
+  String selectedStageName = "";
   List selectedwork = [];
   List statusItems = [];
   List stageItems = [];
@@ -102,6 +105,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
     print(list.toString());
     selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+    selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
     statusItems.add(defaultSelectedStatus);
     statusItems.addAll(list);
     print('status>>' + statusItems.toString());
@@ -348,6 +352,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     print(stageList.toString());
     stageItemsAll.addAll(stageList);
     selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
+    selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
     stageItems.add(defaultSelectedStage);
     print('stage>>' + stageItems.toString());
     print('stageItemsAll>>' + stageItemsAll.toString());
@@ -372,7 +377,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
         if (!descriptionController.text.isEmpty &&
             descriptionController.text != '') {
           if (!selectedStatus.isEmpty && selectedStatus != '0') {
-            saveData();
+            prefs.getString(s.onOffType)=="online"?saveData():saveDataOffline();
           } else {
             utils.showAlert(context, "Please Select Status");
           }
@@ -407,7 +412,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     }
     Map dataset = {
       s.key_dcode: selectedwork[0][s.key_dcode].toString(),
-      s.key_rural_urban: prefs.getString(s.area_type),
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
       s.key_bcode: selectedwork[0][s.key_bcode].toString(),
       s.key_pvcode: selectedwork[0][s.key_pvcode].toString(),
       s.key_hab_code: selectedwork[0][s.key_hab_code].toString(),
@@ -460,7 +465,220 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
       }
     }
   }
+  Future<void> saveDataOffline() async{
+    var count = 0;
+    var imageCount = 0;
 
+    var isExists = await dbClient.rawQuery(
+        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${prefs.getString(s.key_rural_urban)}' and flag='rdpr'");
+    if (isExists[0]['cnt'] > 0) {
+      print("Edit>>>>");
+      for (int i = 0; i < selectedwork.length; i++) {
+        count = await dbClient.rawInsert(" UPDATE " +
+            s.table_save_work_details +
+            " SET description = '" +
+            descriptionController.text +
+            "' WHERE rural_urban = '" +
+            selectedwork[i][s.key_rural_urban] +
+            "' AND work_id = '" +
+            selectedwork[i][s.key_work_id].toString() +
+            "'AND work_status_id =  '" +
+            selectedStatus +
+            "'AND work_status =  '" +
+            selectedStatusName +
+            "'AND work_stage =  '" +
+            selectedStageName +
+            "'AND work_stage_id =  '" +
+            selectedStage +
+            "'AND dcode =  '" +
+            selectedwork[i][s.key_dcode].toString() +
+            "'");
+      }
+
+    }else{
+      for (int i = 0; i < selectedwork.length; i++) {
+        await dbClient.rawInsert('INSERT INTO ' +
+            s.table_save_work_details +
+            ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
+            "'" +
+            "rdpr" +
+            "' , '" +
+            prefs.getString(s.key_rural_urban).toString() +
+            "' , '" +
+            selectedwork[i][s.key_dcode].toString() +
+            "' , '" +
+            selectedwork[i][s.key_bcode].toString() +
+            "' , '" +
+            selectedwork[i][s.key_pvcode].toString() +
+            "' , '" +
+            selectedwork[i][s.key_work_id].toString() +
+            "' , '" +
+            selectedwork[i][s.key_scheme_id].toString() +
+            "' , '" +
+            selectedStatus +
+            "' , '" +
+            selectedStatusName +
+            "' , '" +
+            selectedwork[i][s.key_current_stage_of_work].toString() +
+            "' , '" +
+            selectedwork[i][s.key_stage_name].toString() +
+            "' , '" +
+            selectedwork[i][s.key_scheme_group_id].toString() +
+            "' , '" +
+            selectedwork[i][s.key_work_group_id].toString() +
+            "' , '" +
+            selectedwork[i][s.key_work_type_id].toString() +
+            "' , '" +
+            selectedwork[i][s.key_fin_year].toString() +
+            "' , '" +
+            selectedwork[i][s.key_work_name].toString() +
+            "' , '" +
+            "0" +
+            "' , '" +
+            descriptionController.text.toString() +
+            "' , '" +
+            "0"+
+            "' , '" +
+            "0" +
+            "' , '" +
+            "0" +
+            "' , '" +
+            "0" +
+            "')");
+
+      }
+    }
+    //Image Data
+    if (count > 0) {
+      var serial_count = 0;
+      // print(img_jsonArray_val);
+
+      for (int i = 0; i < img_jsonArray_val.length; i++) {
+        serial_count++;
+
+        var imageExists = await dbClient.rawQuery(
+            "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and flag='rdpr' and dcode='${selectedwork[0][s.key_dcode].toString()}'and rural_urban='${prefs.getString(s.key_rural_urban)}' and serial_no='${serial_count.toString()}'");
+
+        if (imageExists.length > 0) {
+          await File(imageExists[0][s.key_image_path]).exists()
+              ? await File(imageExists[0][s.key_image_path]).delete()
+              : null;
+
+          imageCount = await dbClient.rawInsert(" UPDATE " +
+              s.table_save_images +
+              " SET image_description = '" +
+              img_jsonArray_val[i][s.key_image_description].toString() +
+              "', latitude = '" +
+              img_jsonArray_val[i][s.key_latitude].toString() +
+              "', longitude = '" +
+              img_jsonArray_val[i][s.key_longitude].toString() +
+              "', serial_no = '" +
+              serial_count.toString() +
+              "', image_path = '" +
+              img_jsonArray_val[i][s.key_image_path].toString() +
+              "', image = '" +
+              img_jsonArray_val[i][s.key_image].toString() +
+              "' WHERE rural_urban = '" +
+              prefs.getString(s.key_rural_urban).toString() +
+              "' AND work_id = '" +
+              selectedwork[0][s.key_work_id].toString() +
+              "' AND serial_no = '" +
+              serial_count.toString() +
+              "' AND flag = '" +
+              "rdpr"+
+              "' AND dcode = '" +
+              selectedwork[0][s.key_dcode].toString() +
+              "'");
+        } else {
+          print("img ins");
+
+          print(img_jsonArray_val[i][s.key_image_path].toString());
+          if(prefs.getString(s.key_rural_urban).toString()=="R"){
+            imageCount = await dbClient.rawInsert('INSERT INTO ' +
+                s.table_save_images +
+                ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
+                    "'rdpr' ," +
+                "'" +
+                selectedwork[0][s.key_work_id].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image_description].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_latitude].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_longitude].toString() +
+                "' , '" +
+                serial_count.toString() +
+                "' , '" +
+                prefs.getString(s.key_rural_urban).toString() +
+                "' , '" +
+                selectedwork[0][s.key_dcode].toString() +
+                "' , '" +
+                selectedwork[0][s.key_bcode].toString() +
+                "' , '" +
+                selectedwork[0][s.key_pvcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image_path].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image].toString() +
+                "')");
+          }
+          else{
+            imageCount = await dbClient.rawInsert('INSERT INTO ' +
+                s.table_save_images +
+                ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
+                    "'rdpr' ," +
+                "'" +
+                selectedwork[0][s.key_work_id].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image_description].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_latitude].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_longitude].toString() +
+                "' , '" +
+                serial_count.toString() +
+                "' , '" +
+                prefs.getString(s.key_rural_urban).toString() +
+                "' , '" +
+                selectedwork[0][s.key_dcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[0][s.key_tpcode].toString() +
+                "' , '" +
+                selectedwork[0][s.key_muncode].toString() +
+                "' , '" +
+                selectedwork[0][s.key_corcode].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image_path].toString() +
+                "' , '" +
+                img_jsonArray_val[i][s.key_image].toString() +
+                "')");
+          }
+
+        }
+      }
+    }
+    if (count > 0 && imageCount > 0) {
+      utils.customAlert(context, "S", s.save_success).then((value) => {
+        Timer(Duration(seconds: 2), () {
+          Navigator.pop(context);
+        })
+      });
+    }
+  }
   listview() {
     return Container(
       color: c.white,
@@ -808,15 +1026,11 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                       ))
                   .toList(),
               onChanged: (value) {
-                if (value != '00') {
-                  stageError = false;
-                  selectedStage = value.toString();
-                  setState(() {});
-                } else {
-                  stageError = true;
-                  selectedStage = value.toString();
-                  setState(() {});
-                }
+                selectedStage = value.toString();
+                int sIndex = stageItems.indexWhere((f) => f[s.key_work_stage_code] == selectedStage);
+                selectedStageName = stageItems[sIndex][s.key_work_stage_name];
+                value != '00'?stageError = false:stageError = true;
+                setState(() {});
               },
               buttonStyleData: const ButtonStyleData(
                 height: 45,
@@ -883,15 +1097,11 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                       ))
                   .toList(),
               onChanged: (value) {
-                if (value != '0') {
-                  statusError = false;
-                  selectedStatus = value.toString();
-                  setState(() {});
-                } else {
-                  statusError = true;
-                  selectedStatus = value.toString();
-                  setState(() {});
-                }
+                selectedStatus = value.toString();
+                int sIndex = statusItems.indexWhere((f) => f[s.key_status_id] == selectedStatus);
+                selectedStatusName = statusItems[sIndex][s.key_status_name];
+                value != '0'?statusError = false:statusError = true;
+                setState(() {});
               },
               buttonStyleData: const ButtonStyleData(
                 height: 45,

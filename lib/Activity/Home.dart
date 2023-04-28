@@ -69,6 +69,8 @@ class _HomeState extends State<Home> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
 
+    await checkLocalData();
+
     if (prefs.getString(s.area_type) != null &&
         prefs.getString(s.area_type) != "") {
       area_type = prefs.getString(s.area_type)!;
@@ -154,8 +156,6 @@ class _HomeState extends State<Home> {
       } else {
         utils.showAlert(context, s.no_internet);
       }
-    } else if (isLogin == "ATR") {
-      await checkLocalData();
     }
 
     satisfied_count = prefs.getString(s.satisfied_count)!;
@@ -1258,7 +1258,9 @@ class _HomeState extends State<Home> {
     Navigator.of(context)
         .push(CupertinoPageRoute(
           fullscreenDialog: true,
-          builder: (context) => PendingScreen(),
+          builder: (context) => PendingScreen(
+            Flag: atrFlag,
+          ),
         ))
         .then((value) => checkLocalData());
   }
@@ -1266,10 +1268,10 @@ class _HomeState extends State<Home> {
   // *************************** CHECK LOCAL DATA *************************** //
 
   Future<bool> checkLocalData() async {
-    var isExists = await dbClient.rawQuery(
-        "SELECT count(1) as cnt FROM ${s.table_save_atr_work_details} ");
+    var isExists = await dbClient
+        .rawQuery("SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
 
-    // print(isExists[0]['cnt'].runtimeType);
+    // print(isExists);
 
     isExists[0]['cnt'] > 0 ? syncFlag = true : syncFlag = false;
     setState(() {});

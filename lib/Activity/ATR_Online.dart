@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -51,7 +51,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   String town_type = "T";
 
   //BoolVariabless
-  bool isSpinnerLoading = true;
+  bool isSpinnerLoading = false;
   bool isNeedImprovementActive = false;
   bool isUnSatisfiedActive = false;
   bool isWorklistAvailable = false;
@@ -91,6 +91,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     if (await utils.isOnline()) {
       // API Call
       await fetchOnlineATRWroklist(startDate, toDate);
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
     }
     setState(() {
       SDBText = "Block - ${prefs.getString(s.key_bname)}";
@@ -1133,7 +1135,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                 builder: (context) => ATR_Save(
-                                                  area_type: widget.Flag,
+                                                  rural_urban: widget.Flag,
                                                   onoff_type: prefs
                                                       .getString(s.onOffType),
                                                   selectedWorklist:

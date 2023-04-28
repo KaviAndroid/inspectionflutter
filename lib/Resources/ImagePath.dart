@@ -47,6 +47,11 @@ String arrow_up_icon = "assets/images/arrow_up_icon.png";
 String tick = "assets/images/tick.png";
 String edit_icon = "assets/images/edit_icon.png";
 String search_icon = "assets/images/search.png";
+String gallery = "assets/images/gallery.png";
+String edit = "assets/images/edit.png";
+String delete = "assets/images/delete.png";
+String graph_ic = "assets/images/graph_ic.png";
+String warning = "assets/images/warning.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";
@@ -56,3 +61,5 @@ String wave = "assets/svg_icons/wave.svg";
 String ic_user = "assets/svg_icons/ic_user.svg";
 String user = "assets/svg_icons/user.svg";
 String mic_loading = "assets/svg_icons/mic_loading.gif";
+String success = "assets/svg_icons/success.gif";
+String error = "assets/svg_icons/error.gif";

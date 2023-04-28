@@ -1122,7 +1122,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                 builder: (context) => ATR_Save(
-                                                  area_type: widget.Flag,
+                                                  rural_urban: widget.Flag,
                                                   onoff_type: prefs
                                                       .getString(s.onOffType),
                                                   selectedWorklist:

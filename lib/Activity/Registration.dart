@@ -76,7 +76,7 @@ class _RegistrationState extends State<Registration> {
   bool isLoadingCUG = false;
   bool isLoadingLevel = false;
   bool isLoadingDcode = false;
-  bool isSpinnerLoading = true;
+  bool isSpinnerLoading = false;
 
   List genderItems = [];
   List levelItems = [];
@@ -1136,7 +1136,7 @@ class _RegistrationState extends State<Registration> {
         if (pickedFile == null) {
           Navigator.pop(context);
 
-          Utils().showAlert(context, "User Canceled operation");
+          Utils().customAlert(context, "E", "User Canceled operation");
         } else {
           List<int> imageBytes = await pickedFile.readAsBytes();
           profileImage = base64Encode(imageBytes);
@@ -1153,7 +1153,7 @@ class _RegistrationState extends State<Registration> {
         if (pickedFile == null) {
           Navigator.pop(context);
 
-          Utils().showAlert(context, "User Canceled operation");
+          Utils().customAlert(context, "E", "User Canceled operation");
         } else {
           List<int> imageBytes = await pickedFile.readAsBytes();
           profileImage = base64Encode(imageBytes);
@@ -1259,13 +1259,13 @@ class _RegistrationState extends State<Registration> {
       var responseValue = userData[s.key_response];
       var message = userData[s.key_message];
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "S", message);
         cugValid = true;
         __initializeBodyUI();
         // Visible Gone
       } else {
         isLoadingCUG = false;
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "E", message);
         setState(() {});
       }
     }
@@ -1653,7 +1653,7 @@ class _RegistrationState extends State<Registration> {
       });
 
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "S", message);
 
         setState(() {
           Navigator.of(context).pushAndRemoveUntil(
@@ -1664,7 +1664,7 @@ class _RegistrationState extends State<Registration> {
               (route) => false);
         });
       } else if (status == s.key_ok && responseValue == s.key_fail) {
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "E", message);
       }
     }
   }

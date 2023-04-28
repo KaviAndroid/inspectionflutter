@@ -269,14 +269,14 @@ class _OTPVerificationState extends State<OTPVerification> {
       });
 
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "S", message);
 
         setState(() {
           prefs.setString(s.key_mobile, mobileNumber.text);
           design_flag = 'OTP';
         });
       } else if (status == s.key_ok && responseValue == s.key_fail) {
-        Utils().showAlert(context, message);
+        Utils().customAlert(context, "E", message);
       }
     }
   }

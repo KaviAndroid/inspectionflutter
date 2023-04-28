@@ -51,7 +51,7 @@ class DbHelper {
     await db.execute(
         "CREATE TABLE $table_WorkStages ( work_group_id TEXT , work_type_id TEXT , work_stage_order TEXT , work_stage_code TEXT , work_stage_name TEXT )");
     await db.execute(
-        "CREATE TABLE $table_AtrWorkList ( rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, work_name TEXT, inspection_id TEXT, inspection_date TEXT, status_id TEXT, status TEXT, description TEXT, inspection_by_officer TEXT, inspection_by_officer_designation TEXT, work_type_name TEXT, dname TEXT, bname TEXT, pvname TEXT, action_status TEXT, action_taken_id TEXT, reported_by TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT, townpanchayat_name TEXT, municipality_name TEXT, corporation_name TEXT )");
+        "CREATE TABLE $table_AtrWorkList ( flag TEXT DEFAULT 'ATR', rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, work_name TEXT, inspection_id TEXT, inspection_date TEXT, status_id TEXT, status TEXT, description TEXT, inspection_by_officer TEXT, inspection_by_officer_designation TEXT, work_type_name TEXT, dname TEXT, bname TEXT, pvname TEXT, action_status TEXT, action_taken_id TEXT, reported_by TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT, townpanchayat_name TEXT, municipality_name TEXT, corporation_name TEXT )");
     await db.execute(
         "CREATE TABLE $table_RdprWorkList ( rural_urban TEXT ,town_type TEXT , dcode TEXT, dname TEXT , bcode TEXT, bname TEXT, pvcode TEXT, pvname TEXT, hab_code TEXT, scheme_group_id TEXT, scheme_id TEXT, scheme_name TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_id TEXT,"
         " work_name TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, stage_name TEXT, as_date TEXT, "
@@ -60,9 +60,9 @@ class DbHelper {
     await db.execute(
         "CREATE TABLE $table_SchemeList ( rural_urban TEXT , scheme_id TEXT, scheme_name TEXT )");
     await db.execute(
-        "CREATE TABLE $table_save_atr_work_details ( rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
+        "CREATE TABLE $table_save_work_details ( flag TEXT ,rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, scheme_id TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, work_status_id TEXT, work_status TEXT, work_stage_id TEXT, work_stage TEXT, scheme_group_id TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_name TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
     await db.execute(
-        "CREATE TABLE $table_save_images ( atr_flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
+        "CREATE TABLE $table_save_images ( flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
   }
 
   Future close() async {
@@ -149,7 +149,7 @@ class DbHelper {
 
   void delete_table_save_atr_work_details() {
     // you can execute drop table and create table
-    myDb?.execute("DELETE FROM $table_save_atr_work_details");
+    myDb?.execute("DELETE FROM $table_save_work_details");
   }
 
   void delete_table_save_images() {
@@ -190,7 +190,7 @@ class DbHelper {
     db.execute('DROP TABLE IF EXISTS $table_AtrWorkList');
     db.execute('DROP TABLE IF EXISTS $table_RdprWorkList');
     db.execute('DROP TABLE IF EXISTS $table_SchemeList');
-    db.execute('DROP TABLE IF EXISTS $table_save_atr_work_details');
+    db.execute('DROP TABLE IF EXISTS $table_save_work_details');
     db.execute('DROP TABLE IF EXISTS $table_save_images');
   }
 }

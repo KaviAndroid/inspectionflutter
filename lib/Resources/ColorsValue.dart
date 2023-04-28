@@ -1,3 +1,4 @@
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, use_full_hex_values_for_flutter_colors
 
 import 'dart:ui';
 
@@ -15,7 +16,7 @@ Color ca3 = Color(0xFFcdefed);
 Color ca4 = Color(0xFFb9e9e5);
 Color colorAccent2 = Color(0xFFeafcff);
 Color colorAccent3 = Color(0xFF9ef1ff);
-Color bg_screen= Color(0xFF1E07B3A5);
+Color bg_screen = Color(0xFF1E07B3A5);
 
 Color address = Color(0xFF2F7092);
 Color followers = Color(0xFF0D5D98);
@@ -108,3 +109,6 @@ Color calender_color = Color(0xFFe74c3c);
 Color need_improvement_color = Color(0xFF1E90FF);
 Color unsatisfied_color = Color(0xFFFFA500);
 Color satisfied_color = Color(0xFF00FA9A);
+Color yellow_new = Color(0xFFFFC947);
+Color green_new = Color(0xFF12C06A);
+Color red_new = Color(0xFFDE0239);

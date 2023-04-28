@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:inspection_flutter_app/Activity/ATR_Offline.dart';
 import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -22,8 +21,8 @@ import 'package:http/io_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ATR_Save extends StatefulWidget {
-  final area_type, onoff_type, selectedWorklist;
-  ATR_Save({this.area_type, this.onoff_type, this.selectedWorklist});
+  final rural_urban, onoff_type, selectedWorklist;
+  ATR_Save({this.rural_urban, this.onoff_type, this.selectedWorklist});
 
   @override
   State<ATR_Save> createState() => _ATR_SaveState();
@@ -77,6 +76,8 @@ class _ATR_SaveState extends State<ATR_Save> {
     dbClient = await dbHelper.db;
     txtFlag = true;
     selectedwork = widget.selectedWorklist;
+
+    print(selectedwork);
     for (int i = 0;
         i < int.parse(prefs.getString(s.service_key_photo_count).toString());
         i++) {
@@ -525,9 +526,6 @@ class _ATR_SaveState extends State<ATR_Save> {
       child: InkWell(
         onTap: () async {
           if (await utils.isOnline()) {
-            setState(() {
-              isSpinnerLoading = true;
-            });
             FocusManager.instance.primaryFocus?.unfocus();
             validate();
           } else {
@@ -726,6 +724,10 @@ class _ATR_SaveState extends State<ATR_Save> {
   // *************************** SAVE DATA *************************** //
 
   Future<void> onlineSave() async {
+    setState(() {
+      isSpinnerLoading = true;
+    });
+
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
@@ -749,7 +751,7 @@ class _ATR_SaveState extends State<ATR_Save> {
       s.key_corcode: selectedwork[0][s.key_corcode],
     };
 
-    if (widget.area_type == "U") {
+    if (widget.rural_urban == "U") {
       dataset.addAll(urbanRequest);
     }
 
@@ -798,7 +800,7 @@ class _ATR_SaveState extends State<ATR_Save> {
         Timer(Duration(seconds: 3), () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ATR_Worklist(
-              Flag: widget.area_type,
+              Flag: widget.rural_urban,
             ),
           ));
         });
@@ -813,11 +815,14 @@ class _ATR_SaveState extends State<ATR_Save> {
   // *************************** INSERT DATA *************************** //
 
   Future<void> offlineSave() async {
+    setState(() {
+      isSpinnerLoading = true;
+    });
     var count = 0;
     var imageCount = 0;
 
     var isExists = await dbClient.rawQuery(
-        "SELECT count(1) as cnt  FROM ${s.table_save_atr_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
+        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
 
     // print(isExists);
     // print(imageExists);
@@ -827,7 +832,7 @@ class _ATR_SaveState extends State<ATR_Save> {
 
       for (int i = 0; i < selectedwork.length; i++) {
         count = await dbClient.rawInsert(" UPDATE " +
-            s.table_save_atr_work_details +
+            s.table_save_work_details +
             " SET description = '" +
             descriptionController.text +
             "' WHERE rural_urban = '" +
@@ -844,8 +849,9 @@ class _ATR_SaveState extends State<ATR_Save> {
       print("Insert>>");
       for (int i = 0; i < selectedwork.length; i++) {
         count = await dbClient.rawInsert('INSERT INTO ' +
-            s.table_save_atr_work_details +
-            ' (dcode, bcode , pvcode, inspection_id, description , work_id, rural_urban, town_type, tpcode, muncode, corcode) VALUES(' +
+            s.table_save_work_details +
+            ' (flag, dcode, bcode , pvcode, inspection_id, description , work_id, work_name, rural_urban, town_type, tpcode, muncode, corcode) VALUES('
+                "'ATR' ," +
             "'" +
             selectedwork[i][s.key_dcode].toString() +
             "' , '" +
@@ -858,6 +864,8 @@ class _ATR_SaveState extends State<ATR_Save> {
             descriptionController.text +
             "' , '" +
             selectedwork[i][s.key_work_id].toString() +
+            "' , '" +
+            selectedwork[i][s.key_work_name] +
             "' , '" +
             selectedwork[i][s.key_rural_urban] +
             "' , '" +
@@ -918,8 +926,8 @@ class _ATR_SaveState extends State<ATR_Save> {
           print(img_jsonArray_val[i][s.key_image_path].toString());
           imageCount = await dbClient.rawInsert('INSERT INTO ' +
               s.table_save_images +
-              ' (atr_flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
-                  "'Y' ," +
+              ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
+                  "'ATR' ," +
               "'" +
               selectedwork[0][s.key_work_id].toString() +
               "' , '" +
@@ -959,10 +967,11 @@ class _ATR_SaveState extends State<ATR_Save> {
     });
 
     if (count > 0 && imageCount > 0) {
-      utils.showAlert(context, s.save_success);
-      Timer(Duration(seconds: 3), () {
-        Navigator.pop(context);
-      });
+      utils.customAlert(context, "S", s.save_success).then((value) => {
+            Timer(Duration(seconds: 2), () {
+              Navigator.pop(context);
+            })
+          });
     }
   }
 
@@ -972,9 +981,9 @@ class _ATR_SaveState extends State<ATR_Save> {
 
   Future<void> checkData() async {
     var isExists = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_save_atr_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
+        "SELECT * FROM ${s.table_save_work_details} WHERE rural_urban='${selectedwork[0][s.key_rural_urban].toString()}' and work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
     var imageExists = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
+        "SELECT * FROM ${s.table_save_images} WHERE rural_urban='${selectedwork[0][s.key_rural_urban].toString()}' and work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
 
     if (isExists.length > 0 && imageExists.length > 0) {
       for (int i = 0; i < imageExists.length; i++) {

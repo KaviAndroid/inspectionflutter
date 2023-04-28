@@ -202,6 +202,15 @@ String total_inspected_works = "Total Inspected Works()";
 String save_success = "Your Data Save Successfully!";
 String logout_message = "Please Sync the Data before Logout";
 String pending_list = "Pending List";
+String inspection_id = "Inspection ID";
+String ins_urban_work = "Inspected Urban Work";
+String ins_rural_work = "Inspected Rural Work";
+String atr_for_urban = "ATR For Urban";
+String atr_for_rural = "ATR For Rural";
+String delete_local_data_msg = "Are you sure to Delete data from local ?";
+String upload_local_data_msg = "Are you sure to upload data into server ?";
+String delete_local_data_msg_success = "Data Deleted Successfully!";
+String online_data_save_success = "Your Data is Synchronized to Server!";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -316,6 +325,7 @@ String key_type = "type";
 String key_date = "date";
 String key_days = "days";
 String key_image_path = "image_path";
+String key_flag = "flag";
 
 // Service Key
 String service_key_login = "login";
@@ -405,5 +415,5 @@ String table_WorkStages = "WorkStages";
 String table_AtrWorkList = "atr_work_list";
 String table_RdprWorkList = "rdpr_work_list";
 String table_SchemeList = "scheme_list";
-String table_save_atr_work_details = "save_atr_work_details";
+String table_save_work_details = "save_work_details";
 String table_save_images = "save_images";

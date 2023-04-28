@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
-import 'package:inspection_flutter_app/Activity/ViewSavedRDPR.dart';
+import 'package:inspection_flutter_app/Activity/ViewSavedRDPRReport.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
@@ -354,7 +354,7 @@ class _DrawerAppState extends State<DrawerApp> {
             onTap: (){
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                builder: (context) => ViewSavedRDPR(Flag: area_type),
+                builder: (context) => ViewSavedRDPRReport(Flag: area_type),
               ));
               print("FLAG####"+area_type);
             },child: Row(

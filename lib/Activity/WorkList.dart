@@ -126,11 +126,15 @@ class _WorkListState extends State<WorkList> {
         flagC = true;
       }
     }
-    if (widget.flag == 'filter') {
+    if (widget.flag == 'rdpr_online') {
       selectedScheme = widget.scheme;
       schemeFlag = true;
       await getWorkList(widget.finYear, widget.dcode, widget.bcode,
           widget.pvcode, widget.scheme);
+    }else if (widget.flag == 'rdpr_offline') {
+      selectedScheme = widget.scheme;
+      schemeFlag = true;
+      await fetchOfflineWorkList(areaType, widget.scheme);
     } else if (widget.flag == 'geo') {
       schemeFlag = false;
       await getWorkListByVillage(widget.dcode, widget.bcode, widget.pvcode);
@@ -253,7 +257,7 @@ class _WorkListState extends State<WorkList> {
                                 if (value != "0") {
                                   isLoadingScheme = true;
                                   selectedScheme = value.toString();
-                                  if (widget.flag == 'filter') {
+                                  if (widget.flag == 'rdpr_online') {
                                     await getWorkList(
                                         widget.finYear,
                                         widget.dcode,
@@ -272,7 +276,7 @@ class _WorkListState extends State<WorkList> {
                                         widget.townType,
                                         schemeArray,
                                         widget.finYear);
-                                  } else if (widget.flag == 'tmc_offline') {
+                                  } else if (widget.flag == 'tmc_offline' || widget.flag == 'rdpr_offline') {
                                     await fetchOfflineWorkList(
                                         areaType, selectedScheme);
                                   }

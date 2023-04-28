@@ -716,7 +716,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               scheme: selectedScheme,
                                               tmccode: '',
                                               townType: '',
-                                              flag: 'filter',
+                                              flag: 'rdpr_online',
                                             )));
                               },
                               child: Text(
@@ -742,11 +742,10 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   }
 
   void loadUIBlock(String value) async {
+    selectedDistrict = value.toString();
     await getBlockList(value);
     setState(() {
-      isLoadingD = false;
-      districtError = false;
-      selectedDistrict = value.toString();
+
     });
   }
 
@@ -836,6 +835,11 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Block Found");
       }
+      isLoadingD = false;
+      districtError = false;
+      setState(() {
+
+      });
     }
   }
 

@@ -54,6 +54,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
   List finList = [];
   List schList = [];
   List schIdList = [];
+  List selectedSchemeArray=[];
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     level = prefs.getString(s.key_level)!;
     schemeFlag = false;
     submitFlag = false;
-
+    finyearList.clear();
     List<Map> list =
     await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
@@ -83,6 +84,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       dFlag = true;
       bFlag = false;
       vFlag = false;
+      dList.clear();
+       selectedDistrict = "";
+       selectedBlock = "";
+       selectedVillage = "";
+       selectedDistrictName = "";
+       selectedBlockName = "";
+       selectedVillageName = "";
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
       for (int i = 0; i < list.length; i++) {
@@ -96,6 +104,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       dFlag = false;
       bFlag = true;
       vFlag = false;
+      bList.clear();
+      selectedDistrict = prefs.getString(s.key_dcode).toString();
+      selectedBlock = "";
+      selectedVillage = "";
+      selectedDistrictName =  prefs.getString(s.key_dname).toString();
+      selectedBlockName = "";
+      selectedVillageName = "";
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
       for (int i = 0; i < list.length; i++) {
@@ -110,6 +125,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       dFlag = false;
       bFlag = false;
       vFlag = true;
+      vList.clear();
+      selectedDistrict = prefs.getString(s.key_dcode).toString();
+      selectedBlock = prefs.getString(s.key_bcode).toString();
+      selectedVillage = "";
+      selectedDistrictName =  prefs.getString(s.key_dname).toString();
+      selectedBlockName = prefs.getString(s.key_bname).toString();
+      selectedVillageName = "";
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ' + s.table_Village);
       for (int i = 0; i < list.length; i++) {
@@ -297,7 +319,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                             flex: 3,
                                             child: InkWell(
                                               onTap: () {
-                                                multiChoiceSelection(finyearList,s.select_financial_year,"F");
+                                                multiChoiceFinYearSelection(finyearList,s.select_financial_year);
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.fromLTRB(
@@ -381,12 +403,12 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                           ),
                                           Expanded(
                                             flex: 3,
-                                            child: Text(
-                                              finList.toString(),
+                                            child: Text(finList.isNotEmpty?
+                                              finList.toString():"",
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: c.grey_10),
+                                                  color: c.grey_8),
                                               overflow: TextOverflow.clip,
                                               maxLines: 1,
                                               softWrap: true,
@@ -542,7 +564,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
-                                                    color: c.grey_10),
+                                                    color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -610,7 +632,11 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: InkWell(
                                                 onTap: () {
-                                                  singleChoiceSelection(bList,s.selectBlock,"B");
+                                                  if(level == "S" && bList.isEmpty){
+                                                    utils.showAlert(context, s.selectDistrict);
+                                                  }else{
+                                                    singleChoiceSelection(bList,s.selectBlock,"B");
+                                                  }
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.fromLTRB(
@@ -699,7 +725,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
-                                                    color: c.grey_10),
+                                                    color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -767,8 +793,15 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: InkWell(
                                                 onTap: () {
-                                                  singleChoiceSelection(vList,s.select_village,"V");
-                                                  // singleChoiceDialog(villageList,s.select_village);
+                                                  if(vList.isEmpty){
+                                                    utils.showAlert(context, s.selectBlock);
+                                                  }else{
+                                                    if(finList.isEmpty){
+                                                      utils.showAlert(context, s.select_financial_year);
+                                                    }else{
+                                                      singleChoiceSelection(vList,s.select_village,"V");
+                                                    }                                                  }
+
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.fromLTRB(
@@ -857,7 +890,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
-                                                    color: c.grey_10),
+                                                    color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -923,7 +956,11 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                             flex: 3,
                                             child: InkWell(
                                               onTap: () {
-                                                multiChoiceSelection(schemeList,s.select_scheme,"S");
+                                                if(schemeList.isEmpty){
+                                                  utils.showAlert(context, s.select_village);
+                                                }else{
+                                                  multiChoiceSchemeSelection(schemeList,s.select_scheme);
+                                                }
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.fromLTRB(
@@ -1007,14 +1044,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                           ),
                                           Expanded(
                                             flex: 3,
-                                            child: Text(
-                                              schList.toString(),
+                                            child: Text(schList.isNotEmpty?
+                                              schList.toString():"",
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: c.grey_10),
+                                                  color: c.grey_8),
                                               overflow: TextOverflow.clip,
-                                              maxLines: 1,
                                               softWrap: true,
                                             ),
                                           ),
@@ -1028,7 +1064,11 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                           )),
                       Visibility(
                         visible: submitFlag,
-                        child: Container(
+                        child: InkWell(
+                          onTap: (){
+                            download();
+                          },
+                          child:Container(
                         width: 200,
                         margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
                         padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -1052,7 +1092,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),),
+                      ),),),
                     ],
                   ),
                 ),
@@ -1086,6 +1126,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             return AlertDialog(
               title: Text(msg,style: TextStyle(color: c.grey_10,fontSize: 14),),
               content: Container(
+                height: 300,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -1111,28 +1152,36 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                       crossAxisAlignmentOfRow: CrossAxisAlignment.center,
                     ),
                   ),),
-                  Container(
-                      alignment: AlignmentDirectional.bottomEnd,
-                      child:      Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-              child: InkWell(
-                onTap: (){
+                   InkWell(
+                onTap: () async {
+                  Navigator.pop(context, 'OK');
                   submitFlag = false;
                   if(key=="D"){
-                    loadBlockList(selectedDistrict);
+                    if(selectedDistrict != "0"&& selectedDistrict != ""){
+                      await loadBlockList(selectedDistrict);
+                    }
                   }else if(key=="B"){
-                    level== "S" ?getVillageList(selectedDistrict,selectedBlock):loadVillageList(selectedBlock);
-                    getVillageList(selectedDistrict,selectedBlock);
+                    if(selectedBlock != "0"&& selectedBlock != ""){
+                      if(level == "S" || level == "D"){
+                        await getVillageList(selectedDistrict,selectedBlock);
+                      }else if(level == "B"){
+                        await loadVillageList(selectedDistrict,selectedBlock);
+                      }
+                    }
+
                   }else if(key=="V"){
-                    loadSchemeList(selectedDistrict,selectedBlock,selectedVillage,finList);
+                    await loadSchemeList(selectedDistrict,selectedBlock,selectedVillage,finList);
                   }
-                  Navigator.pop(context, 'OK');
                   setState(() {
 
                   });
 
                 },
-                child: Text(
+                child:Container(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child:      Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    child: Text(
                 s.key_ok ,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -1148,13 +1197,105 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             );
           }
       );}
-    void multiChoiceSelection(List<FlutterLimitedCheckBoxModel> list,String msg,String key){
+
+    void multiChoiceSchemeSelection(List<FlutterLimitedCheckBoxModel> list,String msg){
+    int limitCount=list.length;
+    List schArray=[];
+    showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 400,
+                margin: EdgeInsets.all(30),
+                child: Material(
+                    child:Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      alignment: AlignmentDirectional.topStart,
+                      child:      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child:Text(
+                          msg ,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.grey_10,
+                              fontSize: 15),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child:  Align(
+                      alignment: Alignment.centerLeft,
+                      child: FlutterLimitedCheckbox(
+                        limit: limitCount,
+                        limitedValueList: list,
+                        onChanged: (List<FlutterLimitedCheckBoxModel> list){
+                          schList.clear();
+                          schIdList.clear();
+                          schArray.clear();
+                          for (int i = 0; i < list.length; i++) {
+                            schList.add(list[i].selectTitle);
+                            schIdList.add(list[i].selectId);
+                            Map<String, String> map = {
+                              s.key_scheme_id:list[i].selectId.toString(),
+                              s.key_scheme_name:list[i].selectTitle
+                            };
+                            schArray.add(map);
+                          }
+
+                          print(schIdList.toString());
+                          print(schArray.toString());
+
+                        },
+                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                      ),
+                    ),),
+                    InkWell(
+                        onTap: (){
+                          if(schIdList.isNotEmpty){
+                            submitFlag=true;
+                            selectedSchemeArray.clear();
+                            selectedSchemeArray.addAll(schArray);
+                          }
+                          Navigator.pop(context, 'OK');
+
+                          setState(() {
+
+                          });
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child:      Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child:Text(
+                              s.key_ok ,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],))
+
+            );
+          }
+      );}
+    void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list,String msg){
+    int limitCount=2;
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(msg,style: TextStyle(color: c.grey_10,fontSize: 14),),
               content: Container(
+                height: 300,
+                width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -1162,49 +1303,42 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                   Expanded(child:  Align(
                     alignment: Alignment.centerLeft,
                     child: FlutterLimitedCheckbox(
-                      limit: 2,
+                      limit: limitCount,
                       limitedValueList: list,
                       onChanged: (List<FlutterLimitedCheckBoxModel> list){
-                        if(key=="F"){
-                          finList.clear();
-                          for (int i = 0; i < list.length; i++) {
-                            finList.add(list[i].selectTitle);
-                          }
-                          print(finList.toString());
-                        }else{
-                          schList.clear();
-                          schIdList.clear();
-                          for (int i = 0; i < list.length; i++) {
-                            schList.add(list[i].selectTitle);
-                            schIdList.add(list[i].selectId);
-                          }
-                          print(schIdList.toString());
+                        finList.clear();
+                        for (int i = 0; i < list.length; i++) {
+                          finList.add(list[i].selectTitle);
                         }
+                        print(finList.toString());
 
                         },
                       mainAxisAlignmentOfRow: MainAxisAlignment.start,
                       crossAxisAlignmentOfRow: CrossAxisAlignment.center,
                     ),
                   ),),
-                  Container(
-                      alignment: AlignmentDirectional.bottomEnd,
-                      child:      Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-              child: InkWell(
+                   InkWell(
                 onTap: (){
-            if(key=="F"){
-              Navigator.pop(context, 'OK');
-              submitFlag = false;
-            }else{
-              submitFlag=true;
-              Navigator.pop(context, 'OK');
+                  if(finList.isNotEmpty){
+                    schemeFlag = false;
+                    submitFlag = false;
+                    selectedVillage="";
+                    selectedVillageName="";
+                    schemeList = [];
+                    schList = [];
+                    schIdList = [];
+                  }
+            Navigator.pop(context, 'OK');
 
-            }
             setState(() {
 
             });
                 },
-                child: Text(
+                child: Container(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child:      Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    child:Text(
                 s.key_ok ,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -1225,6 +1359,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     dFlag = true;
     bFlag = true;
     vFlag = false;
+    schemeFlag = false;
+    bList.clear();
     List<Map> list =
         await dbClient.rawQuery('SELECT * FROM ' + s.table_Block+' Where dcode='+selectedDistrict);
     for (int i = 0; i < list.length; i++) {
@@ -1236,16 +1372,24 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
 
     print(list.toString());
     setState(() {
-
+      selectedBlock="";
+      selectedBlockName="";
+      selectedVillage="";
+      selectedVillageName="";
+      submitFlag = false;
+      schemeList = [];
+      schList = [];
+      schIdList = [];
     });
   }
 
-  Future<void> loadVillageList(String selectedBlock) async {
+  Future<void> loadVillageList(String dcode,String bcode) async {
     dFlag = true;
     bFlag = true;
     vFlag = true;
+    vList.clear();
     List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_Village+' Where bcode='+selectedBlock);
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_Village+' Where bcode='+bcode+' and dcode='+dcode);
     for (int i = 0; i < list.length; i++) {
       vList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -1253,6 +1397,14 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
           selectId: int.parse(list[i][s.key_pvcode])));
       print(list.toString());
     }
+    setState(() {
+      selectedVillage="";
+      selectedVillageName="";
+      submitFlag = false;
+      schemeList = [];
+      schList = [];
+      schIdList = [];
+    });
   }
 
   Future<void> getVillageList(String selectedDistrict, String selectedBlock) async {
@@ -1314,7 +1466,12 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         }
       }
       setState(() {
-
+        selectedVillage="";
+        selectedVillageName="";
+        submitFlag = false;
+        schemeList = [];
+        schList = [];
+        schIdList = [];
       });
     }
   }
@@ -1370,19 +1527,217 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             schemeList.add(FlutterLimitedCheckBoxModel(
                 isSelected: false,
                 selectTitle: res_jsonArray[i][s.key_scheme_name],
-                selectId: int.parse(res_jsonArray[i][s.key_scheme_id])));
+                selectId: res_jsonArray[i][s.key_scheme_id]));
           }
           schemeFlag = true;
-
+          submitFlag = false;
+          schList = [];
+          schIdList = [];
           print("schemeList>>" + schemeList.toString());
         }
-        setState(() {
-
-        });
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Scheme Found");
       }
     }
+  }
+  Future<void> download() async{
+    if (await utils.isOnline()) {
+      getWorkListToDownload(finList, selectedDistrict, selectedBlock, selectedVillage, schIdList);
+    } else {
+      utils.showAlert(context, s.no_internet);
+    }
+  }
+  Future<void> getWorkListToDownload(List finYear, String dcode, String bcode,
+      String pvcode, List scheme) async {
+    late Map json_request;
+
+    Map work_detail = {
+      s.key_scode: prefs.getString(s.key_scode),
+      s.key_dcode: dcode,
+      s.key_bcode: bcode,
+      s.key_pvcode: [pvcode],
+      s.key_fin_year: finYear,
+      s.key_scheme_id: scheme,
+    };
+    json_request = {
+      s.key_service_id: s.service_key_get_inspection_work_details,
+      s.key_inspection_work_details: work_detail,
+    };
+
+    Map encrpted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_request_json>>" + json_request.toString());
+    print("WorkList_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("WorkList_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_work_id].compareTo(b[s.key_work_id]);
+        });
+        if (res_jsonArray.length > 0) {
+
+          dbHelper.delete_table_RdprWorkList('R');
+          dbHelper.delete_table_SchemeList('R');
+          for (int i = 0; i < selectedSchemeArray.length; i++)
+          {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_SchemeList +
+                ' (rural_urban, scheme_id , scheme_name ) VALUES(' +
+                "'" +
+                "R" +
+                "' , '" +
+                selectedSchemeArray[i][s.key_scheme_id].toString() +
+                "' , '" +
+                selectedSchemeArray[i][s.key_scheme_name].toString() +
+                "')");
+
+          }
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_RdprWorkList +
+                ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
+                "'" +
+                "R" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                res_jsonArray[i][s.key_dcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_dname].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_bcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_bname].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_pvcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_pvname].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_hab_code].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_scheme_group_id].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_scheme_id].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_scheme_name].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_group_id].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_type_id].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_fin_year].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_id].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_name].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_as_value].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_ts_value].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_current_stage_of_work].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_is_high_value].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_stage_name].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_as_date].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_ts_date].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_upd_date].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_order_date].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_work_type_name].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "')");
+
+          }
+          showAlert(context, s.download_success,schIdList);
+        } else {
+          utils.showAlert(context, s.no_data);
+        }
+      } else {
+        utils.showAlert(context, s.no_data);
+      }
+    }
+  }
+  Future<void> showAlert(BuildContext context, String msg,List schArray) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(msg),
+                Text(''),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                print("schArray"+schArray.toString());
+                print("Scheme"+schArray[0].toString());
+                Navigator.pop(context, 'OK');
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WorkList(
+                          schemeList: selectedSchemeArray,
+                          scheme: selectedSchemeArray[0][s.key_scheme_id].toString(),
+                          flag: 'rdpr_offline',
+                        ))) .then((value) {
+                  utils.gotoHomePage(context, "RDPRUrban");
+                  // you can do what you need here
+                  // setState etc.
+                });
+
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 }

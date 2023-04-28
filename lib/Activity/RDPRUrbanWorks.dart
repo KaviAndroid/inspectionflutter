@@ -121,6 +121,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
+      selectedTMC = "";
     } else {
       districtFlag = false;
       townList = await dbClient.rawQuery('SELECT * FROM ' + s.table_TownList);
@@ -654,7 +655,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                   child: InkWell(
                                     onTap: (){
 
-                                      if(selectedTMC != null && selectedTMC != "0"){
+                                      if(selectedTMC != null && selectedTMC != "0"&& selectedTMC != ""){
 
                                         if(finYearList[index][s.flag] == "0" ){
                                          if(selectedFinYearList.length < finCount  ){
@@ -1406,7 +1407,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
               }else if(towntype == "M"){
                 await dbClient.rawInsert('INSERT INTO ' +
                     s.table_RdprWorkList +
-                    ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , upd_date, ts_date , work_order_date , work_type_name , tpcode   , townpanchayat_name  ) VALUES(' +
+                    ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , upd_date, ts_date , work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
                     "'" +
                     "U" +
                     "' , '" +

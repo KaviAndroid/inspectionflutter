@@ -211,6 +211,7 @@ String delete_local_data_msg = "Are you sure to Delete data from local ?";
 String upload_local_data_msg = "Are you sure to upload data into server ?";
 String delete_local_data_msg_success = "Data Deleted Successfully!";
 String online_data_save_success = "Your Data is Synchronized to Server!";
+String description = "Description";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -326,6 +327,7 @@ String key_date = "date";
 String key_days = "days";
 String key_image_path = "image_path";
 String key_flag = "flag";
+String key_inspection_image = "inspection_image";
 
 // Service Key
 String service_key_login = "login";

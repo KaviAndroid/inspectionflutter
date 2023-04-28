@@ -822,7 +822,7 @@ class _ATR_SaveState extends State<ATR_Save> {
     var imageCount = 0;
 
     var isExists = await dbClient.rawQuery(
-        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
+        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE rural_urban = '${selectedwork[0][s.key_rural_urban].toString()}' and work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}'");
 
     // print(isExists);
     // print(imageExists);
@@ -888,7 +888,7 @@ class _ATR_SaveState extends State<ATR_Save> {
         serial_count++;
 
         var imageExists = await dbClient.rawQuery(
-            "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}' and serial_no='${serial_count.toString()}'");
+            "SELECT * FROM ${s.table_save_images} WHERE rural_urban = '${selectedwork[0][s.key_rural_urban].toString()}' and work_id='${selectedwork[0][s.key_work_id].toString()}' and inspection_id='${selectedwork[0][s.key_inspection_id].toString()}' and dcode='${selectedwork[0][s.key_dcode].toString()}' and serial_no='${serial_count.toString()}'");
 
         if (imageExists.length > 0) {
           await File(imageExists[0][s.key_image_path]).exists()

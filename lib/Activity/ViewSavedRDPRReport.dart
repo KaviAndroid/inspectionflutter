@@ -45,6 +45,7 @@ class ViewSavedRDPRReport extends StatefulWidget {
   ViewSavedRDPRReport({this.workList, this.Flag, this.flag});
   State<ViewSavedRDPRReport> createState() => _ViewSavedRDPRState();
 }
+
 class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   List<DateTime>? selectedDateRange;
   List workList = [];
@@ -84,11 +85,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   String munCount = "";
   String corpCount = "";
   String tappedValue = "";
-  String inspectionid="";
+  String inspectionid = "";
   //bool Values
   bool isSpinnerLoading = true;
   bool isPiechartLoading = true;
-  bool isSatisfiedActive=false;
+  bool isSatisfiedActive = false;
   bool isNeedImprovementActive = false;
   bool isUnSatisfiedActive = false;
   bool townActive = true;
@@ -134,6 +135,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -178,21 +180,21 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-            height: 751,
-            color: ca1,
+              height: 751,
+              color: ca1,
               child: Column(
-            children: [
-              widget.Flag == "Urban Area"
-                  ? __Urban_design()
-                  : const SizedBox(
-                      height: 10,
-                    ),
-              _DatePicker(),
-              _Workid(),
-              isSpinnerLoading ? const SizedBox() : _Piechart(),
-              _WorkList(),
-            ],
-          )),
+                children: [
+                  widget.Flag == "Urban Area"
+                      ? __Urban_design()
+                      : const SizedBox(
+                          height: 10,
+                        ),
+                  _DatePicker(),
+                  _Workid(),
+                  isSpinnerLoading ? const SizedBox() : _Piechart(),
+                  _WorkList(),
+                ],
+              )),
         ),
         /*body:Container(
             color: c.ca1,
@@ -422,7 +424,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                 border: InputBorder.none,
                 suffixIconConstraints:
                     BoxConstraints(minHeight: 20, minWidth: 20),
-                contentPadding: EdgeInsets.only(left: 15, right: 5, top: 5,bottom: 5),
+                contentPadding:
+                    EdgeInsets.only(left: 15, right: 5, top: 5, bottom: 5),
                 filled: true,
                 fillColor: c.grey_2,
                 suffixIcon: Padding(
@@ -478,514 +481,464 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
   _Workid() {
     return Container(
-      height: 45,
+        height: 45,
         child: Container(
-      child: Padding(
-        padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
-        child: TextField(
-          controller: workid,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "Enter Work id",
-            contentPadding:
-                 EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 5),
-            filled: true,
-            fillColor: c.grey_2,
-            suffixIcon: Material(
-                elevation: 5.0,
-                color: c.dot_dark_screen5,
-                shadowColor: c.dot_dark_screen5,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    if (workid.text.isNotEmpty) {
-                      getWorkDetails(from_Date,to_Date);
-                    } else {
-                      utils.showAlert(context, "Please enter a Work Id");
-                    }
-                  },
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: c.white,
-                    size: 22,
-                  ),
-                )),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.1, color: c.grey_2),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10))),
+          child: Padding(
+            padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+            child: TextField(
+              controller: workid,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter Work id",
+                contentPadding:
+                    EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 5),
+                filled: true,
+                fillColor: c.grey_2,
+                suffixIcon: Material(
+                    elevation: 5.0,
+                    color: c.dot_dark_screen5,
+                    shadowColor: c.dot_dark_screen5,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        if (workid.text.isNotEmpty) {
+                          getWorkDetails(from_Date, to_Date);
+                        } else {
+                          utils.showAlert(context, "Please enter a Work Id");
+                        }
+                      },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: c.white,
+                        size: 22,
+                      ),
+                    )),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 0.1, color: c.grey_2),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10))),
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 
   _Piechart() {
     return Container(
         width: 370,
-      child:Visibility(
-        visible:  isPiechartLoading,
-          child: Card(
-            color: c.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                )),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Align(
-                        alignment: AlignmentDirectional.topCenter,
-                        child: Text(
-                          s.total_inspected_works ="Total Inspected Works(" + totalWorksCount + ")",
-                          style: TextStyle(
-                              color: c.grey_9,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
+        child: Visibility(
+            visible: isPiechartLoading,
+            child: Card(
+              color: c.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              )),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Align(
+                      alignment: AlignmentDirectional.topCenter,
+                      child: Text(
+                        s.total_inspected_works =
+                            "Total Inspected Works(" + totalWorksCount + ")",
+                        style: TextStyle(
+                            color: c.grey_9,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
                       ),
-                    )),
-                Container(
-                  height: 230,
-                  child: SfCircularChart(
-                    legend: Legend(
-                      isVisible: true,
-                      alignment: ChartAlignment.near,
-                      orientation: LegendItemOrientation.horizontal,
-                      position: LegendPosition.bottom,
                     ),
-                    series: <CircularSeries>[
-                      DoughnutSeries<ChartData, String>(
-                          radius: "65",
-                          xValueMapper: (ChartData data, _) => data.status,
-                          yValueMapper: (ChartData data, _) => int.parse(data.count),
-                          dataSource: [
-                                ChartData('Satisfied', sCount, satisfied_color),
-                                ChartData('UnSatisfied', usCount, unsatisfied_color),
-                                ChartData('Need Improvement', nimpCount,need_improvement_color),
-                          ],
-                          legendIconType: LegendIconType.circle,
-                          dataLabelSettings: DataLabelSettings(
-                            isVisible: true,
-                            labelPosition: ChartDataLabelPosition.outside,
-                            connectorLineSettings:
-                            ConnectorLineSettings(color: Colors.black),
-                          ),
-                          pointColorMapper: (ChartData data, _) => data.color,
-                          explode:true,
-                          onPointTap: (ChartData)
-                          {
-                            tappedValue = ChartData.pointIndex.toString();
-                            setState(() {
-                              if(tappedValue=="0")
-                              {
-                                isNeedImprovementActive=false;
-                                isUnSatisfiedActive=false;
-                                isSatisfiedActive=true;
-                                workList=satisfiedWorkList;
-                              }
-                              else if(tappedValue=="1")
-                              {
-
-                                isUnSatisfiedActive=true;
-                                isNeedImprovementActive=false;
-                                isSatisfiedActive=false;
-                                workList=unSatisfiedWorkList;
-                              }
-                              else if(tappedValue=="2")
-                              {
-
-                                isUnSatisfiedActive=false;
-                                isSatisfiedActive=false;
-                                isNeedImprovementActive=true;
-                                workList=needImprovementWorkList;
-                              }
-                            });
-                          }
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-      )
-
-       );
+                  )),
+                  Container(
+                    height: 230,
+                    child: SfCircularChart(
+                      legend: Legend(
+                        isVisible: true,
+                        alignment: ChartAlignment.near,
+                        orientation: LegendItemOrientation.horizontal,
+                        position: LegendPosition.bottom,
+                      ),
+                      series: <CircularSeries>[
+                        DoughnutSeries<ChartData, String>(
+                            radius: "65",
+                            xValueMapper: (ChartData data, _) => data.status,
+                            yValueMapper: (ChartData data, _) =>
+                                int.parse(data.count),
+                            dataSource: [
+                              ChartData('Satisfied', sCount, satisfied_color),
+                              ChartData(
+                                  'UnSatisfied', usCount, unsatisfied_color),
+                              ChartData('Need Improvement', nimpCount,
+                                  need_improvement_color),
+                            ],
+                            legendIconType: LegendIconType.circle,
+                            dataLabelSettings: DataLabelSettings(
+                              isVisible: true,
+                              labelPosition: ChartDataLabelPosition.outside,
+                              connectorLineSettings:
+                                  ConnectorLineSettings(color: Colors.black),
+                            ),
+                            pointColorMapper: (ChartData data, _) => data.color,
+                            explode: true,
+                            onPointTap: (ChartData) {
+                              tappedValue = ChartData.pointIndex.toString();
+                              setState(() {
+                                if (tappedValue == "0") {
+                                  isNeedImprovementActive = false;
+                                  isUnSatisfiedActive = false;
+                                  isSatisfiedActive = true;
+                                  workList = satisfiedWorkList;
+                                } else if (tappedValue == "1") {
+                                  isUnSatisfiedActive = true;
+                                  isNeedImprovementActive = false;
+                                  isSatisfiedActive = false;
+                                  workList = unSatisfiedWorkList;
+                                } else if (tappedValue == "2") {
+                                  isUnSatisfiedActive = false;
+                                  isSatisfiedActive = false;
+                                  isNeedImprovementActive = true;
+                                  workList = needImprovementWorkList;
+                                }
+                              });
+                            })
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            )));
   }
+
   _WorkList() {
     return Container(
-      color: ca1,
+        color: ca1,
         height: 300,
         child: Padding(
-          padding: EdgeInsets.only(top: 0,left: 8,right: 8),
-          child: Stack(
-              children: [
+          padding: EdgeInsets.only(top: 0, left: 8, right: 8),
+          child: Stack(children: [
             Visibility(
               visible: isWorklistAvailable,
               child: Container(
                   child: ListView.builder(
-                    itemCount: workList == null ? 0 : workList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        onTap: () {
-                          selectedworkList.clear();
-                          selectedworkList.add(workList[index]);
-                          print('selectedworkList>>' +
-                              selectedworkList.toString());
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Work_detailed_ViewScreen(
+                itemCount: workList == null ? 0 : workList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      selectedworkList.clear();
+                      selectedworkList.add(workList[index]);
+                      print('selectedworkList>>' + selectedworkList.toString());
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Work_detailed_ViewScreen(
                                     selectedworkList: selectedworkList,
                                   )));
-                        },
-                        child: Card(
-                            elevation: 5,
-                            color: c.colorAccentlight,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(15),
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
-                              ),
-                            ),
-                            clipBehavior: Clip.hardEdge,
-                            margin: EdgeInsets.fromLTRB(0, 7, 0, 0),
-                            child: ClipPath(
-                              clipper: ShapeBorderClipper(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(20))),
+                    },
+                    child: Card(
+                        elevation: 5,
+                        color: c.colorAccentlight,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        margin: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                        child: ClipPath(
+                          clipper: ShapeBorderClipper(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          child: Container(
                               child: Container(
-                                  child: Container(
+                            child: Column(children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Align(
+                                      alignment: AlignmentDirectional.topStart,
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(35),
+                                          ),
+                                          color: c.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: InkWell(
+                                    onTap: () {
+                                      get_PDF(
+                                          workList[index][s.key_work_id]
+                                              .toString(),
+                                          workList[index][s.key_inspection_id]
+                                              .toString());
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.topRight,
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 0, 5, 0),
+                                        child: Image.asset(
+                                          imagePath.pdf_icon,
+                                          height: 30,
+                                          width: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  ))
+                                ],
+                              ),
+                              Container(
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 0, bottom: 0, left: 10, right: 0),
                                     child: Column(children: [
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            child: Align(
-                                              alignment:
-                                              AlignmentDirectional
-                                                  .topStart,
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration:
-                                                BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.only(
-                                                    topLeft:
-                                                    Radius.circular(
-                                                        10),
-                                                    bottomRight:
-                                                    Radius.circular(
-                                                        35),
-                                                  ),
-                                                  color: c.white,
-                                                ),
-                                              ),
+                                            flex: 1,
+                                            child: Text(
+                                              s.work_id,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
                                             ),
                                           ),
                                           Expanded(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  get_PDF(
-                                                      workList[index][
-                                                      s.key_work_id]
-                                                          .toString(),
-                                                      workList[index][s
-                                                          .key_inspection_id]
-                                                          .toString());
-                                                },
-                                                child: Align(
-                                                  alignment:
-                                                  Alignment.topRight,
-                                                  child: Container(
-                                                    padding:
-                                                    EdgeInsets.fromLTRB(
-                                                        20, 0, 5, 0),
-                                                    child: Image.asset(
-                                                      imagePath.pdf_icon,
-                                                      height: 30,
-                                                      width: 30,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ))
+                                            flex: 0,
+                                            child: Text(
+                                              ':',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                                workList[index][s.key_work_id]
+                                                    .toString(),
+                                                style:
+                                                    TextStyle(color: c.white),
+                                                maxLines: 1),
+                                          ),
                                         ],
                                       ),
-                                      Container(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 0,
-                                                bottom: 0,
-                                                left: 10,
-                                                right: 0),
-                                            child: Column(children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              s.work_name,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 0,
+                                            child: Text(
+                                              ':',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              workList[index][s.key_work_name]
+                                                  .toString(),
+                                              style: TextStyle(color: c.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              s.inspected_date,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 0,
+                                            child: Text(
+                                              ':',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              workList[index]
+                                                      [s.key_inspection_date]
+                                                  .toString(),
+                                              style: TextStyle(color: c.white),
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              s.work_status,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 0,
+                                            child: Text(
+                                              ':',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.white),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              workList[index][s.key_status_name]
+                                                  .toString(),
+                                              maxLines: 2,
+                                              style: TextStyle(color: c.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Visibility(
+                                            visible: editdelayHours(
+                                                workList[index]
+                                                    [s.key_inspection_date]),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
                                                     flex: 1,
-                                                    child: Text(
-                                                      s.work_id,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                        workList[index]
-                                                        [s.key_work_id]
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: c.white),
-                                                        maxLines: 1),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      s.work_name,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      workList[index]
-                                                      [s.key_work_name]
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: c.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      s.inspected_date,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      workList[index][s
-                                                          .key_inspection_date]
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: c.white),
-                                                      maxLines: 2,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      s.work_status,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          color: c.white),
-                                                      overflow:
-                                                      TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      workList[index][
-                                                      s.key_status_name]
-                                                          .toString(),
-                                                      maxLines: 2,
-                                                      style: TextStyle(
-                                                          color: c.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Column(
-                                                children: [
-                                                  Visibility(
-                                                    visible: editdelayHours(
-                                                        workList[index][s
-                                                            .key_inspection_date]),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                            flex: 1,
-                                                            child: Visibility(
-                                                              child: Align(
-                                                                alignment:
-                                                                AlignmentDirectional
-                                                                    .bottomEnd,
-                                                                child:
-                                                                Container(
-                                                                    height:
-                                                                    45,
-                                                                    width:
-                                                                    45,
-                                                                    decoration:
-                                                                    BoxDecoration(
-                                                                      borderRadius:
-                                                                      BorderRadius.only(
-                                                                        topLeft:
-                                                                        Radius.circular(70),
-                                                                        bottomRight:
-                                                                        Radius.circular(20),
-                                                                      ),
-                                                                      color:
-                                                                      c.white,
-                                                                    ),
-                                                                    child:
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () async {
-                                                                        Navigator.push(context,
-                                                                            MaterialPageRoute(builder: (context) => SaveWorkDetails()));
-                                                                        /*   if(await utils.isOnline())
+                                                    child: Visibility(
+                                                      child: Align(
+                                                        alignment:
+                                                            AlignmentDirectional
+                                                                .bottomEnd,
+                                                        child: Container(
+                                                            height: 45,
+                                                            width: 45,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        70),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                              ),
+                                                              color: c.white,
+                                                            ),
+                                                            child: InkWell(
+                                                              onTap: () async {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                SaveWorkDetails()));
+                                                                /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];
                                                                                town_type=workList[index]["town_type"];
@@ -1007,36 +960,45 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                                       }
                                                                                   }
                                                                               }*/
-                                                                        // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
-                                                                      },
-                                                                      child:
-                                                                      Visibility(
-                                                                        child:
-                                                                        Container(
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.only(top: 15, left: 16, right: 5, bottom: 10),
-                                                                            child: Image.asset(imagePath.edit_icon),
-                                                                          ),
-                                                                          height: 25,
-                                                                          width: 25,
-                                                                        ),
-                                                                      ),
-                                                                    )),
+                                                                // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
+                                                              },
+                                                              child: Visibility(
+                                                                child:
+                                                                    Container(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 15,
+                                                                        left:
+                                                                            16,
+                                                                        right:
+                                                                            5,
+                                                                        bottom:
+                                                                            10),
+                                                                    child: Image.asset(
+                                                                        imagePath
+                                                                            .edit_icon),
+                                                                  ),
+                                                                  height: 25,
+                                                                  width: 25,
+                                                                ),
                                                               ),
                                                             )),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ])),
-                                      ),
-                                    ]),
-                                  )),
-                            )),
-                      );
-                    },
-                  )),
+                                                      ),
+                                                    )),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ])),
+                              ),
+                            ]),
+                          )),
+                        )),
+                  );
+                },
+              )),
             ),
             Visibility(
               visible: isWorklistAvailable == false ? true : false,
@@ -1046,8 +1008,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                   alignment: Alignment.center,
                   child: Text(
                     s.no_data,
-                    style: TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w800),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                   ),
                 ),
               ),
@@ -1094,10 +1055,10 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   Future<void> getWorkDetails(String fromDate, String toDate) async {
     prefs = await SharedPreferences.getInstance();
     setState(() {
-      workList=[];
+      workList = [];
       isSpinnerLoading = true;
       isWorklistAvailable = false;
-      isSatisfiedActive=false;
+      isSatisfiedActive = false;
       isNeedImprovementActive = false;
       isUnSatisfiedActive = false;
     });
@@ -1108,13 +1069,13 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       json_request = {
         s.key_work_id: work_id,
         s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.area_type),
+        s.key_rural_urban: prefs.getString(s.key_rural_urban),
         s.key_type: 1
       };
     } else if (dateController.text.toString().isNotEmpty) {
       json_request = {
         s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.area_type),
+        s.key_rural_urban: prefs.getString(s.key_rural_urban),
         s.key_from_date: fromDate,
         s.key_to_date: toDate,
         s.key_type: 2
@@ -1126,13 +1087,15 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(
-        url.main_service, body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrypted_request));
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1141,7 +1104,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrpt_data =
-    utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
@@ -1150,43 +1113,35 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       Map res_jsonArray = userData[s.key_json_data];
       List<dynamic> RdprWorkList = res_jsonArray[s.key_inspection_details];
       if (RdprWorkList.isNotEmpty) {
-        satisfiedWorkList=[];
-        unSatisfiedWorkList=[];
-        needImprovementWorkList=[];
+        satisfiedWorkList = [];
+        unSatisfiedWorkList = [];
+        needImprovementWorkList = [];
         RdprWorkList.sort((a, b) {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         for (int i = 0; i < RdprWorkList.length; i++) {
-          inspectionid=RdprWorkList[i][s.key_inspection_id].toString();
-          print("inspectionid>>>>"+inspectionid);
-          if (RdprWorkList[i][s.key_status_id]==1) {
+          inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
+          print("inspectionid>>>>" + inspectionid);
+          if (RdprWorkList[i][s.key_status_id] == 1) {
             satisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id]==2) {
+          } else if (RdprWorkList[i][s.key_status_id] == 2) {
             unSatisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id]==3) {
+          } else if (RdprWorkList[i][s.key_status_id] == 3) {
             needImprovementWorkList.add(RdprWorkList[i]);
           }
-          if(RdprWorkList[i][s.key_rural_urban]=="U")
-          {
-            print("Image>>>>"+ImageList.toString());
+          if (RdprWorkList[i][s.key_rural_urban] == "U") {
+            print("Image>>>>" + ImageList.toString());
             workList.add(RdprWorkList[i]);
-            if([s.key_town_type]=="T")
-            {
-              TownWorkList=workList;
+            if ([s.key_town_type] == "T") {
+              TownWorkList = workList;
+            } else if ([s.key_town_type] == "M") {
+              MunicipalityWorkList = workList;
+            } else if ([s.key_town_type] == "C") {
+              corporationWorklist = workList;
             }
-            else if([s.key_town_type]=="M")
-            {
-              MunicipalityWorkList=workList;
-            }
-            else if([s.key_town_type]=="C")
-            {
-              corporationWorklist=workList;
-            }
+          } else {
+            workList.add(RdprWorkList[i]);
           }
-          else
-            {
-              workList.add(RdprWorkList[i]);
-            }
         }
       }
       totalWorksCount = workList.length.toString();
@@ -1194,45 +1149,40 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       usCount = unSatisfiedWorkList.length.toString();
       nimpCount = needImprovementWorkList.length.toString();
       setState(() {
-        if(s.key_rural_urban=="U")
-          {
-            if(satisfiedWorkList.isNotEmpty)
-            {
-              isSatisfiedActive=true;
-              workList=satisfiedWorkList;
-              print("satisfied>>>"+workList.toString());
-            }
-            else if(unSatisfiedWorkList.isNotEmpty)
-            {
-              isUnSatisfiedActive=true;
-              workList=unSatisfiedWorkList;
-              print("unSatisfied>>>"+workList.toString());
-            }
-            else if(needImprovementWorkList.isNotEmpty) {
-              isNeedImprovementActive=true;
-              workList=needImprovementWorkList;
-              print("needImprovement>>>"+workList.toString());
-            }
+        if (s.key_rural_urban == "U") {
+          if (satisfiedWorkList.isNotEmpty) {
+            isSatisfiedActive = true;
+            workList = satisfiedWorkList;
+            print("satisfied>>>" + workList.toString());
+          } else if (unSatisfiedWorkList.isNotEmpty) {
+            isUnSatisfiedActive = true;
+            workList = unSatisfiedWorkList;
+            print("unSatisfied>>>" + workList.toString());
+          } else if (needImprovementWorkList.isNotEmpty) {
+            isNeedImprovementActive = true;
+            workList = needImprovementWorkList;
+            print("needImprovement>>>" + workList.toString());
           }
-        isSpinnerLoading=false;
-        isPiechartLoading=true;
-        isWorklistAvailable=true;
+        }
+        isSpinnerLoading = false;
+        isPiechartLoading = true;
+        isWorklistAvailable = true;
       });
-    }
-    else if (status == s.key_ok && response_value == s.key_noRecord) {
+    } else if (status == s.key_ok && response_value == s.key_noRecord) {
       setState(() {
         isSpinnerLoading = false;
-        isPiechartLoading=false;
+        isPiechartLoading = false;
         totalWorksCount = "0";
-        townCount="0";
-        munCount="0";
-        corpCount="0";
-        sCount="0";
+        townCount = "0";
+        munCount = "0";
+        corpCount = "0";
+        sCount = "0";
         nimpCount = "0";
         usCount = "0";
       });
     }
   }
+
   Future<void> get_PDF(String work_id, String inspection_id) async {
     var userPassKey = prefs.getString(s.userPassKey);
 
@@ -1244,7 +1194,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
@@ -1274,13 +1224,15 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => PDF_Viewer(
-                pdfBytes: pdf,
-              )),
+                    pdfBytes: pdf,
+                  )),
         );
       }
     }
   }
-  Future<void> getRDPRwork (String work_id, String inspection_id, String area_type, String flag_town_type, String flag_tmc_id)async {
+
+  Future<void> getRDPRwork(String work_id, String inspection_id,
+      String area_type, String flag_town_type, String flag_tmc_id) async {
     var userPassKey = prefs.getString(s.userPassKey);
     Map jsonRequest = {
       s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
@@ -1288,7 +1240,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       s.key_inspection_id: inspection_id,
       s.key_rural_urban: area_type,
     };
-    print("AREA_TYPE>>>"+s.key_rural_urban);
+    print("AREA_TYPE>>>" + s.key_rural_urban);
     print("JSON_REQUEST>>>>" + jsonRequest.toString());
     if (s.key_rural_urban == "U") {
       Map urbanRequest = {s.key_town_type: "town_type"};
@@ -1296,24 +1248,19 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       print("JSON_REQUEST>>>>" + jsonRequest.toString());
     }
     if (s.key_town_type == "T") {
-      Map Request = {s.key_townpanchayat_id: "tpcode"
-      };
+      Map Request = {s.key_townpanchayat_id: "tpcode"};
       jsonRequest.addAll(Request);
-    }
-    else if (s.key_town_type == "M") {
-      Map Request = {s.key_municipality_id: "muncode"
-      };
+    } else if (s.key_town_type == "M") {
+      Map Request = {s.key_municipality_id: "muncode"};
       jsonRequest.addAll(Request);
-    }
-    else {
-      Map Request = {s.key_corporation_id: "corcode"
-      };
+    } else {
+      Map Request = {s.key_corporation_id: "corcode"};
       jsonRequest.addAll(Request);
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
     };
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
@@ -1335,7 +1282,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       }
     }
   }
-  bool editdelayHours(String myDate){
+
+  bool editdelayHours(String myDate) {
     DateFormat inputFormat = DateFormat('dd-MM-yyyy');
     DateTime dateTimeLup = inputFormat.parse(myDate);
     DateTime now = DateTime.now();
@@ -1348,13 +1296,14 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     print('hours>>' + '$differenceInHours');
     if (differenceInHours < 48) {
       flag = true;
-      editvisibility=!editvisibility;
+      editvisibility = !editvisibility;
     } else {
       flag = false;
-      editvisibility=editvisibility;
+      editvisibility = editvisibility;
     }
     return flag;
   }
+
   void refresh() {
     TownWorkList = [];
     MunicipalityWorkList = [];

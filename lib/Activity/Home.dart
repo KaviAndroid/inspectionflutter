@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/OtherWorkOnline.dart';
+import 'package:inspection_flutter_app/Activity/OtherWork_RURAL.dart';
 import 'package:inspection_flutter_app/Activity/Pending_Screen.dart';
 import 'package:inspection_flutter_app/Activity/RDPRUrbanWorks.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
@@ -71,9 +72,9 @@ class _HomeState extends State<Home> {
 
     await checkLocalData();
 
-    if (prefs.getString(s.area_type) != null &&
-        prefs.getString(s.area_type) != "") {
-      area_type = prefs.getString(s.area_type)!;
+    if (prefs.getString(s.key_rural_urban) != null &&
+        prefs.getString(s.key_rural_urban) != "") {
+      area_type = prefs.getString(s.key_rural_urban)!;
     } else {
       area_type = "";
     }
@@ -143,7 +144,7 @@ class _HomeState extends State<Home> {
       flag = 2;
     } else {
       flag = 1;
-      prefs.setString(s.area_type, "R");
+      prefs.setString(s.key_rural_urban, "R");
     }
     if (await utils.isOnline()) {
       getDashboardData();
@@ -652,7 +653,8 @@ class _HomeState extends State<Home> {
                                           onTap: () {
                                             setState(() {
                                               flag = 1;
-                                              prefs.setString(s.area_type, "R");
+                                              prefs.setString(
+                                                  s.key_rural_urban, "R");
                                             });
                                           },
                                           child: Row(
@@ -723,7 +725,8 @@ class _HomeState extends State<Home> {
                                           onTap: () {
                                             setState(() {
                                               flag = 2;
-                                              prefs.setString(s.area_type, "U");
+                                              prefs.setString(
+                                                  s.key_rural_urban, "U");
                                             });
                                           },
                                           child: Row(
@@ -864,7 +867,7 @@ class _HomeState extends State<Home> {
                                                 prefs.setString(
                                                     s.workType, "rdpr");
                                                 if (prefs.getString(
-                                                        s.area_type) ==
+                                                        s.key_rural_urban) ==
                                                     'R') {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
@@ -911,7 +914,7 @@ class _HomeState extends State<Home> {
                                                 prefs.setString(
                                                     s.workType, "rdpr");
                                                 if (prefs.getString(
-                                                        s.area_type) ==
+                                                        s.key_rural_urban) ==
                                                     'R') {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
@@ -988,7 +991,7 @@ class _HomeState extends State<Home> {
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                             builder: (context) =>
-                                                OtherWorkOnline(),
+                                                OtherWorks_RURAL(),
                                           ))
                                               .then((value) {
                                             isLogin = "OTHER";
@@ -1125,8 +1128,9 @@ class _HomeState extends State<Home> {
                                                       s.onOffType, "online");
                                                   prefs.setString(
                                                       s.workType, "atr");
-                                                  String? area_type = prefs
-                                                      .getString(s.area_type);
+                                                  String? area_type =
+                                                      prefs.getString(
+                                                          s.key_rural_urban);
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
                                                     builder: (context) =>
@@ -1157,8 +1161,9 @@ class _HomeState extends State<Home> {
                                                       s.onOffType, "offline");
                                                   prefs.setString(
                                                       s.workType, "atr");
-                                                  String? area_type = prefs
-                                                      .getString(s.area_type);
+                                                  String? area_type =
+                                                      prefs.getString(
+                                                          s.key_rural_urban);
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
                                                     builder: (context) =>

@@ -226,6 +226,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
           }
           isSpinnerLoading = false;
           isWorklistAvailable = true;
+          print("WORKLIST >>>>>");
+          print(defaultWorklist);
         });
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
         utils.showAlert(context, s.no_data);

@@ -60,7 +60,7 @@ class DbHelper {
     await db.execute(
         "CREATE TABLE $table_SchemeList ( rural_urban TEXT , scheme_id TEXT, scheme_name TEXT )");
     await db.execute(
-        "CREATE TABLE $table_save_work_details ( flag TEXT ,rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, scheme_id TEXT,work_status_id TEXT, work_status TEXT, work_stage_id TEXT, work_stage TEXT, scheme_group_id TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_name TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
+        "CREATE TABLE $table_save_work_details ( flag TEXT ,rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, scheme_id TEXT,work_status_id TEXT, work_status TEXT, work_stage_id TEXT, work_stage TEXT,current_stage_of_work TEXT, scheme_group_id TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_name TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
     await db.execute(
         "CREATE TABLE $table_save_images ( flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
   }

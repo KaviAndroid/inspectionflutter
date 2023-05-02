@@ -938,7 +938,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) =>SaveWorkDetails(
-                                                                          selectedRDPRworkList: selectedRDPRworkList,
+                                                                          selectedworkList: selectedRDPRworkList,
+                                                                          flag: "edit",
                                                                         )));
                                                                 /*   if(await utils.isOnline())
                                                                               {

@@ -1123,77 +1123,90 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(msg,style: TextStyle(color: c.grey_10,fontSize: 14),),
-              content: Container(
-                height: 300,
-                child: Column(
+            return Container(
+                height: 400,
+                margin: EdgeInsets.all(30),
+                child: Material(
+                  child:Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                  Expanded(child:  Align(
-                    alignment: Alignment.centerLeft,
-                    child: FlutterSingleCheckbox(
-                      shape: CircleBorder(),
-                      singleValueList: list,
-                      onChanged: (index) {
-                        if(key=="D"){
-                          selectedDistrict=list[index].selectId.toString();
-                          selectedDistrictName=list[index].selectTitle.toString();
-                        }else if(key=="B"){
-                          selectedBlock=list[index].selectId.toString();
-                          selectedBlockName=list[index].selectTitle.toString();
-                        }else if(key=="V"){
-                          selectedVillage=list[index].selectId.toString();
-                          selectedVillageName=list[index].selectTitle.toString();
-                        }
-                      },
-                      mainAxisAlignmentOfRow: MainAxisAlignment.start,
-                      crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                    Container(
+                      alignment: AlignmentDirectional.topStart,
+                      child:      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child:Text(
+                          msg ,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.grey_10,
+                              fontSize: 15),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
-                  ),),
-                   InkWell(
-                onTap: () async {
-                  Navigator.pop(context, 'OK');
-                  submitFlag = false;
-                  if(key=="D"){
-                    if(selectedDistrict != "0"&& selectedDistrict != ""){
-                      await loadBlockList(selectedDistrict);
-                    }
-                  }else if(key=="B"){
-                    if(selectedBlock != "0"&& selectedBlock != ""){
-                      if(level == "S" || level == "D"){
-                        await getVillageList(selectedDistrict,selectedBlock);
-                      }else if(level == "B"){
-                        await loadVillageList(selectedDistrict,selectedBlock);
-                      }
-                    }
+                    Expanded(child:  Align(
+                      alignment: Alignment.centerLeft,
+                      child: FlutterSingleCheckbox(
+                        shape: CircleBorder(),
+                        singleValueList: list,
+                        onChanged: (index) {
+                          if(key=="D"){
+                            selectedDistrict=list[index].selectId.toString();
+                            selectedDistrictName=list[index].selectTitle.toString();
+                          }else if(key=="B"){
+                            selectedBlock=list[index].selectId.toString();
+                            selectedBlockName=list[index].selectTitle.toString();
+                          }else if(key=="V"){
+                            selectedVillage=list[index].selectId.toString();
+                            selectedVillageName=list[index].selectTitle.toString();
+                          }
+                        },
+                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                      ),
+                    ),),
+                    InkWell(
+                        onTap: () async {
+                          Navigator.pop(context, 'OK');
+                          submitFlag = false;
+                          if(key=="D"){
+                            if(selectedDistrict != "0"&& selectedDistrict != ""){
+                              await loadBlockList(selectedDistrict);
+                            }
+                          }else if(key=="B"){
+                            if(selectedBlock != "0"&& selectedBlock != ""){
+                              if(level == "S" || level == "D"){
+                                await getVillageList(selectedDistrict,selectedBlock);
+                              }else if(level == "B"){
+                                await loadVillageList(selectedDistrict,selectedBlock);
+                              }
+                            }
 
-                  }else if(key=="V"){
-                    await loadSchemeList(selectedDistrict,selectedBlock,selectedVillage,finList);
-                  }
-                  setState(() {
+                          }else if(key=="V"){
+                            await loadSchemeList(selectedDistrict,selectedBlock,selectedVillage,finList);
+                          }
+                          setState(() {
 
-                  });
+                          });
 
-                },
-                child:Container(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child:      Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                    child: Text(
-                s.key_ok ,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: c.primary_text_color2,
-                    fontSize: 15),
-                textAlign: TextAlign.center,
-              ),
-              ),
-            ))
-                ],)
+                        },
+                        child:Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child:      Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok ,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],),)
 
-              ),
             );
           }
       );}

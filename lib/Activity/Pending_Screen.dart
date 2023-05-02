@@ -18,6 +18,8 @@ import '../Utils/utils.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 
+import 'SaveWorkDetails.dart';
+
 class PendingScreen extends StatefulWidget {
   final Flag;
   PendingScreen({this.Flag});
@@ -38,7 +40,9 @@ class _PendingScreenState extends State<PendingScreen> {
   bool isSpinnerLoading = false;
   bool isWorklistAvailable = false;
   bool flag = false;
-  bool rdprFlag = false;
+  bool flagTab = false;
+  int flagTaped=0;
+  String level="";
 
   List<Map> atr_WorkList = [];
   List<Map> rdpr_WorkList = [];
@@ -55,6 +59,7 @@ class _PendingScreenState extends State<PendingScreen> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
+    level=prefs.getString(s.key_level).toString();
     // utils.customAlert(context, "S", s.online_data_save_success);
     await fetchOfflineWorklist();
 
@@ -64,6 +69,7 @@ class _PendingScreenState extends State<PendingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: c.background_color,
       appBar: AppBar(
         backgroundColor: c.colorPrimary,
         leading: IconButton(
@@ -74,8 +80,104 @@ class _PendingScreenState extends State<PendingScreen> {
         title: Text(s.pending_list),
         centerTitle: true, // like this!
       ),
-      body: SingleChildScrollView(
-          child: Container(
+      body: Column(children: [
+        Visibility(
+          visible: flagTab,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      flag = false;
+                      flagTaped = 1;
+                      if (rdpr_WorkList.length > 0) {
+                        defaultWorklist = [];
+                        defaultWorklist.addAll(rdpr_WorkList);
+                      } else {
+                        defaultWorklist = [];
+                      }
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(20, 10, 0, 0),
+                    padding: EdgeInsets.all(10),
+                    height: 40,
+                    width: MediaQuery.of(context).size.width,
+                    alignment: AlignmentDirectional.center,
+                    decoration: new BoxDecoration(
+                        color: flagTaped == 1 ? c.colorAccent : c.white,
+                        borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(30),
+                          topRight: const Radius.circular(0),
+                          bottomLeft: const Radius.circular(30),
+                          bottomRight: const Radius.circular(0),
+                        )),
+                    child: Text(
+                      s.rdpr_works +
+                          ' (' +
+                          rdpr_WorkList.length.toString() +
+                          ') ',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: flagTaped == 1 ? c.white : c.grey_8,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      flag = true;
+                      flagTaped = 2;
+                      if (atr_WorkList.length > 0) {
+                        defaultWorklist = [];
+                        defaultWorklist.addAll(atr_WorkList);
+                      } else {
+                        defaultWorklist = [];
+                      }
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 10, 20, 0),
+                    padding: EdgeInsets.all(10),
+                    width: MediaQuery.of(context).size.width,
+                    height: 40,
+                    alignment: AlignmentDirectional.center,
+                    decoration: new BoxDecoration(
+                        color: flagTaped == 2 ? c.colorAccent : c.white,
+                        borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(0),
+                          topRight: const Radius.circular(30),
+                          bottomLeft: const Radius.circular(0),
+                          bottomRight: const Radius.circular(30),
+                        )),
+                    child: Text(
+                      s.action_taken_report +
+                          ' (' +
+                          atr_WorkList.length.toString() +
+                          ') ',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: flagTaped == 2 ? c.white : c.grey_8,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+         Expanded(child:
+         Container(
         margin: const EdgeInsets.only(top: 0),
         color: c.background_color,
         width: screenWidth,
@@ -93,7 +195,7 @@ class _PendingScreenState extends State<PendingScreen> {
           ],
         ),
       )),
-    );
+      ],));
   }
 
   // *************************** Pending Design Starts here *************************** //
@@ -103,6 +205,7 @@ class _PendingScreenState extends State<PendingScreen> {
       margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
       child: AnimationLimiter(
           child: ListView.builder(
+              shrinkWrap: true,
               itemCount: defaultWorklist.length,
               itemBuilder: (context, index) {
                 return AnimationConfiguration.staggeredList(
@@ -426,7 +529,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                                           .topStart,
                                                   child: Text(
                                                     defaultWorklist[index]
-                                                            [s.key_status_name]
+                                                            ['work_status']
                                                         .toString(),
                                                   ),
                                                 ),
@@ -555,7 +658,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                                                 .key_rural_urban] ==
                                                             "R"
                                                     ? s.ins_rural_work
-                                                    : flag &&
+                                                    : !flag &&
                                                             defaultWorklist[index][s
                                                                     .key_rural_urban] ==
                                                                 "U"
@@ -629,16 +732,30 @@ class _PendingScreenState extends State<PendingScreen> {
 
   __editWorkList(List workList) async {
     String rural_urban = workList[0][s.key_rural_urban];
+    String flag = workList[0][s.key_flag];
 
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-          builder: (context) => ATR_Save(
-            rural_urban: rural_urban,
-            onoff_type: "offline",
-            selectedWorklist: workList,
-          ),
-        ))
-        .then((value) => {fetchOfflineWorklist()});
+    if(flag=="rdpr"){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SaveWorkDetails(
+                selectedworkList: workList,
+                rural_urban: rural_urban,
+                onoff_type: "offline",
+                flag: "pending",
+              )));
+    }else{
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+        builder: (context) => ATR_Save(
+          rural_urban: rural_urban,
+          onoff_type: "offline",
+          selectedWorklist: workList,
+        ),
+      ))
+          .then((value) => {initialize()});
+    }
+
   }
 
   __uploadWorklist(List workList) async {
@@ -665,24 +782,24 @@ class _PendingScreenState extends State<PendingScreen> {
     atr_WorkList = [];
     rdpr_WorkList = [];
 
-    atr_WorkList =
-        await dbClient.rawQuery("SELECT * FROM ${s.table_save_work_details} ");
+    rdpr_WorkList =
+    await dbClient.rawQuery("SELECT * FROM ${s.table_save_work_details} WHERE flag='rdpr' ");
+    if(level=="B"){
+      atr_WorkList =
+      await dbClient.rawQuery("SELECT * FROM ${s.table_save_work_details} WHERE flag='ATR' ");
+    flagTab=true;
+      flagTaped=1;
+    }else{
+    flagTab=false;
+    }
 
-    if (atr_WorkList.isEmpty && rdpr_WorkList.isEmpty) {
+    if (rdpr_WorkList.isEmpty) {
       setState(() {
         isSpinnerLoading = false;
         isWorklistAvailable = false;
       });
     } else {
-      if (atr_WorkList.isNotEmpty) {
-        flag = true;
-        rdprFlag = false;
-        defaultWorklist = atr_WorkList;
-      } else if (rdpr_WorkList.isNotEmpty) {
-        rdprFlag = true;
-        flag = false;
-        defaultWorklist = rdpr_WorkList;
-      }
+      defaultWorklist = rdpr_WorkList;
 
       print("<<<<<<<<< WORKLIST >>>>>>>");
       print(defaultWorklist);
@@ -690,8 +807,12 @@ class _PendingScreenState extends State<PendingScreen> {
       setState(() {
         isSpinnerLoading = false;
         isWorklistAvailable = true;
+        flag = false;
       });
     }
+    setState(() {
+
+    });
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //
@@ -759,49 +880,88 @@ class _PendingScreenState extends State<PendingScreen> {
       });
 
       List<dynamic> inspection_work_details = [];
-
+      Map dataset = {};
       //Get Offline Imager
 
       if (flag == "ATR") {
         conditionParam =
             "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$work_id' and inspection_id='$inspection_id' and dcode='$dcode'";
+        dataset = {
+          s.key_dcode: dcode,
+          s.key_rural_urban: rural_urban,
+          s.key_work_id: work_id,
+          s.key_inspection_id: inspection_id,
+          'description': workList[0][s.key_description],
+        };
+
       } else {
         conditionParam =
             "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$work_id' and dcode='$dcode'";
+
+        dataset = {
+          s.key_dcode: dcode,
+          s.key_rural_urban: rural_urban,
+          s.key_work_id: work_id,
+          s.key_status_id: workList[0]['work_status_id'].toString(),
+          s.key_work_stage_code: workList[0]['work_stage_id'].toString(),
+          s.key_work_group_id: workList[0][s.key_work_group_id].toString(),
+          s.key_work_type_id: workList[0][s.key_work_type_id].toString(),
+          'description': workList[0][s.key_description],
+        };
       }
 
       var imageExists = [];
       imageExists = await dbClient
           .rawQuery("SELECT * FROM ${s.table_save_images} $conditionParam");
 
-      Map dataset = {
-        s.key_dcode: dcode,
-        s.key_rural_urban: rural_urban,
-        s.key_bcode: workList[0][s.key_bcode],
-        s.key_pvcode: workList[0][s.key_pvcode],
-        s.key_work_id: work_id,
-        s.key_inspection_id: inspection_id,
-        'description': workList[0][s.key_description],
-        'image_details': imageExists,
-      };
-
-      Map urbanRequest = {
-        s.key_town_type: workList[0][s.key_town_type],
-        s.key_tpcode: workList[0][s.key_tpcode],
-        s.key_muncode: workList[0][s.key_muncode],
-        s.key_corcode: workList[0][s.key_corcode],
-      };
+      Map urbanRequest = {};
+      Map ruralRequest = {};
+      Map main_dataset = {};
+      Map imgset = { 'image_details': imageExists,};
 
       if (rural_urban == "U") {
+        if(workList[0][s.key_town_type] == "T"){
+          urbanRequest = {
+            s.key_town_type: workList[0][s.key_town_type],
+            s.key_tpcode: workList[0][s.key_tpcode],
+          };
+
+        }else if(workList[0][s.key_town_type] == "M"){
+          urbanRequest = {
+            s.key_town_type: workList[0][s.key_town_type],
+            s.key_muncode: workList[0][s.key_muncode],
+          };
+
+        }else if(workList[0][s.key_town_type] == "C"){
+          urbanRequest = {
+            s.key_town_type: workList[0][s.key_town_type],
+            s.key_corcode: workList[0][s.key_corcode],
+          };
+      }
         dataset.addAll(urbanRequest);
+      }else{
+          ruralRequest = {
+            s.key_bcode: workList[0][s.key_bcode],
+            s.key_pvcode: workList[0][s.key_pvcode],
+          };
+          dataset.addAll(ruralRequest);
+
       }
 
-      inspection_work_details.add(dataset);
+      dataset.addAll(imgset);
 
-      Map main_dataset = {
-        s.key_service_id: s.service_key_action_taken_details_save,
-        'inspection_work_details': inspection_work_details,
-      };
+      inspection_work_details.add(dataset);
+      if (flag == "ATR") {
+         main_dataset = {
+          s.key_service_id: s.service_key_action_taken_details_save,
+          'inspection_work_details': inspection_work_details,
+        };
+      }else{
+         main_dataset = {
+          s.key_service_id: s.service_key_work_inspection_details_save,
+          'inspection_work_details': inspection_work_details,
+        };
+      }
 
       Map encrpted_request = {
         s.key_user_name: prefs.getString(s.key_user_name),
@@ -816,6 +976,7 @@ class _PendingScreenState extends State<PendingScreen> {
       var response = await _ioClient.post(url.main_service,
           body: json.encode(encrpted_request));
 
+      print("onlineSave_request>>$main_dataset");
       print("onlineSave_request_encrpt>>$encrpted_request");
       setState(() {
         isSpinnerLoading = false;

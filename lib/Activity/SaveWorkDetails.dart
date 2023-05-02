@@ -21,8 +21,8 @@ import '../Utils/utils.dart';
 import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 
 class SaveWorkDetails extends StatefulWidget {
-  final selectedworkList;
-  SaveWorkDetails({this.selectedworkList});
+  final rural_urban, onoff_type,selectedworkList,townType,flag;
+  SaveWorkDetails({this.rural_urban, this.onoff_type,this.selectedworkList,this.townType,this.flag});
   @override
   State<SaveWorkDetails> createState() => _SaveWorkDetailsState();
 }
@@ -38,6 +38,8 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
   List<Map<String, String>> img_jsonArray_val = [];
   var _imageFile;
   String workmage = '';
+  String onoffType = '';
+  String rural_urban = '';
   final _picker = ImagePicker();
   TextEditingController descriptionController = TextEditingController();
   String selectedStatus = "";
@@ -67,6 +69,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
   bool speech = false;
   String _lastWords = '';
   String lang = 'en_US';
+  int max_img_count=0;
 
   @override
   void initState() {
@@ -78,34 +81,30 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     txtFlag = true;
+    onoffType=widget.onoff_type;
+    rural_urban=widget.rural_urban;
     selectedwork = widget.selectedworkList;
-    for (int i = 0;
-        i < int.parse(prefs.getString(s.service_key_photo_count).toString());
-        i++) {
-      Map<String, String> mymap =
-          {}; // This created one object in the current scope.
-
-      // First iteration , i = 0
-      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = (i + 1).toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
-      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
-      img_jsonArray.add(mymap); // mylist = [mymap];
+    print("selectedwork"+selectedwork.toString());
+    loadImageList();
+    var isExists = await dbClient.rawQuery(
+        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+    if (isExists[0]['cnt'] > 0) {
+      print("exists>>>>");
+      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_work_details+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+      selectedStatus=list[0]['work_status_id'];
+      selectedStatusName=list[0]['work_status'];
+      selectedStage=list[0]['work_stage_id'];
+      selectedStageName=list[0]['work_stage'];
+      descriptionController.text=list[0]['description'];
+    }else{
+      selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+      selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+      selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
+      selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
+      descriptionController.text="";
     }
-    print("Img>>" + img_jsonArray.toString());
-    if (img_jsonArray.length > 0) {
-      noDataFlag = false;
-      imageListFlag = true;
-    } else {
-      noDataFlag = true;
-      imageListFlag = false;
-    }
-
     List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
     print(list.toString());
-    selectedStatus = defaultSelectedStatus[s.key_status_id]!;
-    selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
     statusItems.add(defaultSelectedStatus);
     statusItems.addAll(list);
     print('status>>' + statusItems.toString());
@@ -228,6 +227,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                       margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
                       child: InkWell(
                         onTap: () {
+                          utils.hideSoftKeyBoard(context);
                           validate();
                         },
                         child: Container(
@@ -324,8 +324,12 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
 
   Future<void> TakePhoto(
       ImageSource source, int i, String latitude, String longitude) async {
-    final pickedFile = await _picker.pickImage(source: source);
-
+    // final pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 75,
+        maxHeight: 400,
+        maxWidth: 400);
     if (pickedFile == null) {
       Navigator.pop(context);
 
@@ -351,8 +355,6 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
         await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
     print(stageList.toString());
     stageItemsAll.addAll(stageList);
-    selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
-    selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
     stageItems.add(defaultSelectedStage);
     print('stage>>' + stageItems.toString());
     print('stageItemsAll>>' + stageItemsAll.toString());
@@ -377,7 +379,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
         if (!descriptionController.text.isEmpty &&
             descriptionController.text != '') {
           if (!selectedStatus.isEmpty && selectedStatus != '0') {
-            prefs.getString(s.onOffType)=="online"?saveData():saveDataOffline();
+            onoffType=="online"?saveData():saveDataOffline();
           } else {
             utils.showAlert(context, "Please Select Status");
           }
@@ -408,22 +410,56 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
+      int count=i+1;
+      img_jsonArray[i].update('serial_no', (value) => count.toString());
       jsonArray.add(img_jsonArray_val[i]);
     }
+
     Map dataset = {
       s.key_dcode: selectedwork[0][s.key_dcode].toString(),
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_bcode: selectedwork[0][s.key_bcode].toString(),
-      s.key_pvcode: selectedwork[0][s.key_pvcode].toString(),
-      s.key_hab_code: selectedwork[0][s.key_hab_code].toString(),
       s.key_work_id: selectedwork[0][s.key_work_id].toString(),
       s.key_status_id: selectedStatus,
       s.key_work_stage_code: selectedStage,
       s.key_work_group_id: selectedwork[0][s.key_work_group_id].toString(),
       s.key_work_type_id: selectedwork[0][s.key_work_type_id].toString(),
       'description': descriptionController.text.toString(),
-      'image_details': jsonArray,
     };
+    Map ruralset = {};
+    Map urbanset = {};
+    Map imgset = { 'image_details': jsonArray,};
+
+    if (rural_urban == "U") {
+      if(widget.townType == "T"){
+        urbanset = {
+          s.key_town_type: widget.townType,
+          s.key_tpcode: selectedwork[0][s.key_tpcode],
+        };
+
+      }else if(widget.townType == "M"){
+        urbanset = {
+          s.key_town_type: widget.townType,
+          s.key_muncode: selectedwork[0][s.key_muncode],
+        };
+
+      }else if(widget.townType == "C"){
+        urbanset = {
+          s.key_town_type: widget.townType,
+          s.key_corcode: selectedwork[0][s.key_corcode],
+        };
+
+      }
+      dataset.addAll(urbanset);
+    }else{
+      ruralset = {
+        s.key_bcode: selectedwork[0][s.key_bcode].toString(),
+        s.key_pvcode: selectedwork[0][s.key_pvcode].toString(),
+        s.key_hab_code: selectedwork[0][s.key_hab_code].toString(),
+      };
+      dataset.addAll(ruralset);
+    }
+    dataset.addAll(imgset);
+
     inspection_work_details.add(dataset);
 
     Map main_dataset = {
@@ -470,26 +506,29 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     var imageCount = 0;
 
     var isExists = await dbClient.rawQuery(
-        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${prefs.getString(s.key_rural_urban)}' and flag='rdpr'");
+        "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
     if (isExists[0]['cnt'] > 0) {
       print("Edit>>>>");
+      print("Edit>>>>"+isExists.toString());
       for (int i = 0; i < selectedwork.length; i++) {
         count = await dbClient.rawInsert(" UPDATE " +
             s.table_save_work_details +
             " SET description = '" +
             descriptionController.text +
+            "', work_status_id = '" +
+            selectedStatus +
+            "', work_status = '" +
+            selectedStatusName +
+            "', work_stage_id = '" +
+            selectedStage +
+            "', work_stage = '" +
+            selectedStageName +
             "' WHERE rural_urban = '" +
-            selectedwork[i][s.key_rural_urban] +
+            rural_urban.toString()  +
             "' AND work_id = '" +
             selectedwork[i][s.key_work_id].toString() +
-            "'AND work_status_id =  '" +
-            selectedStatus +
-            "'AND work_status =  '" +
-            selectedStatusName +
-            "'AND work_stage =  '" +
-            selectedStageName +
-            "'AND work_stage_id =  '" +
-            selectedStage +
+            "'AND flag =  '" +
+            "rdpr" +
             "'AND dcode =  '" +
             selectedwork[i][s.key_dcode].toString() +
             "'");
@@ -497,54 +536,216 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
 
     }else{
       for (int i = 0; i < selectedwork.length; i++) {
-        await dbClient.rawInsert('INSERT INTO ' +
-            s.table_save_work_details +
-            ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
-            "'" +
-            "rdpr" +
-            "' , '" +
-            prefs.getString(s.key_rural_urban).toString() +
-            "' , '" +
-            selectedwork[i][s.key_dcode].toString() +
-            "' , '" +
-            selectedwork[i][s.key_bcode].toString() +
-            "' , '" +
-            selectedwork[i][s.key_pvcode].toString() +
-            "' , '" +
-            selectedwork[i][s.key_work_id].toString() +
-            "' , '" +
-            selectedwork[i][s.key_scheme_id].toString() +
-            "' , '" +
-            selectedStatus +
-            "' , '" +
-            selectedStatusName +
-            "' , '" +
-            selectedwork[i][s.key_current_stage_of_work].toString() +
-            "' , '" +
-            selectedwork[i][s.key_stage_name].toString() +
-            "' , '" +
-            selectedwork[i][s.key_scheme_group_id].toString() +
-            "' , '" +
-            selectedwork[i][s.key_work_group_id].toString() +
-            "' , '" +
-            selectedwork[i][s.key_work_type_id].toString() +
-            "' , '" +
-            selectedwork[i][s.key_fin_year].toString() +
-            "' , '" +
-            selectedwork[i][s.key_work_name].toString() +
-            "' , '" +
-            "0" +
-            "' , '" +
-            descriptionController.text.toString() +
-            "' , '" +
-            "0"+
-            "' , '" +
-            "0" +
-            "' , '" +
-            "0" +
-            "' , '" +
-            "0" +
-            "')");
+        if(rural_urban=="R"){
+          count = await dbClient.rawInsert('INSERT INTO ' +
+              s.table_save_work_details +
+              ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
+              "'" +
+              "rdpr" +
+              "' , '" +
+              rural_urban.toString() +
+              "' , '" +
+              selectedwork[i][s.key_dcode].toString() +
+              "' , '" +
+              selectedwork[i][s.key_bcode].toString() +
+              "' , '" +
+              selectedwork[i][s.key_pvcode].toString() +
+              "' , '" +
+              selectedwork[i][s.key_work_id].toString() +
+              "' , '" +
+              selectedwork[i][s.key_scheme_id].toString() +
+              "' , '" +
+              selectedStatus +
+              "' , '" +
+              selectedStatusName +
+              "' , '" +
+              selectedStage +
+              "' , '" +
+              selectedStageName +
+              "' , '" +
+              selectedwork[i][s.key_current_stage_of_work].toString() +
+              "' , '" +
+              selectedwork[i][s.key_scheme_group_id].toString() +
+              "' , '" +
+              selectedwork[i][s.key_work_group_id].toString() +
+              "' , '" +
+              selectedwork[i][s.key_work_type_id].toString() +
+              "' , '" +
+              selectedwork[i][s.key_fin_year].toString() +
+              "' , '" +
+              selectedwork[i][s.key_work_name].toString() +
+              "' , '" +
+              "0" +
+              "' , '" +
+              descriptionController.text.toString() +
+              "' , '" +
+              "0"+
+              "' , '" +
+              "0" +
+              "' , '" +
+              "0" +
+              "' , '" +
+              "0" +
+              "')");
+        }else{
+          if(widget.townType=="T"){
+            count = await dbClient.rawInsert('INSERT INTO ' +
+                s.table_save_work_details +
+                ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
+                "'" +
+                "rdpr" +
+                "' , '" +
+                rural_urban.toString() +
+                "' , '" +
+                selectedwork[i][s.key_dcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[i][s.key_work_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_id].toString() +
+                "' , '" +
+                selectedStatus +
+                "' , '" +
+                selectedStatusName +
+                "' , '" +
+                selectedStage +
+                "' , '" +
+                selectedStageName +
+                "' , '" +
+                selectedwork[i][s.key_current_stage_of_work].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_type_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_fin_year].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_name].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                descriptionController.text.toString() +
+                "' , '" +
+                widget.townType+
+                "' , '" +
+                selectedwork[i][s.key_tpcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "')");
+          }
+          else if(widget.townType=="M"){
+            count = await dbClient.rawInsert('INSERT INTO ' +
+                s.table_save_work_details +
+                ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
+                "'" +
+                "rdpr" +
+                "' , '" +
+                rural_urban.toString() +
+                "' , '" +
+                selectedwork[i][s.key_dcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[i][s.key_work_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_id].toString() +
+                "' , '" +
+                selectedStatus +
+                "' , '" +
+                selectedStatusName +
+                "' , '" +
+                selectedStage +
+                "' , '" +
+                selectedStageName +
+                "' , '" +
+                selectedwork[i][s.key_current_stage_of_work].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_type_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_fin_year].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_name].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                descriptionController.text.toString() +
+                "' , '" +
+                widget.townType+
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[i][s.key_muncode].toString()+
+                "' , '" +
+                "0" +
+                "')");
+          }
+          else if(widget.townType=="C"){
+            count = await dbClient.rawInsert('INSERT INTO ' +
+                s.table_save_work_details +
+                ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
+                "'" +
+                "rdpr" +
+                "' , '" +
+                rural_urban.toString() +
+                "' , '" +
+                selectedwork[i][s.key_dcode].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[i][s.key_work_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_id].toString() +
+                "' , '" +
+                selectedStatus +
+                "' , '" +
+                selectedStatusName +
+                "' , '" +
+                selectedStage +
+                "' , '" +
+                selectedStageName +
+                "' , '" +
+                selectedwork[i][s.key_current_stage_of_work].toString() +
+                "' , '" +
+                selectedwork[i][s.key_scheme_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_group_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_type_id].toString() +
+                "' , '" +
+                selectedwork[i][s.key_fin_year].toString() +
+                "' , '" +
+                selectedwork[i][s.key_work_name].toString() +
+                "' , '" +
+                "0" +
+                "' , '" +
+                descriptionController.text.toString() +
+                "' , '" +
+                widget.townType+
+                "' , '" +
+                "0" +
+                "' , '" +
+                "0" +
+                "' , '" +
+                selectedwork[i][s.key_corcode].toString() +
+                "')");
+          }
+        }
+
 
       }
     }
@@ -557,7 +758,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
         serial_count++;
 
         var imageExists = await dbClient.rawQuery(
-            "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and flag='rdpr' and dcode='${selectedwork[0][s.key_dcode].toString()}'and rural_urban='${prefs.getString(s.key_rural_urban)}' and serial_no='${serial_count.toString()}'");
+            "SELECT * FROM ${s.table_save_images} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and flag='rdpr' and dcode='${selectedwork[0][s.key_dcode].toString()}'and rural_urban='${rural_urban}' and serial_no='${serial_count.toString()}'");
 
         if (imageExists.length > 0) {
           await File(imageExists[0][s.key_image_path]).exists()
@@ -579,7 +780,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
               "', image = '" +
               img_jsonArray_val[i][s.key_image].toString() +
               "' WHERE rural_urban = '" +
-              prefs.getString(s.key_rural_urban).toString() +
+              rural_urban.toString() +
               "' AND work_id = '" +
               selectedwork[0][s.key_work_id].toString() +
               "' AND serial_no = '" +
@@ -593,7 +794,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
           print("img ins");
 
           print(img_jsonArray_val[i][s.key_image_path].toString());
-          if(prefs.getString(s.key_rural_urban).toString()=="R"){
+          if(rural_urban.toString()=="R"){
             imageCount = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_images +
                 ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
@@ -611,7 +812,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                 "' , '" +
                 serial_count.toString() +
                 "' , '" +
-                prefs.getString(s.key_rural_urban).toString() +
+                rural_urban.toString() +
                 "' , '" +
                 selectedwork[0][s.key_dcode].toString() +
                 "' , '" +
@@ -648,7 +849,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                 "' , '" +
                 serial_count.toString() +
                 "' , '" +
-                prefs.getString(s.key_rural_urban).toString() +
+                rural_urban.toString() +
                 "' , '" +
                 selectedwork[0][s.key_dcode].toString() +
                 "' , '" +
@@ -673,10 +874,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     }
     if (count > 0 && imageCount > 0) {
       utils.customAlert(context, "S", s.save_success).then((value) => {
-        Timer(Duration(seconds: 2), () {
-          Navigator.pop(context);
-        })
-      });
+      Navigator.pop(context)      });
     }
   }
   listview() {
@@ -1163,5 +1361,46 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
         );
       },
     );
+  }
+
+  Future<void> loadImageList()async {
+    img_jsonArray.clear();
+    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_images+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+
+    for (int i = 0; i < list.length; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
+
+      // First iteration , i = 0
+      mymap["latitude"] = list[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = list[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = list[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = list[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = list[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+
+    for (int i = img_jsonArray.length; i < max_img_count; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
+
+      // First iteration , i = 0
+      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
+      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+    print("Img>>" + img_jsonArray.toString());
+    if (img_jsonArray.length > 0) {
+      noDataFlag = false;
+      imageListFlag = true;
+    } else {
+      noDataFlag = true;
+      imageListFlag = false;
+    }
+
   }
 }

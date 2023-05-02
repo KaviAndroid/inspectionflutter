@@ -731,6 +731,8 @@ class _ATR_SaveState extends State<ATR_Save> {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
+      int count=i+1;
+      img_jsonArray[i].update('serial_no', (value) => count.toString());
       jsonArray.add(img_jsonArray_val[i]);
     }
     Map dataset = {
@@ -968,9 +970,7 @@ class _ATR_SaveState extends State<ATR_Save> {
 
     if (count > 0 && imageCount > 0) {
       utils.customAlert(context, "S", s.save_success).then((value) => {
-            Timer(Duration(seconds: 2), () {
-              Navigator.pop(context);
-            })
+      Navigator.pop(context)
           });
     }
   }

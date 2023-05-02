@@ -204,11 +204,11 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                       scheme: schemeList[0][s.key_scheme_id],
                                       townType: town_type,
                                       flag: 'tmc_offline',
-                                    ))).then((value) {
+                                    )))/*.then((value) {
                               utils.gotoHomePage(context, "RDPRUrban");
                               // you can do what you need here
                               // setState etc.
-                            });
+                            })*/;
                           },
                           child: Container(
                           alignment: AlignmentDirectional.center,
@@ -939,11 +939,11 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                             townType: town_type,
                                             selectedschemeList: schArray,
                                             flag: 'tmc_online',
-                                          ))).then((value) {
+                                          )))/*.then((value) {
                                     utils.gotoHomePage(context, "RDPRUrban");
                                     // you can do what you need here
                                     // setState etc.
-                                  });
+                                  })*/;
                                 }else{
                                   String dcode=selectedLevel == 'S'? selectedDistrict:prefs.getString(s.key_dcode).toString();
                                   await getWorkListByTMC(dcode, selectedTMC, town_type, schArray, finArray);

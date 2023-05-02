@@ -50,6 +50,7 @@ class _DrawerAppState extends State<DrawerApp> {
   }
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
+    dbClient = await dbHelper.db;
     if (prefs?.getString(s.key_name) != null && prefs?.getString(s.key_name) != "" ) {
       name=prefs!.getString(s.key_name)!;
     } else {
@@ -559,12 +560,14 @@ class _DrawerAppState extends State<DrawerApp> {
     );
   }
   Future<void> stageApi() async {
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_WorkStages);
+    getAll_Stage();
+
+    /* List<Map> list = await dbClient.rawQuery('SELECT * FROM '+s.table_WorkStages);
     print("table_WorkStages >>" + list.toString());
     print("table_WorkStages_size >>" + list.length.toString());
     if(list.length == 0){
       getAll_Stage();
-    }
+    }*/
   }
   Future<void> getAll_Stage() async {
     late Map json_request;
@@ -604,14 +607,15 @@ class _DrawerAppState extends State<DrawerApp> {
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert(
                 'INSERT INTO '+s.table_WorkStages+' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
+                    "'" +
                     res_jsonArray[i][s.key_work_group_id].toString() +
-                    ','+
+                    "' , '" +
                     res_jsonArray[i][s.key_work_type_id].toString() +
-                    ','+
+                    "' , '" +
                     res_jsonArray[i][s.key_work_stage_order].toString()  +
-                    ','+
+                    "' , '" +
                     res_jsonArray[i][s.key_work_stage_code] .toString() +
-                    ",'"+
+                    "' , '"+
                     res_jsonArray[i][s.key_work_stage_name] +
                     "')");
 

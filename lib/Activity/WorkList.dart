@@ -5,6 +5,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/SaveWorkDetails.dart';
@@ -728,10 +729,17 @@ class _WorkListState extends State<WorkList> {
                         visible: workListFlag,
                         child: Container(
                           margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                          child: ListView.builder(
+                          child: AnimationLimiter(
+                            child: ListView.builder(
                             itemCount: workList == null ? 0 : workList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return InkWell(
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 800),
+                                child: SlideAnimation(
+                                  horizontalOffset: 200.0,
+                                  child: FlipAnimation(
+                                      child: InkWell(
                                   onTap: () {},
                                   child: Card(
                                       elevation: 2,
@@ -846,7 +854,7 @@ class _WorkListState extends State<WorkList> {
                                                                       context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => SaveWorkDetails(
-                                                                                selectedworkList: selectedworkList,
+                                                                                selectedworkList: selectedworkList,onoff_type: prefs.getString(s.onOffType),rural_urban: prefs.getString(s.key_rural_urban),townType: widget.townType,flag: "worklist",
                                                                               )));
                                                                 },
                                                                 child:
@@ -2355,9 +2363,11 @@ class _WorkListState extends State<WorkList> {
                                             ],
                                           ),
                                         ),
-                                      )));
+                                      )))),
+                              ),
+                              );
                             },
-                          ),
+                          ),),
                         ),
                       ),
                       Visibility(

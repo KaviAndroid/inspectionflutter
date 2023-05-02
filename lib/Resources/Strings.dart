@@ -213,6 +213,8 @@ String online_data_save_success = "Your Data is Synchronized to Server!";
 String description = "Description";
 String please_enter_category = "Please Select Category";
 String select_other = "Select Category";
+String enter_other_work_details = "Enter other work detail";
+String please_enter_other_work_details = "Please enter other work detail";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -403,8 +405,10 @@ String service_key_work_id_wise_inspection_details_view =
 String service_key_date_wise_inspection_details_view =
     "date_wise_inspection_details_view";
 String service_key_action_taken_details_save = "action_taken_details_save";
-String service_key_work_id_wise_inspection_action_taken_details_view = "work_id_wise_inspection_action_taken_details_view";
-
+String service_key_work_id_wise_inspection_action_taken_details_view =
+    "work_id_wise_inspection_action_taken_details_view";
+String service_key_other_work_inspection_details_save =
+    "other_work_inspection_details_save";
 
 //Table Name
 String table_District = "District";

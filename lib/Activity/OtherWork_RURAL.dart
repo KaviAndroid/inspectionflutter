@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/OtherWorks_Save.dart';
 import 'package:inspection_flutter_app/Activity/SaveWorkDetails.dart';
 import 'package:inspection_flutter_app/Activity/WorkList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -707,21 +708,17 @@ class OtherWorks_RURALState extends State<OtherWorks_RURAL> {
                                     borderRadius: BorderRadius.circular(15),
                                   ))),
                               onPressed: () {
-                                print(selectedCategory);
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => WorkList(
-                                //               schemeList: categoryItems,
-                                //               finYear: selectedFinYear,
-                                //               dcode: selectedDistrict,
-                                //               bcode: selectedBlock,
-                                //               pvcode: selectedVillage,
-                                //               scheme: selectedCategory,
-                                //               tmccode: '',
-                                //               townType: '',
-                                //               flag: 'rdpr_online',
-                                //             )));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OtherWork_Save(
+                                              category: selectedCategory,
+                                              finYear: selectedFinYear,
+                                              dcode: selectedDistrict,
+                                              bcode: selectedBlock,
+                                              pvcode: selectedVillage,
+                                              flag: 'R',
+                                            )));
                               },
                               child: Text(
                                 s.submit,
@@ -841,7 +838,7 @@ class OtherWorks_RURALState extends State<OtherWorks_RURAL> {
           blockFlag = true;
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        Utils().showAlert(context, "No Block Found");
+        utils.customAlert(context, "E", "No Block Found");
       }
       isLoadingD = false;
       districtError = false;
@@ -898,7 +895,7 @@ class OtherWorks_RURALState extends State<OtherWorks_RURAL> {
           villageFlag = true;
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        Utils().showAlert(context, "No Village Found");
+        utils.customAlert(context, "E", "No Village Found");
       }
     }
   }

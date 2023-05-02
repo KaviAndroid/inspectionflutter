@@ -181,7 +181,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               }
                             } else {
                               utils.showAlert(
-                                  context, s.enter_a_valid_mobile_number);
+                                  context,s.enter_a_valid_mobile_number);
                             }
                           },
                         )),

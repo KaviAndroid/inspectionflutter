@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -29,9 +30,9 @@ class Work_detailed_ViewScreen extends StatefulWidget {
   final workList;
   final Flag;
   final flag;
-  final selectedworkList;
+  final selectedRDPRworkList;
 
-  Work_detailed_ViewScreen({this.selectedworkList, this.workList, this.Flag, this.flag});
+  Work_detailed_ViewScreen({this.selectedRDPRworkList, this.workList, this.Flag, this.flag});
   State<Work_detailed_ViewScreen> createState() => Work_detailed_ViewScreenState();
 }
 class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
@@ -39,18 +40,31 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   bool isWorklistAvailable = false;
   late SharedPreferences prefs;
   Utils utils = Utils();
+  bool noDataFlag = false;
+  bool imageListFlag = false;
   List workList = [];
   List ImageList = [];
+  List<Map<String, String>> img_jsonArray = [];
+  List<Map<String, String>> img_jsonArray_val = [];
   String town_type = "T";
   String inspection_id="";
   String work_id="";
   String action_taken_id="";
   String other_work_inspection_id="";
   String type="";
+  Uint8List? image;
   @override
   void initState() {
     super.initState();
+    if (img_jsonArray.length > 0) {
+      noDataFlag = false;
+      imageListFlag = true;
+    } else {
+      noDataFlag = true;
+      imageListFlag = false;
+    }
     getWorkDetails();
+    ;
   }
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
@@ -132,7 +146,8 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                     itemCount: 1,
                    itemBuilder: (BuildContext context,int index)
             {
-              inspection_id=widget.selectedworkList[index][s.key_inspection_id].toString();
+              inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
+              town_type=widget.selectedRDPRworkList[index][s.key_town_type];
             return InkWell(
             child:Card(
             elevation: 5,
@@ -198,7 +213,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             Expanded(
             flex: 1,
             child: Text(
-                work_id=widget.selectedworkList[index][s.key_work_id].toString(),
+                work_id=widget.selectedRDPRworkList[index][s.key_work_id].toString(),
             style: TextStyle(
             color: c.black),
             maxLines: 1),
@@ -247,7 +262,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Text(widget.selectedworkList[index][s.key_status_name].toString(),
+                    child: Text(widget.selectedRDPRworkList[index][s.key_status_name].toString(),
                         style: TextStyle(
                             color: c.black),
                         maxLines: 1),
@@ -296,7 +311,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Text(widget.selectedworkList[index][s.key_work_name],
+                    child: Text(widget.selectedRDPRworkList[index][s.key_work_name],
                         style: TextStyle(
                             color: c.black),
                         maxLines: 4),
@@ -345,7 +360,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Text(widget.selectedworkList[index][s.key_description],
+                    child: Text(widget.selectedRDPRworkList[index][s.key_description],
                         style: TextStyle(
                           fontSize: 15,
                             color: c.black),
@@ -416,10 +431,53 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     crossAxisAlignment:
     CrossAxisAlignment.start,
     children: [
-    Expanded(
-    flex: 1,
-    child: Image.asset(imagePath.edit_icon),
-    ),
+      Expanded(  child: image != null
+          ? Image.memory(
+        base64.decode(image.toString()),
+        width: screenWidth,
+        height: screenWidth * 0.3,
+        fit: BoxFit.fitWidth,
+      )
+          : Image.asset(
+        imagePath.bg_curve,
+        width: screenWidth,
+        height: screenWidth * 0.3,
+        fit: BoxFit.fill,
+      ),
+      )
+      /*Expanded(
+        child: InkWell(
+          child: img_jsonArray[index]['image'] == '0'
+              ? Container(
+            width: 80,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(10),
+                topRight: const Radius.circular(10),
+                bottomLeft:
+                const Radius.circular(0),
+                bottomRight:
+                const Radius.circular(0),
+              ),
+              border: Border.all(
+                  color: c.grey, width: 0.2),
+            ),
+          )
+              : Container(
+            width: 80,
+            height: 50,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.fill,
+                image: MemoryImage(Base64Decoder()
+                    .convert(img_jsonArray[index]
+                ['image']!)),
+              ),
+            ),
+          ),
+        ),
+      )*/
     ],
     ),
     SizedBox(
@@ -437,12 +495,9 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
     prefs.getString(s.key_rural_urban);
-    json_request={
-     s.key_inspection_id:inspection_id,
-      s.key_work_id:work_id,
-    };
     print("Workid>>>>"+work_id);
     print("inspection>>>>"+inspection_id);
+    print("towntype>>>>>"+town_type);
     if(type=="atr")
       {
         json_request = {
@@ -451,15 +506,17 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         };
       }
     else
-      {
-        json_request = {
-          s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-        };
-      }
+    {
+      json_request = {
+        s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+        s.key_inspection_id:inspection_id,
+        s.key_work_id:work_id,
+        s.key_rural_urban:prefs.getString(s.key_rural_urban),
+      };
+    }
     if (s.key_rural_urban=="U") {
       Map urbanRequest = {s.key_town_type:town_type};
       json_request.addAll(urbanRequest);
-      print("REQUEST>>>>>>"+json_request.toString());
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
@@ -477,21 +534,25 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     print("WorkList_response>>" + data);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
-    var decrpt_data =
-    utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrpt_data);
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
-      Map res_jsonArray = userData[s.key_json_data];
-      List<dynamic> RdprWorkList = res_jsonArray[s.key_inspection_details];
-      if (RdprWorkList.isNotEmpty) {
-        for (int i = 0; i < RdprWorkList.length; i++) {
-
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        for (int i = 0; i < res_jsonArray.length; i++) {
+          String res_image = res_jsonArray[i][s.key_image];
+          if (!(res_image == ("null") || res_image == (""))) {
+            image = Base64Codec().decode(res_image);
+          }
         }
       }
-      setState(() {
-      });
+      /*// Map<String,dynamic> res_jsonArray=userData[s.key_json_data];
+      List<dynamic> res_jsonArray=userData[s.key_json_data];
+      print("res_jsonArray>>>>"+res_jsonArray.toString());
+      img_jsonArray.add(userData[s.key_inspection_image]);
+      print("image>>>>"+img_jsonArray.toString());*/
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {
       setState(() {

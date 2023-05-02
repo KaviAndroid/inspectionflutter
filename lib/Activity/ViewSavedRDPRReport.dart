@@ -49,7 +49,7 @@ class ViewSavedRDPRReport extends StatefulWidget {
 class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   List<DateTime>? selectedDateRange;
   List workList = [];
-  List selectedworkList = [];
+  List selectedRDPRworkList = [];
   List TownWorkList = [];
   List MunicipalityWorkList = [];
   List corporationWorklist = [];
@@ -179,9 +179,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Container(
-              height: 751,
-              color: ca1,
               child: Column(
                 children: [
                   widget.Flag == "Urban Area"
@@ -194,7 +191,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                   isSpinnerLoading ? const SizedBox() : _Piechart(),
                   _WorkList(),
                 ],
-              )),
+              ),
         ),
         /*body:Container(
             color: c.ca1,
@@ -624,7 +621,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   _WorkList() {
     return Container(
         color: ca1,
-        height: 300,
         child: Padding(
           padding: EdgeInsets.only(top: 0, left: 8, right: 8),
           child: Stack(children: [
@@ -632,18 +628,21 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               visible: isWorklistAvailable,
               child: Container(
                   child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 itemCount: workList == null ? 0 : workList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      selectedworkList.clear();
-                      selectedworkList.add(workList[index]);
-                      print('selectedworkList>>' + selectedworkList.toString());
+                      selectedRDPRworkList.clear();
+                      selectedRDPRworkList.add(workList[index]);
+                      print("SELECTED_RDPR_WORKLIST>>>>"+selectedRDPRworkList.toString());
+                      print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Work_detailed_ViewScreen(
-                                    selectedworkList: selectedworkList,
+                                    selectedRDPRworkList: selectedRDPRworkList,
                                   )));
                     },
                     child: Card(
@@ -900,9 +899,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                       Column(
                                         children: [
                                           Visibility(
-                                            visible: editdelayHours(
+                                            /*visible: editdelayHours(
                                                 workList[index]
-                                                    [s.key_inspection_date]),
+                                                    [s.key_inspection_date]),*/
                                             child: Row(
                                               children: [
                                                 Expanded(
@@ -932,12 +931,15 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             ),
                                                             child: InkWell(
                                                               onTap: () async {
+                                                                selectedRDPRworkList.clear();
+                                                                selectedRDPRworkList.add(workList[index]);
+                                                                print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                SaveWorkDetails()));
+                                                                        builder: (context) =>SaveWorkDetails(
+                                                                          selectedRDPRworkList: selectedRDPRworkList,
+                                                                        )));
                                                                 /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];

@@ -22,12 +22,12 @@ import '../DataBase/DbHelper.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../Utils/utils.dart';
 
-class OtherWorks_RURAL extends StatefulWidget {
+class OtherWorksRural extends StatefulWidget {
   @override
-  State<OtherWorks_RURAL> createState() => OtherWorks_RURALState();
+  State<OtherWorksRural> createState() => OtherWorksRuralState();
 }
 
-class OtherWorks_RURALState extends State<OtherWorks_RURAL> {
+class OtherWorksRuralState extends State<OtherWorksRural> {
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
@@ -717,7 +717,7 @@ class OtherWorks_RURALState extends State<OtherWorks_RURAL> {
                                               dcode: selectedDistrict,
                                               bcode: selectedBlock,
                                               pvcode: selectedVillage,
-                                              flag: 'R',
+                                              flag: 'other',
                                             )));
                               },
                               child: Text(

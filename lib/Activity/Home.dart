@@ -7,8 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/OtherWorkOnline.dart';
-import 'package:inspection_flutter_app/Activity/OtherWork_RURAL.dart';
+import 'package:inspection_flutter_app/Activity/OtherWorkUrban.dart';
+import 'package:inspection_flutter_app/Activity/OtherWorkRural.dart';
 import 'package:inspection_flutter_app/Activity/Pending_Screen.dart';
 import 'package:inspection_flutter_app/Activity/RDPRUrbanWorks.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
@@ -985,23 +985,8 @@ class _HomeState extends State<Home> {
                                           )),
                                       child: InkWell(
                                         onTap: () {
-                                          prefs.setString(
-                                              s.onOffType, "online");
-                                          prefs.setString(s.workType, "other");
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                OtherWorks_RURAL(),
-                                          ))
-                                              .then((value) {
-                                            isLogin = "OTHER";
-                                            initialize();
-                                            // you can do what you need here
-                                            // setState etc.
-                                          });
-                                          /* Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => RDPR_Online()));*/
+                                          callOtherWorkEntryScreen();
+
                                         },
                                         child: Text(
                                           s.other_works,
@@ -1027,7 +1012,11 @@ class _HomeState extends State<Home> {
                                       // This comes with a small performance cost, and you should not set [clipBehavior]
                                       // unless you need it.
                                       clipBehavior: Clip.hardEdge,
-                                      child: Container(
+                                      child: InkWell(
+                                        onTap: (){
+                                          callOtherWorkEntryScreen();
+                                        },
+                                        child:Container(
                                         height: 70,
                                         width: 80,
                                         alignment: Alignment.bottomCenter,
@@ -1044,6 +1033,7 @@ class _HomeState extends State<Home> {
                                             ),
                                           ],
                                         ),
+                                      ),
                                       ),
                                     ),
                                   )
@@ -1915,5 +1905,36 @@ class _HomeState extends State<Home> {
         }
       }
     }
+  }
+
+  callOtherWorkEntryScreen() {
+    prefs.setString(s.onOffType, "online");
+    prefs.setString(s.workType, "other");
+    if(prefs.getString(s.key_rural_urban)=="R"){
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+        builder: (context) =>
+            OtherWorksRural(),
+      ))
+          .then((value) {
+        isLogin = "OTHER";
+        initialize();
+        // you can do what you need here
+        // setState etc.
+      });
+    }else{
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+        builder: (context) =>
+            OtherWorkUrban(),
+      ))
+          .then((value) {
+        isLogin = "OTHER";
+        initialize();
+        // you can do what you need here
+        // setState etc.
+      });
+    }
+
   }
 }

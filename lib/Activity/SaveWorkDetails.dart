@@ -27,7 +27,7 @@ class SaveWorkDetails extends StatefulWidget {
   State<SaveWorkDetails> createState() => _SaveWorkDetailsState();
 }
 
-class _SaveWorkDetailsState extends State<SaveWorkDetails> {
+class _SaveWorkDetailsState extends State<SaveWorkDetails> with ChangeNotifier{
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
@@ -85,8 +85,37 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     rural_urban=widget.rural_urban;
     selectedwork = widget.selectedworkList;
     print("selectedwork"+selectedwork.toString());
-    loadImageList();
-    var isExists = await dbClient.rawQuery(
+    if(widget.flag=="edit")
+    {
+      selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+      selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+      selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
+      selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
+      descriptionController.text=selectedwork[0]['description'];
+      // imageList.addAll(widget.);
+    }
+    else
+    {
+      var isExists = await dbClient.rawQuery(
+          "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+      if (isExists[0]['cnt'] > 0) {
+        print("exists>>>>");
+        List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_work_details+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+        selectedStatus=list[0]['work_status_id'];
+        selectedStatusName=list[0]['work_status'];
+        selectedStage=list[0]['work_stage_id'];
+        selectedStageName=list[0]['work_stage'];
+        descriptionController.text=list[0]['description'];
+      }else{
+        selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+        selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+        selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
+        selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
+        descriptionController.text="";
+      }
+    }
+
+    /*  var isExists = await dbClient.rawQuery(
         "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
     if (isExists[0]['cnt'] > 0) {
       print("exists>>>>");
@@ -102,7 +131,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
       selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
       selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
       descriptionController.text="";
-    }
+    }*/
     List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
     print(list.toString());
     statusItems.add(defaultSelectedStatus);
@@ -110,6 +139,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     print('status>>' + statusItems.toString());
 
     await loadStages();
+    loadImageList();
 
     setState(() {});
   }
@@ -495,9 +525,9 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
-        showSuccessAlert(context, "Your Data is Synchronized to the server!");
+        utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop());
       } else {
-        utils.showAlert(context, s.no_data);
+        utils.customAlert(context, "E", s.no_data).then((value) => _onWillPop());
       }
     }
   }
@@ -1299,7 +1329,8 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
                 int sIndex = statusItems.indexWhere((f) => f[s.key_status_id] == selectedStatus);
                 selectedStatusName = statusItems[sIndex][s.key_status_name];
                 value != '0'?statusError = false:statusError = true;
-                setState(() {});
+                // setState(() {});
+                notifyListeners();
               },
               buttonStyleData: const ButtonStyleData(
                 height: 45,
@@ -1330,6 +1361,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
     );
   }
 
+/*
   Future<void> showSuccessAlert(BuildContext context, String msg) async {
     return showDialog<void>(
       context: context,
@@ -1346,10 +1378,12 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
             ),
           ),
           actions: <Widget>[
-            /*TextButton(
+            */
+/*TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
               child: const Text('Cancel'),
-            ),*/
+            ),*//*
+
             TextButton(
               onPressed: () {
                 Navigator.pop(context, 'OK');
@@ -1362,6 +1396,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails> {
       },
     );
   }
+*/
 
   Future<void> loadImageList()async {
     img_jsonArray.clear();

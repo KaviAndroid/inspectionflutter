@@ -222,7 +222,7 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
               color: c.white,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(
                       child: SingleChildScrollView(
@@ -643,10 +643,11 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           margin: EdgeInsets.only(top: 15),
-          padding: const EdgeInsets.symmetric(vertical: 8),
           child: TextFormField(
             controller: otherWorkDetailsController,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            maxLines: 5,
+            minLines: 1,
             validator: (value) => value!.isEmpty
                 ? s.please_enter_other_work_details
                 : !Utils().isNameValid(value)
@@ -655,11 +656,11 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
             decoration: InputDecoration(
               hintText: s.enter_other_work_details,
               hintStyle: GoogleFonts.getFont('Roboto',
-                  fontWeight: FontWeight.w800, fontSize: 15, color: c.grey_8),
+                  fontWeight: FontWeight.w800, fontSize: 13, color: c.grey_7),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: c.grey_out,
               errorBorder: OutlineInputBorder(
                   borderSide: BorderSide(width: 1, color: c.red),
                   borderRadius: BorderRadius.circular(10.0)),
@@ -832,13 +833,35 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
     Map dataset = {
       s.key_dcode: widget.dcode,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_bcode: widget.bcode,
-      s.key_pvcode: widget.pvcode,
-      s.key_hab_code: "",
       s.key_status_id: selectedStatus,
+      s.key_fin_year: widget.finYear,
+      'other_work_category_id': widget.category,
       'description': descriptionController.text.toString(),
-      'image_details': jsonArray,
+      'other_work_detail': otherWorkDetailsController.text.toString(),
     };
+
+    Map ruralset = {};
+    Map urbanset = {};
+    Map imgset = { 'image_details': jsonArray,};
+
+    if (prefs.getString(s.key_rural_urban) == "U") {
+      urbanset = {
+        s.key_town_type: widget.townType,
+        s.key_tpcode: widget.tmccode,
+      };
+      dataset.addAll(urbanset);
+    }else{
+      ruralset = {
+        s.key_bcode: widget.bcode,
+        s.key_pvcode: widget.pvcode,
+        s.key_hab_code: "",
+      };
+      dataset.addAll(ruralset);
+    }
+    dataset.addAll(imgset);
+
+
+
     inspection_work_details.add(dataset);
 
     Map main_dataset = {
@@ -874,9 +897,9 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
-        // showSuccessAlert(context, "Your Data is Synchronized to the server!");
+        utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop());
       } else {
-        utils.showAlert(context, s.no_data);
+        utils.customAlert(context, "E", s.no_data).then((value) => _onWillPop());
       }
     }
   }

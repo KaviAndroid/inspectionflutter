@@ -86,6 +86,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   String corpCount = "";
   String tappedValue = "";
   String inspectionid = "";
+  String type="";
   //bool Values
   bool isSpinnerLoading = true;
   bool isPiechartLoading = true;
@@ -109,6 +110,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
+    prefs.setString(s.onOffType, "online");
     dbClient = await dbHelper.db;
     loadWorkList();
     print("FLAG#####>>>>>>>>" + widget.Flag);
@@ -687,7 +689,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                       child: InkWell(
                                     onTap: () {
                                       get_PDF(
-                                          workList[index][s.key_work_id]
+                                         workList[index][s.key_work_id]
                                               .toString(),
                                           workList[index][s.key_inspection_id]
                                               .toString());
@@ -931,6 +933,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             ),
                                                             child: InkWell(
                                                               onTap: () async {
+                                                                getSavedWorkDetails(workList[index][s.key_work_id].toString(),workList[index][s.key_inspection_id].toString());
                                                                 selectedRDPRworkList.clear();
                                                                 selectedRDPRworkList.add(workList[index]);
                                                                 print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
@@ -1233,7 +1236,65 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       }
     }
   }
+  Future<void> getSavedWorkDetails(String work_id,String inspection_id) async {
+    prefs = await SharedPreferences.getInstance();
+    late Map json_request;
+    prefs.getString(s.key_rural_urban);
+    json_request = {
+      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+      s.key_inspection_id:inspection_id,
+      s.key_work_id:work_id,
+      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+    };
+    if (s.key_rural_urban=="U") {
+      Map urban_request = {s.key_town_type:town_type};
+      json_request.addAll(urban_request);
+    }
+    if(type=="atr")
+    {
+      json_request = {
+        s.key_service_id: s.service_key_date_wise_inspection_details_view,
+        s.key_action_taken_id:s.service_key_work_id_wise_inspection_details_view
+      };
+    }
 
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_request_json>>" + json_request.toString());
+    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("WorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        for (int i = 0; i < res_jsonArray.length; i++) {
+          List res_image = res_jsonArray[i][s.key_inspection_image];
+          print("Res image>>>"+res_image.toString());
+          ImageList.addAll(res_image);
+          print("image_List>>>>>>"+ImageList.toString());
+        }
+      }
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+      setState(() {
+
+      });
+    }
+  }
   Future<void> getRDPRwork(String work_id, String inspection_id,
       String area_type, String flag_town_type, String flag_tmc_id) async {
     var userPassKey = prefs.getString(s.userPassKey);
@@ -1285,7 +1346,63 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       }
     }
   }
+  Future<void> getRDPRWorkDetails() async {
+    prefs = await SharedPreferences.getInstance();
+    late Map json_request;
+    prefs.getString(s.key_rural_urban);
+    json_request = {
+      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+      s.key_inspection_id:inspection_id,
+      s.key_work_id:work_id,
+      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+    };
+    if(s.key_rural_urban=="U")
+    {
+      Map urbanrequest={
+        s.key_town_type:town_type,
+      };
+      json_request.addAll(urbanrequest);
+    }
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_request_json>>" + json_request.toString());
+    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("WorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        for (int i = 0; i < res_jsonArray.length; i++) {
 
+          }
+        }
+      }
+      /*// Map<String,dynamic> res_jsonArray=userData[s.key_json_data];
+      List<dynamic> res_jsonArray=userData[s.key_json_data];
+      print("res_jsonArray>>>>"+res_jsonArray.toString());
+      img_jsonArray.add(userData[s.key_inspection_image]);
+      print("image>>>>"+img_jsonArray.toString());*/
+
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+      setState(() {
+
+      });
+    }
+  }
   bool editdelayHours(String myDate) {
     DateFormat inputFormat = DateFormat('dd-MM-yyyy');
     DateTime dateTimeLup = inputFormat.parse(myDate);

@@ -41,7 +41,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   late SharedPreferences prefs;
   Utils utils = Utils();
   bool noDataFlag = false;
-  bool imageListFlag = false;
   List workList = [];
   List ImageList = [];
   List<Map<String, String>> img_jsonArray = [];
@@ -52,19 +51,13 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   String action_taken_id="";
   String other_work_inspection_id="";
   String type="";
+  String area_type="";
   Uint8List? image;
+
   @override
   void initState() {
     super.initState();
-    if (img_jsonArray.length > 0) {
-      noDataFlag = false;
-      imageListFlag = true;
-    } else {
-      noDataFlag = true;
-      imageListFlag = false;
-    }
     getWorkDetails();
-    ;
   }
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
@@ -114,7 +107,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-              height: 650,
               color: ca1,
               child: Column(
                 children: [
@@ -141,13 +133,15 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
          child:Stack(
            children: [
              Visibility(child:Container(
-               height: 250,
                child: ListView.builder(
+                   physics: NeverScrollableScrollPhysics(),
+                   shrinkWrap: true,
                     itemCount: 1,
                    itemBuilder: (BuildContext context,int index)
             {
               inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
               town_type=widget.selectedRDPRworkList[index][s.key_town_type];
+              print("ImageList####"+ImageList.toString());
             return InkWell(
             child:Card(
             elevation: 5,
@@ -393,59 +387,56 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         padding: EdgeInsets.only(top: 10,left: 20,right: 15),
     child:Stack(
     children: [
-    Visibility(child:Container(
-  height: 300,
+    Visibility(
+        child:Container(
   child: ListView.builder(
-  itemCount: 1,
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+  itemCount: ImageList.length,
   itemBuilder: (BuildContext context,int index)
     {
     return InkWell(
-    child:Card(
-    elevation: 5,
-    color: c.white,
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.only(
-    bottomLeft: Radius.circular(15),
-    topLeft: Radius.circular(15),
-    topRight: Radius.circular(15),
-    bottomRight: Radius.circular(15),
-    ),
-    ),
-    clipBehavior: Clip.hardEdge,
-    child: ClipPath(
-    clipper: ShapeBorderClipper(
-    shape: RoundedRectangleBorder(
-    borderRadius:
-    BorderRadius.circular(20))),
-    child: Container(
-    child: Container(
-    child: Column(children: [
-    Container(
-    child: Padding(
-    padding: EdgeInsets.all(10),
-    child: Column(children: [
-    Row(
-    mainAxisAlignment:
-    MainAxisAlignment
-        .spaceBetween,
-    crossAxisAlignment:
-    CrossAxisAlignment.start,
-    children: [
-      Expanded(  child: image != null
-          ? Image.memory(
-        base64.decode(image.toString()),
-        width: screenWidth,
-        height: screenWidth * 0.3,
-        fit: BoxFit.fitWidth,
-      )
-          : Image.asset(
-        imagePath.bg_curve,
-        width: screenWidth,
-        height: screenWidth * 0.3,
-        fit: BoxFit.fill,
-      ),
-      )
-      /*Expanded(
+    child:Visibility(
+        child:Card(
+            elevation: 5,
+            color: c.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+              ),
+            ),
+            clipBehavior: Clip.hardEdge,
+            child: ClipPath(
+                clipper: ShapeBorderClipper(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(20))),
+                child: Container(
+                    child: Container(
+                        child: Column(children: [
+                          Container(
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Column(children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .spaceBetween,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded( child: ImageList!= null
+                                            ? Image.memory(
+                                          base64.decode(ImageList[index][s.key_image]),
+                                        )
+                                            : Image.asset(
+                                          imagePath.bg_curve,
+                                        ),
+                                        )
+                                        /*Expanded(
         child: InkWell(
           child: img_jsonArray[index]['image'] == '0'
               ? Container(
@@ -478,16 +469,17 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
           ),
         ),
       )*/
-    ],
-    ),
-    SizedBox(
-    height: 10,
-    ),
-    ]
-    )
-    )
-    )
-    ]))))));
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ]
+                                  )
+                              )
+                          ),
+                        ])))))
+    ));
     }
     )))])));
   }
@@ -495,9 +487,17 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
     prefs.getString(s.key_rural_urban);
-    print("Workid>>>>"+work_id);
-    print("inspection>>>>"+inspection_id);
-    print("towntype>>>>>"+town_type);
+    json_request = {
+      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+      s.key_inspection_id:inspection_id,
+      s.key_work_id:work_id,
+      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+      s.key_town_type:town_type,
+    };
+    if (s.key_rural_urban=="U") {
+      Map urbanRequest = {s.key_town_type:town_type};
+      json_request.addAll(urbanRequest);
+    }
     if(type=="atr")
       {
         json_request = {
@@ -505,19 +505,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
           s.key_action_taken_id:s.service_key_work_id_wise_inspection_details_view
         };
       }
-    else
-    {
-      json_request = {
-        s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-        s.key_inspection_id:inspection_id,
-        s.key_work_id:work_id,
-        s.key_rural_urban:prefs.getString(s.key_rural_urban),
-      };
-    }
-    if (s.key_rural_urban=="U") {
-      Map urbanRequest = {s.key_town_type:town_type};
-      json_request.addAll(urbanRequest);
-    }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
@@ -542,17 +529,12 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
-          String res_image = res_jsonArray[i][s.key_image];
-          if (!(res_image == ("null") || res_image == (""))) {
-            image = Base64Codec().decode(res_image);
-          }
+          List res_image = res_jsonArray[i][s.key_inspection_image];
+          print("Res image>>>"+res_image.toString());
+          ImageList.addAll(res_image);
+          print("image_List>>>>>>"+ImageList.toString());
         }
       }
-      /*// Map<String,dynamic> res_jsonArray=userData[s.key_json_data];
-      List<dynamic> res_jsonArray=userData[s.key_json_data];
-      print("res_jsonArray>>>>"+res_jsonArray.toString());
-      img_jsonArray.add(userData[s.key_inspection_image]);
-      print("image>>>>"+img_jsonArray.toString());*/
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {
       setState(() {

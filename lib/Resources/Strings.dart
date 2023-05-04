@@ -99,6 +99,7 @@ String registerFlag = "Registration_Flag";
 String work_id = "Work id";
 String other_work_id = "Other Work id";
 String other_work_name = "Other Work Name";
+String other_work_category_name = "Category Name";
 String work_name = "Work Name";
 String work_type_name = "Work Type Name";
 String stage_name = "Stage Name";
@@ -123,6 +124,7 @@ String please_enter_new_password_and_confirm_password =
 String enter_new_password = "Enter New Password";
 String enter_confirm_password = "Enter Confirm Password";
 String submit = "SUBMIT";
+String update = "UPDATE";
 String password_must_be_atleast_8_to_15_characters =
     "Password must be atleast 8 to 15 Characters";
 String new_password_and_confirm_password_must_be_same =
@@ -320,6 +322,9 @@ String key_from_date = "from_date";
 String key_to_date = "to_date";
 String key_rural_urban = "rural_urban";
 String key_inspection_details = "inspection_details";
+String key_other_inspection_details = "other_inspection_details";
+String key_other_work_inspection_id = "other_work_inspection_id";
+String key_other_work_name= "other_work_detail";
 String key_inspection_id = "inspection_id";
 String key_inspection_date = "inspection_date";
 String key_description = "description";
@@ -393,6 +398,7 @@ String service_key_forgotpassword = "ForgotPassword";
 String service_key_forgotpassword_verify_otp = "ForgotPasswordVerifyOtp";
 String service_key_appcode = "WI";
 String service_key_get_pdf = "get_pdf";
+String service_get_other_work_pdf = "get_other_work_pdf";
 String service_key_work_progress_detail = "work_progress_detail";
 String service_key_get_inspection_details_for_atr =
     "get_inspection_details_for_atr";
@@ -407,8 +413,8 @@ String service_key_date_wise_inspection_details_view =
 String service_key_action_taken_details_save = "action_taken_details_save";
 String service_key_work_id_wise_inspection_action_taken_details_view =
     "work_id_wise_inspection_action_taken_details_view";
-String service_key_other_work_inspection_details_save =
-    "other_work_inspection_details_save";
+String service_key_other_work_inspection_details_save = "other_work_inspection_details_save";
+String service_key_date_wise_other_inspection_details_view = "date_wise_other_inspection_details_view";
 
 //Table Name
 String table_District = "District";

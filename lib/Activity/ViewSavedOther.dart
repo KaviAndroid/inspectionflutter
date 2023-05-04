@@ -38,19 +38,18 @@ import 'Pdf_Viewer.dart';
 import 'RdprOnlineWorkListFromGeoLocation.dart';
 import 'SaveWorkDetails.dart';
 
-class ViewSavedRDPRReport extends StatefulWidget {
+class ViewSavedOther extends StatefulWidget {
   @override
-  final workList;
   final Flag;
   final flag;
-  ViewSavedRDPRReport({this.workList, this.Flag, this.flag});
-  State<ViewSavedRDPRReport> createState() => _ViewSavedRDPRState();
+  ViewSavedOther({this.Flag, this.flag});
+  State<ViewSavedOther> createState() => _ViewSavedOtherState();
 }
 
-class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
+class _ViewSavedOtherState extends State<ViewSavedOther> {
   List<DateTime>? selectedDateRange;
   List workList = [];
-  List selectedRDPRworkList = [];
+  List selectedOtherworkList = [];
   List TownWorkList = [];
   List MunicipalityWorkList = [];
   List corporationWorklist = [];
@@ -86,7 +85,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   String munCount = "";
   String corpCount = "";
   String tappedValue = "";
-  String inspectionid = "";
+  String otherworkid = "";
   String type="";
   //bool Values
   bool isSpinnerLoading = true;
@@ -127,7 +126,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     to_Date = "$toDate";
     dateController.text = "$from_Date to $to_Date";
     print("date>>>>" + dateController.text);
-    await getWorkDetails(startDate, toDate);
+    await getOtherWorkDetails(startDate, toDate);
     setState(() {
       isSpinnerLoading = false;
     });
@@ -182,40 +181,40 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-             child:Align(
-                 child: Column(
-                   children: [
-                     widget.Flag == "Urban Area"
-                         ? __Urban_design()
-                         : const SizedBox(
-                       height: 10,
-                     ),
-                     _DatePicker(),
-                     _Workid(),
-                     isSpinnerLoading ? const SizedBox() : _Piechart(),
-                     _WorkList(),
-                     Container(
-                       alignment: AlignmentDirectional.center,
-                       child: Visibility(
-                         visible: isWorklistAvailable == false ? true : false,
-                         child: Align(
-                          alignment: Alignment.center,
-                           child: Container(
-                             child: Padding(
-                                 padding: EdgeInsets.all(80),
-                                 child: Text(
-                                   s.no_data,
-                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                                   textAlign:TextAlign.center,
-                                 )
-                             ),
-                           ),
-                         ),
-                       ),
-                     )
-                   ],
-                 )
-             ),
+          child:Align(
+              child: Column(
+                children: [
+                  widget.Flag == "Urban Area"
+                      ? __Urban_design()
+                      : const SizedBox(
+                    height: 10,
+                  ),
+                  _DatePicker(),
+                  _Workid(),
+                  isSpinnerLoading ? const SizedBox() : _Piechart(),
+                  _WorkList(),
+                  Container(
+                    alignment: AlignmentDirectional.center,
+                    child: Visibility(
+                      visible: isWorklistAvailable == false ? true : false,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          child: Padding(
+                              padding: EdgeInsets.all(80),
+                              child: Text(
+                                s.no_data,
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                                textAlign:TextAlign.center,
+                              )
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              )
+          ),
         ),
       ),
     );
@@ -272,12 +271,12 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     munActive = false;
                     corpActive = false;
                     setState(() {
-                      getWorkDetails(from_Date, to_Date);
+                      getOtherWorkDetails(from_Date, to_Date);
                       dateController.text = "$from_Date to $to_Date";
                     });
                   },
                   child: Container(
-                      // height: 35,
+                    // height: 35,
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -318,12 +317,12 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     munActive = true;
                     corpActive = false;
                     setState(() {
-                      getWorkDetails(from_Date, to_Date);
+                      getOtherWorkDetails(from_Date, to_Date);
                       dateController.text = "$from_Date to $to_Date";
                     });
                   },
                   child: Container(
-                      // height: 35,
+                    // height: 35,
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -364,7 +363,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     munActive = false;
                     corpActive = true;
                     setState(() {
-                      getWorkDetails(from_Date, to_Date);
+                      getOtherWorkDetails(from_Date, to_Date);
                       dateController.text = "$from_Date to $to_Date";
                     });
                   },
@@ -419,9 +418,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 suffixIconConstraints:
-                    BoxConstraints(minHeight: 20, minWidth: 20),
+                BoxConstraints(minHeight: 20, minWidth: 20),
                 contentPadding:
-                    EdgeInsets.only(left: 15, right: 5, top: 5, bottom: 5),
+                EdgeInsets.only(left: 15, right: 5, top: 5, bottom: 5),
                 filled: true,
                 fillColor: c.grey_2,
                 suffixIcon: Padding(
@@ -467,7 +466,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         utils.showAlert(context, "End Date should be greater than Start Date");
       } else {
         dateController.text = "$startDate  To  $endDate";
-        getWorkDetails(from_Date, to_Date);
+        getOtherWorkDetails(from_Date, to_Date);
       }
       if (startDate.compareTo(endDate) > 0) {
         dateController.text = s.select_from_to_date;
@@ -478,7 +477,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   }
 
   _Workid() {
-      workid.text.isEmpty ? dateController.text="$from_Date to $to_Date":dateController.text="Select Date";
+    workid.text.isEmpty ? dateController.text="$from_Date to $to_Date":dateController.text="Select Date";
     return Container(
         height: 45,
         child: Container(
@@ -490,7 +489,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                 border: InputBorder.none,
                 hintText: "Enter Work id",
                 contentPadding:
-                    EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 5),
+                EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 5),
                 filled: true,
                 fillColor: c.grey_2,
                 suffixIcon: Material(
@@ -504,7 +503,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     child: InkWell(
                       onTap: () {
                         if (workid.text.isNotEmpty) {
-                          getWorkDetails(from_Date, to_Date);
+                          getOtherWorkDetails(from_Date, to_Date);
                         } else {
                           utils.showAlert(context, "Please enter a Work Id");
                         }
@@ -537,29 +536,29 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               color: c.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              )),
+                    bottomLeft: Radius.circular(15),
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  )),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                       child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Align(
-                      alignment: AlignmentDirectional.topCenter,
-                      child: Text(
-                        s.total_inspected_works =
-                            "Total Inspected Works(" + totalWorksCount + ")",
-                        style: TextStyle(
-                            color: c.grey_9,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  )),
+                        padding: EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: AlignmentDirectional.topCenter,
+                          child: Text(
+                            s.total_inspected_works =
+                                "Total Inspected Works(" + totalWorksCount + ")",
+                            style: TextStyle(
+                                color: c.grey_9,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )),
                   Container(
                     height: 230,
                     child: SfCircularChart(
@@ -587,7 +586,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               isVisible: true,
                               labelPosition: ChartDataLabelPosition.outside,
                               connectorLineSettings:
-                                  ConnectorLineSettings(color: Colors.black),
+                              ConnectorLineSettings(color: Colors.black),
                             ),
                             pointColorMapper: (ChartData data, _) => data.color,
                             explode: true,
@@ -642,15 +641,15 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               child:FlipAnimation(
                                 child:  InkWell(
                                   onTap: () {
-                                    selectedRDPRworkList.clear();
-                                    selectedRDPRworkList.add(workList[index]);
-                                    print("SELECTED_RDPR_WORKLIST>>>>"+selectedRDPRworkList.toString());
-
+                                    selectedOtherworkList.clear();
+                                    selectedOtherworkList.add(workList[index]);
+                                    print("SELECTED_RDPR_WORKLIST>>>>"+selectedOtherworkList.toString());
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => Work_detailed_ViewScreen(
-                                              selectedRDPRworkList: selectedRDPRworkList,
+                                              selectedOtherWorkList: selectedOtherworkList,
+                                              flag:"other"
                                             )));
                                   },
                                   child: Card(
@@ -695,10 +694,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             get_PDF(
-                                                                workList[index][s.key_work_id]
+                                                                workList[index][s.key_other_work_inspection_id]
                                                                     .toString(),
-                                                                workList[index][s.key_inspection_id]
-                                                                    .toString());
+                                                                );
                                                           },
                                                           child: Align(
                                                             alignment: Alignment.topRight,
@@ -729,7 +727,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                s.work_id,
+                                                                s.other_work_id,
                                                                 style: TextStyle(
                                                                     fontSize: 15,
                                                                     fontWeight: FontWeight.normal,
@@ -755,7 +753,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                  workList[index][s.key_work_id]
+                                                                  workList[index][s.key_other_work_inspection_id]
                                                                       .toString(),
                                                                   style:
                                                                   TextStyle(color: c.white),
@@ -775,7 +773,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                s.work_name,
+                                                                s.other_work_name,
                                                                 style: TextStyle(
                                                                     fontSize: 15,
                                                                     fontWeight: FontWeight.normal,
@@ -801,7 +799,52 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index][s.key_work_name]
+                                                                workList[index][s.key_other_work_name]
+                                                                    .toString(),
+                                                                style: TextStyle(color: c.white),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Text(
+                                                                s.other_work_category_name,
+                                                                style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    fontWeight: FontWeight.normal,
+                                                                    color: c.white),
+                                                                overflow: TextOverflow.clip,
+                                                                maxLines: 1,
+                                                                softWrap: true,
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 0,
+                                                              child: Text(
+                                                                ':',
+                                                                style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    fontWeight: FontWeight.normal,
+                                                                    color: c.white),
+                                                                overflow: TextOverflow.clip,
+                                                                maxLines: 1,
+                                                                softWrap: true,
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Text(
+                                                                workList[index][s.key_other_work_category_name]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
                                                               ),
@@ -904,108 +947,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                         SizedBox(
                                                           height: 10,
                                                         ),
-                                                        Column(
-                                                          children: [
-                                                            Visibility(
-                                                              visible: editdelayHours(
-                                                                  workList[index]
-                                                                  [s.key_inspection_date]),
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                      flex: 1,
-                                                                      child: Visibility(
-                                                                        child: Align(
-                                                                          alignment:
-                                                                          AlignmentDirectional
-                                                                              .bottomEnd,
-                                                                          child: Container(
-                                                                              height: 45,
-                                                                              width: 45,
-                                                                              decoration:
-                                                                              BoxDecoration(
-                                                                                borderRadius:
-                                                                                BorderRadius
-                                                                                    .only(
-                                                                                  topLeft: Radius
-                                                                                      .circular(
-                                                                                      70),
-                                                                                  bottomRight:
-                                                                                  Radius
-                                                                                      .circular(
-                                                                                      20),
-                                                                                ),
-                                                                                color: c.white,
-                                                                              ),
-                                                                              child: InkWell(
-                                                                                onTap: () async {
-                                                                                  await getSavedWorkDetails(workList[index][s.key_work_id].toString(),workList[index][s.key_inspection_id].toString());
-                                                                                  selectedRDPRworkList.clear();
-                                                                                  selectedRDPRworkList.add(workList[index]);
-                                                                                  print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
-                                                                                  Navigator.push(
-                                                                                      context,
-                                                                                      MaterialPageRoute(
-                                                                                          builder: (context) =>SaveWorkDetails(
-                                                                                            selectedworkList: selectedRDPRworkList,
-                                                                                            imagelist: ImageList,
-                                                                                            flag: "edit",
-                                                                                            onoff_type: "online",
-                                                                                            townType: town_type,
-                                                                                          )));
-                                                                                  /*   if(await utils.isOnline())
-                                                                              {
-                                                                               inspection_date= workList[index]["inspection_date"];
-                                                                               town_type=workList[index]["town_type"];
-                                                                                area_type=workList[index]["rural_urban"];
-                                                                                if(area_type=="U")
-                                                                                  {
-                                                                                    flag_town_type=workList[index]["town_type"];
-                                                                                    if(flag_town_type=="T")
-                                                                                      {
-                                                                                        flag_tmc_id=workList[index]["tpcode"].toString();
-                                                                                      }
-                                                                                    else if(flag_town_type=="M")
-                                                                                    {
-                                                                                      flag_tmc_id=workList[index]["muncode"].toString();
-                                                                                    }
-                                                                                    else
-                                                                                      {
-                                                                                        flag_tmc_id=workList[index]["corcode"].toString();
-                                                                                      }
-                                                                                  }
-                                                                              }*/
-                                                                                  // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
-                                                                                },
-                                                                                child: Visibility(
-                                                                                  child:
-                                                                                  Container(
-                                                                                    child:
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets.only(
-                                                                                          top: 15,
-                                                                                          left:
-                                                                                          16,
-                                                                                          right:
-                                                                                          5,
-                                                                                          bottom:
-                                                                                          10),
-                                                                                      child: Image.asset(
-                                                                                          imagePath
-                                                                                              .edit_icon),
-                                                                                    ),
-                                                                                    height: 25,
-                                                                                    width: 25,
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                        ),
-                                                                      )),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          ],
-                                                        )
                                                       ])),
                                                 ),
                                               ]),
@@ -1057,7 +998,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     dateValidation();
   }
 
-  Future<void> getWorkDetails(String fromDate, String toDate) async {
+  Future<void> getOtherWorkDetails(String fromDate, String toDate) async {
     prefs = await SharedPreferences.getInstance();
     setState(() {
       workList = [];
@@ -1069,23 +1010,12 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     });
 
     late Map json_request;
-    work_id = workid.text.toString();
-    if (!work_id.isEmpty) {
       json_request = {
-        s.key_work_id: work_id,
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
+        s.key_service_id: s.service_key_date_wise_other_inspection_details_view,
         s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_type: 1
+        s.key_from_date:from_Date,
+        s.key_to_date:to_Date,
       };
-    } else if (dateController.text.toString().isNotEmpty) {
-      json_request = {
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_from_date: fromDate,
-        s.key_to_date: toDate,
-        s.key_type: 2
-      };
-    }
     if (widget.Flag == "Urban Area") {
       Map urbanRequest = {s.key_town_type: town_type};
       json_request.addAll(urbanRequest);
@@ -1109,34 +1039,34 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrpt_data =
-        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     if (status == s.key_ok && response_value == s.key_ok) {
       isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];
-      List<dynamic> RdprWorkList = res_jsonArray[s.key_inspection_details];
-      if (RdprWorkList.isNotEmpty) {
+      List<dynamic> OtherWorkList = res_jsonArray[s.key_other_inspection_details];
+      if (OtherWorkList.isNotEmpty) {
         satisfiedWorkList = [];
         unSatisfiedWorkList = [];
         needImprovementWorkList = [];
-        RdprWorkList.sort((a, b) {
+        OtherWorkList.sort((a, b) {
           return a[s.key_inspection_date].compareTo(b[s.key_inspection_date]);
         });
-        for (int i = 0; i < RdprWorkList.length; i++) {
-          inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
-          print("inspectionid>>>>" + inspectionid);
-          if (RdprWorkList[i][s.key_status_id] == 1) {
-            satisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id] == 2) {
-            unSatisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id] == 3) {
-            needImprovementWorkList.add(RdprWorkList[i]);
+        for (int i = 0; i < OtherWorkList.length; i++) {
+          otherworkid = OtherWorkList[i][s.key_other_work_inspection_id].toString();
+          print("inspectionid>>>>" + otherworkid);
+          if (OtherWorkList[i][s.key_status_id] == 1) {
+            satisfiedWorkList.add(OtherWorkList[i]);
+          } else if (OtherWorkList[i][s.key_status_id] == 2) {
+            unSatisfiedWorkList.add(OtherWorkList[i]);
+          } else if (OtherWorkList[i][s.key_status_id] == 3) {
+            needImprovementWorkList.add(OtherWorkList[i]);
           }
-          if (RdprWorkList[i][s.key_rural_urban] == "U") {
+          if (OtherWorkList[i][s.key_rural_urban] == "U") {
             print("Image>>>>" + ImageList.toString());
-            workList.add(RdprWorkList[i]);
+            workList.add(OtherWorkList[i]);
             if ([s.key_town_type] == "T") {
               TownWorkList = workList;
             } else if ([s.key_town_type] == "M") {
@@ -1145,7 +1075,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               corporationWorklist = workList;
             }
           } else {
-            workList.add(RdprWorkList[i]);
+            workList.add(OtherWorkList[i]);
           }
         }
       }
@@ -1188,18 +1118,17 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     }
   }
 
-  Future<void> get_PDF(String work_id, String inspection_id) async {
+  Future<void> get_PDF(String otherwork_id) async {
     var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
-      s.key_service_id: s.service_key_get_pdf,
-      s.key_work_id: work_id,
-      s.key_inspection_id: inspection_id,
+      s.key_service_id: s.service_get_other_work_pdf,
+      s.key_other_work_inspection_id: otherwork_id,
     };
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
@@ -1229,8 +1158,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => PDF_Viewer(
-                    pdfBytes: pdf,
-                  )),
+                pdfBytes: pdf,
+              )),
         );
       }
     }
@@ -1326,7 +1255,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
     };
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
@@ -1347,83 +1276,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         print("JSON_REQUEST>>>>" + jsonRequest.toString());
       }
     }
-  }
-  Future<void> getRDPRWorkDetails() async {
-    prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    prefs.getString(s.key_rural_urban);
-    json_request = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_inspection_id:inspection_id,
-      s.key_work_id:work_id,
-      s.key_rural_urban:prefs.getString(s.key_rural_urban),
-    };
-    if(s.key_rural_urban=="U")
-    {
-      Map urbanrequest={
-        s.key_town_type:town_type,
-      };
-      json_request.addAll(urbanrequest);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(
-        url.main_service, body: json.encode(encrypted_request));
-    print("WorkList_url>>" + url.main_service.toString());
-    print("WorkList_request_json>>" + json_request.toString());
-    print("WorkList_request_encrpt>>" + encrypted_request.toString());
-    String data = response.body;
-    print("WorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrypt_data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
-    if (status == s.key_ok && response_value == s.key_ok) {
-      List<dynamic> res_jsonArray = userData[s.key_json_data];
-      if (res_jsonArray.length > 0) {
-        for (int i = 0; i < res_jsonArray.length; i++) {
-
-          }
-        }
-      }
-      /*// Map<String,dynamic> res_jsonArray=userData[s.key_json_data];
-      List<dynamic> res_jsonArray=userData[s.key_json_data];
-      print("res_jsonArray>>>>"+res_jsonArray.toString());
-      img_jsonArray.add(userData[s.key_inspection_image]);
-      print("image>>>>"+img_jsonArray.toString());*/
-
-    else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
-    }
-  }
-  bool editdelayHours(String myDate) {
-    DateFormat inputFormat = DateFormat('dd-MM-yyyy');
-    DateTime dateTimeLup = inputFormat.parse(myDate);
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
-    DateTime dateTimeNow = inputFormat.parse(formattedDate);
-    bool flag = false;
-    final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
-    final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
-    print('days>>' + '$differenceInDays');
-    print('hours>>' + '$differenceInHours');
-    if (differenceInHours < 48) {
-      flag = true;
-      editvisibility = !editvisibility;
-    } else {
-      flag = false;
-      editvisibility = editvisibility;
-    }
-    return flag;
   }
 
   void refresh() {

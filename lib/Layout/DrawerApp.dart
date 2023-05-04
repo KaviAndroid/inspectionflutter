@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
+import 'package:inspection_flutter_app/Activity/ViewSavedOther.dart';
 import 'package:inspection_flutter_app/Activity/ViewSavedRDPRReport.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -384,6 +385,11 @@ class _DrawerAppState extends State<DrawerApp> {
                    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                    child: InkWell(
                      onTap: () {
+                       Navigator.of(context)
+                           .push(MaterialPageRoute(
+                         builder: (context) => ViewSavedOther(Flag: area_type),
+                       ));
+                       print("FLAG####"+area_type);
                      }, child: Row(
                        mainAxisAlignment: MainAxisAlignment.start,
                        crossAxisAlignment: CrossAxisAlignment.center,

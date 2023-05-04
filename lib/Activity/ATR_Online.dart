@@ -1143,7 +1143,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                   selectedWorklist:
                                                       selectedWorklist,
                                                 ),
-                                              ));
+                                              )).then((value) => initialize());
                                             },
                                             child: Container(
                                               height: 55,

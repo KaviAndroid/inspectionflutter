@@ -1128,6 +1128,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
   }
 
   Future<void> getSchemeList(List finYear, String dcode, String tmdId) async {
+    utils.showProgress(context, 1);
     List finArray=[];
      for(int i=0;i<finYear.length;i++){
       finArray.add(finYear[i][s.key_fin_year]);
@@ -1171,6 +1172,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
     print("SchemeList_url>>" + url.main_service.toString());
     print("SchemeList_request_json>>" + json_request.toString());
     print("SchemeList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1236,6 +1238,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
 
   Future<void> getWorkListByTMC( String dcode, String tmccode, String towntype,
       List scheme, List finYear) async {
+    utils.showProgress(context, 2);
     late Map json_request;
     late Map work_detail;
 
@@ -1296,6 +1299,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1315,7 +1319,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         if (res_jsonArray.length > 0) {
-
+          utils.showProgress(context, 1);
             dbHelper.delete_table_RdprWorkList('U');
             dbHelper.delete_table_SchemeList('U');
             for (int i = 0; i < scheme.length; i++)
@@ -1551,6 +1555,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
               }
 
             }
+          utils.hideProgress(context);
             List<Map> list =
             await dbClient.rawQuery('SELECT * FROM ' + s.table_RdprWorkList);
             List<Map> schemeList =

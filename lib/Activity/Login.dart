@@ -51,20 +51,7 @@ class LoginState extends State<Login> {
     _passwordVisible = false;
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String appName = packageInfo.appName;
-    String packageName = packageInfo.packageName;
-    version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
-    print("app>>" +
-        appName +
-        " >>" +
-        packageName +
-        " >>" +
-        version +
-        " >>" +
-        buildNumber);
+    version = utils.getVersion().toString();
     setState(() {});
   }
 
@@ -314,10 +301,10 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9080873403";
+                                user_name.text = "9751337424";
                                 String ss =
                                     String.fromCharCodes(Runes('\u0024'));
-                                user_password.text = "crd45#" + ss;
+                                user_password.text = "Test88#" + ss;
                                 if (user_name.text.isNotEmpty) {
                                   if (user_password.text.isNotEmpty) {
                                     // utils.showToast(context, string.success);

@@ -257,6 +257,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
   }
 
   Future<void> getVillageListOfLocation(String latitude, String longitude) async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -279,6 +280,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
     print("VillageListOfLocation_url>>" + url.main_service.toString());
     print("VillageListOfLocation_request_json>>" + json_request.toString());
     print("VillageListOfLocation_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.

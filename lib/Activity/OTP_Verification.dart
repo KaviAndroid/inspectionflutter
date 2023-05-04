@@ -24,6 +24,7 @@ class OTPVerification extends StatefulWidget {
 
 class _OTPVerificationState extends State<OTPVerification> {
   String design_flag = '';
+  Utils utils = Utils();
 
   String otp_empty_msg = 'Please Enter OTP';
   String num_empty_msg = 'Please Enter Number';
@@ -236,6 +237,7 @@ class _OTPVerificationState extends State<OTPVerification> {
   // ************************** Send OTP API *****************************/
 
   Future<void> send_OTP() async {
+    utils.showProgress(context, 1);
     setState(() {
       isSpinnerLoading = true;
     });
@@ -253,7 +255,7 @@ class _OTPVerificationState extends State<OTPVerification> {
     IOClient _ioClient = new IOClient(_client);
     var response =
         await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
-
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       var responseData = response.body;
       var data = jsonDecode(responseData);
@@ -284,6 +286,7 @@ class _OTPVerificationState extends State<OTPVerification> {
   // ************************** Verify OTP API *****************************/
 
   Future<void> verify_OTP() async {
+    utils.showProgress(context, 1);
     setState(() {
       isSpinnerLoading = true;
     });
@@ -300,7 +303,7 @@ class _OTPVerificationState extends State<OTPVerification> {
     IOClient _ioClient = new IOClient(_client);
     var response =
         await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
-
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       var responseData = response.body;
       var data = jsonDecode(responseData);

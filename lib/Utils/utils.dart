@@ -12,7 +12,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
@@ -448,6 +450,23 @@ class Utils {
     sc.setTrustedCertificatesBytes(sslCert1.buffer.asInt8List());
     return sc;
   }
+  Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = "";
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    print("app>>" +
+        appName +
+        " >>" +
+        packageName +
+        " >>" +
+        version +
+        " >>" +
+        buildNumber);
+    return version;
+  }
 
   Future<bool> handleLocationPermission(BuildContext context) async {
     bool serviceEnabled;
@@ -613,5 +632,13 @@ class Utils {
       flag = false;
     }
     return flag;
+  }
+  launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

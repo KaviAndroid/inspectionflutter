@@ -59,6 +59,7 @@ dependencies:
   flutter_limited_checkbox: ^0.0.1
   flutter_staggered_animations: ^1.1.1
   provider: ^6.0.5
+  url_launcher: ^6.1.7
 
 
 

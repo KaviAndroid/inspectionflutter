@@ -871,6 +871,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     });
   }
   Future<void> getTownList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_townpanchayat_list_district_wise,
       s.key_dcode:selectedDistrict,
@@ -889,6 +890,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     print("TownList_url>>" + url.master_service.toString());
     print("TownList_request_json>>" + json_request.toString());
     print("TownList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -917,6 +919,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   }
 
   Future<void> getMunicipalityList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_municipality_list_district_wise,
       s.key_dcode: selectedDistrict,
@@ -935,6 +938,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     print("MunicipalityList_url>>" + url.master_service.toString());
     print("MunicipalityList_request_json>>" + json_request.toString());
     print("MunicipalityList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -964,6 +968,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   }
 
   Future<void> getCorporationList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_corporation_list_district_wise,
       s.key_dcode: selectedDistrict,
@@ -982,6 +987,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     print("CorporationList_url>>" + url.master_service.toString());
     print("CorporationList_request_json>>" + json_request.toString());
     print("CorporationList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1010,92 +1016,6 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     }
   }
 
-  Future<void> getSchemeList(List finYear, String dcode, String tmdId) async {
-    List finArray=[];
-    for(int i=0;i<finYear.length;i++){
-      finArray.add(finYear[i][s.key_fin_year]);
-    }
-    Map json_request = {};
-    if (town_type == 'T') {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_townpanchayat_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_townpanchayat_wise,
-      };
-    } else if (town_type == 'M')  {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_municipality_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_municipality_wise,
-      };
-    }else if (town_type == 'C')  {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_corporation_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_corporation_wise,
-      };
-    }
-
-    Map encrpted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          json.encode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    print("SchemeList_url>>" + url.main_service.toString());
-    print("SchemeList_request_json>>" + json_request.toString());
-    print("SchemeList_request_encrpt>>" + encrpted_request.toString());
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("SchemeList_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(
-          enc_data.toString(), prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var responseValue = userData[s.key_response];
-      schemeList = [];
-      if (status == s.key_ok && responseValue == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        res_jsonArray.sort((a, b) {
-          return a[s.key_scheme_name]
-              .toLowerCase()
-              .compareTo(b[s.key_scheme_name].toLowerCase());
-        });
-        if (res_jsonArray.length > 0) {
-
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            Map<String, String> map = {
-              s.flag: "0",
-              s.key_scheme_id:res_jsonArray[i][s.key_scheme_id].toString(),
-              s.key_scheme_name:res_jsonArray[i][s.key_scheme_name]
-            };
-            schemeList.add(map);
-          }
-
-          schemeFlag = true;
-          setState(() {
-
-          });
-          print("schemeItems>>" + schemeList.toString());
-        }
-      } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        Utils().showAlert(context, "No Scheme Found");
-      }
-    }
-  }
 
   Future<void>  loadTMC() async{
     tmcItems = [];
@@ -1115,385 +1035,6 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       selectedTMC = defaultSelectedC[s.key_corporation_id]!;
 
     }
-  }
-
-  Future<void> getWorkListByTMC( String dcode, String tmccode, String towntype,
-      List scheme, List finYear) async {
-    late Map json_request;
-    late Map work_detail;
-
-    List schemeArray=[];
-    for(int i=0;i<scheme.length;i++){
-      schemeArray.add(scheme[i][s.key_scheme_id]);
-    }
-    if(towntype=="T"){
-      work_detail = {
-        s.key_fin_year: finYear,
-        s.key_dcode: dcode,
-        s.key_townpanchayat_id: tmccode,
-        s.key_scheme_id: schemeArray,
-      };
-      json_request = {
-        s.key_service_id: s.service_key_get_inspection_work_details_townpanchayat_wise,
-        s.key_inspection_work_details: work_detail,
-      };
-    }else if(towntype=="M"){
-      work_detail = {
-        s.key_fin_year: finYear,
-        s.key_dcode: dcode,
-        s.key_municipality_id: tmccode,
-        s.key_scheme_id: schemeArray,
-      };
-      json_request = {
-        s.key_service_id: s.service_key_get_inspection_work_details_municipality_wise,
-        s.key_inspection_work_details: work_detail,
-      };
-    }else if(towntype=="C"){
-      work_detail = {
-        s.key_fin_year: finYear,
-        s.key_dcode: dcode,
-        s.key_corporation_id: tmccode,
-        s.key_scheme_id: schemeArray,
-      };
-      json_request = {
-        s.key_service_id: s.service_key_get_inspection_work_details_corporation_wise,
-        s.key_inspection_work_details: work_detail,
-      };
-    }
-
-
-
-
-    Map encrpted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    print("WorkList_url>>" + url.main_service.toString());
-    print("WorkList_request_json>>" + json_request.toString());
-    print("WorkList_request_encrpt>>" + encrpted_request.toString());
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("WorkList_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data =
-      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        res_jsonArray.sort((a, b) {
-          return a[s.key_work_id].compareTo(b[s.key_work_id]);
-        });
-        if (res_jsonArray.length > 0) {
-
-          dbHelper.delete_table_RdprWorkList('U');
-          dbHelper.delete_table_SchemeList('U');
-          for (int i = 0; i < scheme.length; i++)
-          {
-            await dbClient.rawInsert('INSERT INTO ' +
-                s.table_SchemeList +
-                ' (rural_urban, scheme_id , scheme_name ) VALUES(' +
-                "'" +
-                "U" +
-                "' , '" +
-                scheme[i][s.key_scheme_id].toString() +
-                "' , '" +
-                scheme[i][s.key_scheme_name].toString() +
-                "')");
-
-          }
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            if(towntype == "T"){
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_RdprWorkList +
-                  ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
-                  "'" +
-                  "U" +
-                  "' , '" +
-                  towntype +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dname].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_bcode].toString()+
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_pvcode].toString() +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_hab_code].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_fin_year].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_current_stage_of_work].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_is_high_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_stage_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_upd_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_order_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_tpcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_townpanchayat_name].toString() +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0"+
-                  "')");
-            }else if(towntype == "M"){
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_RdprWorkList +
-                  ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , upd_date, ts_date , work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
-                  "'" +
-                  "U" +
-                  "' , '" +
-                  towntype +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dname].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_bcode].toString()+
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_pvcode].toString() +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_hab_code].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_fin_year].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_current_stage_of_work].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_is_high_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_stage_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_upd_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_order_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_name].toString() +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_muncode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_municipality_name].toString()+
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0"+
-                  "')");
-
-            }else if(towntype == "C"){
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_RdprWorkList +
-                  ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , upd_date, ts_date , work_order_date , work_type_name , tpcode   , townpanchayat_name  ) VALUES(' +
-                  "'" +
-                  "U" +
-                  "' , '" +
-                  towntype +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_dname].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_bcode].toString()+
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_pvcode].toString() +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_hab_code].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_scheme_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_fin_year].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_current_stage_of_work].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_is_high_value].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_stage_name].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_as_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_ts_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_upd_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_order_date].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_name].toString() +
-                  "' , '" +
-                  "0"+
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  "0" +
-                  "' , '" +
-                  res_jsonArray[i][s.key_corcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_corporation_name] .toString()+
-                  "')");
-
-            }
-
-          }
-          List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ' + s.table_RdprWorkList);
-          List<Map> schemeList =
-          await dbClient.rawQuery("SELECT * FROM $table_SchemeList where rural_urban = 'U'");
-          // await dbClient.rawQuery('SELECT * FROM ' + s.table_SchemeList+' where rural_urban = U');
-          print("table_RdprWorkList"+list.toString());
-          print("table_SchemeList"+schemeList.toString());
-          showAlert(context, s.download_success,schemeList);
-
-        } else {
-          utils.showAlert(context, s.no_data);
-        }
-      } else {
-        utils.showAlert(context, s.no_data);
-      }
-    }
-  }
-
-  Future<void> showAlert(BuildContext context, String msg,List schArray) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(msg),
-                Text(''),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                print("schArray"+schArray.toString());
-                print("Scheme"+schArray[0][s.key_scheme_id].toString());
-                Navigator.pop(context, 'OK');
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WorkList(
-                          schemeList: schArray,
-                          scheme: schArray[0][s.key_scheme_id],
-                          townType: town_type,
-                          flag: 'tmc_offline',
-                        ))) .then((value) {
-                  utils.gotoHomePage(context, "RDPRUrban");
-                  // you can do what you need here
-                  // setState etc.
-                });
-
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
 

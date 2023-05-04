@@ -1,10 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Layout/AppUpdate.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
+import 'package:inspection_flutter_app/Resources/url.dart' as url;
+
 
 class Splash extends StatefulWidget {
   @override
@@ -13,10 +22,17 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   Utils utils = Utils();
+  late SharedPreferences prefs;
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
+    initialize();
+    // utils.gotoLoginPageFromSplash(context);
+  }
+  Future<void> initialize() async {
+    prefs = await SharedPreferences.getInstance();
+    // checkVersion(context);
     utils.gotoLoginPageFromSplash(context);
   }
 
@@ -91,4 +107,46 @@ class _SplashState extends State<Splash> {
       ),
     );
   }
+
+  Future<dynamic> checkVersion(BuildContext context) async {
+    var request = {
+      s.key_service_id: s.service_key_version_check,
+      s.key_app_code: s.service_key_appcode,
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = IOClient(_client);
+    var response = await _ioClient.post(url.login, body: request);
+    // http.Response response = await http.post(url.login, body: request);
+    print("checkVersion_url>>" + url.login.toString());
+    print("checkVersion_request>>" + request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("checkVersion_response>>" + data);
+      var decodedData = json.decode(data);
+      // var decodedData= await json.decode(json.encode(response.body));
+      String version = decodedData['version'];
+      String app_version = utils.getVersion().toString();
+      if (decodedData[s.key_app_code]== "WI" && (version != app_version)) {
+        prefs.setString(s.download_apk, decodedData['apk_path']);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AppUpdate(
+                  type: "W",url:s.download_apk ,
+                )));
+
+      } else {
+        utils.gotoLoginPageFromSplash(context);
+      }
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed');
+    }
+  }
+
 }

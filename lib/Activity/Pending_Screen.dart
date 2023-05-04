@@ -774,6 +774,7 @@ class _PendingScreenState extends State<PendingScreen> {
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
+    utils.showProgress(context, 1);
     setState(() {
       isSpinnerLoading = true;
     });
@@ -813,6 +814,7 @@ class _PendingScreenState extends State<PendingScreen> {
     setState(() {
 
     });
+    utils.hideProgress(context);
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //
@@ -866,6 +868,7 @@ class _PendingScreenState extends State<PendingScreen> {
   // *************************** GO TO DELETE   *************************** //
 
   gotoUpload(List workList) async {
+    utils.showProgress(context, 1);
     if (await utils.isOnline()) {
       String conditionParam = "";
 
@@ -978,6 +981,7 @@ class _PendingScreenState extends State<PendingScreen> {
 
       print("onlineSave_request>>$main_dataset");
       print("onlineSave_request_encrpt>>$encrpted_request");
+      utils.hideProgress(context);
       setState(() {
         isSpinnerLoading = false;
       });

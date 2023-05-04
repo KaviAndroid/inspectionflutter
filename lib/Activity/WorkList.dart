@@ -2394,6 +2394,7 @@ class _WorkListState extends State<WorkList> {
 
   Future<void> getWorkList(String finYear, String dcode, String bcode,
       String pvcode, String scheme) async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     Map work_detail = {
@@ -2423,6 +2424,7 @@ class _WorkListState extends State<WorkList> {
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -2494,6 +2496,7 @@ class _WorkListState extends State<WorkList> {
 
   Future<void> getWorkListByTMC(String dcode, String tmccode, String towntype,
       List scheme, List finYear) async {
+    utils.showProgress(context, 1);
     late Map json_request;
     late Map work_detail;
 
@@ -2554,6 +2557,7 @@ class _WorkListState extends State<WorkList> {
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -2846,6 +2850,7 @@ class _WorkListState extends State<WorkList> {
   }
 
   Future<void> getProgressDetails(String workId) async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_work_progress_detail,
@@ -2867,6 +2872,7 @@ class _WorkListState extends State<WorkList> {
     print("ProgressDetails_url>>" + url.main_service.toString());
     print("ProgressDetails_request_json>>" + json_request.toString());
     print("ProgressDetails_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -2899,6 +2905,7 @@ class _WorkListState extends State<WorkList> {
 
   Future<void> getWorkListByVillage(
       String dcode, String bcode, String pvcode) async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     Map work_detail = {
@@ -2926,6 +2933,7 @@ class _WorkListState extends State<WorkList> {
     print("WorkListByVillage_url>>" + url.main_service.toString());
     print("WorkListByVillage_request_json>>" + json_request.toString());
     print("WorkListByVillage_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -2991,6 +2999,7 @@ class _WorkListState extends State<WorkList> {
   }
 
   Future<void> fetchWorkListAll() async {
+    utils.showProgress(context, 1);
     ongoingWorkList = [];
     completedWorkList = [];
     workList = [];
@@ -3026,9 +3035,11 @@ class _WorkListState extends State<WorkList> {
       progressFlag.add(false);
     }
     setState(() {});
+    utils.hideProgress(context);
   }
 
   Future<void> fetchWorkList(String type, String val) async {
+    utils.showProgress(context, 1);
     flagTab = true;
     flagList = true;
     ongoingWorkList = [];
@@ -3080,9 +3091,11 @@ class _WorkListState extends State<WorkList> {
     }
 
     setState(() {});
+    utils.hideProgress(context);
   }
 
   Future<void> fetchOfflineWorkList(String areatype, String scheme) async {
+    utils.showProgress(context, 1);
     List<Map> list = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${areatype}' and scheme_id='${scheme}' ");
     print(
@@ -3130,5 +3143,6 @@ class _WorkListState extends State<WorkList> {
     setState(() {
       isLoadingScheme = false;
     });
+    utils.hideProgress(context);
   }
 }

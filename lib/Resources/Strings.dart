@@ -222,6 +222,7 @@ String enter_other_work_details = "Enter other work detail";
 String please_enter_other_work_details = "Please enter other work detail";
 String loading = "Loading...";
 String downloading = "Downloading...";
+String download_apk = "Download the latest version and install the new APK.";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -277,6 +278,7 @@ String key_ok = "OK";
 String key_cancel = "CANCEL";
 String key_key = "KEY";
 String key_appcode = "app_code";
+String key_app_code = "appcode";
 String key_satisfied = "satisfied";
 String key_unsatisfied = "unsatisfied";
 String key_need_improvement = "need_improvement";
@@ -345,6 +347,7 @@ String key_inspection_image = "inspection_image";
 
 // Service Key
 String service_key_login = "login";
+String service_key_version_check = "version_check";
 String service_key_scheme_list = "scheme_list";
 String service_key_scheme_list_townpanchayat_wise =
     "scheme_list_townpanchayat_wise";

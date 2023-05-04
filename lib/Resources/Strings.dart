@@ -163,6 +163,7 @@ String work_details = "Work Details";
 String clear_text = "Clear Text";
 String maximum_length_1000 = "(Maximum Length 2000)";
 String enter_work_id = "Enter Work Id";
+String logout_msg = "Logging out while offline may leads to loss of data!";
 String logout_message = "Sync all the data before logout!";
 String logout = "Are you sure you want to Logout?";
 String total_inspection_works = "Total Inspected Works - ";

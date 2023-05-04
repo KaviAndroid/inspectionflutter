@@ -494,6 +494,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<dynamic> sendOtp(String mobile_number) async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.resend_otp,
       s.service_key_mobile_number: mobile_number,
@@ -510,6 +511,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("otp>>" + request.toString());
     String data = response.body;
     print("otp_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -522,6 +524,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> resend_otp(BuildContext context) async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_resend_otp,
       s.service_key_mobile_number: mobile_number.text,
@@ -537,6 +540,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("Resendotp>>" + request.toString());
     String data = response.body;
     print("Resendotp_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -548,6 +552,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<dynamic> otp_params() async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_verify_otp,
       s.key_mobile_otp: otp.text,
@@ -564,6 +569,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("otp>>" + request.toString());
     String data = response.body;
     print("otp_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -580,6 +586,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<dynamic> FORGOT_PASSWORD_send_otp() async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_send_otp_for_forgot_password,
       s.service_key_mobile_number: mobile_number.text,
@@ -597,6 +604,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("otp_request>>" + request.toString());
     String data = response.body;
     print("password_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -613,6 +621,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> ResendOtpForgotPasswordParams() async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_resend_otp_forgot_password,
       s.service_key_mobile_number: mobile_number.text.toString(),
@@ -630,6 +639,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("Resend_otp_forgot_password_request>>" + request.toString());
     String data = response.body;
     print("Resend_forgot_password_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -642,6 +652,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> FORGOT_PASSWORD_OTP_Params() async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_forgotpassword_verify_otp,
       s.service_key_mobile_number: mobile_number.text.toString(),
@@ -659,6 +670,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("FORGOT_PASSWORD_OTP_url>>" + url.open_service.toString());
     String data = response.body;
     print("FORGOT_PASSWORD_OTP_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -677,6 +689,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> forgot_password_Params() async {
+    utils.showProgress(context, 1);
     Map request = {
       s.key_service_id: s.service_key_forgotpassword,
       s.service_key_mobile_number: mobile_number.text.toString(),
@@ -697,6 +710,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("forgot_password_request>>" + request.toString());
     String data = response.body;
     print("forgot_password_response>>" + data);
+    utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
@@ -713,6 +727,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> change_password_send_otpParams() async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_send_otp_changepassword,
@@ -735,6 +750,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("change_password_send_otp_request_json>>" + json_request.toString());
     print("change_password_send_otp_request_encrypt>>" +
         encrypted_request.toString());
+    utils.hideProgress(context);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
@@ -755,6 +771,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> change_password_Resend_otpParams(BuildContext context) async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_resend_otp_changepassword,
@@ -778,6 +795,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         "change_password_Resend_otp_request_json>>" + json_request.toString());
     print("change_password_Resend_otp_request_encrypt>>" +
         encrypted_request.toString());
+    utils.hideProgress(context);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
@@ -792,6 +810,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> change_password_OTP_Params() async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_change_password_verify_otp,
@@ -816,6 +835,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("change_password_send_otp_request_json>>" + json_request.toString());
     print("change_password_send_otp_request_encrypt>>" +
         encrypted_request.toString());
+    utils.hideProgress(context);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
@@ -835,6 +855,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
   Future<void> changepassword_params()async
   {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_change_password,
@@ -860,6 +881,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("ChangePassword_request_encrypt>>" + encrypted_request.toString());
     String data = response.body;
     print("ChangePassword_response>>" + data);
+    utils.hideProgress(context);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrypt_data = utils.decryption(enc_data,prefs.getString(s.userPassKey).toString());

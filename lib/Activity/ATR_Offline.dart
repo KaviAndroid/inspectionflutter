@@ -185,6 +185,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** API Call starts  Here  *************************** //
 
   Future<void> fetchOnlineATRWroklist(String fromDate, String toDate) async {
+    utils.showProgress(context, 1);
     setState(() {
       isSpinnerLoading = true;
       isWorklistAvailable = false;
@@ -219,6 +220,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrpted_request));
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       String responseData = response.body;
 
@@ -314,6 +316,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
+    utils.showProgress(context, 1);
     if (await utils.isOnline()) {
       setState(() {
         isSpinnerLoading = true;
@@ -339,7 +342,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       IOClient _ioClient = new IOClient(_client);
       var response = await _ioClient.post(url.main_service,
           body: json.encode(encrpted_request));
-
+      utils.hideProgress(context);
       if (response.statusCode == 200) {
         String responseData = response.body;
 
@@ -378,6 +381,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
+    utils.showProgress(context, 1);
     list = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' ");
 
@@ -435,6 +439,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     setState(() {
       SDBText = "Block - ${prefs.getString(s.key_bname)}";
     });
+    utils.hideProgress(context);
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //

@@ -463,6 +463,7 @@ class LoginState extends State<Login> {
   }
 
   Future<dynamic> login(BuildContext context) async {
+    utils.showProgress(context, 1);
     String random_char = utils.generateRandomString(15);
     var request = {
       s.key_service_id: s.service_key_login,
@@ -478,6 +479,7 @@ class LoginState extends State<Login> {
     // http.Response response = await http.post(url.login, body: request);
     print("login_url>>" + url.login.toString());
     print("login_request>>" + request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -561,6 +563,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getDistrictList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_scode: prefs.getString(s.key_dcode) as String,
       s.key_service_id: s.service_key_district_list_all,
@@ -581,6 +584,7 @@ class LoginState extends State<Login> {
     print("districtList_url>>" + url.master_service.toString());
     print("districtList_request_json>>" + json_request.toString());
     print("districtList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -619,6 +623,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getBlockList() async {
+    utils.showProgress(context, 1);
     Map json_request = {};
 
     if (prefs.getString(s.key_level) as String == "D") {
@@ -648,6 +653,7 @@ class LoginState extends State<Login> {
     print("BlockList_url>>" + url.master_service.toString());
     print("BlockList_request_json>>" + json_request.toString());
     print("BlockList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -688,6 +694,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getVillageList() async {
+    utils.showProgress(context, 1);
     Map json_request = {};
 
     json_request = {
@@ -711,6 +718,7 @@ class LoginState extends State<Login> {
     print("VillageList_url>>" + url.master_service.toString());
     print("VillageList_request_json>>" + json_request.toString());
     print("VillageList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -753,6 +761,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getProfileData() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -774,6 +783,8 @@ class LoginState extends State<Login> {
     print("ProfileData_url>>" + url.main_service.toString());
     print("ProfileData_request_json>>" + json_request.toString());
     print("ProfileData_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
+
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -820,9 +831,11 @@ class LoginState extends State<Login> {
         }
       }
     }
+
   }
 
   Future<void> getDashboardData() async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_current_finyear_wise_status_count
@@ -843,6 +856,7 @@ class LoginState extends State<Login> {
     print("DashboardData_url>>" + url.main_service.toString());
     print("DashboardData_request_json>>" + json_request.toString());
     print("DashboardData_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.

@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
     }
     if (isLogin == "Login") {
       if (await utils.isOnline()) {
-        callApis();
+        await callApis();
       } else {
         utils.showAlert(context, s.no_internet);
       }
@@ -1243,7 +1243,14 @@ class _HomeState extends State<Home> {
 
   logout() async {
     if (await checkLocalData()) {
-      utils.showAlert(context, s.logout_message);
+      utils.customAlert(context,"E", s.logout_message);
+    }else{
+      if (await utils.isOnline()) {
+        utils.customAlert(context,"W", s.logout);
+      } else {
+        utils.customAlert(context,"E", s.logout_msg);
+      }
+
     }
   }
 
@@ -1271,7 +1278,7 @@ class _HomeState extends State<Home> {
     isExists[0]['cnt'] > 0 ? syncFlag = true : syncFlag = false;
     setState(() {});
 
-    return true;
+    return syncFlag;
   }
 
   Future<void> callApis() async {
@@ -1295,6 +1302,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getDashboardData() async {
+    utils.showProgress(context, 1);
     late Map json_request;
     json_request = {
       s.key_service_id: s.service_key_current_finyear_wise_status_count
@@ -1315,6 +1323,7 @@ class _HomeState extends State<Home> {
     print("DashboardData_url>>" + url.main_service.toString());
     print("DashboardData_request_json>>" + json_request.toString());
     print("DashboardData_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1369,11 +1378,13 @@ class _HomeState extends State<Home> {
           }
         }
         setState(() {});
+
       }
     }
   }
 
   Future<void> getProfileData() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1395,6 +1406,7 @@ class _HomeState extends State<Home> {
     print("ProfileData_url>>" + url.main_service.toString());
     print("ProfileData_request_json>>" + json_request.toString());
     print("ProfileData_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1445,6 +1457,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getPhotoCount() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1466,6 +1479,7 @@ class _HomeState extends State<Home> {
     print("photo_count_url>>" + url.main_service.toString());
     print("photo_count_request_json>>" + json_request.toString());
     print("photo_count_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1486,6 +1500,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getFinYearList() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1507,6 +1522,7 @@ class _HomeState extends State<Home> {
     print("fin_year_url>>" + url.main_service.toString());
     print("fin_year_request_json>>" + json_request.toString());
     print("fin_year_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1540,6 +1556,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getInspection_statusList() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1561,6 +1578,7 @@ class _HomeState extends State<Home> {
     print("inspection_status_url>>" + url.master_service.toString());
     print("inspection_status_request_json>>" + json_request.toString());
     print("inspection_status_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1595,6 +1613,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getCategoryList() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1617,6 +1636,7 @@ class _HomeState extends State<Home> {
     print("other_work_category_list_request_json>>" + json_request.toString());
     print("other_work_category_list_request_encrpt>>" +
         encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1657,6 +1677,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getTownList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_townpanchayat_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
@@ -1677,6 +1698,7 @@ class _HomeState extends State<Home> {
     print("TownList_url>>" + url.master_service.toString());
     print("TownList_request_json>>" + json_request.toString());
     print("TownList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1719,6 +1741,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getMunicipalityList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_municipality_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
@@ -1739,6 +1762,7 @@ class _HomeState extends State<Home> {
     print("MunicipalityList_url>>" + url.master_service.toString());
     print("MunicipalityList_request_json>>" + json_request.toString());
     print("MunicipalityList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1781,6 +1805,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getCorporationList() async {
+    utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_corporation_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
@@ -1801,6 +1826,7 @@ class _HomeState extends State<Home> {
     print("CorporationList_url>>" + url.master_service.toString());
     print("CorporationList_request_json>>" + json_request.toString());
     print("CorporationList_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1843,6 +1869,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getAll_Stage() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -1864,6 +1891,7 @@ class _HomeState extends State<Home> {
     print("WorkStages_url>>" + url.main_service.toString());
     print("WorkStages_request_json>>" + json_request.toString());
     print("WorkStages_request_encrpt>>" + encrpted_request.toString());
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -1881,6 +1909,7 @@ class _HomeState extends State<Home> {
         res_jsonArray.sort((a, b) {
           return a[s.key_work_stage_code].compareTo(b[s.key_work_stage_code]);
         });
+        utils.showProgress(context, 1);
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_WorkStages();
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1903,6 +1932,7 @@ class _HomeState extends State<Home> {
           print("table_WorkStages >>" + list.toString());
           print("table_WorkStages size >>" + res_jsonArray.length.toString());
         }
+        utils.hideProgress(context);
       }
     }
   }

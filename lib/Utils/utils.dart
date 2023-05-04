@@ -12,12 +12,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/Home.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
+
+import '../DataBase/DbHelper.dart';
 import '../Resources/global.dart';
 
 class Utils {
@@ -59,23 +63,12 @@ class Utils {
   }
 
   void gotoHomePage(BuildContext context, String s) {
-    if (s == "Login") {
-      Timer(
-          const Duration(seconds: 2),
-          () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Home(
-                        isLogin: s,
-                      ))));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Home(
-                    isLogin: s,
-                  )));
-    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Home(
+              isLogin: s,
+            )));
   }
 
   Future<void> gotoLoginPageFromSplash(BuildContext context) async {
@@ -222,6 +215,8 @@ class Utils {
 
   Future<void> customAlert(
       BuildContext context, String type, String msg) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -349,7 +344,16 @@ class Utils {
                                               BorderRadius.circular(15),
                                         ))),
                                     onPressed: () {
-                                      Navigator.pop(context, true);
+                                      if(msg==s.logout){
+                                        dbHelper.deleteAll();
+                                        prefs.clear();
+                                        Navigator.pushReplacement(
+                                            context, MaterialPageRoute(builder: (context) => Login()));
+
+                                      }else{
+                                        Navigator.pop(context, true);
+
+                                      }
                                     },
                                     child: Text(
                                       "Yes",
@@ -525,12 +529,74 @@ class Utils {
       ),
     );
   }
-
-  Future<bool> editdelayHours(String myDate) async {
-    DateFormat inputFormat = DateFormat('dd-MM-yyyy hh:mm:ss');
+  Future<void> showLoading(
+      BuildContext context,  String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(80.0),
+                  color: c.white,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 6.0,
+                    ),
+                  ]),
+              child: Stack(
+                children: [
+                  SpinKitDualRing(
+                    lineWidth: 5,
+                    color: c.white,
+                    duration: const Duration(seconds: 1, milliseconds: 500),
+                    size: 100,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SpinKitFadingCircle(
+                        color: c.primary_text_color2,
+                        duration: const Duration(seconds: 1, milliseconds: 500),
+                        size: 50,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text(message,
+                          style: GoogleFonts.getFont('Roboto',
+                              fontWeight: FontWeight.w800,
+                              decoration: TextDecoration.none,
+                              fontSize: 10,
+                              color: c.primary_text_color2))
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  Future<void> showProgress(BuildContext context, int i) async{
+    i==1?showLoading(context, s.loading):showLoading(context, s.downloading);
+  }
+  Future<void> hideProgress(BuildContext context) async{
+    Navigator.pop(context, true);
+  }
+  bool editdelayHours(String myDate) {
+    DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
     DateTime dateTimeLup = inputFormat.parse(myDate);
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
+    String formattedDate = DateFormat('dd-MM-yyyy HH:mm:ss').format(now);
     DateTime dateTimeNow = inputFormat.parse(formattedDate);
     bool flag = false;
     // double  hoursOfMonth=month*30*24;

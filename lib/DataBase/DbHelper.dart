@@ -147,7 +147,7 @@ class DbHelper {
             "DELETE FROM $table_SchemeList where rural_urban = '$type'");
   }
 
-  void delete_table_save_atr_work_details() {
+  void delete_table_save_work_details() {
     // you can execute drop table and create table
     myDb?.execute("DELETE FROM $table_save_work_details");
   }
@@ -171,7 +171,7 @@ class DbHelper {
     delete_table_AtrWorkList("ALL");
     delete_table_RdprWorkList("ALL");
     delete_table_SchemeList("ALL");
-    delete_table_save_atr_work_details();
+    delete_table_save_work_details();
     delete_table_save_images();
   }
 

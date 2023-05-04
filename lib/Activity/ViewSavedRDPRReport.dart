@@ -546,20 +546,26 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                      child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Align(
-                      alignment: AlignmentDirectional.topCenter,
-                      child: Text(
-                        s.total_inspected_works =
-                            "Total Inspected Works(" + totalWorksCount + ")",
-                        style: TextStyle(
-                            color: c.grey_9,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  )),
+                     child:InkWell(
+                       onTap: ()
+                         {
+                           getWorkDetails(from_Date, to_Date);
+                         },
+                         child: Padding(
+                           padding: EdgeInsets.only(top: 20),
+                           child: Align(
+                             alignment: AlignmentDirectional.topCenter,
+                             child: Text(
+                               s.total_inspected_works =
+                                   "Total Inspected Works(" + totalWorksCount + ")",
+                               style: TextStyle(
+                                   color: c.grey_9,
+                                   fontSize: 15,
+                                   fontWeight: FontWeight.bold),
+                             ),
+                           ),
+                         )
+                     )),
                   Container(
                     height: 230,
                     child: SfCircularChart(
@@ -1058,6 +1064,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
+    utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     setState(() {
       workList = [];
@@ -1113,6 +1120,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
+    utils.hideProgress(context);
     if (status == s.key_ok && response_value == s.key_ok) {
       isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];
@@ -1121,8 +1129,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         satisfiedWorkList = [];
         unSatisfiedWorkList = [];
         needImprovementWorkList = [];
-        RdprWorkList.sort((a, b) {
-          return a[s.key_inspection_date].compareTo(b[s.key_inspection_date]);
+        RdprWorkList.sort((a,b ) {
+          return a[s.key_ins_date].compareTo(b[s.key_ins_date]);
         });
         for (int i = 0; i < RdprWorkList.length; i++) {
           inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
@@ -1189,6 +1197,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
+    utils.showProgress(context, 1);
     var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
@@ -1219,7 +1228,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-
+      utils.hideProgress(context);
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
@@ -1297,27 +1306,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       });
     }
   }
- /* bool editdelayHours(String myDate) {
-    DateFormat inputFormat = DateFormat('dd-MM-yyyy');
-    DateTime dateTimeLup = inputFormat.parse(myDate);
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM-yyyy HH:mm:ss').format(now);
-    DateTime dateTimeNow = inputFormat.parse(formattedDate);
-    bool flag = false;
-    final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
-    final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
-    print('days>>' + '$differenceInDays');
-    print('hours>>' + '$differenceInHours');
-    if (differenceInHours < 48) {
-      flag = true;
-      editvisibility = !editvisibility;
-    } else {
-      flag = false;
-      editvisibility = editvisibility;
-    }
-    return flag;
-  }*/
-
   void refresh() {
     TownWorkList = [];
     MunicipalityWorkList = [];

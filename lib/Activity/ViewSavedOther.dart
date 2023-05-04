@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/OtherWorks_Save.dart';
 import 'package:inspection_flutter_app/Activity/RdprOnlineWorkListFromFilter.dart';
 import 'package:inspection_flutter_app/Activity/Work_detailed_ViewScreen.dart';
 import 'package:inspection_flutter_app/Layout/ReadMoreLess.dart';
@@ -154,22 +155,18 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: 4,
+                  padding: EdgeInsets.only(top: 4,left: 5
                   ),
                 ),
                 Align(
-                  alignment: AlignmentDirectional.center,
                   child: Container(
-                    transform: Matrix4.translationValues(80, 2, 15),
-                    alignment: Alignment.center,
+                    transform: Matrix4.translationValues(35, 2, 15),
                     child: Visibility(
                         visible: appBarvisibility,
                         child: Text(
-                          s.work_list,
+                          s.other_inspection,
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                              fontSize: 19, fontWeight: FontWeight.bold),
                         )),
                   ),
                 ),
@@ -479,7 +476,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
   _Workid() {
     workid.text.isEmpty ? dateController.text="$from_Date to $to_Date":dateController.text="Select Date";
-    return Container(
+    return Visibility(
+      visible: false,
+        child: Container(
         height: 45,
         child: Container(
           child: Padding(
@@ -525,7 +524,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
               ),
             ),
           ),
-        ));
+        )));
   }
 
   _Piechart() {
@@ -546,19 +545,25 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: Align(
-                          alignment: AlignmentDirectional.topCenter,
-                          child: Text(
-                            s.total_inspected_works =
-                                "Total Inspected Works(" + totalWorksCount + ")",
-                            style: TextStyle(
-                                color: c.grey_9,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                      child:InkWell(
+                        onTap: ()
+                          {
+                            getOtherWorkDetails(from_Date, to_Date);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Align(
+                              alignment: AlignmentDirectional.topCenter,
+                              child: Text(
+                                s.total_inspected_works =
+                                    "Total Inspected Works(" + totalWorksCount + ")",
+                                style: TextStyle(
+                                    color: c.grey_9,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
                       )),
                   Container(
                     height: 230,
@@ -988,8 +993,13 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                                   Navigator.push(
                                                                                       context,
                                                                                       MaterialPageRoute(
-                                                                                          builder: (context) =>SaveWorkDetails(
+                                                                                          builder: (context) =>OtherWork_Save(
                                                                                             selectedworkList: selectedOtherworkList,
+                                                                                            category: selectedOtherworkList[index][s.key_other_work_category_name],
+                                                                                            finYear: selectedOtherworkList[index][s.key_fin_year],
+                                                                                            dcode:selectedOtherworkList[index][s.key_dcode],
+                                                                                            bcode:selectedOtherworkList[index][s.key_bcode],
+                                                                                            pvcode:selectedOtherworkList[index][s.key_pvcode],
                                                                                             imagelist: ImageList,
                                                                                             flag: "edit",
                                                                                             onoff_type: "online",
@@ -1100,6 +1110,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   }
 
   Future<void> getOtherWorkDetails(String fromDate, String toDate) async {
+    utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     setState(() {
       workList = [];
@@ -1144,6 +1155,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
+    utils.hideProgress(context);
     if (status == s.key_ok && response_value == s.key_ok) {
       isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];
@@ -1218,8 +1230,61 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       });
     }
   }
+  Future<void> getSavedotherWorkDetails(String other_work_inspection_id) async {
+    prefs = await SharedPreferences.getInstance();
+    late Map json_request;
+    json_request = {
+      s.key_service_id: s.service_key_date_wise_other_inspection_details_view,
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_from_date:from_Date,
+      s.key_to_date:to_Date,
+    };
+    if (widget.Flag == "Urban Area") {
+      Map urbanRequest = {s.key_town_type: town_type};
+      json_request.addAll(urbanRequest);
+    }
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    print("SavedWorkList_url>>" + url.main_service.toString());
+    print("SavedWorkList_request_json>>" + json_request.toString());
+    print("SavedWorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("SavedWorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    ImageList.clear();
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        for (int i = 0; i < res_jsonArray.length; i++) {
+          List res_image = res_jsonArray[i][s.key_inspection_image];
+          other_work_inspection_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
+          print("WORK_ID"+other_work_inspection_id);
+          print("Res image>>>"+res_image.toString());
+          ImageList.addAll(res_image);
+          print("image_List>>>>>>"+ImageList.toString());
+        }
+      }
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+      setState(() {
 
+      });
+    }
+  }
   Future<void> get_PDF(String otherwork_id) async {
+    utils.showProgress(context, 1);
     var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
@@ -1249,7 +1314,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-
+      utils.hideProgress(context);
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
@@ -1270,7 +1335,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     Map dataset = {
       s.key_service_id:s.service_key_other_inspection_details_view,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_other_work_inspection_id: selectedOtherworkList[0][s.key_other_work_inspection_id].toString(),
+      s.key_other_work_inspection_id: otherworkid,
     };
     if(s.key_rural_urban=="U")
     {

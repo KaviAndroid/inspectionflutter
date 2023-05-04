@@ -37,6 +37,7 @@ import 'Home.dart';
 import 'Pdf_Viewer.dart';
 import 'RdprOnlineWorkListFromGeoLocation.dart';
 import 'SaveWorkDetails.dart';
+import '../Utils/utils.dart';
 
 class ViewSavedOther extends StatefulWidget {
   @override
@@ -643,7 +644,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                   onTap: () {
                                     selectedOtherworkList.clear();
                                     selectedOtherworkList.add(workList[index]);
-                                    print("SELECTED_RDPR_WORKLIST>>>>"+selectedOtherworkList.toString());
+                                    print("SELECTED_OTHER_WORKLIST>>>>"+selectedOtherworkList.toString());
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -947,6 +948,106 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         SizedBox(
                                                           height: 10,
                                                         ),
+                                                        Column(
+                                                          children: [
+                                                            Visibility(
+                                                              visible:  utils.editdelayHours(workList[index][s.key_ins_date].toString()),
+                                                              child: Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                      flex: 1,
+                                                                      child: Visibility(
+                                                                        child: Align(
+                                                                          alignment:
+                                                                          AlignmentDirectional
+                                                                              .bottomEnd,
+                                                                          child: Container(
+                                                                              height: 45,
+                                                                              width: 45,
+                                                                              decoration:
+                                                                              BoxDecoration(
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .only(
+                                                                                  topLeft: Radius
+                                                                                      .circular(
+                                                                                      70),
+                                                                                  bottomRight:
+                                                                                  Radius
+                                                                                      .circular(
+                                                                                      20),
+                                                                                ),
+                                                                                color: c.white,
+                                                                              ),
+                                                                              child: InkWell(
+                                                                                onTap: () async {
+                                                                                  await getSavedOtherWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
+                                                                                  selectedOtherworkList.clear();
+                                                                                  selectedOtherworkList.add(workList[index]);
+                                                                                  print('selectedOtherworkList>>' + selectedOtherworkList.toString());
+                                                                                  Navigator.push(
+                                                                                      context,
+                                                                                      MaterialPageRoute(
+                                                                                          builder: (context) =>SaveWorkDetails(
+                                                                                            selectedworkList: selectedOtherworkList,
+                                                                                            imagelist: ImageList,
+                                                                                            flag: "edit",
+                                                                                            onoff_type: "online",
+                                                                                            townType: town_type,
+                                                                                          )));
+                                                                                  /*   if(await utils.isOnline())
+                                                                              {
+                                                                               inspection_date= workList[index]["inspection_date"];
+                                                                               town_type=workList[index]["town_type"];
+                                                                                area_type=workList[index]["rural_urban"];
+                                                                                if(area_type=="U")
+                                                                                  {
+                                                                                    flag_town_type=workList[index]["town_type"];
+                                                                                    if(flag_town_type=="T")
+                                                                                      {
+                                                                                        flag_tmc_id=workList[index]["tpcode"].toString();
+                                                                                      }
+                                                                                    else if(flag_town_type=="M")
+                                                                                    {
+                                                                                      flag_tmc_id=workList[index]["muncode"].toString();
+                                                                                    }
+                                                                                    else
+                                                                                      {
+                                                                                        flag_tmc_id=workList[index]["corcode"].toString();
+                                                                                      }
+                                                                                  }
+                                                                              }*/
+                                                                                  // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
+                                                                                },
+                                                                                child: Visibility(
+                                                                                  child:
+                                                                                  Container(
+                                                                                    child:
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.only(
+                                                                                          top: 15,
+                                                                                          left:
+                                                                                          16,
+                                                                                          right:
+                                                                                          5,
+                                                                                          bottom:
+                                                                                          10),
+                                                                                      child: Image.asset(
+                                                                                          imagePath
+                                                                                              .edit_icon),
+                                                                                    ),
+                                                                                    height: 25,
+                                                                                    width: 25,
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        ),
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
                                                       ])),
                                                 ),
                                               ]),
@@ -1164,31 +1265,24 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       }
     }
   }
-  Future<void> getSavedWorkDetails(String work_id,String inspection_id) async {
+  Future<void> getSavedOtherWorkDetails(String other_work_id,) async {
     prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    prefs.getString(s.key_rural_urban);
-    json_request = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_inspection_id:inspection_id,
-      s.key_work_id:work_id,
-      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+    Map dataset = {
+      s.key_service_id:s.service_key_other_inspection_details_view,
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_other_work_inspection_id: selectedOtherworkList[0][s.key_other_work_inspection_id].toString(),
     };
-    if (s.key_rural_urban=="U") {
-      Map urban_request = {s.key_town_type:town_type};
-      json_request.addAll(urban_request);
-    }
-    if(type=="atr")
+    if(s.key_rural_urban=="U")
     {
-      json_request = {
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_action_taken_id:s.service_key_work_id_wise_inspection_details_view
+      Map set = {
+        s.key_town_type: town_type,
       };
+      dataset.addAll(set);
     }
-
+    print("Other Work Request>>>>"+dataset.toString());
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(jsonEncode(dataset), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
@@ -1196,7 +1290,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
     print("SavedWorkList_url>>" + url.main_service.toString());
-    print("SavedWorkList_request_json>>" + json_request.toString());
+    print("SavedWorkList_request_json>>" + dataset.toString());
     print("SavedWorkList_request_encrpt>>" + encrypted_request.toString());
     String data = response.body;
     print("SavedWorkList_response>>" + data);
@@ -1226,8 +1320,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       });
     }
   }
-  Future<void> getRDPRwork(String work_id, String inspection_id,
-      String area_type, String flag_town_type, String flag_tmc_id) async {
+  /*Future<void> getRDPRwork(String work_id, String inspection_id, String area_type, String flag_town_type, String flag_tmc_id) async {
     var userPassKey = prefs.getString(s.userPassKey);
     Map jsonRequest = {
       s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
@@ -1276,7 +1369,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         print("JSON_REQUEST>>>>" + jsonRequest.toString());
       }
     }
-  }
+  }*/
 
   void refresh() {
     TownWorkList = [];

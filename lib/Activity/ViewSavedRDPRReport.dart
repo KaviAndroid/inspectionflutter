@@ -907,9 +907,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                         Column(
                                                           children: [
                                                             Visibility(
-                                                              visible: editdelayHours(
+                                                              visible: utils.editdelayHours(
                                                                   workList[index]
-                                                                  [s.key_inspection_date]),
+                                                                  [s.key_ins_date].toString()),
                                                               child: Row(
                                                                 children: [
                                                                   Expanded(
@@ -1297,119 +1297,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       });
     }
   }
-  Future<void> getRDPRwork(String work_id, String inspection_id,
-      String area_type, String flag_town_type, String flag_tmc_id) async {
-    var userPassKey = prefs.getString(s.userPassKey);
-    Map jsonRequest = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_work_id: work_id,
-      s.key_inspection_id: inspection_id,
-      s.key_rural_urban: area_type,
-    };
-    print("AREA_TYPE>>>" + s.key_rural_urban);
-    print("JSON_REQUEST>>>>" + jsonRequest.toString());
-    if (s.key_rural_urban == "U") {
-      Map urbanRequest = {s.key_town_type: "town_type"};
-      jsonRequest.addAll(urbanRequest);
-      print("JSON_REQUEST>>>>" + jsonRequest.toString());
-    }
-    if (s.key_town_type == "T") {
-      Map Request = {s.key_townpanchayat_id: "tpcode"};
-      jsonRequest.addAll(Request);
-    } else if (s.key_town_type == "M") {
-      Map Request = {s.key_municipality_id: "muncode"};
-      jsonRequest.addAll(Request);
-    } else {
-      Map Request = {s.key_corporation_id: "corcode"};
-      jsonRequest.addAll(Request);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-    };
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
-
-    if (response.statusCode == 200) {
-      String responseData = response.body;
-      var jsonData = jsonDecode(responseData);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        print("JSON_REQUEST>>>>" + jsonRequest.toString());
-      }
-    }
-  }
-  Future<void> getRDPRWorkDetails() async {
-    prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    prefs.getString(s.key_rural_urban);
-    json_request = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_inspection_id:inspection_id,
-      s.key_work_id:work_id,
-      s.key_rural_urban:prefs.getString(s.key_rural_urban),
-    };
-    if(s.key_rural_urban=="U")
-    {
-      Map urbanrequest={
-        s.key_town_type:town_type,
-      };
-      json_request.addAll(urbanrequest);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(
-        url.main_service, body: json.encode(encrypted_request));
-    print("WorkList_url>>" + url.main_service.toString());
-    print("WorkList_request_json>>" + json_request.toString());
-    print("WorkList_request_encrpt>>" + encrypted_request.toString());
-    String data = response.body;
-    print("WorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrypt_data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
-    if (status == s.key_ok && response_value == s.key_ok) {
-      List<dynamic> res_jsonArray = userData[s.key_json_data];
-      if (res_jsonArray.length > 0) {
-        for (int i = 0; i < res_jsonArray.length; i++) {
-
-          }
-        }
-      }
-      /*// Map<String,dynamic> res_jsonArray=userData[s.key_json_data];
-      List<dynamic> res_jsonArray=userData[s.key_json_data];
-      print("res_jsonArray>>>>"+res_jsonArray.toString());
-      img_jsonArray.add(userData[s.key_inspection_image]);
-      print("image>>>>"+img_jsonArray.toString());*/
-
-    else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
-    }
-  }
-  bool editdelayHours(String myDate) {
+ /* bool editdelayHours(String myDate) {
     DateFormat inputFormat = DateFormat('dd-MM-yyyy');
     DateTime dateTimeLup = inputFormat.parse(myDate);
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM-yyyy hh:mm:ss').format(now);
+    String formattedDate = DateFormat('dd-MM-yyyy HH:mm:ss').format(now);
     DateTime dateTimeNow = inputFormat.parse(formattedDate);
     bool flag = false;
     final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
@@ -1424,7 +1316,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       editvisibility = editvisibility;
     }
     return flag;
-  }
+  }*/
 
   void refresh() {
     TownWorkList = [];

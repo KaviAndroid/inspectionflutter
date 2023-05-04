@@ -100,6 +100,8 @@ String work_id = "Work id";
 String other_work_id = "Other Work id";
 String other_work_name = "Other Work Name";
 String other_work_category_name = "Category Name";
+String other_inspection = "Other Inspection";
+String other_work_details = "Other Work Detail";
 String work_name = "Work Name";
 String work_type_name = "Work Type Name";
 String stage_name = "Stage Name";
@@ -161,7 +163,8 @@ String work_details = "Work Details";
 String clear_text = "Clear Text";
 String maximum_length_1000 = "(Maximum Length 2000)";
 String enter_work_id = "Enter Work Id";
-String logout_msg = "Logging out while offline may leads to loss of data!";
+String logout_message = "Sync all the data before logout!";
+String logout = "Are you sure you want to Logout?";
 String total_inspection_works = "Total Inspected Works - ";
 String select_from_to_date = "Select Form and To Date";
 String inspected_by = "Inspected By";
@@ -201,7 +204,6 @@ String selected_village = "Selected Village";
 String selected_scheme = "Selected Scheme";
 String total_inspected_works = "Total Inspected Works()";
 String save_success = "Your Data Save Successfully!";
-String logout_message = "Please Sync the Data before Logout";
 String pending_list = "Pending List";
 String inspection_id = "Inspection ID";
 String ins_urban_work = "Inspected Urban Work";
@@ -217,6 +219,8 @@ String please_enter_category = "Please Select Category";
 String select_other = "Select Category";
 String enter_other_work_details = "Enter other work detail";
 String please_enter_other_work_details = "Please enter other work detail";
+String loading = "Loading...";
+String downloading = "Downloading...";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -327,6 +331,7 @@ String key_other_work_inspection_id = "other_work_inspection_id";
 String key_other_work_name= "other_work_detail";
 String key_inspection_id = "inspection_id";
 String key_inspection_date = "inspection_date";
+String key_ins_date = "ins_date";
 String key_description = "description";
 String key_town_type = "town_type";
 String key_hab_code = "hab_code";
@@ -414,6 +419,7 @@ String service_key_action_taken_details_save = "action_taken_details_save";
 String service_key_work_id_wise_inspection_action_taken_details_view =
     "work_id_wise_inspection_action_taken_details_view";
 String service_key_other_work_inspection_details_save = "other_work_inspection_details_save";
+String service_key_other_inspection_details_view = "other_inspection_details_view";
 String service_key_date_wise_other_inspection_details_view = "date_wise_other_inspection_details_view";
 
 //Table Name

@@ -60,8 +60,14 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   void initState() {
     super.initState();
     setState(() {
-      getWorkDetails();
-      getOtherWorkDetails();
+     if(widget.flag=="other")
+       {
+         print("FLAG#####"+widget.flag);
+         getSavedOtherWorkDetails();
+       }
+     else{
+       getWorkDetails();
+     }
     });
 
   }
@@ -74,6 +80,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        backgroundColor: c.ca1,
         appBar: AppBar(
           backgroundColor: c.colorPrimary,
           centerTitle: true,
@@ -116,8 +123,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
               color: ca1,
               child: Column(
                 children: [
-                  _WorkList(),
-                  _OtherWorkList(),
+                  widget.flag=="other"? _OtherWorkList():_WorkList(),
                   Container(
                     child:Padding(
                       padding: EdgeInsets.only(top: 15,bottom: 10,left: 10,right: 10),
@@ -128,7 +134,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                         )
                     ),
                   ),
-                  _Photos()
+                  _Photos(),
                 ],
               )),
         ),
@@ -153,6 +159,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             {
               inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
               town_type=widget.selectedRDPRworkList[index][s.key_town_type];
+
             return InkWell(
             child:Card(
             elevation: 5,
@@ -398,15 +405,16 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             padding: EdgeInsets.only(top: 20,left: 15,right: 15),
             child:Stack(
                 children: [
-                  Visibility(child:Container(
+                  Visibility(
+                      child:Container(
                       child: ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: 1,
                           itemBuilder: (BuildContext context,int index)
                           {
-                            inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
-                            town_type=widget.selectedRDPRworkList[index][s.key_town_type];
+                            other_work_inspection_id=widget.selectedOtherWorkList[index][s.key_other_work_inspection_id].toString();
+                            town_type=widget.selectedOtherWorkList[index][s.key_town_type].toString();
                             return InkWell(
                                 child:Card(
                                     elevation: 5,
@@ -442,7 +450,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 Expanded(
                                                                   flex: 1,
                                                                   child: Text(
-                                                                    s.work_id,
+                                                                    s.other_work_id,
                                                                     style: TextStyle(
                                                                         fontSize: 15,
                                                                         fontWeight:
@@ -471,8 +479,56 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_other_work_inspection_id].toString(),
+                                                                      style: TextStyle(
+                                                                          color: c.black),
+                                                                      maxLines: 1),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
                                                                   child: Text(
-                                                                      work_id=widget.selectedRDPRworkList[index][s.key_work_id].toString(),
+                                                                    s.financial_year,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight:
+                                                                        FontWeight.normal,
+                                                                        color: c.black),
+                                                                    overflow:
+                                                                    TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 0,
+                                                                  child: Text(
+                                                                    ':',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight:
+                                                                        FontWeight.normal,
+                                                                        color: c.black),
+                                                                    overflow:
+                                                                    TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_fin_year].toString(),
                                                                       style: TextStyle(
                                                                           color: c.black),
                                                                       maxLines: 1),
@@ -521,7 +577,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
-                                                                  child: Text(widget.selectedRDPRworkList[index][s.key_status_name].toString(),
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_status_name].toString(),
                                                                       style: TextStyle(
                                                                           color: c.black),
                                                                       maxLines: 1),
@@ -541,7 +597,56 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 Expanded(
                                                                   flex: 1,
                                                                   child: Text(
-                                                                    s.work_name,
+                                                                    s.other_inspection,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight:
+                                                                        FontWeight.normal,
+                                                                        color: c.black),
+                                                                    overflow:
+                                                                    TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 0,
+                                                                  child: Text(
+                                                                    ':',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight:
+                                                                        FontWeight.normal,
+                                                                        color: c.black),
+                                                                    overflow:
+                                                                    TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_other_work_category_name],
+                                                                      style: TextStyle(
+                                                                          color: c.black),
+                                                                      maxLines: 4),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                    s.other_work_details,
                                                                     style: TextStyle(
                                                                         fontSize: 15,
                                                                         fontWeight:
@@ -570,7 +675,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
-                                                                  child: Text(widget.selectedRDPRworkList[index][s.key_work_name],
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_other_work_name],
                                                                       style: TextStyle(
                                                                           color: c.black),
                                                                       maxLines: 4),
@@ -619,7 +724,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
-                                                                  child: Text(widget.selectedRDPRworkList[index][s.key_description],
+                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_description],
                                                                       style: TextStyle(
                                                                           fontSize: 15,
                                                                           color: c.black),
@@ -783,55 +888,69 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       imageListFlag = false;
     }
   }
-  Future<void> getOtherWorkDetails() async {
+  Future<void> getSavedOtherWorkDetails() async {
     prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    json_request = {
-      s.key_service_id: s.service_key_date_wise_other_inspection_details_view,
+    Map dataset = {
+      s.key_service_id:s.service_key_other_inspection_details_view,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_other_work_inspection_id: other_work_inspection_id,
     };
-    if (widget.Flag == "Urban Area") {
-      Map urbanRequest = {s.key_town_type: town_type};
-      json_request.addAll(urbanRequest);
+    if(s.key_rural_urban=="U")
+    {
+      Map set = {
+        s.key_town_type: town_type,
+      };
+      dataset.addAll(set);
     }
+    print("Other Work Request>>>>"+dataset.toString());
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(jsonEncode(dataset), prefs.getString(s.userPassKey).toString()),
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
-    print("WorkList_url>>" + url.main_service.toString());
-    print("WorkList_request_json>>" + json_request.toString());
-    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    print("Saved_OtherWorkList_url>>" + url.main_service.toString());
+    print("Saved_OtherWorkList_request_json>>" + dataset.toString());
+    print("Saved_OtherWorkList_request_encrpt>>" + encrypted_request.toString());
     String data = response.body;
-    print("WorkList_response>>" + data);
+    print("Saved_OtherWorkList_response>>" + data);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
-    var decrpt_data =
-    utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrpt_data);
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
+
     if (status == s.key_ok && response_value == s.key_ok) {
-      isWorklistAvailable = true;
-      Map res_jsonArray = userData[s.key_json_data];
-      List<dynamic> OtherWorkList = res_jsonArray[s.key_other_inspection_details];
-      if(widget.flag=="other")
-        {
-          OtherWorkList.addAll(workList);
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        for (int i = 0; i < res_jsonArray.length; i++) {
+          List res_image = res_jsonArray[i][s.key_inspection_image];
+          other_work_inspection_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
+          print("OTHER_WORK_ID"+other_work_inspection_id);
+          print("Res image>>>"+res_image.toString());
+          ImageList.addAll(res_image);
+          print("image_List>>>>>>"+ImageList.toString());
         }
+      }
       setState(() {
-        _WorkList();
+        _Photos();
       });
-    } else if (status == s.key_ok && response_value == s.key_noRecord) {
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
       setState(() {
 
       });
+    }
+    if (ImageList.length > 0) {
+      noDataFlag = false;
+      imageListFlag = true;
+    } else {
+      noDataFlag = true;
+      imageListFlag = false;
     }
   }
 }

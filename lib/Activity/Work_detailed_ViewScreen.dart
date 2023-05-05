@@ -818,7 +818,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       ));
   }
   Future<void> getWorkDetails() async {
-    utils.showProgress(context, 1);
+    // utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
     prefs.getString(s.key_rural_urban);
@@ -867,6 +867,8 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
           print("Res image>>>"+res_image.toString());
+          inspection_id=res_jsonArray[i][s.key_inspection_id].toString();
+          print("WORK_ID"+inspection_id);
           List description=res_jsonArray[i][s.key_image_description];
           print("image description>>>>"+description.toString());
           ImageList.addAll(res_image);
@@ -891,7 +893,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     }
   }
   Future<void> getSavedOtherWorkDetails() async {
-    utils.showProgress(context, 1);
+    // utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     Map dataset = {
       s.key_service_id:s.service_key_other_inspection_details_view,
@@ -926,7 +928,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
+    // utils.hideProgress(context);
     if (status == s.key_ok && response_value == s.key_ok) {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
       if (res_jsonArray.length > 0) {

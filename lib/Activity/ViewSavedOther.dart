@@ -73,7 +73,16 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   String from_Date = "";
   String to_Date = "";
   String work_id = "";
+  String dcode = "";
+  String bcode = "";
+  String pvcode = "";
+  String finyear = "";
+  String category = "";
+  String tmccode = "";
   String town_type = "T";
+  String tpcode = "";
+  String muncode = "";
+  String corpcode = "";
   String inspection_id = "";
   String area_type = "";
   String flag_town_type = "";
@@ -655,7 +664,11 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                         MaterialPageRoute(
                                             builder: (context) => Work_detailed_ViewScreen(
                                               selectedOtherWorkList: selectedOtherworkList,
-                                              flag:"other"
+                                              flag:"other",
+                                              workList: [],
+                                              Flag: "",
+                                              imagelist: [],
+                                              selectedRDPRworkList: [],
                                             )));
                                   },
                                   child: Card(
@@ -995,15 +1008,16 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                                       MaterialPageRoute(
                                                                                           builder: (context) =>OtherWork_Save(
                                                                                             selectedworkList: selectedOtherworkList,
-                                                                                            category: selectedOtherworkList[index][s.key_other_work_category_name],
-                                                                                            finYear: selectedOtherworkList[index][s.key_fin_year],
-                                                                                            dcode:selectedOtherworkList[index][s.key_dcode],
-                                                                                            bcode:selectedOtherworkList[index][s.key_bcode],
-                                                                                            pvcode:selectedOtherworkList[index][s.key_pvcode],
-                                                                                            imagelist: ImageList,
                                                                                             flag: "edit",
                                                                                             onoff_type: "online",
                                                                                             townType: town_type,
+                                                                                            imagelist: ImageList,
+                                                                                            category: "",
+                                                                                            finYear: "",
+                                                                                            dcode:"",
+                                                                                            bcode:"",
+                                                                                            pvcode:"",
+                                                                                            tmccode: "",
                                                                                           )));
                                                                                   /*   if(await utils.isOnline())
                                                                               {
@@ -1230,59 +1244,6 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       });
     }
   }
-  Future<void> getSavedotherWorkDetails(String other_work_inspection_id) async {
-    prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    json_request = {
-      s.key_service_id: s.service_key_date_wise_other_inspection_details_view,
-      s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_from_date:from_Date,
-      s.key_to_date:to_Date,
-    };
-    if (widget.Flag == "Urban Area") {
-      Map urbanRequest = {s.key_town_type: town_type};
-      json_request.addAll(urbanRequest);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(
-        url.main_service, body: json.encode(encrypted_request));
-    print("SavedWorkList_url>>" + url.main_service.toString());
-    print("SavedWorkList_request_json>>" + json_request.toString());
-    print("SavedWorkList_request_encrpt>>" + encrypted_request.toString());
-    String data = response.body;
-    print("SavedWorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrypt_data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
-    ImageList.clear();
-    if (status == s.key_ok && response_value == s.key_ok) {
-      List<dynamic> res_jsonArray = userData[s.key_json_data];
-      if (res_jsonArray.length > 0) {
-        for (int i = 0; i < res_jsonArray.length; i++) {
-          List res_image = res_jsonArray[i][s.key_inspection_image];
-          other_work_inspection_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
-          print("WORK_ID"+other_work_inspection_id);
-          print("Res image>>>"+res_image.toString());
-          ImageList.addAll(res_image);
-          print("image_List>>>>>>"+ImageList.toString());
-        }
-      }
-    }
-    else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
-    }
-  }
   Future<void> get_PDF(String otherwork_id) async {
     utils.showProgress(context, 1);
     var userPassKey = prefs.getString(s.userPassKey);
@@ -1372,6 +1333,29 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
           work_id=res_jsonArray[i][s.key_work_id].toString();
+          dcode=res_jsonArray[i][s.key_dcode].toString();
+          bcode=res_jsonArray[i][s.key_bcode].toString();
+          pvcode=res_jsonArray[i][s.key_pvcode].toString();
+          town_type=res_jsonArray[i][s.key_town_type].toString();
+          tpcode=res_jsonArray[i][s.key_tpcode].toString();
+          muncode=res_jsonArray[i][s.key_muncode].toString();
+          corpcode=res_jsonArray[i][s.key_corcode].toString();
+          if(town_type=="T")
+            {
+              tmccode=tpcode;
+              print("tpcode"+tmccode);
+
+            }
+          else if(town_type=="M")
+            {
+              tmccode=muncode;
+            }
+          else if(town_type=="C")
+          {
+            tmccode=corpcode;
+          }
+          finyear=res_jsonArray[i][s.key_fin_year].toString();
+          category=res_jsonArray[i][s.key_other_work_category_name].toString();
           print("WORK_ID"+work_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
@@ -1385,57 +1369,6 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       });
     }
   }
-  /*Future<void> getRDPRwork(String work_id, String inspection_id, String area_type, String flag_town_type, String flag_tmc_id) async {
-    var userPassKey = prefs.getString(s.userPassKey);
-    Map jsonRequest = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_work_id: work_id,
-      s.key_inspection_id: inspection_id,
-      s.key_rural_urban: area_type,
-    };
-    print("AREA_TYPE>>>" + s.key_rural_urban);
-    print("JSON_REQUEST>>>>" + jsonRequest.toString());
-    if (s.key_rural_urban == "U") {
-      Map urbanRequest = {s.key_town_type: "town_type"};
-      jsonRequest.addAll(urbanRequest);
-      print("JSON_REQUEST>>>>" + jsonRequest.toString());
-    }
-    if (s.key_town_type == "T") {
-      Map Request = {s.key_townpanchayat_id: "tpcode"};
-      jsonRequest.addAll(Request);
-    } else if (s.key_town_type == "M") {
-      Map Request = {s.key_municipality_id: "muncode"};
-      jsonRequest.addAll(Request);
-    } else {
-      Map Request = {s.key_corporation_id: "corcode"};
-      jsonRequest.addAll(Request);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-    };
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
-
-    if (response.statusCode == 200) {
-      String responseData = response.body;
-      var jsonData = jsonDecode(responseData);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        print("JSON_REQUEST>>>>" + jsonRequest.toString());
-      }
-    }
-  }*/
-
   void refresh() {
     TownWorkList = [];
     MunicipalityWorkList = [];

@@ -718,6 +718,12 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
                                               bcode: selectedBlock,
                                               pvcode: selectedVillage,
                                               flag: 'other',
+                                               tmccode: "",
+                                               townType: "",
+                                               selectedworkList: [],
+                                               imagelist:[],
+                                               onoff_type:"",
+
                                             )));
                               },
                               child: Text(

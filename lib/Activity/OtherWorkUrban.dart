@@ -60,6 +60,14 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     s.key_dcode: "0",
     s.key_dname: s.selectDistrict
   };
+  Map<String, String> defaultSelectedBlock = {
+    s.key_bcode: "0",
+    s.key_bname: s.selectBlock
+  };
+  Map<String, String> defaultSelectedVillage = {
+    s.key_pvcode: "0",
+    s.key_pvname: s.select_village
+  };
   Map<String, String> defaultSelectedT = {
     s.key_townpanchayat_id: "0",
     s.key_townpanchayat_name: s.select_town
@@ -830,7 +838,12 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                             dcode: selectedDistrict,
                                             townType: town_type,
                                             tmccode: selectedTMC,
+                                            onoff_type: onOffType,
                                             flag: 'other',
+                                            pvcode:"",
+                                            bcode: "",
+                                            imagelist: [],
+                                            selectedworkList: [],
                                           )));
 
                                 },

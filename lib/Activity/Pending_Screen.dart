@@ -743,6 +743,8 @@ class _PendingScreenState extends State<PendingScreen> {
                 rural_urban: rural_urban,
                 onoff_type: "offline",
                 flag: "pending",
+                townType: "",
+                imagelist: [],
               )));
     }else{
       Navigator.of(context)

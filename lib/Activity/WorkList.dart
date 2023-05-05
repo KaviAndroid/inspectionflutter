@@ -854,7 +854,12 @@ class _WorkListState extends State<WorkList> {
                                                                       context,
                                                                       MaterialPageRoute(
                                                                           builder: (context) => SaveWorkDetails(
-                                                                                selectedworkList: selectedworkList,onoff_type: prefs.getString(s.onOffType),rural_urban: prefs.getString(s.key_rural_urban),townType: widget.townType,flag: "worklist",
+                                                                                selectedworkList: selectedworkList,
+                                                                                onoff_type: prefs.getString(s.onOffType),
+                                                                                rural_urban: prefs.getString(s.key_rural_urban),
+                                                                                townType: widget.townType,
+                                                                                flag: "worklist",
+                                                                                imagelist: [],
                                                                               )));
                                                                 },
                                                                 child:

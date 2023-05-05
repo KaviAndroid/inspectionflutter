@@ -657,6 +657,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                         MaterialPageRoute(
                                             builder: (context) => Work_detailed_ViewScreen(
                                               selectedRDPRworkList: selectedRDPRworkList,
+                                              imagelist: [],
+                                              flag: "",
+                                              Flag: "",
+                                              workList: [],
+                                              selectedOtherWorkList: [],
                                             )));
                                   },
                                   child: Card(
@@ -958,6 +963,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                                             flag: "edit",
                                                                                             onoff_type: "online",
                                                                                             townType: town_type,
+                                                                                            rural_urban: area_type,
                                                                                           )));
                                                                                   /*   if(await utils.isOnline())
                                                                               {
@@ -1064,7 +1070,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
-    utils.showProgress(context, 1);
+    // utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     setState(() {
       workList = [];
@@ -1120,7 +1126,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
+    // utils.hideProgress(context);
     if (status == s.key_ok && response_value == s.key_ok) {
       isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];

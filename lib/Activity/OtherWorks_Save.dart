@@ -117,6 +117,7 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
                         child: Column(children: [
                           listview(),
                           StatusView(),
+                          OtherWorkdetail(),
                           descriptionview(),
                         ]),
                       ),
@@ -474,106 +475,111 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
       ]),
     );
   }
-
+  OtherWorkdetail()
+  {
+    return  Container(
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+      child: TextFormField(
+        controller: refer.otherWorkDetailsController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        maxLines: 5,
+        minLines: 1,
+        validator: (value) => value!.isEmpty
+            ? s.please_enter_other_work_details
+            : !Utils().isNameValid(value)
+            ? s.please_enter_other_work_details
+            : null,
+        decoration: InputDecoration(
+          hintText: s.enter_other_work_details,
+          hintStyle: GoogleFonts.getFont('Roboto',
+              fontWeight: FontWeight.w800, fontSize: 13, color: c.grey_7),
+          contentPadding:
+          const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          filled: true,
+          fillColor: c.grey_out,
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: c.red),
+              borderRadius: BorderRadius.circular(10.0)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: c.red),
+              borderRadius: BorderRadius.circular(10.0)),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 0.1, color: c.white),
+              borderRadius: BorderRadius.circular(10.0)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: c.colorPrimary),
+              borderRadius: BorderRadius.circular(10.0)),
+        ),
+      ),
+    );
+  }
   StatusView() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          margin: EdgeInsets.only(top: 15),
-          child: TextFormField(
-            controller: refer.otherWorkDetailsController,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            maxLines: 5,
-            minLines: 1,
-            validator: (value) => value!.isEmpty
-                ? s.please_enter_other_work_details
-                : !Utils().isNameValid(value)
-                    ? s.please_enter_other_work_details
-                    : null,
-            decoration: InputDecoration(
-              hintText: s.enter_other_work_details,
-              hintStyle: GoogleFonts.getFont('Roboto',
-                  fontWeight: FontWeight.w800, fontSize: 13, color: c.grey_7),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              filled: true,
-              fillColor: c.grey_out,
-              errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: c.red),
-                  borderRadius: BorderRadius.circular(10.0)),
-              focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: c.red),
-                  borderRadius: BorderRadius.circular(10.0)),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 0.1, color: c.white),
-                  borderRadius: BorderRadius.circular(10.0)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: c.colorPrimary),
-                  borderRadius: BorderRadius.circular(10.0)),
+    return Visibility(
+      visible: refer.statusvisibility,
+      child: Container(
+        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            child: Text(
+              s.select_status,
+              style: GoogleFonts.getFont('Roboto',
+                  fontWeight: FontWeight.w800, fontSize: 12, color: c.grey_8),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 15, bottom: 15),
-          child: Text(
-            s.select_status,
-            style: GoogleFonts.getFont('Roboto',
-                fontWeight: FontWeight.w800, fontSize: 12, color: c.grey_8),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              color: c.grey_out,
-              border: Border.all(
-                  width: refer.statusError ? 1 : 0.1,
-                  color: refer.statusError ? c.red : c.grey_10),
-              borderRadius: BorderRadius.circular(10.0)),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton2(
-              style: const TextStyle(color: Colors.black),
-              value: refer.selectedStatus,
-              isExpanded: true,
-              items: refer.statusItems
-                  .map((item) => DropdownMenuItem<String>(
-                        value: item[s.key_status_id].toString(),
-                        child: Text(
-                          item[s.key_status_name].toString(),
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                refer.setStatus(value);
-              },
-              buttonStyleData: const ButtonStyleData(
-                height: 45,
-                padding: EdgeInsets.only(right: 10),
-              ),
-              dropdownStyleData: DropdownStyleData(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+          Container(
+            decoration: BoxDecoration(
+                color: c.grey_out,
+                border: Border.all(
+                    width: refer.statusError ? 1 : 0.1,
+                    color: refer.statusError ? c.red : c.grey_10),
+                borderRadius: BorderRadius.circular(10.0)),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                style: const TextStyle(color: Colors.black),
+                value: refer.selectedStatus,
+                isExpanded: true,
+                items: refer.statusItems
+                    .map((item) => DropdownMenuItem<String>(
+                  value: item[s.key_status_id].toString(),
+                  child: Text(
+                    item[s.key_status_name].toString(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  refer.setStatus(value);
+                },
+                buttonStyleData: const ButtonStyleData(
+                  height: 45,
+                  padding: EdgeInsets.only(right: 10),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 8.0),
-        Visibility(
-          visible: refer.statusError ? true : false,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              s.please_enter_status,
-              // state.hasError ? state.errorText : '',
-              style:
-                  TextStyle(color: Colors.redAccent.shade700, fontSize: 12.0),
+          const SizedBox(height: 8.0),
+          Visibility(
+            visible: refer.statusError ? true : false,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                s.please_enter_status,
+                // state.hasError ? state.errorText : '',
+                style:
+                TextStyle(color: Colors.redAccent.shade700, fontSize: 12.0),
+              ),
             ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 

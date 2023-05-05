@@ -60,9 +60,15 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   String widgetflag="";
   String widgettmccode="";
   String widgettownType="";
+  String onoffType = '';
   List widgetselectedworkList=[];
+  List selectedwork = [];
   List widgetimagelist=[];
+  List imageList=[];
+  bool stagevisibility=false;
+  bool statusvisibility=false;
   String widgetonoff_type="";
+  int max_img_count=0;
 
   SaveOtherWorkDatacontroller(category, finYear, dcode, bcode, pvcode, tmccode, townType, flag,selectedworkList,imagelist,onoff_type) {
      widgetcategory=category;
@@ -70,11 +76,11 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
      widgetdcode=dcode;
      widgetbcode=bcode;
      widgetpvcode=pvcode;
-     widgetflag=tmccode;
-     widgettmccode=townType;
-     widgettownType=flag;
-     widgetselectedworkList=selectedworkList;
-     widgetimagelist=imagelist;
+     widgetflag=flag;
+     widgettmccode=tmccode;
+     widgettownType=townType;
+     widgetselectedworkList.addAll(selectedworkList);
+     widgetimagelist.addAll(imagelist);
      widgetonoff_type=onoff_type;
      initialize();
     initSpeech();
@@ -90,39 +96,31 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     txtFlag = true;
+    selectedwork = widgetselectedworkList;
 
-    for (int i = 0;
-    i < int.parse(prefs.getString(s.service_key_photo_count).toString());
-    i++) {
-      Map<String, String> mymap =
-      {}; // This created one object in the current scope.
-
-      // First iteration , i = 0
-      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = (i + 1).toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
-      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
-      img_jsonArray.add(mymap); // mylist = [mymap];
-    }
-    print("Img>>" + img_jsonArray.toString());
-    if (img_jsonArray.isNotEmpty) {
-      noDataFlag = false;
-      imageListFlag = true;
-    } else {
-      noDataFlag = true;
-      imageListFlag = false;
-    }
-
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
-    print(list.toString());
-    selectedStatus = defaultSelectedStatus[s.key_status_id]!;
-    selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
-    statusItems.add(defaultSelectedStatus);
-    statusItems.addAll(list);
-    print('status>>' + statusItems.toString());
-
+    if(widgetflag=="edit")
+      {
+        statusvisibility;
+        selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+        selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+        descriptionController.text=selectedwork[0]['description'];
+        otherWorkDetailsController.text=selectedwork[0]['other_work_detail'];
+      }
+    else
+      {
+        stagevisibility=true;
+        statusvisibility=true;
+        List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
+        print(list.toString());
+        selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+        selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+        statusItems.add(defaultSelectedStatus);
+        statusItems.addAll(list);
+        print('status>>' + statusItems.toString());
+      }
+    await loadImageList();
     notifyListeners();
+
   }
 
   Future<bool> _onWillPop(BuildContext context) async {
@@ -277,25 +275,49 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   // *************************** Validation here *************************** //
 
   Future<void> validate(BuildContext context) async {
-    if (await checkImageList(img_jsonArray)) {
-      if (descriptionController.text.isNotEmpty &&
-          descriptionController.text != '') {
-        if (selectedStatus.isNotEmpty && selectedStatus != '0') {
+    if(widgetflag=="edit")
+    {
+      if (await checkImageList(img_jsonArray)) {
           if (otherWorkDetailsController.text.isNotEmpty &&
               otherWorkDetailsController.text != '') {
-            saveData(context);
-          } else {
+            if (!descriptionController.text.isEmpty &&
+                descriptionController.text != '') {
+              saveData(context);
+          }
+            else {
+              utils.showAlert(context, "Please Enter Description");
+            }
+        }
+          else {
             utils.showAlert(context, "Please Enter Other Work Details");
           }
-        } else {
-          utils.showAlert(context, "Please Select Status");
-        }
+
       } else {
-        utils.showAlert(context, "Please Enter Description");
+        utils.showAlert(context, "At least Capture one Photo");
       }
-    } else {
-      utils.showAlert(context, "At least Capture one Photo");
     }
+    else
+      {
+        if (await checkImageList(img_jsonArray)) {
+          if (descriptionController.text.isNotEmpty &&
+              descriptionController.text != '') {
+            if (selectedStatus.isNotEmpty && selectedStatus != '0') {
+              if (otherWorkDetailsController.text.isNotEmpty &&
+                  otherWorkDetailsController.text != '') {
+                saveData(context);
+              } else {
+                utils.showAlert(context, "Please Enter Other Work Details");
+              }
+            } else {
+              utils.showAlert(context, "Please Select Status");
+            }
+          } else {
+            utils.showAlert(context, "Please Enter Description");
+          }
+        } else {
+          utils.showAlert(context, "At least Capture one Photo");
+        }
+      }
   }
 
   // *************************** API Call here *************************** //
@@ -319,6 +341,13 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     Map ruralset = {};
     Map urbanset = {};
     Map imgset = { 'image_details': jsonArray,};
+    if(widgetflag=="edit")
+    {
+      Map set = {
+        s.key_other_work_inspection_id: selectedwork[0][s.key_other_work_inspection_id],
+      };
+      dataset.addAll(set);
+    }
 
     if (prefs.getString(s.key_rural_urban) == "U") {
       urbanset = {
@@ -342,7 +371,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
 
     Map main_dataset = {
       s.key_service_id: s.service_key_other_work_inspection_details_save,
-      'inspection_work_details': inspection_work_details,
+      'other_inspection_work_details': inspection_work_details,
     };
 
     Map encrpted_request = {
@@ -387,6 +416,50 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     selectedStatusName = statusItems[sIndex][s.key_status_name];
     value != '0' ? statusError = false : statusError = true;
     notifyListeners();
+  }
+  Future<void> loadImageList()async {
+    img_jsonArray.clear();
+    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    imageList.clear();
+
+    if(widgetflag=="edit")
+    {
+      imageList.addAll(widgetimagelist);
+    }
+    for (int i = 0; i < imageList.length; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
+
+      // First iteration , i = 0
+      mymap["latitude"] = imageList[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = imageList[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = imageList[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+
+    for (int i = img_jsonArray.length; i < max_img_count; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
+
+      // First iteration , i = 0
+      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
+      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+    print("Img>>" + img_jsonArray.toString());
+    if (img_jsonArray.length > 0) {
+      noDataFlag = false;
+      imageListFlag = true;
+    } else {
+      noDataFlag = true;
+      imageListFlag = false;
+    }
+
   }
 
 }

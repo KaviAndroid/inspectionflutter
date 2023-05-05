@@ -148,15 +148,15 @@ class _HomeState extends State<Home> {
     }
     if (await utils.isOnline()) {
       getDashboardData();
-    } else {
+    } /*else {
       utils.showAlert(context, s.no_internet);
-    }
+    }*/
     if (isLogin == "Login") {
       if (await utils.isOnline()) {
         await callApis();
-      } else {
+      } /*else {
         utils.showAlert(context, s.no_internet);
-      }
+      }*/
     }
 
     satisfied_count = prefs.getString(s.satisfied_count)!;
@@ -181,7 +181,33 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Future<bool> showExitPopup() async {
+      return await showDialog( //show confirm dialogue
+        //the return value will be from "Yes" or "No" options
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Exit App'),
+          content: Text('Do you want to exit an App?'),
+          actions:[
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              //return false when click on "NO"
+              child:Text('No'),
+            ),
+
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              //return true when click on "Yes"
+              child:Text('Yes'),
+            ),
+
+          ],
+        ),
+      )??false; //if showDialouge had returned null, then return false
+    }
+    return  WillPopScope(
+        onWillPop: showExitPopup, //call function on back button press
+        child:Scaffold(
       appBar: AppBar(
         backgroundColor: c.colorPrimary,
         centerTitle: true,
@@ -1238,6 +1264,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -1248,7 +1275,7 @@ class _HomeState extends State<Home> {
       if (await utils.isOnline()) {
         utils.customAlert(context,"W", s.logout);
       } else {
-        utils.customAlert(context,"E", s.logout_msg);
+        utils.customAlertWithOkCancel(context,"W", s.logout_msg);
       }
 
     }

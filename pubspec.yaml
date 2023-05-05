@@ -60,6 +60,7 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   provider: ^6.0.5
   url_launcher: ^6.1.7
+  open_settings: ^2.0.2
 
 
 

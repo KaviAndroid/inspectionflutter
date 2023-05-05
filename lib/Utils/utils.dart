@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
 import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -65,7 +66,7 @@ class Utils {
   }
 
   void gotoHomePage(BuildContext context, String s) {
-    Navigator.push(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => Home(
@@ -241,9 +242,8 @@ class Utils {
               height: 300,
               child: Column(
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Container(
+                  Container(
+                      height: 100,
                       decoration: BoxDecoration(
                           color: type == "W"
                               ? c.yellow_new
@@ -260,16 +260,13 @@ class Utils {
                               : type == "S"
                                   ? imagePath.success
                                   : imagePath.error,
-                          height: type == "W" ? 60 : 200,
-                          width: type == "W" ? 60 : 200,
+                          height: type == "W" ? 60 : 100,
+                            width: type == "W" ? 60 : 100,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Container(
+                  Container(
                       decoration: BoxDecoration(
                           color: c.white,
                           borderRadius: const BorderRadius.only(
@@ -349,6 +346,7 @@ class Utils {
                                       if(msg==s.logout){
                                         dbHelper.deleteAll();
                                         prefs.clear();
+                                        Navigator.pop(context,true);
                                         Navigator.pushReplacement(
                                             context, MaterialPageRoute(builder: (context) => Login()));
 
@@ -404,7 +402,342 @@ class Utils {
                         ),
                       ),
                     ),
-                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  Future<void> customAlertWithOkCancel(
+      BuildContext context, String type, String msg) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: c.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 5.0,
+                    ),
+                  ]),
+              width: 300,
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                          color: type == "W"
+                              ? c.yellow_new
+                              : type == "S"
+                                  ? c.green_new
+                                  : c.red_new,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15))),
+                      child: Center(
+                        child: Image.asset(
+                          type == "W"
+                              ? imagePath.warning
+                              : type == "S"
+                                  ? imagePath.success
+                                  : imagePath.error,
+                          height: type == "W" ? 60 : 100,
+                            width: type == "W" ? 60 : 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: c.white,
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                                type == "W"
+                                    ? "Warning"
+                                    : type == "S"
+                                        ? "Success"
+                                        : "Oops...",
+                                style: GoogleFonts.getFont('Prompt',
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    color: c.text_color)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(msg,
+                                style: GoogleFonts.getFont('Roboto',
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    color: c.black)),
+                            const SizedBox(
+                              height: 35,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Visibility(
+                                  visible:
+                                      type == "S" || type == "E" ? true : false,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.primary_text_color2),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text(
+                                      "Okay",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: type == "W" ? true : false,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.green_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      if(msg==s.logout_msg){
+                                        dbHelper.deleteAll();
+                                        prefs.clear();
+                                        Navigator.push(
+                                            context, MaterialPageRoute(builder: (context) => Login()));
+
+                                      }else{
+                                        Navigator.pop(context, true);
+
+                                      }
+                                    },
+                                    child: Text(
+                                      "Ok",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                    visible: type == "W" ? true : false,
+                                    child: const SizedBox(
+                                      width: 50,
+                                    )),
+                                Visibility(
+                                  visible: type == "W" ? true : false,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.red_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: Text(
+                                      "Cancel",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  Future<void> showalertforOffline(
+      BuildContext context, String msg, String username, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              height: 320,
+              margin: EdgeInsets.all(50),
+              decoration: BoxDecoration(
+                  color: c.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 5.0,
+                    ),
+                  ]),
+              child: Column(
+                children: [
+             Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                          color: c.yellow_new,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15))),
+                      child: Center(
+                        child: Image.asset(
+                          imagePath.warning,
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                   Container(
+                      decoration: BoxDecoration(
+                          color: c.white,
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                                "Warning",
+                                style: GoogleFonts.getFont('Prompt',
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    color: c.text_color)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(msg,
+                                style: GoogleFonts.getFont('Roboto',
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    color: c.black)),
+                            const SizedBox(
+                              height: 35,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Visibility(
+                                  visible:true,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.green_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      OpenSettings.openWIFISetting();
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: Text(
+                                      "Settings",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: true ,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.primary_text_color2),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                      offlineMode(username,password,context);
+                                    },
+                                    child: Text(
+                                      "Continue With Off-Line",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -501,7 +834,7 @@ class Utils {
   Widget showSpinner(BuildContext context, String message) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: Center(
+/*      child: Center(
         child: Container(
           height: 100,
           width: 100,
@@ -545,7 +878,36 @@ class Utils {
             ],
           ),
         ),
-      ),
+      ),*/
+        child: Center(
+          child: Container(
+            height: 100,
+            width: 100,
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SpinKitFadingCircle(
+                      color: c.primary_text_color2,
+                      duration: const Duration(seconds: 1, milliseconds: 500),
+                      size: 50,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text(message,
+                        style: GoogleFonts.getFont('Roboto',
+                            fontWeight: FontWeight.w800,
+                            decoration: TextDecoration.none,
+                            fontSize: 10,
+                            color: c.primary_text_color2))
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
     );
   }
   Future<void> showLoading(
@@ -560,24 +922,8 @@ class Utils {
             child: Container(
               height: 100,
               width: 100,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80.0),
-                  color: c.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 6.0,
-                    ),
-                  ]),
               child: Stack(
                 children: [
-                  SpinKitDualRing(
-                    lineWidth: 5,
-                    color: c.white,
-                    duration: const Duration(seconds: 1, milliseconds: 500),
-                    size: 100,
-                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -639,6 +985,17 @@ class Utils {
       await launchUrl(uri);
     } else {
       throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> offlineMode(String username, String password, BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userName = prefs.getString(s.key_user_name).toString();
+    String passWord = prefs.getString(s.key_user_pwd).toString();
+    if (username==userName  && password==passWord) {
+      gotoHomePage(context, "Login");
+    } else {
+      customAlert(context, "E", s.no_offline_data);
     }
   }
 }

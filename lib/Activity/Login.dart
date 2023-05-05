@@ -301,17 +301,19 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                user_name.text = "9751337424";
+                                // user_name.text = "9080873403";
                                 String ss =
                                     String.fromCharCodes(Runes('\u0024'));
-                                user_password.text = "Test88#" + ss;
+                                // user_password.text = "crd45#" + ss;
                                 if (user_name.text.isNotEmpty) {
                                   if (user_password.text.isNotEmpty) {
                                     // utils.showToast(context, string.success);
+
                                     if (await utils.isOnline()) {
+                                      utils.hideSoftKeyBoard(context);
                                       login(context);
                                     } else {
-                                      utils.showAlert(context, s.no_internet);
+                                      utils.showalertforOffline(context, s.internet_error,user_name.text,user_password.text);
                                     }
                                   } else {
                                     utils.showToast(context, s.password_empty);
@@ -466,7 +468,6 @@ class LoginState extends State<Login> {
     // http.Response response = await http.post(url.login, body: request);
     print("login_url>>" + url.login.toString());
     print("login_request>>" + request.toString());
-    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -495,7 +496,7 @@ class LoginState extends State<Login> {
 
         prefs.setString(s.key_name, userData[s.key_name]);
         prefs.setString(s.key_user_name, user_name.text.trim());
-        prefs.setString(s.password, user_password.text.trim());
+        prefs.setString(s.key_user_pwd, user_password.text.trim());
         prefs.setString(s.userPassKey, decryptedKey);
         prefs.setString(s.key_desig_name, userData[s.key_desig_name]);
         prefs.setString(s.key_desig_code, userData[s.key_desig_code]);
@@ -534,11 +535,13 @@ class LoginState extends State<Login> {
           prefs.setString(s.key_bname, userData[s.key_bname]);
           await getVillageList();
         }
+        utils.hideProgress(context);
         await getProfileData();
         await getDashboardData();
 
         utils.gotoHomePage(context, "Login");
       } else {
+        utils.hideProgress(context);
         utils.showToast(context, "Failed");
       }
       return decodedData;
@@ -550,7 +553,6 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getDistrictList() async {
-    utils.showProgress(context, 1);
     Map json_request = {
       s.key_scode: prefs.getString(s.key_dcode) as String,
       s.key_service_id: s.service_key_district_list_all,
@@ -571,7 +573,6 @@ class LoginState extends State<Login> {
     print("districtList_url>>" + url.master_service.toString());
     print("districtList_request_json>>" + json_request.toString());
     print("districtList_request_encrpt>>" + encrpted_request.toString());
-    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -610,7 +611,6 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getBlockList() async {
-    utils.showProgress(context, 1);
     Map json_request = {};
 
     if (prefs.getString(s.key_level) as String == "D") {
@@ -640,7 +640,6 @@ class LoginState extends State<Login> {
     print("BlockList_url>>" + url.master_service.toString());
     print("BlockList_request_json>>" + json_request.toString());
     print("BlockList_request_encrpt>>" + encrpted_request.toString());
-    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
@@ -681,7 +680,6 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getVillageList() async {
-    utils.showProgress(context, 1);
     Map json_request = {};
 
     json_request = {
@@ -705,7 +703,6 @@ class LoginState extends State<Login> {
     print("VillageList_url>>" + url.master_service.toString());
     print("VillageList_request_json>>" + json_request.toString());
     print("VillageList_request_encrpt>>" + encrpted_request.toString());
-    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.

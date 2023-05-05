@@ -287,7 +287,6 @@ class _RegistrationState extends State<Registration> {
                                     onPressed: () async {
                                       if (!cugValid) {
                                         if (await Utils().isOnline()) {
-                                          mobileController.text = '7877979787';
                                           if (Utils().isNumberValid(
                                               mobileController.text)) {
                                             isLoadingCUG = true;

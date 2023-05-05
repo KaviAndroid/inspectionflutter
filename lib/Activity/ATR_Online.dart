@@ -323,14 +323,14 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       context: context,
       type: OmniDateTimePickerType.date,
       startInitialDate: DateTime.now(),
-      startFirstDate: DateTime(2000).subtract(const Duration(days: 3652)),
+      startFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
       startLastDate: DateTime.now().add(
-        const Duration(days: 3652),
+        const Duration(days: 0),
       ),
       endInitialDate: DateTime.now(),
-      endFirstDate: DateTime(2000).subtract(const Duration(days: 3652)),
+      endFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
       endLastDate: DateTime.now().add(
-        const Duration(days: 3652),
+        const Duration(days: 0),
       ),
       borderRadius: const BorderRadius.all(Radius.circular(16)),
       constraints: const BoxConstraints(

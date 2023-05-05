@@ -301,9 +301,20 @@ class LoginState extends State<Login> {
                             alignment: AlignmentDirectional.topCenter,
                             child: InkWell(
                               onTap: () async {
-                                // user_name.text = "9080873403";
+                                /* loginScreenBinding.userName.setText("9080873403");
+        loginScreenBinding.password.setText("crd45#$");// local block*/
+                                /*  loginScreenBinding.userName.setText("7877979787");
+        loginScreenBinding.password.setText("Crd123#$");// local district*/
+
+                                /* loginScreenBinding.userName.setText("9751337424");
+        loginScreenBinding.password.setText("Test88#$");// local state*/
+                                //prod
+                                /* loginScreenBinding.userName.setText("9750895078");
+        loginScreenBinding.password.setText("Test1234#$");//block prod*/
+
                                 String ss =
                                     String.fromCharCodes(Runes('\u0024'));
+                                // user_name.text = "9080873403";
                                 // user_password.text = "crd45#" + ss;
                                 if (user_name.text.isNotEmpty) {
                                   if (user_password.text.isNotEmpty) {

@@ -23,8 +23,8 @@ import 'package:http/io_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ATR_Save extends StatefulWidget {
-  final rural_urban, onoff_type, selectedWorklist;
-  ATR_Save({this.rural_urban, this.onoff_type, this.selectedWorklist});
+  final rural_urban, onoff_type, selectedWorklist,flag,imagelist;
+  ATR_Save({this.rural_urban, this.onoff_type, this.selectedWorklist,this.flag,this.imagelist});
 
   @override
   State<ATR_Save> createState() => _ATR_SaveState();
@@ -48,7 +48,7 @@ class _ATR_SaveState extends State<ATR_Save> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-        ChangeNotifierProvider(create: (_) => AtrSaveDataController(widget.rural_urban, widget.onoff_type,widget.selectedWorklist))
+        ChangeNotifierProvider(create: (_) => AtrSaveDataController(widget.rural_urban, widget.onoff_type,widget.selectedWorklist,widget.flag,widget.imagelist))
     ],
       child:Scaffold(
         appBar: AppBar(
@@ -140,7 +140,14 @@ class _ATR_SaveState extends State<ATR_Save> {
                             Expanded(
                               child: InkWell(
                                 onTap: () {
+                              if(widget.flag=="edit")
+                                {
+                                  utils.showAlert(context, "Image can't edit");
+                                }
+                              else
+                                {
                                   refer.goToCameraScreen(index,context);
+                                }
                                 },
                                 child: refer.img_jsonArray[index]['image'] == '0'
                                     ? Container(
@@ -434,7 +441,7 @@ class _ATR_SaveState extends State<ATR_Save> {
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
             child: Text(
-              s.submit,
+              widget.flag=="edit"?s.update: s.submit,
               style: TextStyle(
                   color: c.subscription_type_red_color,
                   fontSize: 13,

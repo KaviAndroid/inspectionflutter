@@ -58,14 +58,18 @@ class AtrSaveDataController with ChangeNotifier{
   var _imageFile;
   String widgetonoff_type = '';
   String widgetrural_urban = '';
+  String widgetflag = '';
   List widgetselectedworkList = [];
+  int max_img_count=0;
+  List imageList=[];
+  List widgetimagelist = [];
 
-
-  AtrSaveDataController(rural_urban, onoff_type, selectedworkList) {
+  AtrSaveDataController(rural_urban, onoff_type, selectedworkList,flag, imagelist) {
     widgetonoff_type = onoff_type;
     widgetrural_urban = rural_urban;
     widgetselectedworkList.addAll(selectedworkList);
-
+    widgetflag=flag;
+    widgetimagelist.addAll(imagelist);
     initialize();
   }
   Future<void> initialize() async {
@@ -73,30 +77,13 @@ class AtrSaveDataController with ChangeNotifier{
     dbClient = await dbHelper.db;
     txtFlag = true;
     selectedwork = widgetselectedworkList;
-
+    print("IMAGE>>>>>>"+widgetimagelist.toString());
+    if(widgetflag=="edit")
+      {
+        descriptionController.text=selectedwork[0]['description'];
+      }
     print(selectedwork);
-    for (int i = 0;
-    i < int.parse(prefs.getString(s.service_key_photo_count).toString());
-    i++) {
-      Map<String, String> mymap =
-      {}; // This created one object in the current scope.
-
-      // First iteration , i = 0
-      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = (i + 1).toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
-      mymap["image_path"] = '';
-      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
-      img_jsonArray.add(mymap); // mylist = [mymap];
-    }
-    if (img_jsonArray.isNotEmpty) {
-      noDataFlag = false;
-      imageListFlag = true;
-    } else {
-      noDataFlag = true;
-      imageListFlag = false;
-    }
+    loadImageList();
     await checkData();
     notifyListeners();
   }
@@ -284,7 +271,54 @@ class AtrSaveDataController with ChangeNotifier{
   // *************************** Camera Function Ends here *************************** //
 
   // *************************** Validation start here *************************** //
+  Future<void> loadImageList()async {
+    img_jsonArray.clear();
+    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    imageList.clear();
+    if(widgetflag=="edit")
+    {
+      imageList.addAll(widgetimagelist);
+    }
+    else
+    {
+      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_images+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${widgetrural_urban}' and flag='rdpr'");
+      imageList.addAll(list);
+    }
+    for (int i = 0; i < imageList.length; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
 
+      // First iteration , i = 0
+      mymap["latitude"] = imageList[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = imageList[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = imageList[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+
+    for (int i = img_jsonArray.length; i < max_img_count; i++) {
+      Map<String, String> mymap =
+      {}; // This created one object in the current scope.
+
+      // First iteration , i = 0
+      mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
+      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
+      img_jsonArray.add(mymap); // mylist = [mymap];
+    }
+    print("Img>>" + img_jsonArray.toString());
+    if (img_jsonArray.length > 0) {
+      noDataFlag = false;
+      imageListFlag = true;
+    } else {
+      noDataFlag = true;
+      imageListFlag = false;
+    }
+
+  }
   Future<bool> checkImageList(List<Map<String, String>> list) async {
     bool flag = false;
     img_jsonArray_val = [];
@@ -298,17 +332,34 @@ class AtrSaveDataController with ChangeNotifier{
   }
 
   Future<void> validate(BuildContext context) async {
-    if (await checkImageList(img_jsonArray)) {
-      if (descriptionController.text != "") {
-        widgetonoff_type == "offline"
-            ? await offlineSave(context)
-            : await onlineSave(context);
-      } else {
-        utils.showAlert(context, "Please Enter Discription");
+    if(widgetflag=="edit")
+      {
+        if (await checkImageList(img_jsonArray)) {
+          if (descriptionController.text != "") {
+            if(widgetonoff_type=="online")
+              {
+                await onlineSave(context);
+              }
+          }
+          else {
+            utils.showAlert(context, "Please Enter Discription");
+          }
+          }
       }
-    } else {
-      utils.showAlert(context, "At least Capture one Photo");
-    }
+    else
+      {
+        if (await checkImageList(img_jsonArray)) {
+          if (descriptionController.text != "") {
+            widgetonoff_type == "offline"
+                ? await offlineSave(context)
+                : await onlineSave(context);
+          } else {
+            utils.showAlert(context, "Please Enter Discription");
+          }
+        } else {
+          utils.showAlert(context, "At least Capture one Photo");
+        }
+      }
   }
 
   // *************************** Validation Ends here *************************** //
@@ -346,7 +397,17 @@ class AtrSaveDataController with ChangeNotifier{
     if (widgetrural_urban == "U") {
       dataset.addAll(urbanRequest);
     }
-
+    Map set = {
+      s.key_service_id:s.service_key_work_id_wise_inspection_action_taken_details_view,
+      s.key_work_id:selectedwork[0][s.key_work_id],
+      s.key_action_taken_id:selectedwork[0][s.key_action_taken_id],
+      s.key_inspection_id:selectedwork[0][s.key_inspection_id],
+      s.key_rural_urban:selectedwork[0][s.key_rural_urban],
+    };
+    if(widgetflag=="edit")
+      {
+        dataset.addAll(set);
+      }
     inspection_work_details.add(dataset);
 
     Map main_dataset = {

@@ -97,6 +97,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     dbClient = await dbHelper.db;
     txtFlag = true;
     selectedwork = widgetselectedworkList;
+    print("IMAGE>>>>>>"+widgetimagelist.toString());
 
     if(widgetflag=="edit")
       {
@@ -329,13 +330,14 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       jsonArray.add(img_jsonArray_val[i]);
     }
     Map dataset = {
-      s.key_dcode: widgetdcode,
+      s.key_dcode: selectedwork[0][s.key_dcode],
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_status_id: selectedStatus,
-      s.key_fin_year: widgetfinYear,
-      'other_work_category_id': widgetcategory,
+      s.key_status_id: selectedwork[0][s.key_status_id],
+      s.key_fin_year: selectedwork[0][s.key_fin_year],
+      'other_work_category_id':selectedwork[0][s.key_other_work_category_id],
       'description': descriptionController.text.toString(),
       'other_work_detail': otherWorkDetailsController.text.toString(),
+      s.key_pvcode:selectedwork[0][s.key_pvcode],
     };
 
     Map ruralset = {};

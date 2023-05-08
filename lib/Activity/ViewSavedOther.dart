@@ -665,10 +665,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                             builder: (context) => Work_detailed_ViewScreen(
                                               selectedOtherWorkList: selectedOtherworkList,
                                               flag:"other",
-                                              workList: [],
-                                              Flag: "",
                                               imagelist: [],
                                               selectedRDPRworkList: [],
+                                              selectedATRWorkList: [],
                                             )));
                                   },
                                   child: Card(
@@ -1178,8 +1177,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         satisfiedWorkList = [];
         unSatisfiedWorkList = [];
         needImprovementWorkList = [];
-        OtherWorkList.sort((a, b) {
-          return a[s.key_inspection_date].compareTo(b[s.key_inspection_date]);
+        DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+        OtherWorkList.sort((a, b){ //sorting in ascending order
+          return inputFormat.parse(b[s.key_ins_date]).compareTo(inputFormat.parse(a[s.key_ins_date]));
         });
         for (int i = 0; i < OtherWorkList.length; i++) {
           otherworkid = OtherWorkList[i][s.key_other_work_inspection_id].toString();
@@ -1305,7 +1305,6 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       };
       dataset.addAll(set);
     }
-    print("Other Work Request>>>>"+dataset.toString());
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content: utils.encryption(jsonEncode(dataset), prefs.getString(s.userPassKey).toString()),
@@ -1332,31 +1331,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
-          work_id=res_jsonArray[i][s.key_work_id].toString();
-          dcode=res_jsonArray[i][s.key_dcode].toString();
-          bcode=res_jsonArray[i][s.key_bcode].toString();
-          pvcode=res_jsonArray[i][s.key_pvcode].toString();
-          town_type=res_jsonArray[i][s.key_town_type].toString();
-          tpcode=res_jsonArray[i][s.key_tpcode].toString();
-          muncode=res_jsonArray[i][s.key_muncode].toString();
-          corpcode=res_jsonArray[i][s.key_corcode].toString();
-          if(town_type=="T")
-            {
-              tmccode=tpcode;
-              print("tpcode"+tmccode);
-
-            }
-          else if(town_type=="M")
-            {
-              tmccode=muncode;
-            }
-          else if(town_type=="C")
-          {
-            tmccode=corpcode;
-          }
-          finyear=res_jsonArray[i][s.key_fin_year].toString();
-          category=res_jsonArray[i][s.key_other_work_category_name].toString();
-          print("WORK_ID"+work_id);
+          other_work_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
+          print("WORK_ID"+other_work_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());

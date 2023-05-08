@@ -225,6 +225,10 @@ String downloading = "Downloading...";
 String ATRUploadedDate = "ATR Uploaded Date.";
 String internet_error =
     "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
+String no_offline_data = "No data available for offline. Please Turn On Your Network";
+String download_apk = "Download the latest version and install the new APK.";
+
+
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -240,6 +244,7 @@ String key_user_data = "user_data";
 String key_scode = "scode";
 String key_status = "STATUS";
 String key_fail = "FAIL";
+String key_app_code = "appcode";
 String key_response = "RESPONSE";
 String key_message = "MESSAGE";
 String key_json_data = "JSON_DATA";
@@ -352,6 +357,7 @@ String key_inspection_action_taken_details = "inspection_action_taken_details";
 // Service Key
 String service_key_login = "login";
 String service_key_scheme_list = "scheme_list";
+String service_key_version_check = "version_check";
 String service_key_scheme_list_townpanchayat_wise =
     "scheme_list_townpanchayat_wise";
 String service_key_scheme_list_municipality_wise =

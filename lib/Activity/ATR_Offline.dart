@@ -58,7 +58,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   String town_type = "";
 
   // Bool Variables
-  bool isSpinnerLoading = true;
   bool isWorklistAvailable = false;
   bool isNeedImprovementActive = false;
   bool isUnSatisfiedActive = false;
@@ -108,6 +107,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     setState(() {});
   }
 
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,13 +181,75 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           )),
     );
   }
+*/
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: c.colorPrimary,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () =>
+                Navigator.of(context, rootNavigator: true).pop(context),
+          ),
+          title: Text(s.work_list),
+          centerTitle: true, // like this!
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          color: c.colorAccentverylight,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Download Text Icon
+                FadeTransition(
+                  opacity: controller,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: GestureDetector(
+                      onTap: () => selectDateFunc(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            imagePath.download,
+                            width: 20,
+                            height: 20,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(s.download_text,
+                              style: GoogleFonts.getFont('Roboto',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w900,
+                                  color: c.primary_text_color2))
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                widget.Flag == "U"
+                    ? __Urban_design()
+                    : const SizedBox(
+                  height: 10,
+                ),
+                __ATR_Dashboard_Design(),
+                __ATR_WorkList_Loader(),
+              ],
+            ),
+          ),
+        ));
+  }
 
   // *************************** API Call starts  Here  *************************** //
 
   Future<void> fetchOnlineATRWroklist(String fromDate, String toDate) async {
     utils.showProgress(context, 1);
     setState(() {
-      isSpinnerLoading = true;
       isWorklistAvailable = false;
       isNeedImprovementActive = false;
       isUnSatisfiedActive = false;
@@ -305,7 +367,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
         setState(() {
           utils.showAlert(context, s.no_data);
-          isSpinnerLoading = false;
           isWorklistAvailable = false;
           totalWorksCount = "0";
           npCount = "0";
@@ -318,9 +379,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   Future<void> get_PDF(String work_id, String inspection_id) async {
     utils.showProgress(context, 1);
     if (await utils.isOnline()) {
-      setState(() {
-        isSpinnerLoading = true;
-      });
 
       var userPassKey = prefs.getString(s.userPassKey);
 
@@ -357,9 +415,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         if (status == s.key_ok && response_value == s.key_ok) {
           var pdftoString = userData[s.key_json_data];
           pdf = const Base64Codec().decode(pdftoString['pdf_string']);
-          setState(() {
-            isSpinnerLoading = false;
-          });
+
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => PDF_Viewer(
@@ -369,9 +425,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         }
       }
     } else {
-      setState(() {
-        isSpinnerLoading = false;
-      });
+
       utils.showAlert(context, "asd");
     }
   }
@@ -386,7 +440,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' ");
 
     if (list.isEmpty) {
-      isSpinnerLoading = false;
       isWorklistAvailable = false;
     } else {
       totalWorksCount = list.length.toString();
@@ -432,7 +485,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           ? prefs.getString(s.atr_date_u).toString()
           : prefs.getString(s.atr_date_r).toString();
       setState(() {
-        isSpinnerLoading = false;
         isWorklistAvailable = true;
       });
     }
@@ -710,15 +762,9 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** ATR Worklist Starts Here  *************************** //
 
   __ATR_WorkList_Loader() {
-    return SingleChildScrollView(
-      child: Container(
+    return Container(
         margin: const EdgeInsets.only(top: 0),
-        height: widget.Flag == "U" ? sceenHeight - 465 : sceenHeight - 405,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Stack(
+    child:  Column(
                 children: [
                   Visibility(
                       visible: isWorklistAvailable,
@@ -727,6 +773,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                             top: 0, bottom: 10, left: 20, right: 20),
                         child: AnimationLimiter(
                           child: ListView.builder(
+                            shrinkWrap: true,
+                            primary: false,
                             itemCount: isNeedImprovementActive
                                 ? int.parse(npCount)
                                 : int.parse(usCount),
@@ -1132,6 +1180,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       .getString(s.onOffType),
                                                   selectedWorklist:
                                                       selectedWorklist,
+                                                  imagelist: [],
+                                                  flag: "",
                                                 ),
                                               ));
                                             },
@@ -1202,6 +1252,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     child: Align(
                       alignment: AlignmentDirectional.center,
                       child: Container(
+                        margin: EdgeInsets.only(top: 40),
                         alignment: Alignment.center,
                         child: Text(
                           s.no_data,
@@ -1211,12 +1262,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     ),
                   ),
                 ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+              )
+              );
   }
 
   // *************************** ATR Worklist Ends Here  *************************** //

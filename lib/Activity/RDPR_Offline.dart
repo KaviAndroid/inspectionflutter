@@ -215,6 +215,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                           scheme: schemeList[0]
                                               [s.key_scheme_id],
                                           flag: 'rdpr_offline',
+                                      finYear:'',
+                                      dcode:'',
+                                      bcode:'',
+                                      pvcode:'',
+                                      tmccode:'',
+                                      townType: '',
+                                      selectedschemeList:[],
                                         ))).then((value) {
                               utils.gotoHomePage(context, "RDPR");
                               // you can do what you need here
@@ -1305,7 +1312,20 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(msg,style: TextStyle(color: c.grey_10,fontSize: 14),),
+              title: RichText(
+            text: new TextSpan(
+            // Note: Styles for TextSpans must be explicitly defined.
+            // Child text spans will inherit styles from parent
+            style: GoogleFonts.getFont('Roboto',
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                color: c.grey_8),
+            children: <TextSpan>[
+            new TextSpan(text: s.select_financial_year,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
+            new TextSpan(text:" (Any Two)", style: new TextStyle(fontWeight: FontWeight.bold,color: c.subscription_type_red_color)),
+            ],
+            ),
+            ),
               content: Container(
                 height: 300,
                 width: MediaQuery.of(context).size.width,
@@ -1711,7 +1731,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 "')");
 
           }
-          showAlert(context, s.download_success,schIdList);
+          customAlertwithOk(context,"1" ,s.download_success,schIdList);
         } else {
           utils.showAlert(context, s.no_data);
         }
@@ -1720,6 +1740,145 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       }
     }
   }
+
+  Future<void> customAlertwithOk(
+      BuildContext context, String type, String msg,List schArray) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: c.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 5.0,
+                    ),
+                  ]),
+              width: 300,
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: c.green_new,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                    child: Center(
+                      child: Image.asset(
+                        imagePath.success,
+                        height: 60 ,
+                        width:  60 ,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: c.white,
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Text(
+                              "Success",
+                              style: GoogleFonts.getFont('Prompt',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: c.text_color)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(msg,
+                              style: GoogleFonts.getFont('Roboto',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: c.black)),
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Visibility(
+                                visible:
+                                true,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          c.primary_text_color2),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(15),
+                                          ))),
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                    if(type=="1"){
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => WorkList(
+                                                schemeList: selectedSchemeArray,
+                                                scheme: selectedSchemeArray[0][s.key_scheme_id].toString(),
+                                                flag: 'rdpr_offline',
+                                                finYear:'',
+                                                dcode:'',
+                                                bcode:'',
+                                                pvcode:'',
+                                                tmccode:'',
+                                                townType: '',
+                                                selectedschemeList:[],
+                                              ))) .then((value) {
+                                        utils.gotoHomePage(context, "RDPRUrban");
+                                        // you can do what you need here
+                                        // setState etc.
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                    "Okay",
+                                    style: GoogleFonts.getFont('Roboto',
+                                        decoration: TextDecoration.none,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                        color: c.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+/*
   Future<void> showAlert(BuildContext context, String msg,List schArray) async {
     return showDialog<void>(
       context: context,
@@ -1762,5 +1921,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       },
     );
   }
+*/
 
 }

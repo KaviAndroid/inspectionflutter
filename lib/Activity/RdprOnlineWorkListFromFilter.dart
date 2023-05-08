@@ -717,6 +717,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               tmccode: '',
                                               townType: '',
                                               flag: 'rdpr_online',
+                                          selectedschemeList:[],
                                             )));
                               },
                               child: Text(

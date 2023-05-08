@@ -21,8 +21,7 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'SaveWorkDetails.dart';
 
 class PendingScreen extends StatefulWidget {
-  final Flag;
-  PendingScreen({this.Flag});
+  PendingScreen();
 
   @override
   State<PendingScreen> createState() => _PendingScreenState();
@@ -753,6 +752,8 @@ class _PendingScreenState extends State<PendingScreen> {
           rural_urban: rural_urban,
           onoff_type: "offline",
           selectedWorklist: workList,
+          imagelist: [],
+          flag: "",
         ),
       ))
           .then((value) => {initialize()});

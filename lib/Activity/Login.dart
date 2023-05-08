@@ -314,8 +314,8 @@ class LoginState extends State<Login> {
 
                                 String ss =
                                     String.fromCharCodes(Runes('\u0024'));
-                                // user_name.text = "9080873403";
-                                // user_password.text = "crd45#" + ss;
+                                user_name.text = "9080873403";
+                                user_password.text = "crd45#" + ss;
                                 if (user_name.text.isNotEmpty) {
                                   if (user_password.text.isNotEmpty) {
                                     // utils.showToast(context, string.success);

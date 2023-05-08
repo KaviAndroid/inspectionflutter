@@ -204,6 +204,13 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                       scheme: schemeList[0][s.key_scheme_id],
                                       townType: town_type,
                                       flag: 'tmc_offline',
+                                        finYear:'',
+                                        dcode:'',
+                                        bcode:'',
+                                        pvcode:'',
+                                        tmccode:'',
+                                        selectedschemeList:[],
+
                                     )))/*.then((value) {
                               utils.gotoHomePage(context, "RDPRUrban");
                               // you can do what you need here
@@ -836,19 +843,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                              selectedschemeList.clear();
                                              selectedschemeList.add(schemeList[index]);
                                              print("sche>>"+selectedschemeList.toString());
-                                             setState(() {
-                                               if(onOffType=="online"){
-                                                 if(selectedschemeList.length == schemeCount  ){
-                                                   submitFlag = true;
-                                                 }else{
-                                                   submitFlag = false;
-                                                 }
-                                               }else{
-                                                 if(selectedschemeList.length > 0  ){
-                                                   submitFlag = true;
-                                                 }
-                                               }
-                                             });
+
                                            }else{
                                              utils.showAlert(context, "Maximum "+schemeCount.toString()+" Schem Can be Selected");
 
@@ -864,12 +859,24 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                           }schemeList[index][s.flag] == "1" ? schemeList[index][s.flag] ="0":
                                           schemeList[index][s.flag] ="1";
                                           print("Sche>>"+selectedschemeList.toString());
-                                          setState(() {
 
-                                          });
                                         }
 
-
+                                        setState(() {
+                                          if(onOffType=="online"){
+                                            if(selectedschemeList.length == schemeCount  ){
+                                              submitFlag = true;
+                                            }else{
+                                              submitFlag = false;
+                                            }
+                                          }else{
+                                            if(selectedschemeList.length>0 ){
+                                              submitFlag = true;
+                                            }else{
+                                              submitFlag = false;
+                                            }
+                                          }
+                                        });
 
                                     },
                                     child: Row(
@@ -1563,7 +1570,8 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
             // await dbClient.rawQuery('SELECT * FROM ' + s.table_SchemeList+' where rural_urban = U');
             print("table_RdprWorkList"+list.toString());
             print("table_SchemeList"+schemeList.toString());
-          showAlert(context, s.download_success,schemeList);
+          customAlertwithOk(context,"1" ,s.download_success,schemeList);
+          // showAlert(context, s.download_success,schemeList);
 
         } else {
           utils.showAlert(context, s.no_data);
@@ -1574,7 +1582,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
     }
   }
 
-  Future<void> showAlert(BuildContext context, String msg,List schArray) async {
+  /*Future<void> showAlert(BuildContext context, String msg,List schArray) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -1616,7 +1624,146 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
         );
       },
     );
-  }
+  }*/
 
+  Future<void> customAlertwithOk(
+      BuildContext context, String type, String msg,List schArray) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: c.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 5.0,
+                    ),
+                  ]),
+              width: 300,
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: c.green_new,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                    child: Center(
+                      child: Image.asset(
+                        imagePath.success,
+                        height: 60 ,
+                        width:  60 ,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: c.white,
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Text(
+                              "Success",
+                              style: GoogleFonts.getFont('Prompt',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: c.text_color)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(msg,
+                              style: GoogleFonts.getFont('Roboto',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: c.black)),
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Visibility(
+                                visible:
+                                true,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          c.primary_text_color2),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(15),
+                                          ))),
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                    if(type=="1"){
+                                      print("schArray"+schArray.toString());
+                                      print("Scheme"+schArray[0][s.key_scheme_id].toString());
+                                      Navigator.pop(context, 'OK');
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => WorkList(
+                                                schemeList: schArray,
+                                                scheme: schArray[0][s.key_scheme_id],
+                                                townType: town_type,
+                                                flag: 'tmc_offline',
+                                                finYear:'',
+                                                dcode:'',
+                                                bcode:'',
+                                                pvcode:'',
+                                                tmccode:'',
+                                                selectedschemeList:[],
+                                              ))) .then((value) {
+                                        utils.gotoHomePage(context, "RDPRUrban");
+                                        // you can do what you need here
+                                        // setState etc.
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                    "Okay",
+                                    style: GoogleFonts.getFont('Roboto',
+                                        decoration: TextDecoration.none,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                        color: c.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
 }

@@ -51,7 +51,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   String town_type = "T";
 
   //BoolVariabless
-  bool isSpinnerLoading = false;
   bool isNeedImprovementActive = false;
   bool isUnSatisfiedActive = false;
   bool isWorklistAvailable = false;
@@ -99,6 +98,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     });
   }
 
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,13 +140,47 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
               ],
             )));
   }
+*/
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: c.colorPrimary,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () =>
+                Navigator.of(context, rootNavigator: true).pop(context),
+          ),
+          title: Text(s.work_list),
+          centerTitle: true, // like this!
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          color: c.colorAccentverylight,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                widget.Flag == "U"
+                    ? __Urban_design()
+                    : const SizedBox(
+                  height: 10,
+                ),
+                __ATR_Dashboard_Design(),
+                __ATR_WorkList_Loader(),
+              ],
+            ),
+          ),
+        ));
+  }
 
   // *************************** API call Starts here *************************** //
 
   Future<void> fetchOnlineATRWroklist(String fromDate, String toDate) async {
     utils.showProgress(context, 1);
     setState(() {
-      isSpinnerLoading = true;
+      // isSpinnerLoading = true;
       isWorklistAvailable = false;
       isNeedImprovementActive = false;
       isUnSatisfiedActive = false;
@@ -226,7 +260,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
           } else {
             defaultWorklist = [];
           }
-          isSpinnerLoading = false;
           isWorklistAvailable = true;
           print("WORKLIST >>>>>");
           print(defaultWorklist);
@@ -234,7 +267,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
         utils.showAlert(context, s.no_data);
         setState(() {
-          isSpinnerLoading = false;
           totalWorksCount = "0";
           npCount = "0";
           usCount = "0";
@@ -245,10 +277,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
     utils.showProgress(context, 1);
-    setState(() {
-      isSpinnerLoading = true;
-    });
-
     var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
@@ -284,9 +312,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
-        setState(() {
-          isSpinnerLoading = false;
-        });
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => PDF_Viewer(
@@ -390,14 +415,14 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                   padding: EdgeInsets.only(top: 10),
                   child: Text(SDBText,
                       style: GoogleFonts.getFont('Montserrat',
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           fontSize: 13,
                           color: c.text_color)),
                 ),
                 Text(s.total_inspection_works + totalWorksCount,
                     style: GoogleFonts.getFont('Montserrat',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                         color: c.text_color)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -434,15 +459,15 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                 children: [
                                   Text(s.need_improvement,
                                       style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
                                   Text(npCount,
                                       style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
@@ -481,15 +506,15 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                 children: [
                                   Text(s.un_satisfied,
                                       style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
                                           color: isUnSatisfiedActive
                                               ? c.white
                                               : c.unsatisfied)),
                                   Text(usCount,
                                       style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
                                           color: isUnSatisfiedActive
                                               ? c.white
                                               : c.unsatisfied)),
@@ -724,15 +749,9 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   // *************************** ATR Worklist Starts Here  *************************** //
 
   __ATR_WorkList_Loader() {
-    return SingleChildScrollView(
-      child: Container(
+    return Container(
         margin: const EdgeInsets.only(top: 0),
-        height: widget.Flag == "U" ? sceenHeight - 435 : sceenHeight - 350,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Stack(
                 children: [
                   Visibility(
                       visible: isWorklistAvailable,
@@ -741,6 +760,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                             top: 0, bottom: 10, left: 20, right: 20),
                         child: AnimationLimiter(
                           child: ListView.builder(
+                            shrinkWrap: true,
+                            primary: false,
                             itemCount: isNeedImprovementActive
                                 ? int.parse(npCount)
                                 : int.parse(usCount),
@@ -1146,6 +1167,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                       .getString(s.onOffType),
                                                   selectedWorklist:
                                                       selectedWorklist,
+                                                  imagelist: [],
+                                                  flag: "",
                                                 ),
                                               )).then((value) => initialize());
                                             },
@@ -1216,6 +1239,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                     child: Align(
                       alignment: AlignmentDirectional.center,
                       child: Container(
+                        margin: EdgeInsets.only(top: 50),
                         alignment: Alignment.center,
                         child: Text(
                           s.no_data,
@@ -1227,11 +1251,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+
+      );
   }
 
   // *************************** ATR Worklist Ends Here  *************************** //

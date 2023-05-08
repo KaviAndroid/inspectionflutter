@@ -1288,7 +1288,6 @@ class _HomeState extends State<Home> {
         .push(CupertinoPageRoute(
           fullscreenDialog: true,
           builder: (context) => PendingScreen(
-            Flag: atrFlag,
           ),
         ))
         .then((value) => checkLocalData());

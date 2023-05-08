@@ -16,8 +16,7 @@ import '../Resources/ColorsValue.dart' as c;
 
 class OTPVerification extends StatefulWidget {
   final Flag;
-  final mobile_no;
-  OTPVerification({this.Flag, this.mobile_no});
+  OTPVerification({this.Flag});
   @override
   State<OTPVerification> createState() => _OTPVerificationState();
 }
@@ -44,6 +43,9 @@ class _OTPVerificationState extends State<OTPVerification> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     design_flag = widget.Flag;
+    setState(() {
+
+    });
   }
 
   @override

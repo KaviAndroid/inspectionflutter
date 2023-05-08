@@ -732,7 +732,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                   fontSize: 12,
                                   color: c.grey_8),
                               children: <TextSpan>[
-                                new TextSpan(text: s.select_scheme,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
+                                new TextSpan(text: s.select_other,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
                                 new TextSpan(text:onOffType == "online" ?" (Any One)":"", style: new TextStyle(fontWeight: FontWeight.bold,color: c.subscription_type_red_color)),
                               ],
                             ),

@@ -114,6 +114,7 @@ class _VillageListFromGeoLocationState
                                   tmccode: '',
                                   townType: '',
                                   flag: 'geo',
+                                  selectedschemeList:[],
                                 )));
                       },
                       child: Card(

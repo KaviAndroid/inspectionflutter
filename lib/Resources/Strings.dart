@@ -41,7 +41,6 @@ String need_improvement_count_other = "Need Improvement Count Other";
 String financial_year = "Financial Year";
 String select_financial_year = "Select Financial Year";
 String inspection_status = "Inspection Status";
-String internet_error = "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
 String total_inspection_done_by_you = "Total inspection done by you";
 String edit_profile = "Edit Profile";
 String over_all_inspection_report = "View all inspected works";
@@ -221,10 +220,11 @@ String please_enter_category = "Please Select Category";
 String select_other = "Select Category";
 String enter_other_work_details = "Enter other work detail";
 String please_enter_other_work_details = "Please enter other work detail";
-String no_offline_data = "No data available for offline. Please Turn On Your Network";
 String loading = "Loading...";
 String downloading = "Downloading...";
-String download_apk = "Download the latest version and install the new APK.";
+String ATRUploadedDate = "ATR Uploaded Date.";
+String internet_error =
+    "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -280,7 +280,6 @@ String key_ok = "OK";
 String key_cancel = "CANCEL";
 String key_key = "KEY";
 String key_appcode = "app_code";
-String key_app_code = "appcode";
 String key_satisfied = "satisfied";
 String key_unsatisfied = "unsatisfied";
 String key_need_improvement = "need_improvement";
@@ -333,7 +332,7 @@ String key_rural_urban = "rural_urban";
 String key_inspection_details = "inspection_details";
 String key_other_inspection_details = "other_inspection_details";
 String key_other_work_inspection_id = "other_work_inspection_id";
-String key_other_work_name= "other_work_detail";
+String key_other_work_name = "other_work_detail";
 String key_inspection_id = "inspection_id";
 String key_inspection_date = "inspection_date";
 String key_ins_date = "ins_date";
@@ -346,10 +345,12 @@ String key_days = "days";
 String key_image_path = "image_path";
 String key_flag = "flag";
 String key_inspection_image = "inspection_image";
+String key_action_status = "action_status";
+String key_action_taken_date = "action_taken_date";
+String key_inspection_action_taken_details = "inspection_action_taken_details";
 
 // Service Key
 String service_key_login = "login";
-String service_key_version_check = "version_check";
 String service_key_scheme_list = "scheme_list";
 String service_key_scheme_list_townpanchayat_wise =
     "scheme_list_townpanchayat_wise";
@@ -424,9 +425,17 @@ String service_key_date_wise_inspection_details_view =
 String service_key_action_taken_details_save = "action_taken_details_save";
 String service_key_work_id_wise_inspection_action_taken_details_view =
     "work_id_wise_inspection_action_taken_details_view";
-String service_key_other_work_inspection_details_save = "other_work_inspection_details_save";
-String service_key_other_inspection_details_view = "other_inspection_details_view";
-String service_key_date_wise_other_inspection_details_view = "date_wise_other_inspection_details_view";
+String service_key_other_work_inspection_details_save =
+    "other_work_inspection_details_save";
+String service_key_other_inspection_details_view =
+    "other_inspection_details_view";
+String service_key_date_wise_other_inspection_details_view =
+    "date_wise_other_inspection_details_view";
+String service_key_overall_inspection_details_for_atr =
+    "overall_inspection_details_for_atr";
+String service_key_date_wise_inspection_action_taken_details_view =
+    "date_wise_inspection_action_taken_details_view";
+String service_key_get_action_taken_work_pdf = "get_action_taken_work_pdf";
 
 //Table Name
 String table_District = "District";

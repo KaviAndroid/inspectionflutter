@@ -611,6 +611,7 @@ class _DrawerAppState extends State<DrawerApp> {
 
   Future<void> getAll_Stage() async {
     utils.showProgress(context, 1);
+    try {
     late Map json_request;
 
     json_request = {
@@ -629,12 +630,12 @@ class _DrawerAppState extends State<DrawerApp> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
+
     print("RefreshWorkStages_url>>${url.main_service}");
     print("RefreshWorkStages_request_json>>$json_request");
     print("RefreshWorkStages_request_encrpt>>$encrypted_request");
     utils.hideProgress(context);
 
-    try {
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,
         // then parse the JSON.
@@ -675,8 +676,10 @@ class _DrawerAppState extends State<DrawerApp> {
         }
       }
     } on Exception catch (exception) {
+      utils.hideProgress(context);
       utils.customAlert(context, "E", s.failed); // only executed if error is of type Exception
     } catch (error) {
+      utils.hideProgress(context);
       utils.customAlert(context, "E", s.failed); // executed for errors of all types other than Exception
     }
 

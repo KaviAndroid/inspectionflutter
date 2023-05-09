@@ -1086,6 +1086,8 @@ class Utils {
     // DateTime dateTimeNow = DateTime.now();
 
     final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
+    print('dateTimeLup>>' + '$dateTimeLup');
+    print('now>>' + '$now');
     print('days>>' + '$differenceInDays');
 
     final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;

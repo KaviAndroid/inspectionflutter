@@ -84,6 +84,7 @@ class _HomeState extends State<Home> {
       } /*else {
         utils.showAlert(context, s.no_internet);
       }*/
+    }
     if (prefs.getString(s.key_rural_urban) != null &&
         prefs.getString(s.key_rural_urban) != "") {
       area_type = prefs.getString(s.key_rural_urban)!;
@@ -159,7 +160,7 @@ class _HomeState extends State<Home> {
       prefs.setString(s.key_rural_urban, "R");
     }
 
-    }
+
 
     satisfied_count = prefs.getString(s.satisfied_count)!;
     un_satisfied_count = prefs.getString(s.un_satisfied_count)!;

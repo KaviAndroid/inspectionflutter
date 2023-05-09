@@ -36,11 +36,10 @@ class _PendingScreenState extends State<PendingScreen> {
   int worklistCount = 0;
 
   // Bool Variables
-  bool isSpinnerLoading = false;
   bool isWorklistAvailable = false;
   bool flag = false;
   bool flagTab = false;
-  int flagTaped=0;
+  int flagTaped=1;
   String level="";
 
   List<Map> atr_WorkList = [];
@@ -91,12 +90,7 @@ class _PendingScreenState extends State<PendingScreen> {
                     setState(() {
                       flag = false;
                       flagTaped = 1;
-                      if (rdpr_WorkList.length > 0) {
-                        defaultWorklist = [];
-                        defaultWorklist.addAll(rdpr_WorkList);
-                      } else {
-                        defaultWorklist = [];
-                      }
+                      fetchOfflineWorklist();
                     });
                   },
                   child: Container(
@@ -135,12 +129,7 @@ class _PendingScreenState extends State<PendingScreen> {
                     setState(() {
                       flag = true;
                       flagTaped = 2;
-                      if (atr_WorkList.length > 0) {
-                        defaultWorklist = [];
-                        defaultWorklist.addAll(atr_WorkList);
-                      } else {
-                        defaultWorklist = [];
-                      }
+                     fetchOfflineWorklist();
                     });
                   },
                   child: Container(
@@ -181,18 +170,7 @@ class _PendingScreenState extends State<PendingScreen> {
         color: c.background_color,
         width: screenWidth,
         height: sceenHeight - 80,
-        child: Stack(
-          children: [
-            IgnorePointer(
-              ignoring: isSpinnerLoading,
-              child: __PendingScreenListAdaptor(),
-            ),
-            Visibility(
-              visible: isSpinnerLoading,
-              child: utils.showSpinner(context, "Processing"),
-            )
-          ],
-        ),
+        child: __PendingScreenListAdaptor(),
       )),
       ],));
   }
@@ -721,10 +699,11 @@ class _PendingScreenState extends State<PendingScreen> {
   __deleteWorklist(List workList) async {
     await utils
         .customAlert(context, "W", s.delete_local_data_msg)
-        .then((value) {
+        .then((value) async {
       bool flag = (value as bool);
       if (flag) {
-        gotoDelete(workList, false);
+        await gotoDelete(workList, false);
+        await fetchOfflineWorklist();
       }
     });
   }
@@ -777,10 +756,6 @@ class _PendingScreenState extends State<PendingScreen> {
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
-    utils.showProgress(context, 1);
-    setState(() {
-      isSpinnerLoading = true;
-    });
     //Empty the Worklist
     defaultWorklist = [];
     atr_WorkList = [];
@@ -792,32 +767,47 @@ class _PendingScreenState extends State<PendingScreen> {
       atr_WorkList =
       await dbClient.rawQuery("SELECT * FROM ${s.table_save_work_details} WHERE flag='ATR' ");
     flagTab=true;
-      flagTaped=1;
     }else{
     flagTab=false;
     }
 
-    if (rdpr_WorkList.isEmpty) {
-      setState(() {
-        isSpinnerLoading = false;
-        isWorklistAvailable = false;
-      });
-    } else {
-      defaultWorklist = rdpr_WorkList;
+    if(flagTaped ==1){
+      if (rdpr_WorkList.isEmpty) {
+        setState(() {
+          isWorklistAvailable = false;
+        });
+      } else {
+        defaultWorklist = rdpr_WorkList;
 
-      print("<<<<<<<<< WORKLIST >>>>>>>");
-      print(defaultWorklist);
+        print("<<<<<<<<< WORKLIST >>>>>>>");
+        print(defaultWorklist);
 
-      setState(() {
-        isSpinnerLoading = false;
-        isWorklistAvailable = true;
-        flag = false;
-      });
+        setState(() {
+          isWorklistAvailable = true;
+          flag = false;
+        });
+      }
+    }else{
+      if (atr_WorkList.isEmpty) {
+        setState(() {
+          isWorklistAvailable = false;
+        });
+      } else {
+        defaultWorklist = atr_WorkList;
+
+        print("<<<<<<<<< WORKLIST >>>>>>>");
+        print(defaultWorklist);
+
+        setState(() {
+          isWorklistAvailable = true;
+          flag = false;
+        });
+      }
     }
+
     setState(() {
 
     });
-    utils.hideProgress(context);
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //
@@ -863,8 +853,6 @@ class _PendingScreenState extends State<PendingScreen> {
       if (imageDelete.length == 0 && workListDelete.length == 0) {
         utils.customAlert(context, "S", s.delete_local_data_msg_success);
       }
-
-      await fetchOfflineWorklist();
     }
   }
 
@@ -881,9 +869,6 @@ class _PendingScreenState extends State<PendingScreen> {
       String flag = workList[0][s.key_flag];
       String inspection_id = workList[0][s.key_inspection_id];
 
-      setState(() {
-        isSpinnerLoading = true;
-      });
 
       List<dynamic> inspection_work_details = [];
       Map dataset = {};
@@ -985,9 +970,6 @@ class _PendingScreenState extends State<PendingScreen> {
       print("onlineSave_request>>$main_dataset");
       print("onlineSave_request_encrpt>>$encrpted_request");
       utils.hideProgress(context);
-      setState(() {
-        isSpinnerLoading = false;
-      });
 
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,

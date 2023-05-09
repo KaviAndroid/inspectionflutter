@@ -657,7 +657,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                 child:  InkWell(
                                   onTap: () {
                                     selectedOtherworkList.clear();
-                                    selectedOtherworkList.add(workList[index]);
+                                    selectedOtherworkList.add(workList[0]);
                                     print("SELECTED_OTHER_WORKLIST>>>>"+selectedOtherworkList.toString());
                                     Navigator.push(
                                         context,
@@ -668,6 +668,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                               imagelist: [],
                                               selectedRDPRworkList: [],
                                               selectedATRWorkList: [],
+                                              town_type: town_type,
                                             )));
                                   },
                                   child: Card(
@@ -712,7 +713,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             get_PDF(
-                                                                workList[index][s.key_other_work_inspection_id]
+                                                                workList[0][s.key_other_work_inspection_id]
                                                                     .toString(),
                                                                 );
                                                           },
@@ -771,7 +772,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                  workList[index][s.key_other_work_inspection_id]
+                                                                  workList[0][s.key_other_work_inspection_id]
                                                                       .toString(),
                                                                   style:
                                                                   TextStyle(color: c.white),
@@ -817,7 +818,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index][s.key_other_work_name]
+                                                                workList[0][s.key_other_work_name]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
                                                               ),
@@ -862,7 +863,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index][s.key_other_work_category_name]
+                                                                workList[0][s.key_other_work_category_name]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
                                                               ),
@@ -907,7 +908,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index]
+                                                                workList[0]
                                                                 [s.key_inspection_date]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
@@ -954,7 +955,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index][s.key_status_name]
+                                                                workList[0][s.key_status_name]
                                                                     .toString(),
                                                                 maxLines: 2,
                                                                 style: TextStyle(color: c.white),
@@ -968,7 +969,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         Column(
                                                           children: [
                                                             Visibility(
-                                                              visible:  utils.editdelayHours(workList[index][s.key_ins_date].toString()),
+                                                              visible:  utils.editdelayHours(workList[0][s.key_ins_date].toString()),
                                                               child: Row(
                                                                 children: [
                                                                   Expanded(
@@ -998,9 +999,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                               ),
                                                                               child: InkWell(
                                                                                 onTap: () async {
-                                                                                  await getSavedOtherWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
+                                                                                  await getSavedOtherWorkDetails(workList[0][s.key_other_work_inspection_id].toString());
                                                                                   selectedOtherworkList.clear();
-                                                                                  selectedOtherworkList.add(workList[index]);
+                                                                                  selectedOtherworkList.add(workList[0]);
                                                                                   print('selectedOtherworkList>>' + selectedOtherworkList.toString());
                                                                                   Navigator.push(
                                                                                       context,
@@ -1141,7 +1142,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         s.key_from_date:from_Date,
         s.key_to_date:to_Date,
       };
-    if (widget.Flag == "Urban Area") {
+    if (prefs.getString(s.key_rural_urban) == "U") {
       Map urbanRequest = {s.key_town_type: town_type};
       json_request.addAll(urbanRequest);
     }
@@ -1195,11 +1196,11 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
           if (OtherWorkList[i][s.key_rural_urban] == "U") {
             print("Image>>>>" + ImageList.toString());
             workList.add(OtherWorkList[i]);
-            if ([s.key_town_type] == "T") {
+            if (town_type == "T") {
               TownWorkList = workList;
-            } else if ([s.key_town_type] == "M") {
+            } else if (town_type == "M") {
               MunicipalityWorkList = workList;
-            } else if ([s.key_town_type] == "C") {
+            } else if (town_type == "C") {
               corporationWorklist = workList;
             }
           } else {
@@ -1212,7 +1213,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       usCount = unSatisfiedWorkList.length.toString();
       nimpCount = needImprovementWorkList.length.toString();
       setState(() {
-        if (s.key_rural_urban == "U") {
+        if (prefs.getString(s.key_rural_urban) == "U") {
           if (satisfiedWorkList.isNotEmpty) {
             isSatisfiedActive = true;
             workList = satisfiedWorkList;
@@ -1339,6 +1340,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
           print("WORK_ID"+other_work_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
+          Map<String, String> mymap = {};
+          mymap["image_path"] = '0';
+          ImageList.add(mymap);
           print("image_List>>>>>>"+ImageList.toString());
         }
       }

@@ -659,6 +659,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                   flag: "rdpr",
                                                   selectedOtherWorkList:[],
                                                   selectedATRWorkList: [],
+                                                  town_type: town_type,
                                                 )));
                                       },
                                       child: Card(
@@ -1150,11 +1151,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
           if (RdprWorkList[i][s.key_rural_urban] == "U") {
             print("Image>>>>" + ImageList.toString());
             workList.add(RdprWorkList[i]);
-            if ([s.key_town_type] == "T") {
+            if (town_type == "T") {
               TownWorkList = workList;
-            } else if ([s.key_town_type] == "M") {
+            } else if (town_type == "M") {
               MunicipalityWorkList = workList;
-            } else if ([s.key_town_type] == "C") {
+            } else if (town_type == "C") {
               corporationWorklist = workList;
             }
           } else {
@@ -1167,7 +1168,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       usCount = unSatisfiedWorkList.length.toString();
       nimpCount = needImprovementWorkList.length.toString();
       setState(() {
-        if (s.key_rural_urban == "U") {
+        if (prefs.getString(s.key_rural_urban) == "U") {
           if (satisfiedWorkList.isNotEmpty) {
             isSatisfiedActive = true;
             workList = satisfiedWorkList;
@@ -1232,7 +1233,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
-
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       String responseData = response.body;
 
@@ -1243,7 +1244,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      utils.hideProgress(context);
+
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
@@ -1313,6 +1314,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
           print("WORK_ID"+work_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
+          Map<String, String> mymap = {};
+          mymap["image_path"] = '0';
+          ImageList.add(mymap);
           print("image_List>>>>>>"+ImageList.toString());
         }
       }

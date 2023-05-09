@@ -211,6 +211,8 @@ class SaveDatacontroller with ChangeNotifier {
       img_jsonArray[i].update('latitude', (value) => latitude);
       img_jsonArray[i].update('longitude', (value) => longitude);
       img_jsonArray[i].update('image', (value) => workmage);
+      img_jsonArray[i]
+          .update(s.key_image_path, (value) => pickedFile.path.toString());
       _imageFile = File(pickedFile.path);
       print("ImageList>>" + img_jsonArray.toString());
 
@@ -297,7 +299,7 @@ class SaveDatacontroller with ChangeNotifier {
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
       int count=i+1;
-      img_jsonArray[i].update('serial_no', (value) => count.toString());
+      img_jsonArray_val[i].update('serial_no', (value) => count.toString());
       jsonArray.add(img_jsonArray_val[i]);
     }
 
@@ -802,19 +804,21 @@ class SaveDatacontroller with ChangeNotifier {
       mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
       mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
       mymap["image"] = imageList[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      mymap["image_path"] = imageList[i][s.key_image_path].toString(); // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
 
     for (int i = img_jsonArray.length; i < max_img_count; i++) {
       Map<String, String> mymap =
       {}; // This created one object in the current scope.
-
+      int count=i+1;
       // First iteration , i = 0
       mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
       mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = count.toString(); // Now mymap = { name: 'test0' };
       mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
-      mymap["image"] = '0'; // Now mymap = { name: 'test0' };
+      mymap["image"] = '0';
+      mymap["image_path"] = '0'; // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
     print("Img>>" + img_jsonArray.toString());

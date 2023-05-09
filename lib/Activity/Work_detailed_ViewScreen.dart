@@ -20,8 +20,9 @@ class Work_detailed_ViewScreen extends StatefulWidget {
   final selectedOtherWorkList;
   final selectedATRWorkList;
   final imagelist;
+  final town_type;
 
-  Work_detailed_ViewScreen({this.selectedRDPRworkList, this.flag,this.imagelist,this.selectedOtherWorkList,this.selectedATRWorkList});
+  Work_detailed_ViewScreen({this.selectedRDPRworkList, this.flag,this.imagelist,this.selectedOtherWorkList,this.selectedATRWorkList,this.town_type});
   State<Work_detailed_ViewScreen> createState() => Work_detailed_ViewScreenState();
 }
 class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
@@ -1027,7 +1028,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       s.key_work_id:work_id,
       s.key_rural_urban:prefs.getString(s.key_rural_urban),
     };
-    if (s.key_rural_urban=="U") {
+    if (prefs.getString(s.key_rural_urban)=="U") {
       Map urbanRequest = {s.key_town_type:widget.selectedRDPRworkList[0][s.key_town_type]};
       json_request.addAll(urbanRequest);
     }
@@ -1065,6 +1066,9 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
+          res_image.sort((a, b) {
+            return a[s.key_serial_no].compareTo(b[s.key_serial_no]);
+          });
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
@@ -1096,10 +1100,10 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       s.key_other_work_inspection_id: widget.selectedOtherWorkList[0][s.key_other_work_inspection_id],
     };
     print("Rural Urban"+prefs.getString(s.key_rural_urban).toString());
-    if(s.key_rural_urban=="U")
+    if(prefs.getString(s.key_rural_urban)=="U")
     {
       Map set = {
-        s.key_town_type: widget.selectedOtherWorkList[0][s.key_town_type],
+        s.key_town_type: widget.town_type,
       };
       dataset.addAll(set);
     }
@@ -1132,6 +1136,9 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
+          res_image.sort((a, b) {
+            return a[s.key_serial_no].compareTo(b[s.key_serial_no]);
+          });
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
@@ -1155,48 +1162,14 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     }
   }
   Future<void> getAtrWorkDetails() async {
-    utils.showProgress(context, 1);
-    prefs = await SharedPreferences.getInstance();
-    late Map json_request;
-    prefs.getString(s.key_rural_urban);
-    json_request = {
-      s.key_service_id: s.service_key_work_id_wise_inspection_action_taken_details_view,
-      s.key_inspection_id:widget.selectedATRWorkList[0][s.key_inspection_id],
-      s.key_work_id:work_id,
-      s.key_action_taken_id:widget.selectedATRWorkList[0][s.key_action_taken_id],
-      s.key_rural_urban:prefs.getString(s.key_rural_urban),
-    };
-    if (s.key_rural_urban=="U") {
-      Map urbanRequest = {s.key_town_type:town_type};
-      json_request.addAll(urbanRequest);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(
-        url.main_service, body: json.encode(encrypted_request));
-    utils.hideProgress(context);
-    print("ATRWorkList_url>>" + url.main_service.toString());
-    print("ATRWorkList_request_json>>" + json_request.toString());
-    print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
-    String data = response.body;
-    print("ATRWorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrypt_data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
     ImageList.clear();
-    if (status == s.key_ok && response_value == s.key_ok) {
-      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      List<dynamic> res_jsonArray = widget.selectedATRWorkList;
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
+          res_image.sort((a, b) {
+            return a[s.key_serial_no].compareTo(b[s.key_serial_no]);
+          });
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
@@ -1205,12 +1178,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
       setState(() {
         _Photos();
       });
-    }
-    else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
-    }
     if (ImageList.length > 0) {
       noDataFlag = false;
       imageListFlag = true;

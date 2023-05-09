@@ -650,19 +650,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                 child:  InkWell(
                                   onTap: () {
                                     selectedATRworkList.clear();
-                                    selectedATRworkList.add(workList[index]);
+                                    selectedATRworkList.add(workList[0]);
                                     print("SELECTED_ATR_WORKLIST>>>>"+selectedATRworkList.toString());
+                                    getAtrWorkDetails();
 
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Work_detailed_ViewScreen(
-                                              selectedATRWorkList: selectedATRworkList,
-                                              flag: "atr",
-                                              imagelist: [],
-                                              selectedOtherWorkList: [],
-                                              selectedRDPRworkList: [],
-                                            )));
                                   },
                                   child: Card(
                                       elevation: 5,
@@ -706,8 +697,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             get_PDF(
-                                                                workList[index][s.key_work_id]
-                                                                    .toString(),workList[index][s.key_inspection_id].toString(),workList[index][s.key_action_taken_id].toString());
+                                                                workList[0][s.key_work_id]
+                                                                    .toString(),workList[0][s.key_inspection_id].toString(),workList[0][s.key_action_taken_id].toString());
                                                           },
                                                           child: Align(
                                                             alignment: Alignment.topRight,
@@ -764,7 +755,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                  workList[index][s.key_work_id]
+                                                                  workList[0][s.key_work_id]
                                                                       .toString(),
                                                                   style:
                                                                   TextStyle(color: c.white),
@@ -816,7 +807,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                       .topStart,
                                                                   child: Text("Activity:"+
                                                                       workList[
-                                                                      index][
+                                                                      0][
                                                                       s.key_work_name]
                                                                           .toString(),
                                                                       maxLines: 2,style: TextStyle(color: c.white,fontSize: 15)),
@@ -863,7 +854,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[index][s.key_action_taken_date]
+                                                                workList[0][s.key_action_taken_date]
                                                                     .toString(),
                                                                 maxLines: 2,
                                                                 style: TextStyle(color: c.white),
@@ -878,7 +869,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                           children: [
                                                             Visibility(
                                                               visible: utils.editdelayHours(
-                                                                  workList[index]
+                                                                  workList[0]
                                                                   [s.key_ins_date].toString()),
                                                               child: Row(
                                                                 children: [
@@ -909,9 +900,9 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                               ),
                                                                               child: InkWell(
                                                                                 onTap: () async {
-                                                                                  await getSavedWorkDetails(workList[index][s.key_work_id].toString(),workList[index][s.key_inspection_id].toString(),workList[index][s.key_action_taken_id].toString());
+                                                                                  await getSavedWorkDetails(workList[0][s.key_work_id].toString(),workList[index][s.key_inspection_id].toString(),workList[index][s.key_action_taken_id].toString());
                                                                                   selectedATRworkList.clear();
-                                                                                  selectedATRworkList.add(workList[index]);
+                                                                                  selectedATRworkList.add(workList[0]);
                                                                                   print('selectedATRworkList>>' + selectedATRworkList.toString());
                                                                                   Navigator.push(
                                                                                       context,
@@ -1115,11 +1106,11 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           if (RdprWorkList[i][s.key_rural_urban] == "U") {
             print("Image>>>>" + ImageList.toString());
             workList.add(RdprWorkList[i]);
-            if ([s.key_town_type] == "T") {
+            if (town_type == "T") {
               TownWorkList = workList;
-            } else if ([s.key_town_type] == "M") {
+            } else if (town_type == "M") {
               MunicipalityWorkList = workList;
-            } else if ([s.key_town_type] == "C") {
+            } else if (town_type == "C") {
               corporationWorklist = workList;
             }
           } else {
@@ -1132,7 +1123,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       usCount = unSatisfiedWorkList.length.toString();
       nimpCount = needImprovementWorkList.length.toString();
       setState(() {
-        if (s.key_rural_urban == "U") {
+        if (prefs.getString(s.key_rural_urban) == "U") {
           if (satisfiedWorkList.isNotEmpty) {
             isSatisfiedActive = true;
             workList = satisfiedWorkList;
@@ -1262,6 +1253,9 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           print("WORK_ID"+work_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
+          Map<String, String> mymap = {};
+          mymap["image_path"] = '0';
+          ImageList.add(mymap);
           print("image_List>>>>>>"+ImageList.toString());
         }
       }
@@ -1278,6 +1272,65 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     corporationWorklist = [];
     isWorklistAvailable = false;
   }
+  Future<void> getAtrWorkDetails() async {
+    utils.showProgress(context, 1);
+    prefs = await SharedPreferences.getInstance();
+    late Map json_request;
+    prefs.getString(s.key_rural_urban);
+    json_request = {
+      s.key_service_id: s.service_key_work_id_wise_inspection_action_taken_details_view,
+      s.key_inspection_id:selectedATRworkList[0][s.key_inspection_id],
+      s.key_work_id:selectedATRworkList[0][s.key_work_id],
+      s.key_action_taken_id:selectedATRworkList[0][s.key_action_taken_id],
+      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+    };
+    if (prefs.getString(s.key_rural_urban)=="U") {
+      Map urbanRequest = {s.key_town_type:town_type};
+      json_request.addAll(urbanRequest);
+    }
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
+    print("ATRWorkList_url>>" + url.main_service.toString());
+    print("ATRWorkList_request_json>>" + json_request.toString());
+    print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("ATRWorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Work_detailed_ViewScreen(
+                  selectedATRWorkList: res_jsonArray,
+                  flag: "atr",
+                  imagelist: [],
+                  selectedOtherWorkList: [],
+                  selectedRDPRworkList: [],
+                  town_type: town_type,
+                )));
+      }
+
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+     utils.customAlert(context, "E", response_value);
+    }
+  }
+
 }
 
 class ChartData {

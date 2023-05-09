@@ -192,7 +192,6 @@ class _ATR_SaveState extends State<ATR_Save> {
                                 }
                               },
                               child: Container(
-                                width: 160,
                                 height: 30,
                                 padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                                 alignment: Alignment.center,

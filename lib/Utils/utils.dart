@@ -913,10 +913,10 @@ class Utils {
         " >>" +
         packageName +
         " >>" +
-        version +
+        packageInfo.version +
         " >>" +
         buildNumber);
-    return version;
+    return packageInfo.version;
   }
 
   Future<bool> handleLocationPermission(BuildContext context) async {

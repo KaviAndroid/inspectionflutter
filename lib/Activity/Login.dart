@@ -51,7 +51,7 @@ class LoginState extends State<Login> {
     _passwordVisible = false;
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    version = utils.getVersion().toString();
+    version =s.version+" "+ await utils.getVersion();
     setState(() {});
   }
 
@@ -302,7 +302,7 @@ class LoginState extends State<Login> {
                             child: InkWell(
                               onTap: () async {
                                 /* loginScreenBinding.userName.setText("9080873403");
-        loginScreenBinding.password.setText("crd45#$");// local block*/
+        loginScreenBinding.password.setText("Crd555#&");// local block*/
                                 /*  loginScreenBinding.userName.setText("7877979787");
         loginScreenBinding.password.setText("Crd123#$");// local district*/
 
@@ -315,7 +315,7 @@ class LoginState extends State<Login> {
                                 String ss =
                                     String.fromCharCodes(Runes('\u0024'));
                                 user_name.text = "9080873403";
-                                user_password.text = "crd45#" + ss;
+                                user_password.text = "Crd555#" + ss;
                                 if (user_name.text.isNotEmpty) {
                                   if (user_password.text.isNotEmpty) {
                                     // utils.showToast(context, string.success);
@@ -369,7 +369,7 @@ class LoginState extends State<Login> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        Registration(registerFlag: 1)));
+                                        Registration(registerFlag: 1,profileJson: [],)));
 
                             // utils.showToast(context, "click register");
                           },
@@ -435,7 +435,7 @@ class LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text(
-                        s.version + " " + version,
+                         version,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: c.d_grey2,
@@ -553,7 +553,7 @@ class LoginState extends State<Login> {
         utils.gotoHomePage(context, "Login");
       } else {
         utils.hideProgress(context);
-        utils.showToast(context, "Failed");
+        utils.customAlert(context,"E", s.invalid_usn_pswd);
       }
       return decodedData;
     } else {

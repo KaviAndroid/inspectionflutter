@@ -43,9 +43,7 @@ class _OTPVerificationState extends State<OTPVerification> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     design_flag = widget.Flag;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -171,16 +169,29 @@ class _OTPVerificationState extends State<OTPVerification> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                    design_flag == "OTP"
-                                        ? "{ Resend OTP }"
-                                        : '',
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                        color: c.red)),
+                              child: InkWell(
+                                onTap: () {
+                                  prefs
+                                          .getString(s.key_mobile)
+                                          .toString()
+                                          .isNotEmpty
+                                      ? send_OTP(prefs
+                                          .getString(s.key_mobile)
+                                          .toString())
+                                      : utils.showAlert(
+                                          context, s.please_enter_otp);
+                                },
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                      design_flag == "OTP"
+                                          ? "{ Resend OTP }"
+                                          : '',
+                                      style: GoogleFonts.getFont('Roboto',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                          color: c.red)),
+                                ),
                               ),
                             ),
                             Container(
@@ -207,9 +218,21 @@ class _OTPVerificationState extends State<OTPVerification> {
                                             ?.unfocus();
 
                                         design_flag == "login"
-                                            ? send_OTP()
+                                            ? (utils.isNumberValid(mobileNumber
+                                                        .text
+                                                        .toString()) &&
+                                                    (mobileNumber.text
+                                                        .toString()
+                                                        .isNotEmpty))
+                                                ? send_OTP(mobileNumber.text
+                                                    .toString())
+                                                : utils.showAlert(context,
+                                                    s.please_enter_valid_num)
                                             : design_flag == "OTP"
-                                                ? verify_OTP()
+                                                ? otp.text.toString().isNotEmpty
+                                                    ? verify_OTP()
+                                                    : utils.showAlert(context,
+                                                        s.please_enter_otp)
                                                 : null;
                                       },
                                       child: Text(
@@ -238,7 +261,7 @@ class _OTPVerificationState extends State<OTPVerification> {
 
   // ************************** Send OTP API *****************************/
 
-  Future<void> send_OTP() async {
+  Future<void> send_OTP(String mobileNumber) async {
     utils.showProgress(context, 1);
     setState(() {
       isSpinnerLoading = true;
@@ -246,10 +269,8 @@ class _OTPVerificationState extends State<OTPVerification> {
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_resend_otp,
-      s.service_key_mobile_number: '7448944737',
+      s.service_key_mobile_number: mobileNumber,
     };
-
-    print(jsonRequest);
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
@@ -257,12 +278,14 @@ class _OTPVerificationState extends State<OTPVerification> {
     IOClient _ioClient = new IOClient(_client);
     var response =
         await _ioClient.post(url.open_service, body: json.encode(jsonRequest));
+    print("send_OTP_url>>" + url.open_service.toString());
+    print("send_OTP_request_json>>" + jsonRequest.toString());
     utils.hideProgress(context);
     if (response.statusCode == 200) {
       var responseData = response.body;
       var data = jsonDecode(responseData);
 
-      print(data);
+      print("send_OTP_request_encrypt>>" + data.toString());
 
       var status = data[s.key_status];
       var responseValue = data[s.key_response];
@@ -276,7 +299,7 @@ class _OTPVerificationState extends State<OTPVerification> {
         Utils().customAlert(context, "S", message);
 
         setState(() {
-          prefs.setString(s.key_mobile, mobileNumber.text);
+          prefs.setString(s.key_mobile, mobileNumber);
           design_flag = 'OTP';
         });
       } else if (status == s.key_ok && responseValue == s.key_fail) {
@@ -294,9 +317,9 @@ class _OTPVerificationState extends State<OTPVerification> {
     });
 
     Map jsonRequest = {
-      s.key_service_id: s.service_key_resend_otp,
-      s.service_key_mobile_number: prefs.getString(s.key_mobile),
+      s.key_service_id: s.service_key_verify_otp,
       s.key_mobile_otp: otp.text,
+      s.service_key_mobile_number: prefs.getString(s.key_mobile),
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
@@ -321,13 +344,125 @@ class _OTPVerificationState extends State<OTPVerification> {
       });
 
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().showAlert(context, message);
-
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Login()));
+        customAlertwithOk(context, "1", message);
       } else if (status == s.key_ok && responseValue == s.key_fail) {
-        Utils().showAlert(context, message);
+        utils.customAlert(context, "E", message);
       }
     }
+  }
+
+  Future<void> customAlertwithOk(
+      BuildContext context, String type, String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: c.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 5.0,
+                    ),
+                  ]),
+              width: 300,
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: c.green_new,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                    child: Center(
+                      child: Image.asset(
+                        imagePath.success,
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: c.white,
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Text("Success",
+                              style: GoogleFonts.getFont('Prompt',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: c.text_color)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(msg,
+                              style: GoogleFonts.getFont('Roboto',
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: c.black)),
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Visibility(
+                                visible: true,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              c.primary_text_color2),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
+                                  onPressed: () {
+                                    Navigator.pop(context, 'OK');
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Login()));
+                                  },
+                                  child: Text(
+                                    "Okay",
+                                    style: GoogleFonts.getFont('Roboto',
+                                        decoration: TextDecoration.none,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                        color: c.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

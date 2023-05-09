@@ -22,6 +22,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
+import '../Resources/global.dart';
 import '../Utils/utils.dart';
 import 'package:inspection_flutter_app/Activity/ATR_Offline.dart';
 import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
@@ -71,7 +72,18 @@ class _HomeState extends State<Home> {
     dbClient = await dbHelper.db;
 
     await checkLocalData();
-
+    if (await utils.isOnline()) {
+      getDashboardData();
+    } /*else {
+      utils.showAlert(context, s.no_internet);
+    }*/
+    if (isLogin == "Login") {
+      if (await utils.isOnline()){
+        print(">>>>enter");
+        await callApis();
+      } /*else {
+        utils.showAlert(context, s.no_internet);
+      }*/
     if (prefs.getString(s.key_rural_urban) != null &&
         prefs.getString(s.key_rural_urban) != "") {
       area_type = prefs.getString(s.key_rural_urban)!;
@@ -146,17 +158,7 @@ class _HomeState extends State<Home> {
       flag = 1;
       prefs.setString(s.key_rural_urban, "R");
     }
-    if (await utils.isOnline()) {
-      getDashboardData();
-    } /*else {
-      utils.showAlert(context, s.no_internet);
-    }*/
-    if (isLogin == "Login") {
-      if (await utils.isOnline()) {
-        await callApis();
-      } /*else {
-        utils.showAlert(context, s.no_internet);
-      }*/
+
     }
 
     satisfied_count = prefs.getString(s.satisfied_count)!;
@@ -324,7 +326,6 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: Align(
                               alignment: AlignmentDirectional.topEnd,
-                              child: ClipOval(
                                   child: profile_image != null &&
                                           profile_image != ""
                                       ? InkWell(
@@ -344,26 +345,28 @@ class _HomeState extends State<Home> {
                                                               .width,
                                                       child: Expanded(
                                                         child: Image.memory(
-                                                          base64.decode(
-                                                              profile_image),
+                                                          base64.decode(profile_image.replaceAll(RegExp(r'\s+'), '')),
                                                           fit: BoxFit.fitWidth,
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                               context: context),
-                                          child: Image.memory(
-                                            base64.decode(profile_image),
-                                            height: 50,
-                                          ),
+                                          child:  CircleAvatar(
+                                              backgroundImage:MemoryImage(
+                                                base64.decode(profile_image.replaceAll(RegExp(r'\s+'), '')),
+                                              ),
+                                              radius: 30.0
+                                          )
                                         )
-                                      : SvgPicture.asset(
-                                          imagePath.user,
-                                          height: 50,
-                                        )),
-                            ),
+                                      :  CircleAvatar(
+                                      backgroundImage:AssetImage(
+                                        imagePath.user,
+                                      ),
+                                      radius: 30.0
+                                  ))),
+
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -1325,6 +1328,9 @@ class _HomeState extends State<Home> {
     if (list.length == 0) {
       getAll_Stage();
     }
+    setState(() {
+
+    });
   }
 
   Future<void> getDashboardData() async {
@@ -1463,7 +1469,6 @@ class _HomeState extends State<Home> {
             String role_code = res_jsonArray[i][s.key_role_code].toString();
 
             if (!(profile_image == ("null") || profile_image == (""))) {
-              Uint8List bytes = Base64Codec().decode(profile_image);
               prefs.setString(s.key_profile_image, profile_image);
             } else {
               prefs.setString(s.key_profile_image, "");

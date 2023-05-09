@@ -43,6 +43,7 @@ String select_financial_year = "Select Financial Year";
 String inspection_status = "Inspection Status";
 String total_inspection_done_by_you = "Total inspection done by you";
 String edit_profile = "Edit Profile";
+String edit_profile_success = "Profile Updated Successfully!";
 String over_all_inspection_report = "View all inspected works";
 String user_name_empty = "User Name is Empty";
 String password_empty = "User Password is Empty";
@@ -56,6 +57,7 @@ String view_inspected_work = "View Inspected RDPR Work";
 String view_inspected_other_work = "View Inspected Other Work";
 String change_password = "Change Password";
 String log_out = "Log Out";
+String refresh_work_stages_success = "Stages Refreshed Successfully!";
 String refresh_work_stages_up_to_date = "Refresh Work Stages Up to Date";
 String get_village_list = "Get Village List";
 String village_list = "Village List";
@@ -145,6 +147,7 @@ String select_status = "Select Status";
 String select_stage = "Select Work Stage";
 String please_enter_name = "Please Enter Name";
 String please_enter_num = "Please Enter Mobile";
+String please_enter_otp = "Please Enter OTP";
 String please_enter_level = "Please Select Level";
 String please_enter_desig = "Please Select Designation";
 String please_enter_district = "Please Select District";
@@ -222,6 +225,7 @@ String enter_other_work_details = "Enter other work detail";
 String please_enter_other_work_details = "Please enter other work detail";
 String loading = "Loading...";
 String downloading = "Downloading...";
+String invalid_usn_pswd = "Invalid UserName Or Password";
 String ATRUploadedDate = "ATR Uploaded Date.";
 String internet_error =
     "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
@@ -232,8 +236,8 @@ String download_apk = "Download the latest version and install the new APK.";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
-String please_enter_valid_name = "Please Enter Valid Name";
-String please_enter_valid_num = "Please Enter Valid Number";
+String please_enter_valid_name = "Please Enter Name";
+String please_enter_valid_num = "Please Enter Valid Mobile Number";
 
 // Key
 String key_service_id = "service_id";
@@ -442,6 +446,8 @@ String service_key_overall_inspection_details_for_atr =
 String service_key_date_wise_inspection_action_taken_details_view =
     "date_wise_inspection_action_taken_details_view";
 String service_key_get_action_taken_work_pdf = "get_action_taken_work_pdf";
+String service_key_other_work_inspection_details_update =
+    "other_work_inspection_details_update";
 
 //Table Name
 String table_District = "District";

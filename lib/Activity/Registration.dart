@@ -23,15 +23,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'Login.dart';
+
 class Registration extends StatefulWidget {
   final registerFlag;
-  Registration({this.registerFlag});
+  final profileJson;
+  Registration({this.registerFlag,this.profileJson});
   @override
   State<Registration> createState() => _RegistrationState();
 }
 
 class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
+  Utils utils = Utils();
   var dbHelper = DbHelper();
   late PermissionStatus cameraPermission, storagePermission;
   ScrollController scrollController = ScrollController();
@@ -66,6 +70,7 @@ class _RegistrationState extends State<Registration> {
   String? edit_office_address;
   String? edit_email;
   Uint8List? edit_profile_image;
+  String? edit_profile;
 
   // onResponce Variables
   bool cugValid = false;
@@ -112,6 +117,12 @@ class _RegistrationState extends State<Registration> {
     super.initState();
     initialize();
   }
+
+  Future<bool> onWillPop(BuildContext context) async {
+    Navigator.of(context, rootNavigator: true).pop(context);
+    return true;
+  }
+
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -287,7 +298,7 @@ class _RegistrationState extends State<Registration> {
                                     onPressed: () async {
                                       if (!cugValid) {
                                         if (await Utils().isOnline()) {
-                                          mobileController.text = '7877979787';
+                                          // mobileController.text = '7877979787';
                                           if (Utils().isNumberValid(
                                               mobileController.text)) {
                                             isLoadingCUG = true;
@@ -1013,38 +1024,54 @@ class _RegistrationState extends State<Registration> {
         children: <Widget>[
           Container(
             alignment: Alignment.topCenter,
-            child: edit_profile_image != null
-                ? Image.memory(
-                    base64.decode(edit_profile_image.toString()),
-                    width: screenWidth,
-                    height: screenWidth * 0.3,
-                    fit: BoxFit.fitWidth,
-                  )
-                : Image.asset(
-                    imagePath.bg_curve,
-                    width: screenWidth,
-                    height: screenWidth * 0.3,
-                    fit: BoxFit.fill,
-                  ),
-          ),
+            child: Image.asset(
+              imagePath.bg_curve,
+              width: screenWidth,
+              height: screenWidth * 0.3,
+              fit: BoxFit.fill,
+            )),
           Align(
               alignment: Alignment.bottomCenter,
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: c.white,
                 child: ClipOval(
-                    child: _imageFile == null
-                        ? Image.asset(
+                    child: _imageFile != null ? Image.file(
+                      _imageFile!,
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,): edit_profile_image!=null?Image.memory(
+                      edit_profile_image!,
+                      // base64.decode(edit_profile_image.toString()),
+                      width: screenWidth,
+                      height: screenWidth * 0.3,
+                      fit: BoxFit.fitWidth,
+                    ) :Image.asset(
+                      imagePath.regUser,
+                      color: c.colorPrimary,
+                      width: 100,
+                    )
+                  /*                    child: widget.registerFlag == 1 ?
+                    _imageFile == null ? Image.asset(
                             imagePath.regUser,
                             color: c.colorPrimary,
                             width: 100,
-                          )
-                        : Image.file(
+                          ) : Image.file(
                             _imageFile!,
                             width: 120,
                             height: 120,
-                            fit: BoxFit.cover,
-                          )),
+                            fit: BoxFit.cover,)
+                        :edit_profile_image==null?Image.asset(
+                      imagePath.regUser,
+                      color: c.colorPrimary,
+                      width: 100,
+                    ) :Image.memory(
+                      edit_profile_image!,
+                      // base64.decode(edit_profile_image.toString()),
+                      width: screenWidth,
+                      height: screenWidth * 0.3,
+                      fit: BoxFit.fitWidth,
+                    )*/),
               ))
         ],
       ),
@@ -1112,16 +1139,16 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Check Storage Permission *****************************/
 
   Future<bool> gotoStorage() async {
-    storagePermission = await Permission.storage.status;
+    storagePermission = await Permission.photos.status;
 
     bool flag = false;
-    if (await Permission.storage.request().isGranted) {
-      storagePermission = await Permission.storage.status;
+    if (await Permission.photos.request().isGranted) {
+      storagePermission = await Permission.photos.status;
       flag = true;
     }
     if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
       await Utils().showAppSettings(context, s.storage_permission);
-      storagePermission = await Permission.storage.status;
+      storagePermission = await Permission.photos.status;
     }
     return flag;
   }
@@ -1456,6 +1483,41 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Profile API *****************************/
 
   Future<void> getProfileList() async {
+
+        List<dynamic> res_jsonArray = widget.profileJson;
+        if (res_jsonArray.length > 0) {
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            edit_name = res_jsonArray[i][s.key_name];
+            edit_mobile = res_jsonArray[i][s.key_mobile];
+            edit_gender = res_jsonArray[i][s.key_gender];
+            edit_level = res_jsonArray[i][s.key_level];
+            edit_desig_code = res_jsonArray[i][s.key_desig_code].toString();
+            edit_dcode = res_jsonArray[i][s.key_dcode].toString();
+            edit_bcode = res_jsonArray[i][s.key_bcode].toString();
+            edit_office_address = res_jsonArray[i][s.key_office_address];
+            edit_email = res_jsonArray[i][s.key_email];
+            String profile_image = res_jsonArray[i][s.key_profile_image];
+
+            if (!(profile_image == ("null") || profile_image == (""))) {
+              profileImage=profile_image;
+              // edit_profile_image = Base64Codec().decode(profile_image);
+              // edit_profile_image = base64Decode(profile_image);
+              edit_profile_image=base64.decode(profile_image.replaceAll(RegExp(r'\s+'), ''));
+
+            }
+          }
+          await __initializeBodyUI();
+          setState(() {
+            nameController.text = edit_name!;
+            emailController.text = edit_email!;
+            officeController.text = edit_office_address!;
+            mobileController.text = edit_mobile!;
+          });
+        }
+
+  }
+/*
+  Future<void> getProfileList() async {
     setState(() {
       isSpinnerLoading = true;
     });
@@ -1515,7 +1577,10 @@ class _RegistrationState extends State<Registration> {
             String profile_image = res_jsonArray[i][s.key_profile_image];
 
             if (!(profile_image == ("null") || profile_image == (""))) {
-              edit_profile_image = Base64Codec().decode(profile_image);
+              // edit_profile_image = Base64Codec().decode(profile_image);
+              // edit_profile_image = base64Decode(profile_image);
+              edit_profile_image=base64.decode(profile_image.replaceAll(RegExp(r'\s+'), ''));
+
             }
           }
           await __initializeBodyUI();
@@ -1529,6 +1594,7 @@ class _RegistrationState extends State<Registration> {
       }
     }
   }
+*/
 
   /// ************************** Edit API *****************************/
 
@@ -1596,6 +1662,14 @@ class _RegistrationState extends State<Registration> {
 
       print(status);
       print(response_value);
+      utils.customAlert(context, "S", s.edit_profile_success).then((value) =>
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => Login(
+                  )),
+                  (route) => false)
+
+    );
     }
   }
 

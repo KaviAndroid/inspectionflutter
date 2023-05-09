@@ -110,13 +110,7 @@ class _DrawerAppState extends State<DrawerApp> {
         prefs.getString(s.key_rural_urban) == "U") {
       area_type = s.urban_area;
     }
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String appName = packageInfo.appName;
-    String packageName = packageInfo.packageName;
-    version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
-    print("app>>$appName >>$packageName >>$version >>$buildNumber");
+    version =s.version+" "+ await utils.getVersion();
     setState(() {});
   }
 
@@ -171,7 +165,6 @@ class _DrawerAppState extends State<DrawerApp> {
                                       ],
                                       begin: Alignment.bottomLeft,
                                       end: Alignment.topRight)),
-                              child: ClipOval(
                                   child: profile_image != null &&
                                           profile_image != ""
                                       ? InkWell(
@@ -191,24 +184,27 @@ class _DrawerAppState extends State<DrawerApp> {
                                                               .width,
                                                       child: Expanded(
                                                         child: Image.memory(
-                                                          base64.decode(
-                                                              profile_image),
+                                                          base64.decode(profile_image.replaceAll(RegExp(r'\s+'), '')),
                                                           fit: BoxFit.fitWidth,
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                               context: context),
-                                          child: Image.memory(
-                                            base64.decode(profile_image),
-                                            height: 60,
-                                          ),
+                                          child: CircleAvatar(
+                                              backgroundImage:MemoryImage(
+                                                base64.decode(profile_image),
+                                              ),
+                                              radius: 30.0
+                                          )
                                         )
-                                      : SvgPicture.asset(
-                                          imagePath.user,
-                                          height: 50,
-                                        )),
-                            )),
+                                      : CircleAvatar(
+                                      backgroundImage:AssetImage(
+                                        imagePath.user,
+                                      ),
+                                      radius: 30.0
+                                  )),
+                            ),
                         Container(
                           margin: EdgeInsets.fromLTRB(5, 20, 10, 0),
                           alignment: Alignment.topRight,
@@ -274,11 +270,12 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
+                        getProfileList();
+/*                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    Registration(registerFlag: 2)));
+                                    Registration(registerFlag: 2)));*/
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -307,6 +304,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ViewOverallReport(flag: level),
                         ));
@@ -339,6 +337,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) =>
                                 ViewSavedATRReport(Flag: area_type)));
@@ -370,6 +369,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>
                               ViewSavedRDPRReport(Flag: area_type),
@@ -403,6 +403,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ViewSavedOther(Flag: area_type),
                         ));
@@ -435,6 +436,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -469,6 +471,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () {
+                        Navigator.pop(context);
                         stageApi();
                         // getAll_Stage();
                       },
@@ -573,8 +576,10 @@ class _DrawerAppState extends State<DrawerApp> {
     Widget OkButton = TextButton(
       child: Text("Ok"),
       onPressed: () {
+        Navigator.pop(context,true);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Login()));
+
       },
     );
     AlertDialog alert = AlertDialog(
@@ -605,6 +610,7 @@ class _DrawerAppState extends State<DrawerApp> {
   }
 
   Future<void> getAll_Stage() async {
+    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {
@@ -626,43 +632,105 @@ class _DrawerAppState extends State<DrawerApp> {
     print("RefreshWorkStages_url>>${url.main_service}");
     print("RefreshWorkStages_request_json>>$json_request");
     print("RefreshWorkStages_request_encrpt>>$encrypted_request");
+    utils.hideProgress(context);
+
+    try {
+      if (response.statusCode == 200) {
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        String data = response.body;
+        print("RefreshWorkStages_response>>$data");
+        var jsonData = jsonDecode(data);
+        var enc_data = jsonData[s.key_enc_data];
+        var decrptData =
+        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+        var userData = jsonDecode(decrptData);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          if (res_jsonArray.length > 0) {
+            dbHelper.delete_table_WorkStages();
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              await dbClient.rawInsert('INSERT INTO ' +
+                  s.table_WorkStages +
+                  ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
+                  "'" +
+                  res_jsonArray[i][s.key_work_group_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_type_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_stage_order].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_stage_code].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_stage_name] +
+                  "')");
+            }
+            List<Map> list =
+            await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
+            print("table_WorkStages >>" + list.toString());
+          }
+          utils.customAlert(context, "S", s.refresh_work_stages_success);
+        }
+      }
+    } on Exception catch (exception) {
+      utils.customAlert(context, "E", s.failed); // only executed if error is of type Exception
+    } catch (error) {
+      utils.customAlert(context, "E", s.failed); // executed for errors of all types other than Exception
+    }
+
+  }
+  Future<void> getProfileList() async {
+   utils.showProgress(context, 1);
+    var userPassKey = prefs!.getString(s.userPassKey);
+
+    Map jsonRequest = {
+      s.key_service_id: s.service_key_work_inspection_profile_list,
+    };
+
+    Map encrpted_request = {
+      s.key_user_name: prefs?.getString(s.key_user_name),
+      s.key_data_content:
+      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+    };
+
+    print(json.encode(encrpted_request));
+
+    HttpClient _client = HttpClient(context: await Utils().globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      String data = response.body;
-      print("RefreshWorkStages_response>>$data");
-      var jsonData = jsonDecode(data);
+      String responseData = response.body;
+
+      var jsonData = jsonDecode(responseData);
+
       var enc_data = jsonData[s.key_enc_data];
-      var decrptData =
-          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrptData);
+      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
+      var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
+
+      print(status);
+      print(response_value);
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         if (res_jsonArray.length > 0) {
-          dbHelper.delete_table_WorkStages();
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            await dbClient.rawInsert('INSERT INTO ' +
-                s.table_WorkStages +
-                ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
-                "'" +
-                res_jsonArray[i][s.key_work_group_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_type_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_stage_order].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_stage_code].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_stage_name] +
-                "')");
-          }
-          List<Map> list =
-              await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
-          print("table_WorkStages >>" + list.toString());
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Registration(registerFlag: 2,profileJson: res_jsonArray,)));
         }
       }
     }
   }
+
 }

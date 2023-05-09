@@ -1028,7 +1028,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
-    // utils.showProgress(context, 1);
+    utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     setState(() {
       workList = [];
@@ -1072,6 +1072,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("ATRWorkList_url>>" + url.main_service.toString());
     print("ATRWorkList_request_json>>" + json_request.toString());
     print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1187,7 +1188,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
-
+    utils.hideProgress(context);
     if (response.statusCode == 200) {
       String responseData = response.body;
 
@@ -1198,7 +1199,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      utils.hideProgress(context);
+
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
@@ -1215,6 +1216,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     }
   }
   Future<void> getSavedWorkDetails(String work_id,String inspection_id,String action_taken_id) async {
+    utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
     prefs.getString(s.key_rural_urban);
@@ -1238,6 +1240,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("ATRSavedWorkList_url>>" + url.main_service.toString());
     print("ATRSavedWorkList_request_json>>" + json_request.toString());
     print("ATRSavedWorkList_request_encrpt>>" + encrypted_request.toString());

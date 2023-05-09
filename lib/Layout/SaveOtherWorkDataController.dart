@@ -283,7 +283,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
               otherWorkDetailsController.text != '') {
             if (!descriptionController.text.isEmpty &&
                 descriptionController.text != '') {
-              saveData(context);
+              editsaveData(context);
           }
             else {
               utils.showAlert(context, "Please Enter Description");
@@ -300,82 +300,79 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     else
       {
         if (await checkImageList(img_jsonArray)) {
-          if (descriptionController.text.isNotEmpty &&
-              descriptionController.text != '') {
-            if (selectedStatus.isNotEmpty && selectedStatus != '0') {
-              if (otherWorkDetailsController.text.isNotEmpty &&
-                  otherWorkDetailsController.text != '') {
+          if (selectedStatus.isNotEmpty && selectedStatus != '0') {
+            if (otherWorkDetailsController.text.isNotEmpty &&
+                otherWorkDetailsController.text != '') {
+              if (descriptionController.text.isNotEmpty &&
+                  descriptionController.text != '') {
                 saveData(context);
               } else {
-                utils.showAlert(context, "Please Enter Other Work Details");
+                utils.showAlert(context, "Please Enter Description");
               }
             } else {
-              utils.showAlert(context, "Please Select Status");
+              utils.showAlert(context, "Please Enter Other Work Details");
             }
           } else {
-            utils.showAlert(context, "Please Enter Description");
+            utils.showAlert(context, "Please Select Status");
           }
         } else {
           utils.showAlert(context, "At least Capture one Photo");
         }
+
       }
   }
 
   // *************************** API Call here *************************** //
 
-  Future<void> saveData(BuildContext context) async {
+  Future<void> editsaveData(BuildContext context) async {
+    utils.showProgress(context, 1);
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
       jsonArray.add(img_jsonArray_val[i]);
     }
-    Map dataset = {
-      s.key_dcode: selectedwork[0][s.key_dcode],
-      s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_status_id: selectedwork[0][s.key_status_id],
-      s.key_fin_year: selectedwork[0][s.key_fin_year],
-      'other_work_category_id':selectedwork[0][s.key_other_work_category_id],
-      'description': descriptionController.text.toString(),
-      'other_work_detail': otherWorkDetailsController.text.toString(),
-      s.key_pvcode:selectedwork[0][s.key_pvcode],
-    };
+       Map dataset = {
+         s.key_dcode: selectedwork[0][s.key_dcode],
+         s.key_rural_urban: prefs.getString(s.key_rural_urban),
+         s.key_status_id: selectedwork[0][s.key_status_id],
+         s.key_fin_year: selectedwork[0][s.key_fin_year],
+         'other_work_category_id':selectedwork[0][s.key_other_work_category_id],
+         'description': descriptionController.text.toString(),
+         'other_work_detail': otherWorkDetailsController.text.toString(),
+       };
 
-    Map ruralset = {};
-    Map urbanset = {};
-    Map imgset = { 'image_details': jsonArray,};
-    if(widgetflag=="edit")
-    {
-      Map set = {
-        s.key_other_work_inspection_id: selectedwork[0][s.key_other_work_inspection_id],
-      };
-      dataset.addAll(set);
-    }
+       Map ruralset = {};
+       Map urbanset = {};
+       Map imgset = { 'image_details': jsonArray,};
+       if(widgetflag=="edit")
+       {
+         Map set = {
+           s.key_other_work_inspection_id: selectedwork[0][s.key_other_work_inspection_id],
+         };
+         dataset.addAll(set);
+       }
 
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      urbanset = {
-        s.key_town_type: widgettownType,
-        s.key_tpcode: widgettmccode,
-      };
-      dataset.addAll(urbanset);
-    }else{
-      ruralset = {
-        s.key_bcode: widgetbcode,
-        s.key_pvcode: widgetpvcode,
-        s.key_hab_code: "",
-      };
-      dataset.addAll(ruralset);
-    }
-    dataset.addAll(imgset);
-
-
-
-    inspection_work_details.add(dataset);
+       if (prefs.getString(s.key_rural_urban) == "U") {
+         urbanset = {
+           s.key_town_type: widgettownType,
+           s.key_tpcode: widgettmccode,
+         };
+         dataset.addAll(urbanset);
+       }else{
+         ruralset = {
+           s.key_bcode: selectedwork[0][s.key_bcode],
+           s.key_pvcode:selectedwork[0][s.key_pvcode],
+           s.key_hab_code:"",
+         };
+         dataset.addAll(ruralset);
+       }
+       dataset.addAll(imgset);
+       inspection_work_details.add(dataset);
 
     Map main_dataset = {
-      s.key_service_id: s.service_key_other_work_inspection_details_save,
+    s.key_service_id: s.service_key_other_work_inspection_details_update,
       'other_inspection_work_details': inspection_work_details,
     };
-
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content: utils.encryption(
@@ -387,6 +384,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrpted_request));
+    utils.hideProgress(context);
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     print("saveData_url>>" + url.main_service.toString());
     print("saveData_request_json>>" + main_dataset.toString());
@@ -410,7 +408,83 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       }
     }
   }
+  Future<void> saveData(BuildContext context) async {
+    utils.showProgress(context, 1);
+    List<dynamic> jsonArray = [];
+    List<dynamic> inspection_work_details = [];
+    for (int i = 0; i < img_jsonArray_val.length; i++) {
+      jsonArray.add(img_jsonArray_val[i]);
+    }
+      Map dataset = {
+        s.key_dcode: widgetdcode,
+        s.key_rural_urban: prefs.getString(s.key_rural_urban),
+        s.key_status_id: selectedStatus,
+        s.key_fin_year: widgetfinYear,
+        'other_work_category_id':widgetcategory,
+        'description': descriptionController.text.toString(),
+        'other_work_detail': otherWorkDetailsController.text.toString(),
+      };
 
+      Map ruralset = {};
+      Map urbanset = {};
+      Map imgset = { 'image_details': jsonArray,};
+      if (prefs.getString(s.key_rural_urban) == "U") {
+        urbanset = {
+          s.key_town_type: widgettownType,
+          s.key_tpcode: widgettmccode,
+        };
+        dataset.addAll(urbanset);
+      }else{
+        ruralset = {
+          s.key_bcode: widgetbcode,
+          s.key_pvcode:widgetpvcode,
+          s.key_hab_code:"",
+        };
+        dataset.addAll(ruralset);
+      }
+      dataset.addAll(imgset);
+      inspection_work_details.add(dataset);
+
+    Map main_dataset = {
+      s.key_service_id: s.service_key_other_work_inspection_details_save,
+      'other_inspection_work_details': inspection_work_details,
+    };
+
+    Map encrpted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(
+          jsonEncode(main_dataset), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service,
+        body: json.encode(encrpted_request));
+    utils.hideProgress(context);
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    print("saveData_url>>" + url.main_service.toString());
+    print("saveData_request_json>>" + main_dataset.toString());
+    print("saveData_request_encrpt>>" + encrpted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("saveData_response>>" + data);
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop(context));
+      } else {
+        utils.customAlert(context, "E", s.no_data).then((value) => _onWillPop(context));
+      }
+    }
+  }
   Future<void> setStatus(var value)async{
     selectedStatus = value.toString();
     int sIndex = statusItems

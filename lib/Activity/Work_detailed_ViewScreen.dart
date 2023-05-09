@@ -3,28 +3,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/RdprOnlineWorkListFromFilter.dart';
-import 'package:inspection_flutter_app/Layout/ReadMoreLess.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart' as loc;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import '../DataBase/DbHelper.dart';
-import '../ModelClass/ModelClass.dart';
 import '../Resources/ColorsValue.dart';
-import '../Resources/ImagePath.dart';
-import '../Resources/Strings.dart';
-import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 class Work_detailed_ViewScreen extends StatefulWidget {
   @override
 
@@ -60,20 +46,22 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-     if(widget.flag=="other")
-       {
-         print("FLAG#####"+widget.flag);
-         getSavedOtherWorkDetails();
-       }
-     else if(widget.flag=="rdpr"){
-       getWorkDetails();
+    Future.delayed(Duration.zero, () {
+      if(widget.flag=="other")
+      {
+        print("FLAG#####"+widget.flag);
+        getSavedOtherWorkDetails();
       }
-     else if(widget.flag=="atr")
-     {
-       getAtrWorkDetails();
+      else if(widget.flag=="rdpr"){
+        getWorkDetails();
+      }
+      else if(widget.flag=="atr")
+      {
+        getAtrWorkDetails();
+      }
+    });
+    setState(() {
 
-     }
     });
 
   }
@@ -129,8 +117,9 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
               color: ca1,
               child: Column(
                 children: [
-                  widget.flag=="other"? _OtherWorkList():_WorkList(),
-                  widget.flag=="atr"? _ATRWorkList():_WorkList(),
+                 _WorkList(),
+                  _ATRWorkList(),
+                  _OtherWorkList(),
                   Container(
                     child:Padding(
                       padding: EdgeInsets.only(top: 15,bottom: 10,left: 10,right: 10),
@@ -156,6 +145,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
          child:Stack(
            children: [
              Visibility(
+               visible:widget.flag=="rdpr"?true:false,
                  child:Container(
                child: ListView.builder(
                    physics: NeverScrollableScrollPhysics(),
@@ -163,9 +153,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                     itemCount: 1,
                    itemBuilder: (BuildContext context,int index)
             {
-              inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
-              town_type=widget.selectedRDPRworkList[index][s.key_town_type];
-
+              // inspection_id=widget.selectedRDPRworkList[index][s.key_inspection_id].toString();
             return InkWell(
             child:Card(
             elevation: 5,
@@ -280,7 +268,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Text(widget.selectedRDPRworkList[index][s.key_status_name].toString(),
+                    child: Text(widget.selectedRDPRworkList[index][s.key_status_name],
                         style: TextStyle(
                             color: c.black),
                         maxLines: 1),
@@ -412,7 +400,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             child:Stack(
                 children: [
                   Visibility(
-                      visible: widget.flag=="other"?false:true,
+                      visible:widget.flag=="atr"?true:false,
                       child:Container(
                           child: ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
@@ -420,8 +408,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                               itemCount: 1,
                               itemBuilder: (BuildContext context,int index)
                               {
-                                action_taken_id=widget.selectedATRWorkList[index][s.key_action_taken_id].toString();
-                                inspection_id=widget.selectedATRWorkList[index][s.key_inspection_id].toString();
                                 return InkWell(
                                     child:Card(
                                         elevation: 5,
@@ -619,6 +605,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
             child:Stack(
                 children: [
                   Visibility(
+                      visible:widget.flag=="other"?true:false,
                       child:Container(
                       child: ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
@@ -626,9 +613,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                           itemCount: 1,
                           itemBuilder: (BuildContext context,int index)
                           {
-
-                            other_work_inspection_id=widget.selectedOtherWorkList[index][s.key_other_work_inspection_id].toString();
-                            // town_type=widget.selectedOtherWorkList[index][s.key_town_type].toString();
                             return InkWell(
                                 child:Card(
                                     elevation: 5,
@@ -693,7 +677,8 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                 ),
                                                                 Expanded(
                                                                   flex: 1,
-                                                                  child: Text(widget.selectedOtherWorkList[index][s.key_other_work_inspection_id].toString(),
+                                                                  child: Text(
+                                                                      other_work_inspection_id=widget.selectedOtherWorkList[index][s.key_other_work_inspection_id].toString(),
                                                                       style: TextStyle(
                                                                           color: c.black),
                                                                       maxLines: 1),
@@ -1038,12 +1023,12 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     prefs.getString(s.key_rural_urban);
     json_request = {
       s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
-      s.key_inspection_id:inspection_id,
+      s.key_inspection_id:widget.selectedRDPRworkList[0][s.key_inspection_id],
       s.key_work_id:work_id,
       s.key_rural_urban:prefs.getString(s.key_rural_urban),
     };
     if (s.key_rural_urban=="U") {
-      Map urbanRequest = {s.key_town_type:town_type};
+      Map urbanRequest = {s.key_town_type:widget.selectedRDPRworkList[0][s.key_town_type]};
       json_request.addAll(urbanRequest);
     }
     if(type=="atr")
@@ -1062,6 +1047,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1073,7 +1059,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
     ImageList.clear();
     if (status == s.key_ok && response_value == s.key_ok) {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
@@ -1081,10 +1066,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
           print("Res image>>>"+res_image.toString());
-          inspection_id=res_jsonArray[i][s.key_inspection_id].toString();
-          print("WORK_ID>>>>>>"+ inspection_id);
-          List description=res_jsonArray[i][s.key_image_description];
-          print("image description>>>>"+description.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
         }
@@ -1112,12 +1093,13 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     Map dataset = {
       s.key_service_id:s.service_key_other_inspection_details_view,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_other_work_inspection_id: other_work_inspection_id,
+      s.key_other_work_inspection_id: widget.selectedOtherWorkList[0][s.key_other_work_inspection_id],
     };
+    print("Rural Urban"+prefs.getString(s.key_rural_urban).toString());
     if(s.key_rural_urban=="U")
     {
       Map set = {
-        s.key_town_type: town_type,
+        s.key_town_type: widget.selectedOtherWorkList[0][s.key_town_type],
       };
       dataset.addAll(set);
     }
@@ -1131,6 +1113,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("Saved_OtherWorkList_url>>" + url.main_service.toString());
     print("Saved_OtherWorkList_request_json>>" + dataset.toString());
     print("Saved_OtherWorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1142,14 +1125,13 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
+
+    ImageList.clear();
     if (status == s.key_ok && response_value == s.key_ok) {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
-          other_work_inspection_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
-          print("OTHER_WORK_ID"+other_work_inspection_id);
           print("Res image>>>"+res_image.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
@@ -1179,9 +1161,9 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     prefs.getString(s.key_rural_urban);
     json_request = {
       s.key_service_id: s.service_key_work_id_wise_inspection_action_taken_details_view,
-      s.key_inspection_id:inspection_id,
+      s.key_inspection_id:widget.selectedATRWorkList[0][s.key_inspection_id],
       s.key_work_id:work_id,
-      s.key_action_taken_id:action_taken_id,
+      s.key_action_taken_id:widget.selectedATRWorkList[0][s.key_action_taken_id],
       s.key_rural_urban:prefs.getString(s.key_rural_urban),
     };
     if (s.key_rural_urban=="U") {
@@ -1197,18 +1179,18 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
-    print("WorkList_url>>" + url.main_service.toString());
-    print("WorkList_request_json>>" + json_request.toString());
-    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+    utils.hideProgress(context);
+    print("ATRWorkList_url>>" + url.main_service.toString());
+    print("ATRWorkList_request_json>>" + json_request.toString());
+    print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
     String data = response.body;
-    print("WorkList_response>>" + data);
+    print("ATRWorkList_response>>" + data);
     var jsonData = jsonDecode(data);
     var enc_data = jsonData[s.key_enc_data];
     var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
     var userData = jsonDecode(decrypt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
     ImageList.clear();
     if (status == s.key_ok && response_value == s.key_ok) {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
@@ -1216,13 +1198,6 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
           print("Res image>>>"+res_image.toString());
-          inspection_id=res_jsonArray[i][s.key_inspection_id].toString();
-          action_taken_id=res_jsonArray[i][s.key_action_taken_id].toString();
-          print("WORK_ID>>>>>"+ work_id);
-          print("Inspection_ID>>>>>"+ inspection_id);
-          print("Action_Taken_ID>>>>>"+ action_taken_id);
-          List description=res_jsonArray[i][s.key_image_description];
-          print("image description>>>>"+description.toString());
           ImageList.addAll(res_image);
           print("image_List>>>>>>"+ImageList.toString());
         }

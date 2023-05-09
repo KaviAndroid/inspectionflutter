@@ -1156,6 +1156,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("WorkList_url>>" + url.main_service.toString());
     print("WorkList_request_json>>" + json_request.toString());
     print("WorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1168,7 +1169,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     var userData = jsonDecode(decrpt_data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
-    utils.hideProgress(context);
+
     if (status == s.key_ok && response_value == s.key_ok) {
       isWorklistAvailable = true;
       Map res_jsonArray = userData[s.key_json_data];
@@ -1264,6 +1265,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrypted_request));
+    utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       String responseData = response.body;
@@ -1275,7 +1277,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      utils.hideProgress(context);
+
       if (status == s.key_ok && response_value == s.key_ok) {
         var pdftoString = userData[s.key_json_data];
         pdf = const Base64Codec().decode(pdftoString['pdf_string']);
@@ -1293,12 +1295,13 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   }
   Future<void> getSavedOtherWorkDetails(String other_work_id,) async {
     prefs = await SharedPreferences.getInstance();
+    utils.showProgress(context, 1);
     Map dataset = {
       s.key_service_id:s.service_key_other_inspection_details_view,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
       s.key_other_work_inspection_id: otherworkid,
     };
-    if(s.key_rural_urban=="U")
+    if (widget.Flag == "Urban Area")
     {
       Map set = {
         s.key_town_type: town_type,
@@ -1314,6 +1317,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(
         url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
     print("SavedWorkList_url>>" + url.main_service.toString());
     print("SavedWorkList_request_json>>" + dataset.toString());
     print("SavedWorkList_request_encrpt>>" + encrypted_request.toString());

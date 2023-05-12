@@ -189,6 +189,16 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                        height: 10,
                      ),
                      _DatePicker(),
+                     Container(
+                       margin: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                       child: Padding(
+                           padding: EdgeInsets.all(0),
+                           child: Text(
+                             s.or,
+                             style: TextStyle(fontSize: 15, fontWeight:FontWeight.normal,color: c.grey_7),
+                             textAlign:TextAlign.center,)
+                       ),
+                     ),
                      _Workid(),
                      isSpinnerLoading ? const SizedBox() : _Piechart(),
                      _WorkList(),
@@ -254,7 +264,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
             padding: const EdgeInsets.all(3),
             child: Text(s.select_tmc,
                 style: GoogleFonts.getFont('Poppins',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13,
                     color: c.grey_10)),
           ),
@@ -301,7 +311,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                             ),
                             Text("Town Pancha...",
                                 style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 13,
                                     color: townActive ? c.white : c.grey_6)),
                           ])),
@@ -347,7 +357,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                             ),
                             Text(s.municipality,
                                 style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 13,
                                     color: munActive ? c.white : c.grey_6)),
                           ])),
@@ -367,7 +377,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     });
                   },
                   child: Container(
-                      height: 35,
+                      // height: 35,
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -393,7 +403,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                             ),
                             Text(s.corporation,
                                 style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 13,
                                     color: corpActive ? c.white : c.grey_6)),
                           ])),
@@ -528,7 +538,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
   _Piechart() {
     return Container(
-        width: 370,
+        margin: EdgeInsets.fromLTRB(10, 15, 10, 10),
         child: Visibility(
             visible: isPiechartLoading,
             child: Card(
@@ -550,7 +560,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                            getWorkDetails(from_Date, to_Date);
                          },
                          child: Padding(
-                           padding: EdgeInsets.only(top: 20),
+                           padding: EdgeInsets.only(top: 25),
                            child: Align(
                              alignment: AlignmentDirectional.topCenter,
                              child: Text(
@@ -649,18 +659,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                         selectedRDPRworkList.clear();
                                         selectedRDPRworkList.add(workList[index]);
                                         print("SELECTED_RDPR_WORKLIST>>>>"+selectedRDPRworkList.toString());
-                                        print("Town type>>>"+selectedRDPRworkList[0][s.key_town_type]);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Work_detailed_ViewScreen(
-                                                  selectedRDPRworkList: selectedRDPRworkList,
-                                                  imagelist: [],
-                                                  flag: "rdpr",
-                                                  selectedOtherWorkList:[],
-                                                  selectedATRWorkList: [],
-                                                  town_type: town_type,
-                                                )));
+                                        getRDPRWorkDetails();
                                       },
                                       child: Card(
                                           elevation: 5,
@@ -1318,13 +1317,76 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
           mymap["image_path"] = '0';
           ImageList.add(mymap);
           print("image_List>>>>>>"+ImageList.toString());
+
         }
       }
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
+      utils.customAlert(context, "E", response_value);
+    }
+  }
+  Future<void> getRDPRWorkDetails() async {
+    utils.showProgress(context, 1);
+    prefs = await SharedPreferences.getInstance();
+    late Map json_request;
+    prefs.getString(s.key_rural_urban);
+    json_request = {
+      s.key_service_id: s.service_key_work_id_wise_inspection_details_view,
+      s.key_inspection_id:selectedRDPRworkList[0][s.key_inspection_id],
+      s.key_work_id:selectedRDPRworkList[0][s.key_work_id],
+      s.key_rural_urban:prefs.getString(s.key_rural_urban),
+    };
+    if (prefs.getString(s.key_rural_urban)=="U") {
+      Map urbanRequest = {s.key_town_type:town_type};
+      json_request.addAll(urbanRequest);
+    }
+    if(type=="atr")
+    {
+      json_request = {
+        s.key_service_id: s.service_key_date_wise_inspection_details_view,
+        s.key_action_taken_id:s.service_key_work_id_wise_inspection_details_view
+      };
+    }
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
+    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_request_json>>" + json_request.toString());
+    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("WorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    ImageList.clear();
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Work_detailed_ViewScreen(
+                  selectedRDPRworkList: res_jsonArray,
+                  imagelist: [],
+                  flag: "rdpr",
+                  selectedOtherWorkList:[],
+                  selectedATRWorkList: [],
+                  town_type: town_type,
+                )));
+      }
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+      utils.customAlert(context, "E", response_value);
     }
   }
   void refresh() {

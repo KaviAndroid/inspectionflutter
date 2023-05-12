@@ -115,7 +115,6 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
         print(list.toString());
         selectedStatus = defaultSelectedStatus[s.key_status_id]!;
         selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
-        descriptionController.text=list[0]['description'];
         statusItems.add(defaultSelectedStatus);
         statusItems.addAll(list);
         print('status>>' + statusItems.toString());

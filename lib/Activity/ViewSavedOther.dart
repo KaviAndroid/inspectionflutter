@@ -375,7 +375,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                     });
                   },
                   child: Container(
-                      height: 35,
+                      // height: 35,
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -636,7 +636,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
   _WorkList() {
     return Container(
-        color: ca1,
+        margin:  EdgeInsets.fromLTRB(10, 10, 10, 10),        color: ca1,
         child: Padding(
           padding: EdgeInsets.only(top: 0, left: 8, right: 8),
           child: Stack(children: [
@@ -657,19 +657,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                 child:  InkWell(
                                   onTap: () {
                                     selectedOtherworkList.clear();
-                                    selectedOtherworkList.add(workList[0]);
+                                    selectedOtherworkList.add(workList[index]);
                                     print("SELECTED_OTHER_WORKLIST>>>>"+selectedOtherworkList.toString());
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Work_detailed_ViewScreen(
-                                              selectedOtherWorkList: selectedOtherworkList,
-                                              flag:"other",
-                                              imagelist: [],
-                                              selectedRDPRworkList: [],
-                                              selectedATRWorkList: [],
-                                              town_type: town_type,
-                                            )));
+                                    getSavedOtherWorkDetails();
                                   },
                                   child: Card(
                                       elevation: 5,
@@ -683,7 +673,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                         ),
                                       ),
                                       clipBehavior: Clip.hardEdge,
-                                      margin: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
                                       child: ClipPath(
                                         clipper: ShapeBorderClipper(
                                             shape: RoundedRectangleBorder(
@@ -772,7 +762,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                  workList[0][s.key_other_work_inspection_id]
+                                                                  workList[index][s.key_other_work_inspection_id]
                                                                       .toString(),
                                                                   style:
                                                                   TextStyle(color: c.white),
@@ -818,7 +808,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[0][s.key_other_work_name]
+                                                                workList[index][s.key_other_work_name]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
                                                               ),
@@ -863,7 +853,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[0][s.key_other_work_category_name]
+                                                                workList[index][s.key_other_work_category_name]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
                                                               ),
@@ -908,7 +898,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[0]
+                                                                workList[index]
                                                                 [s.key_inspection_date]
                                                                     .toString(),
                                                                 style: TextStyle(color: c.white),
@@ -955,7 +945,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                             Expanded(
                                                               flex: 1,
                                                               child: Text(
-                                                                workList[0][s.key_status_name]
+                                                                workList[index][s.key_status_name]
                                                                     .toString(),
                                                                 maxLines: 2,
                                                                 style: TextStyle(color: c.white),
@@ -969,7 +959,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         Column(
                                                           children: [
                                                             Visibility(
-                                                              visible:  utils.editdelayHours(workList[0][s.key_ins_date].toString()),
+                                                              visible:  utils.editdelayHours(workList[index][s.key_ins_date].toString()),
                                                               child: Row(
                                                                 children: [
                                                                   Expanded(
@@ -999,7 +989,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                               ),
                                                                               child: InkWell(
                                                                                 onTap: () async {
-                                                                                  await getSavedOtherWorkDetails(workList[0][s.key_other_work_inspection_id].toString());
+                                                                                  await getSavedWorkDetails(workList[0][s.key_other_work_inspection_id].toString());
                                                                                   selectedOtherworkList.clear();
                                                                                   selectedOtherworkList.add(workList[0]);
                                                                                   print('selectedOtherworkList>>' + selectedOtherworkList.toString());
@@ -1244,6 +1234,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         nimpCount = "0";
         usCount = "0";
       });
+      utils.customAlert(context, "E", response_value);
     }
   }
   Future<void> get_PDF(String otherwork_id) async {
@@ -1294,15 +1285,15 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       }
     }
   }
-  Future<void> getSavedOtherWorkDetails(String other_work_id,) async {
+  Future<void> getSavedWorkDetails(String other_work_id,) async {
     prefs = await SharedPreferences.getInstance();
     utils.showProgress(context, 1);
     Map dataset = {
       s.key_service_id:s.service_key_other_inspection_details_view,
       s.key_rural_urban: prefs.getString(s.key_rural_urban),
-      s.key_other_work_inspection_id: otherworkid,
+      s.key_other_work_inspection_id: other_work_id,
     };
-    if (widget.Flag == "Urban Area")
+    if (prefs.getString(s.key_rural_urban) == "U")
     {
       Map set = {
         s.key_town_type: town_type,
@@ -1336,15 +1327,83 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
           List res_image = res_jsonArray[i][s.key_inspection_image];
+          List<Map<String, String>> img_jsonArray = [];
+          for (int j = 0; j < res_image.length; j++) {
+            Map<String, String> mymap =
+            {}; // This created one object in the current scope.
+            // First iteration , i = 0
+            mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+            mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+            mymap["serial_no"] = res_image[j][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
+            mymap["image_description"] = res_image[j][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+            mymap["image"] = res_image[j][s.key_image].toString();
+            mymap["image_path"] = '0';// Now mymap = { name: 'test0' };
+            img_jsonArray.add(mymap);
+          }
           other_work_id=res_jsonArray[i][s.key_other_work_inspection_id].toString();
           print("WORK_ID"+other_work_id);
           print("Res image>>>"+res_image.toString());
-          ImageList.addAll(res_image);
-          Map<String, String> mymap = {};
-          mymap["image_path"] = '0';
-          ImageList.add(mymap);
+          ImageList.addAll(img_jsonArray);
           print("image_List>>>>>>"+ImageList.toString());
         }
+      }
+    }
+    else if (status == s.key_ok && response_value == s.key_noRecord) {
+      utils.customAlert(context, "E",response_value);
+    }
+  }
+  Future<void> getSavedOtherWorkDetails() async {
+    utils.showProgress(context, 1);
+    prefs = await SharedPreferences.getInstance();
+    Map dataset = {
+      s.key_service_id:s.service_key_other_inspection_details_view,
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_other_work_inspection_id:selectedOtherworkList[0][s.key_other_work_inspection_id],
+    };
+    print("Rural Urban"+prefs.getString(s.key_rural_urban).toString());
+    if(prefs.getString(s.key_rural_urban)=="U")
+    {
+      Map set = {
+        s.key_town_type:town_type,
+      };
+      dataset.addAll(set);
+    }
+    print("Other Work Request>>>>"+dataset.toString());
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: utils.encryption(jsonEncode(dataset), prefs.getString(s.userPassKey).toString()),
+    };
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(
+        url.main_service, body: json.encode(encrypted_request));
+    utils.hideProgress(context);
+    print("Saved_OtherWorkList_url>>" + url.main_service.toString());
+    print("Saved_OtherWorkList_request_json>>" + dataset.toString());
+    print("Saved_OtherWorkList_request_encrpt>>" + encrypted_request.toString());
+    String data = response.body;
+    print("Saved_OtherWorkList_response>>" + data);
+    var jsonData = jsonDecode(data);
+    var enc_data = jsonData[s.key_enc_data];
+    var decrypt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+    var userData = jsonDecode(decrypt_data);
+    var status = userData[s.key_status];
+    var response_value = userData[s.key_response];
+    if (status == s.key_ok && response_value == s.key_ok) {
+      List<dynamic> res_jsonArray = userData[s.key_json_data];
+      if (res_jsonArray.length > 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Work_detailed_ViewScreen(
+                  selectedOtherWorkList:res_jsonArray,
+                  flag: "other",
+                  imagelist: [],
+                  selectedATRWorkList:[] ,
+                  selectedRDPRworkList: [],
+                  town_type: town_type,
+                )));
       }
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {

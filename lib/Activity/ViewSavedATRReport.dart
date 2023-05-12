@@ -192,6 +192,16 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     height: 10,
                   ),
                   _DatePicker(),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                    child: Padding(
+                        padding: EdgeInsets.all(0),
+                        child: Text(
+                          s.or,
+                          style: TextStyle(fontSize: 15, fontWeight:FontWeight.normal,color: c.grey_7),
+                          textAlign:TextAlign.center,)
+                    ),
+                  ),
                   _Workid(),
                   isSpinnerLoading ? const SizedBox() : _Piechart(),
                   _WorkList(),
@@ -370,7 +380,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     });
                   },
                   child: Container(
-                      height: 35,
+                      // height: 35,
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -505,6 +515,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     child: InkWell(
                       onTap: () {
                         if (workid.text.isNotEmpty) {
+                          dateController.text="";
+                          workid.text="";
                           getWorkDetails(from_Date, to_Date);
                         } else {
                           utils.showAlert(context, "Please enter a Work Id");
@@ -635,286 +647,289 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           child: Stack(children: [
             Visibility(
               visible: isWorklistAvailable,
-              child: AnimationLimiter(
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: workList == null ? 0 : workList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return AnimationConfiguration.staggeredList(
-                          position: index,
-                          duration: const Duration(milliseconds: 800),
-                          child: SlideAnimation(
-                              horizontalOffset: 200.0,
-                              child:FlipAnimation(
-                                child:  InkWell(
-                                  onTap: () {
-                                    selectedATRworkList.clear();
-                                    selectedATRworkList.add(workList[0]);
-                                    print("SELECTED_ATR_WORKLIST>>>>"+selectedATRworkList.toString());
-                                    getAtrWorkDetails();
+              child:Container(
+                  margin:  EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: AnimationLimiter(
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: workList == null ? 0 : workList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 800),
+                              child: SlideAnimation(
+                                  horizontalOffset: 200.0,
+                                  child:FlipAnimation(
+                                    child:  InkWell(
+                                      onTap: () {
+                                        selectedATRworkList.clear();
+                                        selectedATRworkList.add(workList[index]);
+                                        print("SELECTED_ATR_WORKLIST>>>>"+selectedATRworkList.toString());
+                                        print("WORK_ID###"+selectedATRworkList[0][s.key_work_id].toString());
+                                        getAtrWorkDetails();
 
-                                  },
-                                  child: Card(
-                                      elevation: 5,
-                                      color: c.colorAccentlight,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(15),
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                      clipBehavior: Clip.hardEdge,
-                                      margin: EdgeInsets.fromLTRB(0, 7, 0, 0),
-                                      child: ClipPath(
-                                        clipper: ShapeBorderClipper(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20))),
-                                        child: Container(
+                                      },
+                                      child: Card(
+                                          elevation: 5,
+                                          color: c.colorAccentlight,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(15),
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                              bottomRight: Radius.circular(20),
+                                            ),
+                                          ),
+                                          clipBehavior: Clip.hardEdge,
+                                          margin: EdgeInsets.fromLTRB(2, 12, 2, 10),
+                                          child: ClipPath(
+                                            clipper: ShapeBorderClipper(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(20))),
                                             child: Container(
-                                              child: Column(children: [
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Align(
-                                                        alignment: AlignmentDirectional.topStart,
-                                                        child: Container(
-                                                          height: 40,
-                                                          width: 40,
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.only(
-                                                              topLeft: Radius.circular(10),
-                                                              bottomRight: Radius.circular(35),
-                                                            ),
-                                                            color: c.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            get_PDF(
-                                                                workList[0][s.key_work_id]
-                                                                    .toString(),workList[0][s.key_inspection_id].toString(),workList[0][s.key_action_taken_id].toString());
-                                                          },
+                                                child: Container(
+                                                  child: Column(children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
                                                           child: Align(
-                                                            alignment: Alignment.topRight,
+                                                            alignment: AlignmentDirectional.topStart,
                                                             child: Container(
-                                                              padding:
-                                                              EdgeInsets.fromLTRB(20, 0, 5, 0),
-                                                              child: Image.asset(
-                                                                imagePath.pdf_icon,
-                                                                height: 30,
-                                                                width: 30,
+                                                              height: 40,
+                                                              width: 40,
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.only(
+                                                                  topLeft: Radius.circular(10),
+                                                                  bottomRight: Radius.circular(35),
+                                                                ),
+                                                                color: c.white,
                                                               ),
                                                             ),
                                                           ),
-                                                        ))
-                                                  ],
-                                                ),
-                                                Container(
-                                                  child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: 0, bottom: 0, left: 10, right: 0),
-                                                      child: Column(children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Text(
-                                                                s.work_id,
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ':',
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Text(
-                                                                  workList[0][s.key_work_id]
-                                                                      .toString(),
-                                                                  style:
-                                                                  TextStyle(color: c.white),
-                                                                  maxLines: 1),
-                                                            ),
-                                                          ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Text(
-                                                                s.work_name,
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ':',
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Container(
-                                                                child: Align(
-                                                                  alignment:
-                                                                  AlignmentDirectional
-                                                                      .topStart,
-                                                                  child: Text("Activity:"+
-                                                                      workList[
-                                                                      0][
-                                                                      s.key_work_name]
-                                                                          .toString(),
-                                                                      maxLines: 2,style: TextStyle(color: c.white,fontSize: 15)),
+                                                        Expanded(
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                get_PDF(
+                                                                    workList[0][s.key_work_id]
+                                                                        .toString(),workList[0][s.key_inspection_id].toString(),workList[0][s.key_action_taken_id].toString());
+                                                              },
+                                                              child: Align(
+                                                                alignment: Alignment.topRight,
+                                                                child: Container(
+                                                                  padding:
+                                                                  EdgeInsets.fromLTRB(20, 0, 5, 0),
+                                                                  child: Image.asset(
+                                                                    imagePath.pdf_icon,
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                  ),
                                                                 ),
                                                               ),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      child: Padding(
+                                                          padding: EdgeInsets.only(
+                                                              top: 0, bottom: 0, left: 10, right: 0),
+                                                          child: Column(children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.spaceBetween,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                    s.work_id,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 0,
+                                                                  child: Text(
+                                                                    ':',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                      workList[index][s.key_work_id]
+                                                                          .toString(),
+                                                                      style:
+                                                                      TextStyle(color: c.white),
+                                                                      maxLines: 1),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Text(
-                                                                s.ATRUploadedDate,
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
+                                                            SizedBox(
+                                                              height: 10,
                                                             ),
-                                                            Expanded(
-                                                              flex: 0,
-                                                              child: Text(
-                                                                ':',
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: c.white),
-                                                                overflow: TextOverflow.clip,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                              ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.spaceBetween,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                    s.work_name,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 0,
+                                                                  child: Text(
+                                                                    ':',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Container(
+                                                                    child: Align(
+                                                                      alignment:
+                                                                      AlignmentDirectional
+                                                                          .topStart,
+                                                                      child: Text("Activity:"+
+                                                                          workList[
+                                                                          index][
+                                                                          s.key_work_name]
+                                                                              .toString(),
+                                                                          maxLines: 2,style: TextStyle(color: c.white,fontSize: 15)),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Text(
-                                                                workList[0][s.key_action_taken_date]
-                                                                    .toString(),
-                                                                maxLines: 2,
-                                                                style: TextStyle(color: c.white),
-                                                              ),
+                                                            SizedBox(
+                                                              height: 10,
                                                             ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Column(
-                                                          children: [
-                                                            Visibility(
-                                                              visible: utils.editdelayHours(
-                                                                  workList[0]
-                                                                  [s.key_ins_date].toString()),
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                      flex: 1,
-                                                                      child: Visibility(
-                                                                        child: Align(
-                                                                          alignment:
-                                                                          AlignmentDirectional
-                                                                              .bottomEnd,
-                                                                          child: Container(
-                                                                              height: 45,
-                                                                              width: 45,
-                                                                              decoration:
-                                                                              BoxDecoration(
-                                                                                borderRadius:
-                                                                                BorderRadius
-                                                                                    .only(
-                                                                                  topLeft: Radius
-                                                                                      .circular(
-                                                                                      70),
-                                                                                  bottomRight:
-                                                                                  Radius
-                                                                                      .circular(
-                                                                                      20),
-                                                                                ),
-                                                                                color: c.white,
-                                                                              ),
-                                                                              child: InkWell(
-                                                                                onTap: () async {
-                                                                                  await getSavedWorkDetails(workList[0][s.key_work_id].toString(),workList[index][s.key_inspection_id].toString(),workList[index][s.key_action_taken_id].toString());
-                                                                                  selectedATRworkList.clear();
-                                                                                  selectedATRworkList.add(workList[0]);
-                                                                                  print('selectedATRworkList>>' + selectedATRworkList.toString());
-                                                                                  Navigator.push(
-                                                                                      context,
-                                                                                      MaterialPageRoute(
-                                                                                          builder: (context) =>ATR_Save(
-                                                                                            selectedWorklist: selectedATRworkList,
-                                                                                            flag: "edit",
-                                                                                            onoff_type: "online",
-                                                                                            rural_urban: area_type,
-                                                                                            imagelist: ImageList,
-                                                                                          )));
-                                                                                  /*   if(await utils.isOnline())
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.spaceBetween,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                    s.ATRUploadedDate,
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 0,
+                                                                  child: Text(
+                                                                    ':',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.normal,
+                                                                        color: c.white),
+                                                                    overflow: TextOverflow.clip,
+                                                                    maxLines: 1,
+                                                                    softWrap: true,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Text(
+                                                                    workList[index][s.key_action_taken_date]
+                                                                        .toString(),
+                                                                    maxLines: 2,
+                                                                    style: TextStyle(color: c.white),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Visibility(
+                                                                  visible: utils.editdelayHours(
+                                                                      workList[index]
+                                                                      [s.key_ins_date].toString()),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                          flex: 1,
+                                                                          child: Visibility(
+                                                                            child: Align(
+                                                                              alignment:
+                                                                              AlignmentDirectional
+                                                                                  .bottomEnd,
+                                                                              child: Container(
+                                                                                  height: 45,
+                                                                                  width: 45,
+                                                                                  decoration:
+                                                                                  BoxDecoration(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .only(
+                                                                                      topLeft: Radius
+                                                                                          .circular(
+                                                                                          70),
+                                                                                      bottomRight:
+                                                                                      Radius
+                                                                                          .circular(
+                                                                                          20),
+                                                                                    ),
+                                                                                    color: c.white,
+                                                                                  ),
+                                                                                  child: InkWell(
+                                                                                    onTap: () async {
+                                                                                      await getSavedWorkDetails(workList[0][s.key_work_id].toString(),workList[0][s.key_inspection_id].toString(),workList[0][s.key_action_taken_id].toString());
+                                                                                      selectedATRworkList.clear();
+                                                                                      selectedATRworkList.add(workList[0]);
+                                                                                      print('selectedATRworkList>>' + selectedATRworkList.toString());
+                                                                                      Navigator.push(
+                                                                                          context,
+                                                                                          MaterialPageRoute(
+                                                                                              builder: (context) =>ATR_Save(
+                                                                                                selectedWorklist: selectedATRworkList,
+                                                                                                flag: "edit",
+                                                                                                onoff_type: "online",
+                                                                                                rural_urban: area_type,
+                                                                                                imagelist: ImageList,
+                                                                                              )));
+                                                                                      /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];
                                                                                town_type=workList[index]["town_type"];
@@ -936,46 +951,47 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                                       }
                                                                                   }
                                                                               }*/
-                                                                                  // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
-                                                                                },
-                                                                                child: Visibility(
-                                                                                  child:
-                                                                                  Container(
-                                                                                    child:
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets.only(
-                                                                                          top: 15,
-                                                                                          left:
-                                                                                          16,
-                                                                                          right:
-                                                                                          5,
-                                                                                          bottom:
-                                                                                          10),
-                                                                                      child: Image.asset(
-                                                                                          imagePath
-                                                                                              .edit_icon),
+                                                                                      // getRDPRwork(work_id,inspection_id,area_type,flag_town_type,flag_tmc_id);
+                                                                                    },
+                                                                                    child: Visibility(
+                                                                                      child:
+                                                                                      Container(
+                                                                                        child:
+                                                                                        Padding(
+                                                                                          padding: EdgeInsets.only(
+                                                                                              top: 15,
+                                                                                              left:
+                                                                                              16,
+                                                                                              right:
+                                                                                              5,
+                                                                                              bottom:
+                                                                                              10),
+                                                                                          child: Image.asset(
+                                                                                              imagePath
+                                                                                                  .edit_icon),
+                                                                                        ),
+                                                                                        height: 25,
+                                                                                        width: 25,
+                                                                                      ),
                                                                                     ),
-                                                                                    height: 25,
-                                                                                    width: 25,
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                        ),
-                                                                      )),
-                                                                ],
-                                                              ),
+                                                                                  )),
+                                                                            ),
+                                                                          )),
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                              ],
                                                             )
-                                                          ],
-                                                        )
-                                                      ])),
-                                                ),
-                                              ]),
-                                            )),
-                                      )),
-                                ),
-                              )
-                          ));
-                    },
+                                                          ])),
+                                                    ),
+                                                  ]),
+                                                )),
+                                          )),
+                                    ),
+                                  )
+                              ));
+                        },
+                      )
                   )
               ),
             ),
@@ -1048,7 +1064,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         s.key_type: 2
       };
     }
-    if (widget.Flag == "Urban Area") {
+    if (prefs.getString(s.key_rural_urban)== "U") {
       Map urbanRequest = {s.key_town_type: town_type};
       json_request.addAll(urbanRequest);
     }
@@ -1261,9 +1277,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       }
     }
     else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-
-      });
+      utils.customAlert(context, "E", response_value);
     }
   }
   void refresh() {

@@ -51,7 +51,7 @@ class LoginState extends State<Login> {
     _passwordVisible = false;
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    version =s.version+" "+ await utils.getVersion();
+    version = s.version + " " + await utils.getVersion();
     setState(() {});
   }
 
@@ -324,7 +324,11 @@ class LoginState extends State<Login> {
                                       utils.hideSoftKeyBoard(context);
                                       login(context);
                                     } else {
-                                      utils.showalertforOffline(context, s.internet_error,user_name.text,user_password.text);
+                                      utils.showalertforOffline(
+                                          context,
+                                          s.internet_error,
+                                          user_name.text,
+                                          user_password.text);
                                     }
                                   } else {
                                     utils.showToast(context, s.password_empty);
@@ -368,8 +372,10 @@ class LoginState extends State<Login> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        Registration(registerFlag: 1,profileJson: [],)));
+                                    builder: (context) => Registration(
+                                          registerFlag: 1,
+                                          profileJson: [],
+                                        )));
 
                             // utils.showToast(context, "click register");
                           },
@@ -435,7 +441,7 @@ class LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text(
-                         version,
+                        version,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: c.d_grey2,
@@ -553,7 +559,7 @@ class LoginState extends State<Login> {
         utils.gotoHomePage(context, "Login");
       } else {
         utils.hideProgress(context);
-        utils.customAlert(context,"E", s.invalid_usn_pswd);
+        utils.customAlert(context, "E", s.invalid_usn_pswd);
       }
       return decodedData;
     } else {
@@ -826,7 +832,6 @@ class LoginState extends State<Login> {
         }
       }
     }
-
   }
 
   Future<void> getDashboardData() async {

@@ -52,6 +52,7 @@ String edit = "assets/images/edit.png";
 String delete = "assets/images/delete.png";
 String graph_ic = "assets/images/graph_ic.png";
 String warning = "assets/images/warning.png";
+String satisfied = "assets/images/satisfied.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

@@ -18,8 +18,7 @@ import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 import 'WorkList.dart';
 
-class RDPR_Offline extends StatefulWidget with ChangeNotifier{
-
+class RDPR_Offline extends StatefulWidget with ChangeNotifier {
   @override
   State<RDPR_Offline> createState() => _RDPR_OfflineState();
 }
@@ -54,7 +53,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
   List finList = [];
   List schList = [];
   List schIdList = [];
-  List selectedSchemeArray=[];
+  List selectedSchemeArray = [];
 
   @override
   void initState() {
@@ -71,7 +70,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     submitFlag = false;
     finyearList.clear();
     List<Map> list =
-    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
       finyearList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -85,12 +84,12 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       bFlag = false;
       vFlag = false;
       dList.clear();
-       selectedDistrict = "";
-       selectedBlock = "";
-       selectedVillage = "";
-       selectedDistrictName = "";
-       selectedBlockName = "";
-       selectedVillageName = "";
+      selectedDistrict = "";
+      selectedBlock = "";
+      selectedVillage = "";
+      selectedDistrictName = "";
+      selectedBlockName = "";
+      selectedVillageName = "";
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
       for (int i = 0; i < list.length; i++) {
@@ -108,7 +107,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       selectedDistrict = prefs.getString(s.key_dcode).toString();
       selectedBlock = "";
       selectedVillage = "";
-      selectedDistrictName =  prefs.getString(s.key_dname).toString();
+      selectedDistrictName = prefs.getString(s.key_dname).toString();
       selectedBlockName = "";
       selectedVillageName = "";
       List<Map> list =
@@ -117,7 +116,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         bList.add(FlutterLimitedCheckBoxModel(
             isSelected: false,
             selectTitle: list[i][s.key_bname],
-            selectId:int.parse(list[i][s.key_bcode])));
+            selectId: int.parse(list[i][s.key_bcode])));
       }
 
       print(list.toString());
@@ -129,7 +128,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       selectedDistrict = prefs.getString(s.key_dcode).toString();
       selectedBlock = prefs.getString(s.key_bcode).toString();
       selectedVillage = "";
-      selectedDistrictName =  prefs.getString(s.key_dname).toString();
+      selectedDistrictName = prefs.getString(s.key_dname).toString();
       selectedBlockName = prefs.getString(s.key_bname).toString();
       selectedVillageName = "";
       List<Map> list =
@@ -141,7 +140,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             selectId: int.parse(list[i][s.key_pvcode])));
         print(list.toString());
       }
-
     }
     List<Map> list_urban = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${prefs.getString(s.key_rural_urban)}' ");
@@ -215,13 +213,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                           scheme: schemeList[0]
                                               [s.key_scheme_id],
                                           flag: 'rdpr_offline',
-                                      finYear:'',
-                                      dcode:'',
-                                      bcode:'',
-                                      pvcode:'',
-                                      tmccode:'',
-                                      townType: '',
-                                      selectedschemeList:[],
+                                          finYear: '',
+                                          dcode: '',
+                                          bcode: '',
+                                          pvcode: '',
+                                          tmccode: '',
+                                          townType: '',
+                                          selectedschemeList: [],
                                         ))).then((value) {
                               utils.gotoHomePage(context, "RDPR");
                               // you can do what you need here
@@ -326,7 +324,9 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                             flex: 3,
                                             child: InkWell(
                                               onTap: () {
-                                                multiChoiceFinYearSelection(finyearList,s.select_financial_year);
+                                                multiChoiceFinYearSelection(
+                                                    finyearList,
+                                                    s.select_financial_year);
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.fromLTRB(
@@ -410,8 +410,10 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                           ),
                                           Expanded(
                                             flex: 3,
-                                            child: Text(finList.isNotEmpty?
-                                              finList.toString():"",
+                                            child: Text(
+                                              finList.isNotEmpty
+                                                  ? finList.toString()
+                                                  : "",
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
@@ -482,7 +484,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: InkWell(
                                                 onTap: () {
-                                                  singleChoiceSelection(dList,s.selectDistrict,"D");
+                                                  singleChoiceSelection(dList,
+                                                      s.selectDistrict, "D");
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.fromLTRB(
@@ -639,10 +642,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: InkWell(
                                                 onTap: () {
-                                                  if(level == "S" && bList.isEmpty){
-                                                    utils.showAlert(context, s.selectDistrict);
-                                                  }else{
-                                                    singleChoiceSelection(bList,s.selectBlock,"B");
+                                                  if (level == "S" &&
+                                                      bList.isEmpty) {
+                                                    utils.showAlert(context,
+                                                        s.selectDistrict);
+                                                  } else {
+                                                    singleChoiceSelection(bList,
+                                                        s.selectBlock, "B");
                                                   }
                                                 },
                                                 child: Container(
@@ -800,15 +806,20 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: InkWell(
                                                 onTap: () {
-                                                  if(vList.isEmpty){
-                                                    utils.showAlert(context, s.selectBlock);
-                                                  }else{
-                                                    if(finList.isEmpty){
-                                                      utils.showAlert(context, s.select_financial_year);
-                                                    }else{
-                                                      singleChoiceSelection(vList,s.select_village,"V");
-                                                    }                                                  }
-
+                                                  if (vList.isEmpty) {
+                                                    utils.showAlert(
+                                                        context, s.selectBlock);
+                                                  } else {
+                                                    if (finList.isEmpty) {
+                                                      utils.showAlert(context,
+                                                          s.select_financial_year);
+                                                    } else {
+                                                      singleChoiceSelection(
+                                                          vList,
+                                                          s.select_village,
+                                                          "V");
+                                                    }
+                                                  }
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.fromLTRB(
@@ -912,194 +923,204 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                 Visibility(
                                   visible: schemeFlag,
                                   child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                  alignment: AlignmentDirectional.center,
-                                  decoration: new BoxDecoration(
-                                      color: c.white,
-                                      border:
-                                          Border.all(color: c.grey_4, width: 1),
-                                      borderRadius: new BorderRadius.only(
-                                        topLeft: const Radius.circular(5),
-                                        topRight: const Radius.circular(5),
-                                        bottomLeft: const Radius.circular(5),
-                                        bottomRight: const Radius.circular(5),
-                                      )),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.scheme,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                    padding: EdgeInsets.all(10),
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                    alignment: AlignmentDirectional.center,
+                                    decoration: new BoxDecoration(
+                                        color: c.white,
+                                        border: Border.all(
+                                            color: c.grey_4, width: 1),
+                                        borderRadius: new BorderRadius.only(
+                                          topLeft: const Radius.circular(5),
+                                          topRight: const Radius.circular(5),
+                                          bottomLeft: const Radius.circular(5),
+                                          bottomRight: const Radius.circular(5),
+                                        )),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.scheme,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: InkWell(
-                                              onTap: () {
-                                                if(schemeList.isEmpty){
-                                                  utils.showAlert(context, s.select_village);
-                                                }else{
-                                                  multiChoiceSchemeSelection(schemeList,s.select_scheme);
-                                                }
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    30, 0, 30, 0),
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 5, 0, 5),
-                                                decoration: new BoxDecoration(
-                                                    color: c
-                                                        .account_status_green_color,
-                                                    border: Border.all(
-                                                        color: c
-                                                            .account_status_green_color,
-                                                        width: 2),
-                                                    borderRadius:
-                                                        new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(
-                                                              25),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              25),
-                                                      bottomLeft:
-                                                          const Radius.circular(
-                                                              25),
-                                                      bottomRight:
-                                                          const Radius.circular(
-                                                              25),
-                                                    )),
-                                                child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .center,
-                                                  child: Text(
-                                                    s.select,
-                                                    style: TextStyle(
-                                                        color: c.white,
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                            Expanded(
+                                              flex: 3,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  if (schemeList.isEmpty) {
+                                                    utils.showAlert(context,
+                                                        s.select_village);
+                                                  } else {
+                                                    multiChoiceSchemeSelection(
+                                                        schemeList,
+                                                        s.select_scheme);
+                                                  }
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      30, 0, 30, 0),
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 5, 0, 5),
+                                                  decoration: new BoxDecoration(
+                                                      color: c
+                                                          .account_status_green_color,
+                                                      border: Border.all(
+                                                          color: c
+                                                              .account_status_green_color,
+                                                          width: 2),
+                                                      borderRadius:
+                                                          new BorderRadius.only(
+                                                        topLeft: const Radius
+                                                            .circular(25),
+                                                        topRight: const Radius
+                                                            .circular(25),
+                                                        bottomLeft: const Radius
+                                                            .circular(25),
+                                                        bottomRight:
+                                                            const Radius
+                                                                .circular(25),
+                                                      )),
+                                                  child: Align(
+                                                    alignment:
+                                                        AlignmentDirectional
+                                                            .center,
+                                                    child: Text(
+                                                      s.select,
+                                                      style: TextStyle(
+                                                          color: c.white,
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.selected_scheme,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: c.primary_text_color2),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.selected_scheme,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color:
+                                                        c.primary_text_color2),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Text(schList.isNotEmpty?
-                                              schList.toString():"",
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              softWrap: true,
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(
+                                                schList.isNotEmpty
+                                                    ? schList.toString()
+                                                    : "",
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                softWrap: true,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),),
+                                ),
                               ],
                             ),
                           )),
                       Visibility(
                         visible: submitFlag,
                         child: InkWell(
-                          onTap: (){
+                          onTap: () {
                             download();
                           },
-                          child:Container(
-                        width: 200,
-                        margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                        padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
-                        decoration: new BoxDecoration(
-                            color: c.dot_dark_screen2,
-                            border:
-                                Border.all(color: c.dot_dark_screen2, width: 2),
-                            borderRadius: new BorderRadius.only(
-                              topLeft: const Radius.circular(25),
-                              topRight: const Radius.circular(25),
-                              bottomLeft: const Radius.circular(25),
-                              bottomRight: const Radius.circular(25),
-                            )),
-                        child: Align(
-                          alignment: AlignmentDirectional.center,
-                          child: Text(
-                            s.download,
-                            style: TextStyle(
-                                color: c.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                          child: Container(
+                            width: 200,
+                            margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                            padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                            decoration: new BoxDecoration(
+                                color: c.dot_dark_screen2,
+                                border: Border.all(
+                                    color: c.dot_dark_screen2, width: 2),
+                                borderRadius: new BorderRadius.only(
+                                  topLeft: const Radius.circular(25),
+                                  topRight: const Radius.circular(25),
+                                  bottomLeft: const Radius.circular(25),
+                                  bottomRight: const Radius.circular(25),
+                                )),
+                            child: Align(
+                              alignment: AlignmentDirectional.center,
+                              child: Text(
+                                s.download,
+                                style: TextStyle(
+                                    color: c.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
-                      ),),),
+                      ),
                     ],
                   ),
                 ),
@@ -1125,119 +1146,25 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     );
   }
 
-
-    void singleChoiceSelection(List<FlutterLimitedCheckBoxModel> list,String msg,String key){
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
-                height: 400,
-                margin: EdgeInsets.all(30),
-                child: Material(
-                  child:Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      alignment: AlignmentDirectional.topStart,
-                      child:      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child:Text(
-                          msg ,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: c.grey_10,
-                              fontSize: 15),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    Expanded(child:  Align(
-                      alignment: Alignment.centerLeft,
-                      child: FlutterSingleCheckbox(
-                        shape: CircleBorder(),
-                        singleValueList: list,
-                        onChanged: (index) {
-                          if(key=="D"){
-                            selectedDistrict=list[index].selectId.toString();
-                            selectedDistrictName=list[index].selectTitle.toString();
-                          }else if(key=="B"){
-                            selectedBlock=list[index].selectId.toString();
-                            selectedBlockName=list[index].selectTitle.toString();
-                          }else if(key=="V"){
-                            selectedVillage=list[index].selectId.toString();
-                            selectedVillageName=list[index].selectTitle.toString();
-                          }
-                        },
-                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
-                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
-                      ),
-                    ),),
-                    InkWell(
-                        onTap: () async {
-                          Navigator.pop(context, 'OK');
-                          submitFlag = false;
-                          if(key=="D"){
-                            if(selectedDistrict != "0"&& selectedDistrict != ""){
-                              await loadBlockList(selectedDistrict);
-                            }
-                          }else if(key=="B"){
-                            if(selectedBlock != "0"&& selectedBlock != ""){
-                              if(level == "S" || level == "D"){
-                                await getVillageList(selectedDistrict,selectedBlock);
-                              }else if(level == "B"){
-                                await loadVillageList(selectedDistrict,selectedBlock);
-                              }
-                            }
-
-                          }else if(key=="V"){
-                            await loadSchemeList(selectedDistrict,selectedBlock,selectedVillage,finList);
-                          }
-                          setState(() {
-
-                          });
-
-                        },
-                        child:Container(
-                          alignment: AlignmentDirectional.bottomEnd,
-                          child:      Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                            child: Text(
-                              s.key_ok ,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: c.primary_text_color2,
-                                  fontSize: 15),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ))
-                  ],),)
-
-            );
-          }
-      );}
-
-    void multiChoiceSchemeSelection(List<FlutterLimitedCheckBoxModel> list,String msg){
-    int limitCount=list.length;
-    List schArray=[];
+  void singleChoiceSelection(
+      List<FlutterLimitedCheckBoxModel> list, String msg, String key) {
     showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
               height: 400,
-                margin: EdgeInsets.all(30),
-                child: Material(
-                    child:Column(
+              margin: EdgeInsets.all(30),
+              child: Material(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
                       alignment: AlignmentDirectional.topStart,
-                      child:      Padding(
+                      child: Padding(
                         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child:Text(
-                          msg ,
+                        child: Text(
+                          msg,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: c.grey_10,
@@ -1247,52 +1174,63 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                       ),
                     ),
                     Expanded(
-                      child:  Align(
-                      alignment: Alignment.centerLeft,
-                      child: FlutterLimitedCheckbox(
-                        limit: limitCount,
-                        limitedValueList: list,
-                        onChanged: (List<FlutterLimitedCheckBoxModel> list){
-                          schList.clear();
-                          schIdList.clear();
-                          schArray.clear();
-                          for (int i = 0; i < list.length; i++) {
-                            schList.add(list[i].selectTitle);
-                            schIdList.add(list[i].selectId);
-                            Map<String, String> map = {
-                              s.key_scheme_id:list[i].selectId.toString(),
-                              s.key_scheme_name:list[i].selectTitle
-                            };
-                            schArray.add(map);
-                          }
-
-                          print(schIdList.toString());
-                          print(schArray.toString());
-
-                        },
-                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
-                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterSingleCheckbox(
+                          shape: CircleBorder(),
+                          singleValueList: list,
+                          onChanged: (index) {
+                            if (key == "D") {
+                              selectedDistrict =
+                                  list[index].selectId.toString();
+                              selectedDistrictName =
+                                  list[index].selectTitle.toString();
+                            } else if (key == "B") {
+                              selectedBlock = list[index].selectId.toString();
+                              selectedBlockName =
+                                  list[index].selectTitle.toString();
+                            } else if (key == "V") {
+                              selectedVillage = list[index].selectId.toString();
+                              selectedVillageName =
+                                  list[index].selectTitle.toString();
+                            }
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
                       ),
-                    ),),
+                    ),
                     InkWell(
-                        onTap: (){
-                          if(schIdList.isNotEmpty){
-                            submitFlag=true;
-                            selectedSchemeArray.clear();
-                            selectedSchemeArray.addAll(schArray);
-                          }
+                        onTap: () async {
                           Navigator.pop(context, 'OK');
-
-                          setState(() {
-
-                          });
+                          submitFlag = false;
+                          if (key == "D") {
+                            if (selectedDistrict != "0" &&
+                                selectedDistrict != "") {
+                              await loadBlockList(selectedDistrict);
+                            }
+                          } else if (key == "B") {
+                            if (selectedBlock != "0" && selectedBlock != "") {
+                              if (level == "S" || level == "D") {
+                                await getVillageList(
+                                    selectedDistrict, selectedBlock);
+                              } else if (level == "B") {
+                                await loadVillageList(
+                                    selectedDistrict, selectedBlock);
+                              }
+                            }
+                          } else if (key == "V") {
+                            await loadSchemeList(selectedDistrict,
+                                selectedBlock, selectedVillage, finList);
+                          }
+                          setState(() {});
                         },
                         child: Container(
                           alignment: AlignmentDirectional.bottomEnd,
-                          child:      Padding(
+                          child: Padding(
                             padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                            child:Text(
-                              s.key_ok ,
+                            child: Text(
+                              s.key_ok,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: c.primary_text_color2,
@@ -1301,92 +1239,190 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                             ),
                           ),
                         ))
-                  ],))
+                  ],
+                ),
+              ));
+        });
+  }
 
-            );
-          }
-      );}
-    void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list,String msg){
-    int limitCount=2;
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: RichText(
-            text: new TextSpan(
-            // Note: Styles for TextSpans must be explicitly defined.
-            // Child text spans will inherit styles from parent
-            style: GoogleFonts.getFont('Roboto',
-                fontWeight: FontWeight.w800,
-                fontSize: 14,
-                color: c.grey_8),
-            children: <TextSpan>[
-            new TextSpan(text: s.select_financial_year,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
-            new TextSpan(text:" (Any Two)", style: new TextStyle(fontWeight: FontWeight.bold,color: c.subscription_type_red_color)),
-            ],
+  void multiChoiceSchemeSelection(
+      List<FlutterLimitedCheckBoxModel> list, String msg) {
+    int limitCount = list.length;
+    List schArray = [];
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 400,
+              margin: EdgeInsets.all(30),
+              child: Material(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    alignment: AlignmentDirectional.topStart,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Text(
+                        msg,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: c.grey_10,
+                            fontSize: 15),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: FlutterLimitedCheckbox(
+                        limit: limitCount,
+                        limitedValueList: list,
+                        onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                          schList.clear();
+                          schIdList.clear();
+                          schArray.clear();
+                          for (int i = 0; i < list.length; i++) {
+                            schList.add(list[i].selectTitle);
+                            schIdList.add(list[i].selectId);
+                            Map<String, String> map = {
+                              s.key_scheme_id: list[i].selectId.toString(),
+                              s.key_scheme_name: list[i].selectTitle
+                            };
+                            schArray.add(map);
+                          }
+
+                          print(schIdList.toString());
+                          print(schArray.toString());
+                        },
+                        titleTextStyle: TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500
+                            // you can also set other text properties here, like fontSize or fontWeight
+                            ),
+                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {
+                        if (schIdList.isNotEmpty) {
+                          submitFlag = true;
+                          selectedSchemeArray.clear();
+                          selectedSchemeArray.addAll(schArray);
+                        }
+                        Navigator.pop(context, 'OK');
+
+                        setState(() {});
+                      },
+                      child: Container(
+                        alignment: AlignmentDirectional.bottomEnd,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                          child: Text(
+                            s.key_ok,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: c.primary_text_color2,
+                                fontSize: 15),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ))
+                ],
+              )));
+        });
+  }
+
+  void multiChoiceFinYearSelection(
+      List<FlutterLimitedCheckBoxModel> list, String msg) {
+    int limitCount = 2;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: GoogleFonts.getFont('Roboto',
+                    fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+                children: <TextSpan>[
+                  new TextSpan(
+                      text: s.select_financial_year,
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, color: c.grey_8)),
+                  new TextSpan(
+                      text: " (Any Two)",
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.subscription_type_red_color)),
+                ],
+              ),
             ),
-            ),
-              content: Container(
+            content: Container(
                 height: 300,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                  Expanded(child:  Align(
-                    alignment: Alignment.centerLeft,
-                    child: FlutterLimitedCheckbox(
-                      limit: limitCount,
-                      limitedValueList: list,
-                      onChanged: (List<FlutterLimitedCheckBoxModel> list){
-                        finList.clear();
-                        for (int i = 0; i < list.length; i++) {
-                          finList.add(list[i].selectTitle);
-                        }
-                        print(finList.toString());
-
-                        },
-                      mainAxisAlignmentOfRow: MainAxisAlignment.start,
-                      crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterLimitedCheckbox(
+                          limit: limitCount,
+                          limitedValueList: list,
+                          onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                            finList.clear();
+                            for (int i = 0; i < list.length; i++) {
+                              finList.add(list[i].selectTitle);
+                            }
+                            print(finList.toString());
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
+                      ),
                     ),
-                  ),),
-                   InkWell(
-                onTap: (){
-                  if(finList.isNotEmpty){
-                    schemeFlag = false;
-                    submitFlag = false;
-                    selectedVillage="";
-                    selectedVillageName="";
-                    schemeList = [];
-                    schList = [];
-                    schIdList = [];
-                  }
-            Navigator.pop(context, 'OK');
+                    InkWell(
+                        onTap: () {
+                          if (finList.isNotEmpty) {
+                            schemeFlag = false;
+                            submitFlag = false;
+                            selectedVillage = "";
+                            selectedVillageName = "";
+                            schemeList = [];
+                            schList = [];
+                            schIdList = [];
+                          }
+                          Navigator.pop(context, 'OK');
 
-            setState(() {
-
-            });
-                },
-                child: Container(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child:      Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                    child:Text(
-                s.key_ok ,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: c.primary_text_color2,
-                    fontSize: 15),
-                textAlign: TextAlign.center,
-              ),
-              ),
-            ))
-                ],)
-
-              ),
-            );
-          }
-      );}
+                          setState(() {});
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                )),
+          );
+        });
+  }
 
   Future<void> loadBlockList(String selectedDistrict) async {
     utils.showProgress(context, 1);
@@ -1395,21 +1431,21 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     vFlag = false;
     schemeFlag = false;
     bList.clear();
-    List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_Block+' Where dcode='+selectedDistrict);
+    List<Map> list = await dbClient.rawQuery(
+        'SELECT * FROM ' + s.table_Block + ' Where dcode=' + selectedDistrict);
     for (int i = 0; i < list.length; i++) {
       bList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
           selectTitle: list[i][s.key_bname],
-          selectId:int.parse(list[i][s.key_bcode])));
+          selectId: int.parse(list[i][s.key_bcode])));
     }
 
     print(list.toString());
     setState(() {
-      selectedBlock="";
-      selectedBlockName="";
-      selectedVillage="";
-      selectedVillageName="";
+      selectedBlock = "";
+      selectedBlockName = "";
+      selectedVillage = "";
+      selectedVillageName = "";
       submitFlag = false;
       schemeList = [];
       schList = [];
@@ -1418,14 +1454,18 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     utils.hideProgress(context);
   }
 
-  Future<void> loadVillageList(String dcode,String bcode) async {
+  Future<void> loadVillageList(String dcode, String bcode) async {
     utils.showProgress(context, 1);
     dFlag = true;
     bFlag = true;
     vFlag = true;
     vList.clear();
-    List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_Village+' Where bcode='+bcode+' and dcode='+dcode);
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM ' +
+        s.table_Village +
+        ' Where bcode=' +
+        bcode +
+        ' and dcode=' +
+        dcode);
     for (int i = 0; i < list.length; i++) {
       vList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -1434,8 +1474,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       print(list.toString());
     }
     setState(() {
-      selectedVillage="";
-      selectedVillageName="";
+      selectedVillage = "";
+      selectedVillageName = "";
       submitFlag = false;
       schemeList = [];
       schList = [];
@@ -1444,20 +1484,21 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     utils.hideProgress(context);
   }
 
-  Future<void> getVillageList(String selectedDistrict, String selectedBlock) async {
+  Future<void> getVillageList(
+      String selectedDistrict, String selectedBlock) async {
     utils.showProgress(context, 1);
     Map json_request = {};
 
     json_request = {
-      s.key_dcode: selectedDistrict ,
+      s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
       s.key_service_id: s.service_key_village_list_district_block_wise,
     };
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
@@ -1477,7 +1518,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       print("VillageList_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
@@ -1493,7 +1535,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
               .compareTo(b[s.key_pvname].toLowerCase());
         });
         if (res_jsonArray.isNotEmpty) {
-
           for (int i = 0; i < res_jsonArray.length; i++) {
             vList.add(FlutterLimitedCheckBoxModel(
                 isSelected: false,
@@ -1501,12 +1542,11 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 selectId: int.parse(res_jsonArray[i][s.key_pvcode])));
           }
           print(vList.toString());
-
         }
       }
       setState(() {
-        selectedVillage="";
-        selectedVillageName="";
+        selectedVillage = "";
+        selectedVillageName = "";
         submitFlag = false;
         schemeList = [];
         schList = [];
@@ -1515,7 +1555,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     }
   }
 
-  Future<void> loadSchemeList(String selectedDistrict, String selectedBlock, String selectedVillage, List finList) async {
+  Future<void> loadSchemeList(String selectedDistrict, String selectedBlock,
+      String selectedVillage, List finList) async {
     utils.showProgress(context, 1);
     Map json_request = {};
     json_request = {
@@ -1563,7 +1604,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
               .compareTo(b[s.key_scheme_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-
           for (int i = 0; i < res_jsonArray.length; i++) {
             schemeList.add(FlutterLimitedCheckBoxModel(
                 isSelected: false,
@@ -1581,13 +1621,16 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       }
     }
   }
-  Future<void> download() async{
+
+  Future<void> download() async {
     if (await utils.isOnline()) {
-      getWorkListToDownload(finList, selectedDistrict, selectedBlock, selectedVillage, schIdList);
+      getWorkListToDownload(
+          finList, selectedDistrict, selectedBlock, selectedVillage, schIdList);
     } else {
       utils.showAlert(context, s.no_internet);
     }
   }
+
   Future<void> getWorkListToDownload(List finYear, String dcode, String bcode,
       String pvcode, List scheme) async {
     utils.showProgress(context, 2);
@@ -1630,7 +1673,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
       var decrpt_data =
-      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
@@ -1641,11 +1684,9 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         if (res_jsonArray.length > 0) {
-
           dbHelper.delete_table_RdprWorkList('R');
           dbHelper.delete_table_SchemeList('R');
-          for (int i = 0; i < selectedSchemeArray.length; i++)
-          {
+          for (int i = 0; i < selectedSchemeArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_SchemeList +
                 ' (rural_urban, scheme_id , scheme_name ) VALUES(' +
@@ -1656,7 +1697,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 "' , '" +
                 selectedSchemeArray[i][s.key_scheme_name].toString() +
                 "')");
-
           }
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
@@ -1729,9 +1769,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 "' , '" +
                 "0" +
                 "')");
-
           }
-          customAlertwithOk(context,"1" ,s.download_success,schIdList);
+          customAlertwithOk(context, "1", s.download_success, schIdList);
         } else {
           utils.showAlert(context, s.no_data);
         }
@@ -1742,7 +1781,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
   }
 
   Future<void> customAlertwithOk(
-      BuildContext context, String type, String msg,List schArray) async {
+      BuildContext context, String type, String msg, List schArray) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dbHelper = DbHelper();
     return showDialog<void>(
@@ -1777,8 +1816,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                     child: Center(
                       child: Image.asset(
                         imagePath.success,
-                        height: 60 ,
-                        width:  60 ,
+                        height: 60,
+                        width: 60,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -1793,8 +1832,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Text(
-                              "Success",
+                          Text("Success",
                               style: GoogleFonts.getFont('Prompt',
                                   decoration: TextDecoration.none,
                                   fontWeight: FontWeight.w600,
@@ -1816,38 +1854,40 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Visibility(
-                                visible:
-                                true,
+                                visible: true,
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          c.primary_text_color2),
+                                          MaterialStateProperty.all<Color>(
+                                              c.primary_text_color2),
                                       shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                              RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(15),
-                                          ))),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
                                   onPressed: () {
                                     Navigator.pop(context, true);
-                                    if(type=="1"){
+                                    if (type == "1") {
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => WorkList(
-                                                schemeList: selectedSchemeArray,
-                                                scheme: selectedSchemeArray[0][s.key_scheme_id].toString(),
-                                                flag: 'rdpr_offline',
-                                                finYear:'',
-                                                dcode:'',
-                                                bcode:'',
-                                                pvcode:'',
-                                                tmccode:'',
-                                                townType: '',
-                                                selectedschemeList:[],
-                                              ))) .then((value) {
-                                        utils.gotoHomePage(context, "RDPRUrban");
+                                                    schemeList:
+                                                        selectedSchemeArray,
+                                                    scheme: selectedSchemeArray[
+                                                            0][s.key_scheme_id]
+                                                        .toString(),
+                                                    flag: 'rdpr_offline',
+                                                    finYear: '',
+                                                    dcode: '',
+                                                    bcode: '',
+                                                    pvcode: '',
+                                                    tmccode: '',
+                                                    townType: '',
+                                                    selectedschemeList: [],
+                                                  ))).then((value) {
+                                        utils.gotoHomePage(
+                                            context, "RDPRUrban");
                                         // you can do what you need here
                                         // setState etc.
                                       });
@@ -1922,5 +1962,4 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     );
   }
 */
-
 }

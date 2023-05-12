@@ -68,7 +68,7 @@ String click_here_to_get_villages_through_selection =
     "Click here to get villages through selection";
 String enter_distance_in_km = "Enter distance in km";
 String no_village = "No Villages Found!";
-String no_data = "No Data Found!";
+String no_data = "No Data Found !";
 String send_otp = "Send OTP";
 String otp = "OTP";
 String newpassword = "New Password";
@@ -229,10 +229,19 @@ String invalid_usn_pswd = "Invalid UserName Or Password";
 String ATRUploadedDate = "ATR Uploaded Date.";
 String internet_error =
     "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
-String no_offline_data = "No data available for offline. Please Turn On Your Network";
+String no_offline_data =
+    "No data available for offline. Please Turn On Your Network";
 String download_apk = "Download the latest version and install the new APK.";
-
-
+String town_type = "Town Type";
+String atr_status = "ATR Status";
+String pending = "Pending";
+String completed = "Completed";
+String jsonError = "Sorry! Please Try Again ";
+String atr_submit_by = "ATR Submitted by";
+String select_date = "Select Date";
+String or = "(OR)";
+String inspection_taken = "Inspection Taken";
+String other_inspection_taken = "Other Inspection Taken";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -357,6 +366,8 @@ String key_inspection_image = "inspection_image";
 String key_action_status = "action_status";
 String key_action_taken_date = "action_taken_date";
 String key_inspection_action_taken_details = "inspection_action_taken_details";
+String key_reported_by = "reported_by";
+String key_workid = "workid";
 
 // Service Key
 String service_key_login = "login";

@@ -11,7 +11,7 @@
     
     <!-- Required Permission for notification. -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
 
     <!-- Required only if your app targets Android 13 or higher. -->
@@ -39,16 +39,6 @@
         android:label="Flutter TNRD Work Inspection"
         android:name="${applicationName}"
         android:icon="@drawable/logo">
-        <receiver
-            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".MainActivity"
@@ -68,12 +58,6 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-            <meta-data
-                android:name="com.dexterous.flutterlocalnotifications.default_notification_channel_id"
-                android:value="channel_id"/>
-            <meta-data
-                android:name="com.dexterous.flutterlocalnotifications.default_notification_channel_name"
-                android:value="channel_name"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -7,8 +7,10 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PDF_Viewer extends StatefulWidget {
   final pdfBytes;
@@ -71,7 +73,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     try {
       await pdfFile.writeAsBytes(pdfBytes);
       showNotification(
-          "PDF Downloaded", "PDF file saved successfully", pdfFile.path);
+          "Inspection App", "PDF file saved successfully", downloadsPath);
     } catch (e) {
       print('Error writing PDF to file: $e');
       return;
@@ -85,51 +87,70 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
   Future<void> showNotification(
       String title, String message, String payload) async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    await AwesomeNotifications().initialize(
+      // set the icon to null if you want to use the default app icon
+      null,
+      [
+        NotificationChannel(
+            channelKey: 'view_pdf',
+            channelName: 'PDF',
+            channelDescription: 'channel_description',
+            importance: NotificationImportance.Max,
+            icon: null)
+      ],
+      debug: true,
+    );
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
-            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    const MacOSInitializationSettings initializationSettingsMacOS =
-        MacOSInitializationSettings();
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS,
-            macOS: initializationSettingsMacOS);
+    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      //It would be more appropriate if you can show your own dialog
+      //to the user before requesting the notifications permissons.
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications(
+          permissions: [
+            NotificationPermission.Alert,
+            NotificationPermission.Sound,
+            NotificationPermission.Badge,
+            NotificationPermission.Vibration,
+            NotificationPermission.Light,
+            NotificationPermission.FullScreenIntent,
+          ],
+        );
+      }
+    });
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: selectNotification);
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'view_pdf', //Same as above in initilize,
+        title: title,
+        body: message,
+        wakeUpScreen: true,
+        fullScreenIntent: true,
+        criticalAlert: true,
+        //Other parameters
+      ),
+      actionButtons: <NotificationActionButton>[
+        NotificationActionButton(key: 'view', label: 'View'),
+      ],
+    );
 
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        const AndroidNotificationDetails(
-            'your_channel_id', 'your_channel_name', 'your_channel_description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      title, // Notification Title
-      message, // Notification Body
-      platformChannelSpecifics,
-      payload: payload, // Notification Payload
+    await AwesomeNotifications().setListeners(
+      onActionReceivedMethod: (receivedAction) {
+        print("${receivedAction.buttonKeyPressed} - action here");
+        if (receivedAction.buttonKeyPressed == "view") {
+          print("Success");
+          _openFilePath(payload);
+        }
+        throw ("DOne");
+      },
     );
   }
 
-  Future selectNotification(String? payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
+  void _openFilePath(String path) async {
+    if (await canLaunchUrlString(path)) {
+      await launchUrlString(path);
+    } else {
+      throw 'Could not launch $path';
     }
-  }
-
-  Future onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) async {
-    return;
   }
 }

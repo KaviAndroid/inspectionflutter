@@ -1254,7 +1254,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         builder: (BuildContext context) {
           return Container(
               height: 400,
-              margin: EdgeInsets.all(30),
+              margin: EdgeInsets.all(15),
               child: Material(
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1299,7 +1299,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                         },
                         titleTextStyle: TextStyle(
                             overflow: TextOverflow.ellipsis,
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: FontWeight.w500
                             // you can also set other text properties here, like fontSize or fontWeight
                             ),

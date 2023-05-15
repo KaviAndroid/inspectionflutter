@@ -41,6 +41,7 @@ class _DrawerAppState extends State<DrawerApp> {
       profile_image = "",
       area_type = "",
       version = "";
+  bool atrFlag = false;
 
   @override
   void initState() {
@@ -93,6 +94,15 @@ class _DrawerAppState extends State<DrawerApp> {
         level_value = "";
       }
     } else if (level == "B") {
+      if (prefs.getString(s.key_role_code) != null &&
+          prefs.getString(s.key_role_code) != "" &&
+          prefs.getString(s.key_role_code) == "9052" ||
+          prefs.getString(s.key_role_code) == "9042") {
+        atrFlag = true;
+
+      } else {
+        atrFlag = false;
+      }
       level_head = "Block : ";
       if (prefs.getString(s.key_bname) != null &&
           prefs.getString(s.key_bname) != "") {
@@ -335,36 +345,41 @@ class _DrawerAppState extends State<DrawerApp> {
                 Divider(color: c.grey_6),
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                ViewSavedATRReport(Flag: area_type)));
-                      },
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              imagePath.atr_logo,
-                              height: 25,
-                              width: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              s.atr_report,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: c.darkblue,
-                                  fontSize: 13),
-                              textAlign: TextAlign.center,
-                            ),
-                          ]),
-                    )),
-                Divider(color: c.grey_6),
+                    child: Visibility(
+                      visible: atrFlag,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewSavedATRReport(Flag: area_type)));
+                          },
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  imagePath.atr_logo,
+                                  height: 25,
+                                  width: 25,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  s.atr_report,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: c.darkblue,
+                                      fontSize: 13),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ]),
+                        )
+                    ),),
+                Visibility(
+                  visible: atrFlag,
+                  child: Divider(color: c.grey_6),),
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
@@ -504,7 +519,8 @@ class _DrawerAppState extends State<DrawerApp> {
                       onTap: () {
                         // Navigator.of(context).pop(false);
                         // Navigator.push(context,MaterialPageRoute(builder:(context) => Login()));
-                        showAlertDialog();
+                        // showAlertDialog();
+                        logout();
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -565,37 +581,29 @@ class _DrawerAppState extends State<DrawerApp> {
     );
   }
 
-  Future<void> showAlertDialog() async {
-    Widget cancelButton = TextButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        Navigator.pop(
-            context, MaterialPageRoute(builder: (context) => DrawerApp()));
-      },
-    );
-    Widget OkButton = TextButton(
-      child: Text("Ok"),
-      onPressed: () {
-        Navigator.pop(context,true);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Login()));
+  logout() async {
+    if (await checkLocalData()) {
+      utils.customAlert(context,"E", s.logout_message);
+    }else{
+      if (await utils.isOnline()) {
+        utils.customAlert(context,"W", s.logout);
+      } else {
+        utils.customAlertWithOkCancel(context,"W", s.logout_msg);
+      }
 
-      },
-    );
-    AlertDialog alert = AlertDialog(
-      title: Text("AlertDialog"),
-      content: Text("Are You Sure You Want To Logout? "),
-      actions: [
-        cancelButton,
-        OkButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (context) {
-        return alert;
-      },
-    );
+    }
+  }
+  Future<bool> checkLocalData() async {
+    bool syncFlag = false;
+    var isExists = await dbClient
+        .rawQuery("SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
+
+    // print(isExists);
+
+    isExists[0]['cnt'] > 0 ? syncFlag = true : syncFlag = false;
+    setState(() {});
+
+    return syncFlag;
   }
 
   Future<void> stageApi() async {

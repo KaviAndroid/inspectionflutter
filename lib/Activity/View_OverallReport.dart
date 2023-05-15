@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
@@ -462,8 +463,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         await __ModifiyUI();
                                         setState(() {});
                                       },
-                                      child: Icon(Icons.double_arrow_rounded,
-                                          color: c.primary_text_color2),
+                                      child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
                                     ),
                                   ),
                                 ]),
@@ -543,8 +543,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         await __ModifiyUI();
                                         setState(() {});
                                       },
-                                      child: Icon(Icons.double_arrow_rounded,
-                                          color: c.primary_text_color2),
+                                      child:Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
                                     ),
                                   ),
                                 ]),
@@ -624,8 +623,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         await __ModifiyUI();
                                         setState(() {});
                                       },
-                                      child: Icon(Icons.double_arrow_rounded,
-                                          color: c.primary_text_color2),
+                                      child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
                                     ),
                                   ),
                                 ]),
@@ -890,9 +888,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
                                               setState(() {});
                                             },
-                                            child: Icon(
-                                                Icons.double_arrow_rounded,
-                                                color: c.primary_text_color2),
+                                            child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
                                           ),
                                         ),
                                       ]),
@@ -1129,9 +1125,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
                                               setState(() {});
                                             },
-                                            child: Icon(
-                                                Icons.double_arrow_rounded,
-                                                color: c.primary_text_color2),
+                                            child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
                                           ),
                                         ),
                                       ]),
@@ -1217,7 +1211,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             s.satisfied,
                             style: TextStyle(
                                 color: c.grey_8,
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w400),
                           ),
                         )
@@ -1242,7 +1236,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             s.un_satisfied,
                             style: TextStyle(
                                 color: c.grey_8,
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w400),
                           ),
                         )
@@ -1268,7 +1262,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             s.need_improvement,
                             style: TextStyle(
                                 color: c.grey_8,
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w400),
                           ),
                         )

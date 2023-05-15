@@ -1326,7 +1326,6 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
           return a[s.key_work_id].compareTo(b[s.key_work_id]);
         });
         if (res_jsonArray.length > 0) {
-          utils.showProgress(context, 1);
             dbHelper.delete_table_RdprWorkList('U');
             dbHelper.delete_table_SchemeList('U');
             for (int i = 0; i < scheme.length; i++)
@@ -1562,7 +1561,6 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
               }
 
             }
-          utils.hideProgress(context);
             List<Map> list =
             await dbClient.rawQuery('SELECT * FROM ' + s.table_RdprWorkList);
             List<Map> schemeList =

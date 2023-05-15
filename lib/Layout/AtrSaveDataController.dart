@@ -247,7 +247,7 @@ class AtrSaveDataController with ChangeNotifier{
     if (await goToCameraPermission(context)) {
       final pickedFile = await _picker.pickImage(
           source: ImageSource.camera,
-          imageQuality: 75,
+          imageQuality: 80,
           maxHeight: 400,
           maxWidth: 400);
       if (pickedFile == null) {

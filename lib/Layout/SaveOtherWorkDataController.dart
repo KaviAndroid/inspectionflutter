@@ -253,7 +253,11 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
 
   Future<void> TakePhoto(
       ImageSource source, int i, String latitude, String longitude, BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+        maxHeight: 400,
+        maxWidth: 400);
 
     if (pickedFile == null) {
       Navigator.pop(context);

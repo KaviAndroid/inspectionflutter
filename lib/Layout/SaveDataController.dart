@@ -199,7 +199,7 @@ class SaveDatacontroller with ChangeNotifier {
     // final pickedFile = await _picker.pickImage(source: source);
     final pickedFile = await _picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 75,
+        imageQuality: 80,
         maxHeight: 400,
         maxWidth: 400);
     if (pickedFile == null) {

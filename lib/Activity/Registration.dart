@@ -1158,8 +1158,12 @@ class _RegistrationState extends State<Registration> {
   Future<void> TakePhoto(ImageSource source) async {
     if (source == ImageSource.camera) {
       if (await gotoCamera()) {
-        final pickedFile = await _picker.pickImage(source: source);
-
+        // final pickedFile = await _picker.pickImage(source: source);
+        final pickedFile = await _picker.pickImage(
+            source: source,
+            imageQuality: 80,
+            maxHeight: 400,
+            maxWidth: 400);
         if (pickedFile == null) {
           Navigator.pop(context);
 
@@ -1175,8 +1179,12 @@ class _RegistrationState extends State<Registration> {
       }
     } else {
       if (await gotoStorage()) {
-        final pickedFile = await _picker.pickImage(source: source);
-
+        // final pickedFile = await _picker.pickImage(source: source);
+        final pickedFile = await _picker.pickImage(
+            source: source,
+            imageQuality: 80,
+            maxHeight: 400,
+            maxWidth: 400);
         if (pickedFile == null) {
           Navigator.pop(context);
 
@@ -1184,6 +1192,7 @@ class _RegistrationState extends State<Registration> {
         } else {
           List<int> imageBytes = await pickedFile.readAsBytes();
           profileImage = base64Encode(imageBytes);
+          prefs?.setString("UIMG", profileImage!);
           setState(() {
             _imageFile = File(pickedFile.path);
           });

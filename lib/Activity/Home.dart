@@ -85,6 +85,18 @@ class _HomeState extends State<Home> {
         utils.showAlert(context, s.no_internet);
       }*/
     }
+
+    satisfied_count = prefs.getString(s.satisfied_count)!;
+    un_satisfied_count = prefs.getString(s.un_satisfied_count)!;
+    need_improvement_count = prefs.getString(s.need_improvement_count)!;
+    satisfied_count_other = prefs.getString(s.satisfied_count_other)!;
+    un_satisfied_count_other = prefs.getString(s.un_satisfied_count_other)!;
+    need_improvement_count_other =
+    prefs.getString(s.need_improvement_count_other)!;
+    total_rdpr = prefs.getString(s.total_rdpr)!;
+    total_other = prefs.getString(s.total_other)!;
+    fin_year = prefs.getString(s.financial_year)!;
+
     if (prefs.getString(s.key_rural_urban) != null &&
         prefs.getString(s.key_rural_urban) != "") {
       area_type = prefs.getString(s.key_rural_urban)!;
@@ -112,6 +124,7 @@ class _HomeState extends State<Home> {
     if (prefs.getString(s.key_profile_image) != null &&
         prefs.getString(s.key_profile_image) != "") {
       profile_image = prefs.getString(s.key_profile_image)!;
+      // profile_image = prefs.getString("UIMG")!;
     } else {
       profile_image = "";
     }
@@ -160,18 +173,6 @@ class _HomeState extends State<Home> {
       prefs.setString(s.key_rural_urban, "R");
     }
 
-
-
-    satisfied_count = prefs.getString(s.satisfied_count)!;
-    un_satisfied_count = prefs.getString(s.un_satisfied_count)!;
-    need_improvement_count = prefs.getString(s.need_improvement_count)!;
-    satisfied_count_other = prefs.getString(s.satisfied_count_other)!;
-    un_satisfied_count_other = prefs.getString(s.un_satisfied_count_other)!;
-    need_improvement_count_other =
-        prefs.getString(s.need_improvement_count_other)!;
-    total_rdpr = prefs.getString(s.total_rdpr)!;
-    total_other = prefs.getString(s.total_other)!;
-    fin_year = prefs.getString(s.financial_year)!;
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -347,7 +348,7 @@ class _HomeState extends State<Home> {
                                                       child: Expanded(
                                                         child: Image.memory(
                                                           base64.decode(profile_image.replaceAll(RegExp(r'\s+'), '')),
-                                                          fit: BoxFit.fitWidth,
+                                                          fit: BoxFit.contain,
                                                         ),
                                                       ),
                                                     ),
@@ -1410,7 +1411,18 @@ class _HomeState extends State<Home> {
             }
           }
         }
-        setState(() {});
+        setState(() {
+          satisfied_count = prefs.getString(s.satisfied_count)!;
+          un_satisfied_count = prefs.getString(s.un_satisfied_count)!;
+          need_improvement_count = prefs.getString(s.need_improvement_count)!;
+          satisfied_count_other = prefs.getString(s.satisfied_count_other)!;
+          un_satisfied_count_other = prefs.getString(s.un_satisfied_count_other)!;
+          need_improvement_count_other =
+          prefs.getString(s.need_improvement_count_other)!;
+          total_rdpr = prefs.getString(s.total_rdpr)!;
+          total_other = prefs.getString(s.total_other)!;
+          fin_year = prefs.getString(s.financial_year)!;
+        });
 
       }
     }

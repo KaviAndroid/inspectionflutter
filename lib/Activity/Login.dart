@@ -61,9 +61,10 @@ class LoginState extends State<Login> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: c.colorAccentverylight,
+      body: SingleChildScrollView(
         child: Container(
+          height: MediaQuery.of(context).size.height,
+          color: c.colorAccentverylight,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,

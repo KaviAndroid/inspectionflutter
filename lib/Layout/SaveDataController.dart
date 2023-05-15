@@ -51,6 +51,7 @@ class SaveDatacontroller with ChangeNotifier {
   List imageList=[];
   bool stagevisibility=false;
   bool statusvisibility=false;
+  bool syncFlag = false;
 
   Map<String, String> defaultSelectedStatus = {
     s.key_status_id: '0',
@@ -295,6 +296,7 @@ class SaveDatacontroller with ChangeNotifier {
   }
 
   Future<void> saveData(BuildContext context) async {
+    utils.showProgress(context, 1);
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
@@ -382,6 +384,7 @@ class SaveDatacontroller with ChangeNotifier {
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service,
         body: json.encode(encrpted_request));
+    utils.hideProgress(context);
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     print("saveData_url>>" + url.main_service.toString());
     print("saveData_request_json>>" + main_dataset.toString());
@@ -400,6 +403,7 @@ class SaveDatacontroller with ChangeNotifier {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         utils.customAlert(context, "S", s.online_data_save_success).then((value) => onWillPop(context));
+        gotoDelete(selectedwork,true);
       } else {
         utils.customAlert(context, "E", s.no_data).then((value) => onWillPop(context));
       }
@@ -859,4 +863,52 @@ class SaveDatacontroller with ChangeNotifier {
     value != '0'?statusError = false:statusError = true;
     notifyListeners();
   }
+  gotoDelete(List workList, bool save) async {
+    String conditionParam = "";
+
+    String flag = 'rdpr';
+    String workid = workList[0][s.key_work_id].toString();
+    String dcode = workList[0][s.key_dcode].toString();
+    String rural_urban = widgetrural_urban;
+    String inspection_id = workList[0][s.key_inspection_id].toString();
+    print("flag>>>>"+flag.toString());
+
+    if (flag == "ATR") {
+      conditionParam =
+      "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
+    } else {
+      conditionParam =
+      "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
+    }
+
+    var imageDelete = await dbClient
+        .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
+    var workListDelete = await dbClient
+        .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
+
+  }
+ /* gotoDelete(List workList,bool save) async {
+    String conditionParam = "";
+    String workid = workList[0][s.key_work_id];
+    String dcode = workList[0][s.key_dcode];
+    String rural_urban = workList[0][s.key_rural_urban];
+
+      conditionParam = "WHERE rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
+
+    var isExists = await dbClient
+        .rawQuery("SELECT count(1) as cnt FROM ${s.table_save_work_details} $conditionParam");
+      if( isExists[0]['cnt'] > 0)
+        {
+          var imageDelete = await dbClient
+              .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
+          var workListDelete = await dbClient
+              .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
+          if (save) {
+            // Save Delete
+            var offlineWorkListDelete = await dbClient
+                .rawQuery("DELETE FROM ${s.table_RdprWorkList} $conditionParam");
+          }
+        }
+  }*/
+
 }

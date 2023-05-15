@@ -636,7 +636,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
   _WorkList() {
     return Container(
-        margin:  EdgeInsets.fromLTRB(10, 10, 10, 10),        color: ca1,
+        margin:  EdgeInsets.fromLTRB(10, 10, 10, 10),
+        color: ca1,
         child: Padding(
           padding: EdgeInsets.only(top: 0, left: 8, right: 8),
           child: Stack(children: [
@@ -989,7 +990,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                               ),
                                                                               child: InkWell(
                                                                                 onTap: () async {
-                                                                                  await getSavedWorkDetails(workList[0][s.key_other_work_inspection_id].toString());
+                                                                                  await getSavedWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
                                                                                   selectedOtherworkList.clear();
                                                                                   selectedOtherworkList.add(workList[0]);
                                                                                   print('selectedOtherworkList>>' + selectedOtherworkList.toString());

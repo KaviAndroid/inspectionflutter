@@ -450,7 +450,7 @@ class AtrSaveDataController with ChangeNotifier{
       var msg = userData[s.key_message];
       if (status == s.key_ok && response_value == s.key_ok) {
         utils.customAlert(context, "S", s.online_data_save_success).then((value) =>onWillPop(context));
-
+        gotoDelete(selectedwork,true);
 /*        Timer(Duration(seconds: 3), () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ATR_Worklist(
@@ -677,5 +677,29 @@ class AtrSaveDataController with ChangeNotifier{
       Utils().showAppSettings(context, s.cam_permission);
     }
     return flag;
+  }
+  gotoDelete(List workList, bool save) async {
+    String conditionParam = "";
+
+    String flag = 'ATR';
+    String workid = workList[0][s.key_work_id].toString();
+    String dcode = workList[0][s.key_dcode].toString();
+    String rural_urban = widgetrural_urban;
+    String inspection_id = workList[0][s.key_inspection_id].toString();
+    print("flag>>>>"+flag.toString());
+
+    if (flag == "ATR") {
+      conditionParam =
+      "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
+    } else {
+      conditionParam =
+      "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
+    }
+
+    var imageDelete = await dbClient
+        .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
+    var workListDelete = await dbClient
+        .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
+
   }
 }

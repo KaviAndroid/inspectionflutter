@@ -1264,18 +1264,29 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       List<dynamic> res_jsonArray = userData[s.key_json_data];
       if (res_jsonArray.length > 0) {
         for (int i = 0; i < res_jsonArray.length; i++) {
-          List res_image = res_jsonArray[i][s.key_inspection_image];
-          work_id=res_jsonArray[i][s.key_work_id].toString();
-          print("WORK_ID"+work_id);
-          print("Res image>>>"+res_image.toString());
-          ImageList.addAll(res_image);
-          Map<String, String> mymap = {};
-          mymap["image_path"] = '0';
-          ImageList.add(mymap);
-          print("image_List>>>>>>"+ImageList.toString());
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            List res_image = res_jsonArray[i][s.key_inspection_image];
+            List<Map<String, String>> img_jsonArray = [];
+            for (int j = 0; j < res_image.length; j++) {
+              Map<String, String> mymap =
+              {}; // This created one object in the current scope.
+              // First iteration , i = 0
+              mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+              mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+              mymap["serial_no"] = res_image[j][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
+              mymap["image_description"] = res_image[j][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+              mymap["image"] = res_image[j][s.key_image].toString();
+              mymap["image_path"] = '0';// Now mymap = { name: 'test0' };
+              img_jsonArray.add(mymap);
+            }
+            print("Res image>>>"+res_image.toString());
+            ImageList.addAll(res_image);
+            print("image_List>>>>>>"+ImageList.toString());
+
+          }
+        }
         }
       }
-    }
     else if (status == s.key_ok && response_value == s.key_noRecord) {
       utils.customAlert(context, "E", response_value);
     }

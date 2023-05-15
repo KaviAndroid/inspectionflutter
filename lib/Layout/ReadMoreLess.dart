@@ -4,13 +4,15 @@ import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 
 class ExpandableText extends StatefulWidget {
   const ExpandableText(
-      this.text, {
+      this.text,  {
         this.trimLines = 2,
+        this.txtcolor,
       })  : assert(text != null);
 
 
   final String text;
   final int trimLines;
+  final  txtcolor;
 
   @override
   ExpandableTextState createState() => ExpandableTextState();

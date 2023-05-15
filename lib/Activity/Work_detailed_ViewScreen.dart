@@ -52,7 +52,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     Future.delayed(Duration.zero, () {
       if(widget.flag=="other")
       {
-        print("FLAG#####"+widget.flag);
+
         getSavedOtherWorkDetails();
       }
       else if(widget.flag=="rdpr"){
@@ -321,7 +321,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                   Expanded(
                     flex: 1,
                     child: ExpandableText(widget.selectedRDPRworkList[index][s.key_work_name],
-                        trimLines: 4),
+                        trimLines: 4,),
                   ),
                 ],
               ),

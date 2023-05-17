@@ -248,14 +248,15 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** API Call starts  Here  *************************** //
 
   Future<void> fetchOnlineATRWroklist(String fromDate, String toDate) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
     utils.showProgress(context, 1);
     setState(() {
       isWorklistAvailable = false;
       isNeedImprovementActive = false;
       isUnSatisfiedActive = false;
     });
-
-    var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_get_inspection_details_for_atr,
@@ -270,108 +271,144 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       jsonRequest.addAll(urbanRequest);
     }
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      s.key_data_content: jsonRequest,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
     utils.hideProgress(context);
+
+    print("Online_Work_List_url>>" + url.main_service_jwt.toString());
+    print("Online_Work_List_request_encrpt>>" + encrypted_request.toString());
+
     if (response.statusCode == 200) {
-      String responseData = response.body;
+      String data = response.body;
 
-      var jsonData = jsonDecode(responseData);
+      print("Online_Work_List_response>>" + data);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+      String? authorizationHeader = response.headers['authorization'];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        widget.Flag == "U"
-            ? prefs.setString(s.atr_date_u, dateController.text)
-            : prefs.setString(s.atr_date_r, dateController.text);
-        Map res_jsonArray = userData[s.key_json_data];
-        List<dynamic> inspection_details =
-            res_jsonArray[s.key_inspection_details];
+      String? token = authorizationHeader?.split(' ')[1];
 
-        if (inspection_details.isNotEmpty) {
-          if (widget.Flag == "U") {
-            dbHelper.delete_table_AtrWorkList('U');
-          } else if (widget.Flag == "R") {
-            dbHelper.delete_table_AtrWorkList('R');
+      print("Online_Work_List Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("Online_Work_List responceSignature -  $responceSignature");
+
+      print("Online_Work_List responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("Online_Work_List responceSignature - Token Verified");
+
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          widget.Flag == "U"
+              ? prefs.setString(s.atr_date_u, dateController.text)
+              : prefs.setString(s.atr_date_r, dateController.text);
+          Map res_jsonArray = userData[s.key_json_data];
+          List<dynamic> inspection_details =
+              res_jsonArray[s.key_inspection_details];
+
+          if (inspection_details.isNotEmpty) {
+            if (widget.Flag == "U") {
+              dbHelper.delete_table_AtrWorkList('U');
+            } else if (widget.Flag == "R") {
+              dbHelper.delete_table_AtrWorkList('R');
+            }
+            for (int i = 0; i < inspection_details.length; i++) {
+              await dbClient.rawInsert('INSERT INTO ' +
+                  s.table_AtrWorkList +
+                  ' (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES(' +
+                  "'" +
+                  inspection_details[i][s.key_dcode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_bcode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_pvcode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_inspection_id].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_inspection_date] +
+                  "' , '" +
+                  inspection_details[i][s.key_status_id].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_status_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_description] +
+                  "' , '" +
+                  inspection_details[i][s.key_work_id].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_work_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_desig_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_work_type_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_dname] +
+                  "' , '" +
+                  inspection_details[i][s.key_bname] +
+                  "' , '" +
+                  inspection_details[i][s.key_pvname] +
+                  "' , '" +
+                  inspection_details[i][s.key_rural_urban] +
+                  "' , '" +
+                  inspection_details[i][s.key_town_type] +
+                  "' , '" +
+                  inspection_details[i][s.key_tpcode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_townpanchayat_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_muncode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_municipality_name] +
+                  "' , '" +
+                  inspection_details[i][s.key_corcode].toString() +
+                  "' , '" +
+                  inspection_details[i][s.key_corporation_name] +
+                  "')");
+            }
+            fetchOfflineWorklist();
           }
-          for (int i = 0; i < inspection_details.length; i++) {
-            await dbClient.rawInsert('INSERT INTO ' +
-                s.table_AtrWorkList +
-                ' (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES(' +
-                "'" +
-                inspection_details[i][s.key_dcode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_bcode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_pvcode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_inspection_id].toString() +
-                "' , '" +
-                inspection_details[i][s.key_inspection_date] +
-                "' , '" +
-                inspection_details[i][s.key_status_id].toString() +
-                "' , '" +
-                inspection_details[i][s.key_status_name] +
-                "' , '" +
-                inspection_details[i][s.key_description] +
-                "' , '" +
-                inspection_details[i][s.key_work_id].toString() +
-                "' , '" +
-                inspection_details[i][s.key_work_name] +
-                "' , '" +
-                inspection_details[i][s.key_name] +
-                "' , '" +
-                inspection_details[i][s.key_desig_name] +
-                "' , '" +
-                inspection_details[i][s.key_work_type_name] +
-                "' , '" +
-                inspection_details[i][s.key_dname] +
-                "' , '" +
-                inspection_details[i][s.key_bname] +
-                "' , '" +
-                inspection_details[i][s.key_pvname] +
-                "' , '" +
-                inspection_details[i][s.key_rural_urban] +
-                "' , '" +
-                inspection_details[i][s.key_town_type] +
-                "' , '" +
-                inspection_details[i][s.key_tpcode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_townpanchayat_name] +
-                "' , '" +
-                inspection_details[i][s.key_muncode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_municipality_name] +
-                "' , '" +
-                inspection_details[i][s.key_corcode].toString() +
-                "' , '" +
-                inspection_details[i][s.key_corporation_name] +
-                "')");
-          }
-          fetchOfflineWorklist();
+        } else if (status == s.key_ok && response_value == s.key_noRecord) {
+          setState(() {
+            utils.showAlert(context, s.no_data);
+            isWorklistAvailable = false;
+            totalWorksCount = "0";
+            npCount = "0";
+            usCount = "0";
+          });
         }
-      } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        setState(() {
-          utils.showAlert(context, s.no_data);
-          isWorklistAvailable = false;
-          totalWorksCount = "0";
-          npCount = "0";
-          usCount = "0";
-        });
+      } else {
+        utils.customAlert(context, "E", s.jsonError);
+        print("Online_Work_List responceSignature - Token Not Verified");
       }
     }
   }
@@ -379,7 +416,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   Future<void> get_PDF(String work_id, String inspection_id) async {
     utils.showProgress(context, 1);
     if (await utils.isOnline()) {
-      var userPassKey = prefs.getString(s.userPassKey);
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
 
       Map jsonRequest = {
         s.key_service_id: s.service_key_get_pdf,
@@ -387,46 +425,82 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         s.key_inspection_id: inspection_id,
       };
 
-      Map encrpted_request = {
+      Map encrypted_request = {
         s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+        s.key_data_content: jsonRequest,
+      };
+
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
       };
 
       HttpClient _client = HttpClient(context: await Utils().globalContext);
       _client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
       IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.main_service,
-          body: json.encode(encrpted_request));
+
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
+
+      print("Get_PDF_url>>" + url.main_service_jwt.toString());
+      print("Get_PDF_request_encrpt>>" + encrypted_request.toString());
+
       utils.hideProgress(context);
+
       if (response.statusCode == 200) {
-        String responseData = response.body;
+        String data = response.body;
 
-        var jsonData = jsonDecode(responseData);
+        print("Get_PDF_response>>" + data);
 
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
+        String? authorizationHeader = response.headers['authorization'];
 
-        if (status == s.key_ok && response_value == s.key_ok) {
-          var pdftoString = userData[s.key_json_data];
-          pdf = const Base64Codec().decode(pdftoString['pdf_string']);
+        String? token = authorizationHeader?.split(' ')[1];
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => PDF_Viewer(
-                      pdfBytes: pdf,
-                      workID: work_id,
-                      inspectionID: inspection_id,
-                    )),
-          );
+        print("Get_PDF Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("Get_PDF responceSignature -  $responceSignature");
+
+        print("Get_PDF responceData -  $responceData");
+
+        if (responceSignature == responceData) {
+          print("Get_PDF responceSignature - Token Verified");
+
+          var userData = jsonDecode(data);
+
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+
+          if (status == s.key_ok && response_value == s.key_ok) {
+            var pdftoString = userData[s.key_json_data];
+            pdf = const Base64Codec().decode(pdftoString['pdf_string']);
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => PDF_Viewer(
+                        pdfBytes: pdf,
+                        workID: work_id,
+                        inspectionID: inspection_id,
+                      )),
+            );
+          }
+        } else {
+          utils.customAlert(context, "E", s.jsonError);
+          print("Get_PDF responceSignature - Token Not Verified");
         }
       }
     } else {
-      utils.showAlert(context, "asd");
+      utils.showAlert(context, s.no_internet);
     }
   }
 

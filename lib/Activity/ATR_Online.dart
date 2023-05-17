@@ -191,7 +191,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     unSatisfiedWorkList = [];
     needImprovementWorkList = [];
 
-    var userPassKey = prefs.getString(s.userPassKey);
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_get_inspection_details_for_atr,
@@ -206,78 +207,113 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       jsonRequest.addAll(urbanRequest);
     }
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      s.key_data_content: jsonRequest,
     };
 
-    print(jsonRequest);
-    print(encrpted_request);
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
     utils.hideProgress(context);
+
+    print("Online_Worklist_url>>" + url.main_service_jwt.toString());
+    print("Online_Worklist_request_encrpt>>" + encrypted_request.toString());
+
     if (response.statusCode == 200) {
-      String responseData = response.body;
+      String data = response.body;
 
-      var jsonData = jsonDecode(responseData);
+      print("Online_Worklist_response>>" + data);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+      String? authorizationHeader = response.headers['authorization'];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        Map res_jsonArray = userData[s.key_json_data];
-        List<dynamic> inspection_details =
-            res_jsonArray[s.key_inspection_details];
+      String? token = authorizationHeader?.split(' ')[1];
 
-        if (inspection_details.isNotEmpty) {
-          for (int i = 0; i < inspection_details.length; i++) {
-            if (inspection_details[i][s.key_status_id] == 3) {
-              needImprovementWorkList.add(inspection_details[i]);
-            } else if (inspection_details[i][s.key_status_id] == 2) {
-              unSatisfiedWorkList.add(inspection_details[i]);
+      print("Online_Worklist Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("Online_Worklist responceSignature -  $responceSignature");
+
+      print("Online_Worklist responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("Online_Worklist responceSignature - Token Verified");
+
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          Map res_jsonArray = userData[s.key_json_data];
+          List<dynamic> inspection_details =
+              res_jsonArray[s.key_inspection_details];
+
+          if (inspection_details.isNotEmpty) {
+            for (int i = 0; i < inspection_details.length; i++) {
+              if (inspection_details[i][s.key_status_id] == 3) {
+                needImprovementWorkList.add(inspection_details[i]);
+              } else if (inspection_details[i][s.key_status_id] == 2) {
+                unSatisfiedWorkList.add(inspection_details[i]);
+              }
             }
           }
+          totalWorksCount = inspection_details.length.toString();
+          usCount = unSatisfiedWorkList.length.toString();
+          npCount = needImprovementWorkList.length.toString();
+          setState(() {
+            if (needImprovementWorkList.isNotEmpty) {
+              isNeedImprovementActive = true;
+              defaultWorklist = needImprovementWorkList;
+            } else if (unSatisfiedWorkList.isNotEmpty) {
+              isUnSatisfiedActive = true;
+              defaultWorklist = unSatisfiedWorkList;
+            } else {
+              defaultWorklist = [];
+            }
+            isWorklistAvailable = true;
+            print("WORKLIST >>>>>");
+            print(defaultWorklist);
+          });
+        } else if (status == s.key_ok && response_value == s.key_noRecord) {
+          utils.showAlert(context, s.no_data);
+          setState(() {
+            totalWorksCount = "0";
+            npCount = "0";
+            usCount = "0";
+          });
         }
-        totalWorksCount = inspection_details.length.toString();
-        usCount = unSatisfiedWorkList.length.toString();
-        npCount = needImprovementWorkList.length.toString();
-        setState(() {
-          if (needImprovementWorkList.isNotEmpty) {
-            isNeedImprovementActive = true;
-            defaultWorklist = needImprovementWorkList;
-          } else if (unSatisfiedWorkList.isNotEmpty) {
-            isUnSatisfiedActive = true;
-            defaultWorklist = unSatisfiedWorkList;
-          } else {
-            defaultWorklist = [];
-          }
-          isWorklistAvailable = true;
-          print("WORKLIST >>>>>");
-          print(defaultWorklist);
-        });
-      } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        utils.showAlert(context, s.no_data);
-        setState(() {
-          totalWorksCount = "0";
-          npCount = "0";
-          usCount = "0";
-        });
+      } else {
+        utils.customAlert(context, "E", s.jsonError);
+        print("Online_Worklist responceSignature - Token Not Verified");
       }
     }
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
     utils.showProgress(context, 1);
-    var userPassKey = prefs.getString(s.userPassKey);
+
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_get_pdf,
@@ -285,41 +321,71 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       s.key_inspection_id: inspection_id,
     };
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      s.key_data_content: jsonRequest,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
 
     if (response.statusCode == 200) {
-      String responseData = response.body;
+      String data = response.body;
 
-      var jsonData = jsonDecode(responseData);
+      print("Get_PDF_response>>" + data);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+      String? authorizationHeader = response.headers['authorization'];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        var pdftoString = userData[s.key_json_data];
-        pdf = const Base64Codec().decode(pdftoString['pdf_string']);
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => PDF_Viewer(
-                    pdfBytes: pdf,
-                    workID: work_id,
-                    inspectionID: inspection_id,
-                  )),
-        );
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("Get_PDF Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("Get_PDF responceSignature -  $responceSignature");
+
+      print("Get_PDF responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("Get_PDF responceSignature - Token Verified");
+
+        var userData = jsonDecode(data);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          var pdftoString = userData[s.key_json_data];
+          pdf = const Base64Codec().decode(pdftoString['pdf_string']);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PDF_Viewer(
+                      pdfBytes: pdf,
+                      workID: work_id,
+                      inspectionID: inspection_id,
+                    )),
+          );
+        }
+      } else {
+        utils.customAlert(context, "E", s.jsonError);
+        print("Get_PDF responceSignature - Token Not Verified");
       }
     }
     utils.hideProgress(context);

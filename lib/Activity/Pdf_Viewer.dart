@@ -7,14 +7,14 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:open_file/open_file.dart';
 
 class PDF_Viewer extends StatefulWidget {
   final pdfBytes;
-  PDF_Viewer({this.pdfBytes});
+  final workID;
+  final inspectionID;
+  PDF_Viewer({this.pdfBytes, this.workID, this.inspectionID});
 
   @override
   State<PDF_Viewer> createState() => _PDF_ViewerState();
@@ -55,25 +55,44 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
       }
     }
 
-    // Get the external storage directory
-    Directory? externalDir = await getExternalStorageDirectory();
-    if (externalDir == null) {
-      throw Exception("Couldn't get the external storage directory");
+    Directory? downloadDirectory;
+
+    if (Platform.isAndroid) {
+      List<Directory>? storageDirectories =
+          await getExternalStorageDirectories();
+      if (storageDirectories != null && storageDirectories.isNotEmpty) {
+        // Choose the first directory which usually represents the primary external storage
+        downloadDirectory = Directory('${storageDirectories[0].path}/Download');
+        print("ANDROID 1 - $downloadDirectory");
+      }
+    } else if (Platform.isIOS) {
+      downloadDirectory = await getDownloadsDirectory();
+      print("IOS - $downloadDirectory");
     }
 
+    downloadDirectory ??= await getApplicationDocumentsDirectory();
+    print("ANDROID 2 - $downloadDirectory");
+
     // Get the downloads folder path
-    String downloadsPath = '${externalDir.path}/Download';
+    // Directory? directory = Platform.isAndroid
+    //     ? await getExternalStorageDirectory()
+    //     : await getDownloadsDirectory();
+
+    String downloadsPath = '${downloadDirectory.path}/Download';
+
     Directory downloadsDir = Directory(downloadsPath);
     if (!downloadsDir.existsSync()) {
       downloadsDir.createSync();
     }
 
+    String fileName = "Inspection${widget.inspectionID}_${widget.workID}";
+
     // Save the PDF bytes to a file in the downloads folder
-    File pdfFile = File('${downloadsDir.path}/my_pdf_file.pdf');
+    File pdfFile = File('${downloadsDir.path}/$fileName.pdf');
     try {
       await pdfFile.writeAsBytes(pdfBytes);
       showNotification(
-          "Inspection App", "PDF file saved successfully", downloadsPath);
+          "Inspection App", "PDF file saved successfully", pdfFile.path);
     } catch (e) {
       print('Error writing PDF to file: $e');
       return;
@@ -147,10 +166,6 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   void _openFilePath(String path) async {
-    if (await canLaunchUrlString(path)) {
-      await launchUrlString(path);
-    } else {
-      throw 'Could not launch $path';
-    }
+    final result = await OpenFile.open(path);
   }
 }

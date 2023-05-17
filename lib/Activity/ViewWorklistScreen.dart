@@ -226,24 +226,24 @@ class _ViewWorklistState extends State<ViewWorklist> {
 
   // *************************** ATR Worklist Starts Here  *************************** //
 
-  Future<void> get_PDF(String action_status, String work_id, String inspection_id, String action_taken_id) async {
+  Future<void> get_PDF(String action_status, String work_id,
+      String inspection_id, String action_taken_id) async {
     try {
       utils.showProgress(context, 1);
       var userPassKey = prefs.getString(s.userPassKey);
       Map jsonRequest = {};
-      action_status=="Y"?
-      jsonRequest = {
-        s.key_service_id: s.service_key_get_action_taken_work_pdf,
-        s.key_work_id: work_id,
-        s.key_inspection_id: inspection_id,
-        s.key_action_taken_id: action_taken_id,
-      }:
-      jsonRequest = {
-        s.key_service_id: s.service_key_get_pdf,
-        s.key_work_id: work_id,
-        s.key_inspection_id: inspection_id,
-      }
-      ;
+      action_status == "Y"
+          ? jsonRequest = {
+              s.key_service_id: s.service_key_get_action_taken_work_pdf,
+              s.key_work_id: work_id,
+              s.key_inspection_id: inspection_id,
+              s.key_action_taken_id: action_taken_id,
+            }
+          : jsonRequest = {
+              s.key_service_id: s.service_key_get_pdf,
+              s.key_work_id: work_id,
+              s.key_inspection_id: inspection_id,
+            };
 
       Map encrpted_request = {
         s.key_user_name: prefs.getString(s.key_user_name),
@@ -284,6 +284,8 @@ class _ViewWorklistState extends State<ViewWorklist> {
             MaterialPageRoute(
                 builder: (context) => PDF_Viewer(
                       pdfBytes: pdf,
+                      workID: work_id,
+                      inspectionID: inspection_id,
                     )),
           );
         }
@@ -877,13 +879,15 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                   child: GestureDetector(
                                     onTap: () {
                                       get_PDF(
-                                          defaultWorklist[index][s.key_action_status]
+                                          defaultWorklist[index]
+                                                  [s.key_action_status]
                                               .toString(),
                                           defaultWorklist[index][s.key_work_id]
                                               .toString(),
                                           defaultWorklist[index]
                                                   [s.key_inspection_id]
-                                              .toString(), defaultWorklist[index]
+                                              .toString(),
+                                          defaultWorklist[index]
                                                   [s.key_action_taken_id]
                                               .toString());
                                     },

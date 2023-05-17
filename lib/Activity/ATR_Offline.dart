@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -235,8 +235,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 widget.Flag == "U"
                     ? __Urban_design()
                     : const SizedBox(
-                  height: 10,
-                ),
+                        height: 10,
+                      ),
                 __ATR_Dashboard_Design(),
                 __ATR_WorkList_Loader(),
               ],
@@ -379,7 +379,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   Future<void> get_PDF(String work_id, String inspection_id) async {
     utils.showProgress(context, 1);
     if (await utils.isOnline()) {
-
       var userPassKey = prefs.getString(s.userPassKey);
 
       Map jsonRequest = {
@@ -420,12 +419,13 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             MaterialPageRoute(
                 builder: (context) => PDF_Viewer(
                       pdfBytes: pdf,
+                      workID: work_id,
+                      inspectionID: inspection_id,
                     )),
           );
         }
       }
     } else {
-
       utils.showAlert(context, "asd");
     }
   }
@@ -764,506 +764,474 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   __ATR_WorkList_Loader() {
     return Container(
         margin: const EdgeInsets.only(top: 0),
-    child:  Column(
-                children: [
-                  Visibility(
-                      visible: isWorklistAvailable,
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                            top: 0, bottom: 10, left: 20, right: 20),
-                        child: AnimationLimiter(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            primary: false,
-                            itemCount: isNeedImprovementActive
-                                ? int.parse(npCount)
-                                : int.parse(usCount),
-                            itemBuilder: (context, index) {
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 800),
-                                child: SlideAnimation(
-                                  horizontalOffset: 200.0,
-                                  child: FlipAnimation(
-                                    child: Card(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 0),
-                                      elevation: 2,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                      child: Stack(children: [
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                              bottom: 10,
-                                              left: 10,
-                                              right: 10,
-                                              top: 15),
-                                          color: c.white,
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    s.inspected_by,
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: c.grey_8),
-                                                    overflow: TextOverflow.clip,
-                                                    maxLines: 1,
-                                                    softWrap: true,
+        child: Column(
+          children: [
+            Visibility(
+                visible: isWorklistAvailable,
+                child: Container(
+                  margin: const EdgeInsets.only(
+                      top: 0, bottom: 10, left: 20, right: 20),
+                  child: AnimationLimiter(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: isNeedImprovementActive
+                          ? int.parse(npCount)
+                          : int.parse(usCount),
+                      itemBuilder: (context, index) {
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 800),
+                          child: SlideAnimation(
+                            horizontalOffset: 200.0,
+                            child: FlipAnimation(
+                              child: Card(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 0),
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Stack(children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        bottom: 10,
+                                        left: 10,
+                                        right: 10,
+                                        top: 15),
+                                    color: c.white,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              s.inspected_by,
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: c.grey_8),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(
+                                              defaultWorklist[index]
+                                                  [s.inspection_by_officer],
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: c.primary_text_color2),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: c.primary_text_color2),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.work_id,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 5, 0),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topStart,
+                                                  child: Text(
+                                                    defaultWorklist[index]
+                                                            [s.key_work_id]
+                                                        .toString(),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.work_name,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 5, 0),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topStart,
+                                                  child: ExpandableText(
+                                                      defaultWorklist[index]
+                                                              [s.key_work_name]
+                                                          .toString(),
+                                                      trimLines: 2),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.work_type_name,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 5, 0),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topStart,
+                                                  child: Text(
                                                     defaultWorklist[index][s
-                                                        .inspection_by_officer],
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: c
-                                                            .primary_text_color2),
-                                                    overflow: TextOverflow.clip,
-                                                    maxLines: 1,
-                                                    softWrap: true,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: c
-                                                            .primary_text_color2),
-                                                    overflow: TextOverflow.clip,
-                                                    maxLines: 1,
-                                                    softWrap: true,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      s.work_id,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ' : ',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                              .fromLTRB(
-                                                          10, 0, 5, 0),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional
-                                                                .topStart,
-                                                        child: Text(
-                                                          defaultWorklist[index]
-                                                                  [
-                                                                  s.key_work_id]
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      s.work_name,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ' : ',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                              .fromLTRB(
-                                                          10, 0, 5, 0),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional
-                                                                .topStart,
-                                                        child: ExpandableText(
-                                                            defaultWorklist[
-                                                                        index][
-                                                                    s.key_work_name]
-                                                                .toString(),
-                                                            trimLines: 2),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      s.work_type_name,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ' : ',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                              .fromLTRB(
-                                                          10, 0, 5, 0),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional
-                                                                .topStart,
-                                                        child: Text(
-                                                          defaultWorklist[index]
-                                                                  [
-                                                                  s.key_work_type_name]
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      s.inspected_date,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ' : ',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                              .fromLTRB(
-                                                          10, 0, 5, 0),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional
-                                                                .topStart,
-                                                        child: Text(
-                                                          defaultWorklist[index]
-                                                                  [
-                                                                  s.key_inspection_date]
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      s.status,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ' : ',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: c.grey_8),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                              .fromLTRB(
-                                                          10, 0, 5, 0),
-                                                      child: Align(
-                                                        alignment:
-                                                            AlignmentDirectional
-                                                                .topStart,
-                                                        child: Text(
-                                                          defaultWorklist[index]
-                                                                  [
-                                                                  s.key_status_name]
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional.topEnd,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              selectedWorklist.clear();
-                                              selectedWorklist
-                                                  .add(defaultWorklist[index]);
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) => ATR_Save(
-                                                  rural_urban: widget.Flag,
-                                                  onoff_type: prefs
-                                                      .getString(s.onOffType),
-                                                  selectedWorklist:
-                                                      selectedWorklist,
-                                                  imagelist: [],
-                                                  flag: "",
-                                                ),
-                                              ));
-                                            },
-                                            child: Container(
-                                              height: 55,
-                                              width: 55,
-                                              decoration: BoxDecoration(
-                                                  color: c.colorPrimary,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  10.0),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  50))),
-                                              child: Center(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 5, bottom: 5),
-                                                  child: Image.asset(
-                                                    imagePath.forword,
-                                                    width: 25,
-                                                    height: 25,
-                                                    color: c.white,
+                                                            .key_work_type_name]
+                                                        .toString(),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              get_PDF(
-                                                  defaultWorklist[index]
-                                                          [s.key_work_id]
-                                                      .toString(),
-                                                  defaultWorklist[index]
-                                                          [s.key_inspection_id]
-                                                      .toString());
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 10, right: 5),
-                                              child: Image.asset(
-                                                imagePath.pdf,
-                                                width: 30,
-                                                height: 30,
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.inspected_date,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
                                               ),
                                             ),
-                                          ),
-                                        )
-                                      ]),
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 5, 0),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topStart,
+                                                  child: Text(
+                                                    defaultWorklist[index][s
+                                                            .key_inspection_date]
+                                                        .toString(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                s.status,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                ' : ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: c.grey_8),
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 0, 5, 0),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topStart,
+                                                  child: Text(
+                                                    defaultWorklist[index]
+                                                            [s.key_status_name]
+                                                        .toString(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                  Align(
+                                    alignment: AlignmentDirectional.topEnd,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        selectedWorklist.clear();
+                                        selectedWorklist
+                                            .add(defaultWorklist[index]);
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) => ATR_Save(
+                                            rural_urban: widget.Flag,
+                                            onoff_type:
+                                                prefs.getString(s.onOffType),
+                                            selectedWorklist: selectedWorklist,
+                                            imagelist: [],
+                                            flag: "",
+                                          ),
+                                        ));
+                                      },
+                                      child: Container(
+                                        height: 55,
+                                        width: 55,
+                                        decoration: BoxDecoration(
+                                            color: c.colorPrimary,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(10.0),
+                                                    bottomLeft:
+                                                        Radius.circular(50))),
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5, bottom: 5),
+                                            child: Image.asset(
+                                              imagePath.forword,
+                                              width: 25,
+                                              height: 25,
+                                              color: c.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        if (await utils.isOnline()) {
+                                          get_PDF(
+                                              defaultWorklist[index]
+                                                      [s.key_work_id]
+                                                  .toString(),
+                                              defaultWorklist[index]
+                                                      [s.key_inspection_id]
+                                                  .toString());
+                                        } else {
+                                          utils.customAlert(
+                                              context, "E", s.no_internet);
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 10, right: 5),
+                                        child: Image.asset(
+                                          imagePath.pdf,
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ]),
+                              ),
+                            ),
                           ),
-                        ),
-                      )),
-                  Visibility(
-                    visible: isWorklistAvailable == false ? true : false,
-                    child: Align(
-                      alignment: AlignmentDirectional.center,
-                      child: Container(
-                        margin: EdgeInsets.only(top: 40),
-                        alignment: Alignment.center,
-                        child: Text(
-                          s.no_data,
-                          style: const TextStyle(fontSize: 15),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
-                ],
-              )
-              );
+                )),
+            Visibility(
+              visible: isWorklistAvailable == false ? true : false,
+              child: Align(
+                alignment: AlignmentDirectional.center,
+                child: Container(
+                  margin: EdgeInsets.only(top: 40),
+                  alignment: Alignment.center,
+                  child: Text(
+                    s.no_data,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   // *************************** ATR Worklist Ends Here  *************************** //

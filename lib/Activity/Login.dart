@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously, avoid_unnecessary_containers, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
 import 'dart:convert';
@@ -65,404 +65,410 @@ class LoginState extends State<Login> {
         child: Container(
           height: MediaQuery.of(context).size.height,
           color: c.colorAccentverylight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Expanded(
-                  child: Column(children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      transform: Matrix4.translationValues(0.0, -60.0, 0.0),
-                      height: 200,
-                      decoration: BoxDecoration(
-                          border: Border.all(
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Expanded(
+                    child: Column(children: <Widget>[
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -60.0, 0.0),
+                        height: 200,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: c.colorPrimary,
+                            ),
                             color: c.colorPrimary,
-                          ),
-                          color: c.colorPrimary,
-                          borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(200),
-                              bottomRight: Radius.circular(200))),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: Text(
-                        "LOGIN",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 18),
-                        textAlign: TextAlign.left,
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(200),
+                                bottomRight: Radius.circular(200))),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 110, 0, 0),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child: Align(
-                          alignment: AlignmentDirectional.topCenter,
-                          child: Image.asset(
-                            imagePath.logo,
-                            height: 60,
-                          ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Text(
+                          "LOGIN",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 18),
+                          textAlign: TextAlign.left,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-                    child: Align(
-                      alignment: AlignmentDirectional.topCenter,
-                      child: Text(
-                        s.appName,
-                        style: TextStyle(
-                            color: c.grey_8,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-                Stack(children: <Widget>[
-                  Container(
-                    transform: Matrix4.translationValues(0.0, -15.0, 0.0),
-                    child: Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      // clipBehavior is necessary because, without it, the InkWell's animation
-                      // will extend beyond the rounded edges of the [Card] (see https://github.com/flutter/flutter/issues/109776)
-                      // This comes with a small performance cost, and you should not set [clipBehavior]
-                      // unless you need it.
-                      clipBehavior: Clip.hardEdge,
-                      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                child: Text(
-                                  s.mobileNumber,
-                                  style:
-                                      TextStyle(color: c.grey_8, fontSize: 15),
-                                  textAlign: TextAlign.left,
-                                )),
-                            Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: c.grey_3, width: 2),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: const Radius.circular(15),
-                                    topRight: const Radius.circular(15),
-                                    bottomLeft: const Radius.circular(15),
-                                    bottomRight: const Radius.circular(15),
-                                  )),
-                              margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                              alignment: AlignmentDirectional.centerStart,
-                              child: TextField(
-                                textAlignVertical: TextAlignVertical.center,
-                                controller: user_name,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                  hintText: s.mobileNumber,
-                                  hintStyle: TextStyle(
-                                      fontSize: 14.0, color: c.grey_6),
-                                  border: InputBorder.none,
-                                  prefixIcon: SvgPicture.asset(
-                                    imagePath.ic_user,
-                                    color: c.colorPrimary,
-                                    height: 15,
-                                    width: 15,
-                                  ),
-                                  prefixIconConstraints: BoxConstraints(
-                                    minHeight: 20,
-                                    minWidth: 30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                                child: Text(
-                                  s.password,
-                                  style:
-                                      TextStyle(color: c.grey_8, fontSize: 15),
-                                  textAlign: TextAlign.left,
-                                )),
-                            Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: c.grey_3, width: 2),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: const Radius.circular(15),
-                                    topRight: const Radius.circular(15),
-                                    bottomLeft: const Radius.circular(15),
-                                    bottomRight: const Radius.circular(15),
-                                  )),
-                              alignment: AlignmentDirectional.center,
-                              margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
-                              child: TextField(
-                                textAlignVertical: TextAlignVertical.center,
-                                controller: user_password,
-                                obscureText: !_passwordVisible,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                  hintText: s.password,
-                                  hintStyle: TextStyle(
-                                      fontSize: 14.0, color: c.grey_6),
-                                  border: InputBorder.none,
-                                  prefixIcon: SvgPicture.asset(
-                                    imagePath.ic_user,
-                                    color: c.colorPrimary,
-                                    height: 15,
-                                    width: 15,
-                                  ),
-                                  prefixIconConstraints: BoxConstraints(
-                                    minHeight: 20,
-                                    minWidth: 30,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      // Based on passwordVisible state choose the icon
-                                      _passwordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: c.grey_8,
-                                    ),
-                                    onPressed: () {
-                                      // Update the state i.e. toogle the state of passwordVisible variable
-                                      setState(() {
-                                        _passwordVisible = !_passwordVisible;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ForgotPassword(
-                                                isForgotPassword:
-                                                    "forgot_password",
-                                              )));
-                                }, // Handle your callback
-                                child: Text(
-                                  s.forgot_password,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: c.full_transparent,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: c.colorPrimaryDark,
-                                    shadows: [
-                                      Shadow(
-                                          color: c.colorPrimaryDark,
-                                          offset: Offset(0, -3))
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    width: MediaQuery.of(context).size.width,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        alignment: Alignment.bottomCenter,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: c.colorPrimary),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 110, 0, 0),
                         child: Padding(
-                          padding: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                           child: Align(
                             alignment: AlignmentDirectional.topCenter,
-                            child: InkWell(
-                              onTap: () async {
-                                /* loginScreenBinding.userName.setText("9080873403");
-        loginScreenBinding.password.setText("Crd555#&");// local block*/
-                                /*  loginScreenBinding.userName.setText("7877979787");
-        loginScreenBinding.password.setText("Crd123#$");// local district*/
+                            child: Image.asset(
+                              imagePath.logo,
+                              height: 60,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+                      child: Align(
+                        alignment: AlignmentDirectional.topCenter,
+                        child: Text(
+                          s.appName,
+                          style: TextStyle(
+                              color: c.grey_8,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Stack(children: <Widget>[
+                    Container(
+                      transform: Matrix4.translationValues(0.0, -15.0, 0.0),
+                      child: Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        // clipBehavior is necessary because, without it, the InkWell's animation
+                        // will extend beyond the rounded edges of the [Card] (see https://github.com/flutter/flutter/issues/109776)
+                        // This comes with a small performance cost, and you should not set [clipBehavior]
+                        // unless you need it.
+                        clipBehavior: Clip.hardEdge,
+                        margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                                  child: Text(
+                                    s.mobileNumber,
+                                    style: TextStyle(
+                                        color: c.grey_8, fontSize: 15),
+                                    textAlign: TextAlign.left,
+                                  )),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: c.grey_3, width: 2),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(15),
+                                      topRight: const Radius.circular(15),
+                                      bottomLeft: const Radius.circular(15),
+                                      bottomRight: const Radius.circular(15),
+                                    )),
+                                margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                alignment: AlignmentDirectional.centerStart,
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  controller: user_name,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    isDense: true,
+                                    hintText: s.mobileNumber,
+                                    hintStyle: TextStyle(
+                                        fontSize: 14.0, color: c.grey_6),
+                                    border: InputBorder.none,
+                                    prefixIcon: SvgPicture.asset(
+                                      imagePath.ic_user,
+                                      color: c.colorPrimary,
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    prefixIconConstraints: BoxConstraints(
+                                      minHeight: 20,
+                                      minWidth: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                                  child: Text(
+                                    s.password,
+                                    style: TextStyle(
+                                        color: c.grey_8, fontSize: 15),
+                                    textAlign: TextAlign.left,
+                                  )),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: c.grey_3, width: 2),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(15),
+                                      topRight: const Radius.circular(15),
+                                      bottomLeft: const Radius.circular(15),
+                                      bottomRight: const Radius.circular(15),
+                                    )),
+                                alignment: AlignmentDirectional.center,
+                                margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  controller: user_password,
+                                  obscureText: !_passwordVisible,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    isDense: true,
+                                    hintText: s.password,
+                                    hintStyle: TextStyle(
+                                        fontSize: 14.0, color: c.grey_6),
+                                    border: InputBorder.none,
+                                    prefixIcon: SvgPicture.asset(
+                                      imagePath.ic_user,
+                                      color: c.colorPrimary,
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    prefixIconConstraints: BoxConstraints(
+                                      minHeight: 20,
+                                      minWidth: 30,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        _passwordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: c.grey_8,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _passwordVisible = !_passwordVisible;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                alignment: Alignment.centerRight,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgotPassword(
+                                                  isForgotPassword:
+                                                      "forgot_password",
+                                                )));
+                                  }, // Handle your callback
+                                  child: Text(
+                                    s.forgot_password,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: c.full_transparent,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: c.colorPrimaryDark,
+                                      shadows: [
+                                        Shadow(
+                                            color: c.colorPrimaryDark,
+                                            offset: Offset(0, -3))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      width: MediaQuery.of(context).size.width,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          alignment: Alignment.bottomCenter,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: c.colorPrimary),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Align(
+                              alignment: AlignmentDirectional.topCenter,
+                              child: InkWell(
+                                onTap: () async {
+                                  /* loginScreenBinding.userName.setText("9080873403");
+          loginScreenBinding.password.setText("Crd555#&");// local block*/
+                                  /*  loginScreenBinding.userName.setText("7877979787");
+          loginScreenBinding.password.setText("Crd123#$");// local district*/
 
-                                /* loginScreenBinding.userName.setText("9751337424");
-        loginScreenBinding.password.setText("Test88#$");// local state*/
-                                //prod
-                                /* loginScreenBinding.userName.setText("9750895078");
-        loginScreenBinding.password.setText("Test1234#$");//block prod*/
+                                  /* loginScreenBinding.userName.setText("9751337424");
+          loginScreenBinding.password.setText("Test88#$");// local state*/
+                                  //prod
+                                  /* loginScreenBinding.userName.setText("9750895078");
+          loginScreenBinding.password.setText("Test1234#$");//block prod*/
 
-                                String ss =
-                                    String.fromCharCodes(Runes('\u0024'));
-                                user_name.text = "9080873403";
-                                user_password.text = "Crd555#" + ss;
-                                if (user_name.text.isNotEmpty) {
-                                  if (user_password.text.isNotEmpty) {
-                                    // utils.showToast(context, string.success);
+                                  String ss =
+                                      String.fromCharCodes(Runes('\u0024'));
+                                  user_name.text = "9595959595";
+                                  user_password.text = "crd44#" + ss;
+                                  if (user_name.text.isNotEmpty) {
+                                    if (user_password.text.isNotEmpty) {
+                                      // utils.showToast(context, string.success);
 
-                                    if (await utils.isOnline()) {
-                                      utils.hideSoftKeyBoard(context);
-                                      login(context);
+                                      if (await utils.isOnline()) {
+                                        utils.hideSoftKeyBoard(context);
+                                        login(context);
+                                      } else {
+                                        utils.showalertforOffline(
+                                            context,
+                                            s.internet_error,
+                                            user_name.text,
+                                            user_password.text);
+                                      }
                                     } else {
-                                      utils.showalertforOffline(
-                                          context,
-                                          s.internet_error,
-                                          user_name.text,
-                                          user_password.text);
+                                      utils.showToast(
+                                          context, s.password_empty);
                                     }
                                   } else {
-                                    utils.showToast(context, s.password_empty);
+                                    utils.showToast(context, s.user_name_empty);
                                   }
-                                } else {
-                                  utils.showToast(context, s.user_name_empty);
-                                }
-                              }, // Image tapped
-                              child: Image.asset(
-                                imagePath.right_arrow_icon,
-                                color: Colors.white,
-                                height: 45,
+                                }, // Image tapped
+                                child: Image.asset(
+                                  imagePath.right_arrow_icon,
+                                  color: Colors.white,
+                                  height: 45,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ]),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 20, bottom: 20),
-                  // Handle your callback
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                          child: Text(
-                            s.new_user,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: c.d_grey2,
-                                fontSize: 16),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Registration(
-                                          registerFlag: 1,
-                                          profileJson: [],
-                                        )));
-
-                            // utils.showToast(context, "click register");
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    )
+                  ]),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 20, bottom: 20),
+                    // Handle your callback
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                             child: Text(
-                              s.register,
+                              s.new_user,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: c.colorPrimaryDark,
-                                  fontSize: 17),
+                                  color: c.d_grey2,
+                                  fontSize: 16),
                               textAlign: TextAlign.left,
                             ),
                           ),
-                        ),
-                      ]),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(fontSize: 15, color: c.d_grey3),
-                        children: [
-                          TextSpan(
-                            text: s.otp_validation1,
-                            style: TextStyle(fontSize: 15),
-                          ),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                // Handle the tap event
-                                Navigator.push(
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => OTPVerification(
-                                            Flag: "login",
-                                          )),
-                                );
-                              },
-                            text: s.otp_validation2,
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold), //<-- SEE HERE
+                                      builder: (context) => Registration(
+                                            registerFlag: 1,
+                                            profileJson: [],
+                                          )));
+
+                              // utils.showToast(context, "click register");
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: Text(
+                                s.register,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: c.colorPrimaryDark,
+                                    fontSize: 17),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
                           ),
-                          TextSpan(
-                            text: s.otp_validation3,
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ],
+                        ]),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(fontSize: 15, color: c.d_grey3),
+                          children: [
+                            TextSpan(
+                              text: s.otp_validation1,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  // Handle the tap event
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OTPVerification(
+                                              Flag: "login",
+                                            )),
+                                  );
+                                },
+                              text: s.otp_validation2,
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold), //<-- SEE HERE
+                            ),
+                            TextSpan(
+                              text: s.otp_validation3,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ])),
-              Container(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  child: Column(children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text(
-                        version,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: c.d_grey2,
-                            fontSize: 16),
-                        textAlign: TextAlign.left,
+                ])),
+                Container(
+                    alignment: AlignmentDirectional.bottomCenter,
+                    child: Column(children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                        child: Text(
+                          version,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.d_grey2,
+                              fontSize: 16),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                      child: Text(
-                        s.software_designed_and,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: c.grey_8,
-                            fontSize: 17),
-                        textAlign: TextAlign.left,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                        child: Text(
+                          s.software_designed_and,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.grey_8,
+                              fontSize: 17),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
-                    ),
-                  ]))
-            ],
+                    ]))
+              ],
+            ),
           ),
         ),
       ),
@@ -766,24 +772,38 @@ class LoginState extends State<Login> {
     utils.showProgress(context, 1);
     late Map json_request;
 
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
     json_request = {
       s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
     Map encrpted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          utils.encryption(jsonEncode(json_request), userDecriptKey),
+      s.key_user_name: userName,
+      s.key_data_content: json_request,
     };
-    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+
+    String jsonString = jsonEncode(encrpted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    print("ProfileData_url>>" + url.main_service.toString());
-    print("ProfileData_request_json>>" + json_request.toString());
+
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrpted_request), headers: header);
+
+    print("ProfileData_url>>" + url.main_service_jwt.toString());
     print("ProfileData_request_encrpt>>" + encrpted_request.toString());
     utils.hideProgress(context);
 
@@ -791,45 +811,64 @@ class LoginState extends State<Login> {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
+
       print("ProfileData_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, userDecriptKey);
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        if (res_jsonArray.length > 0) {
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            String name = res_jsonArray[i][s.key_name];
-            String mobile = res_jsonArray[i][s.key_mobile];
-            String gender = res_jsonArray[i][s.key_gender];
-            String level = res_jsonArray[i][s.key_level];
-            String desig_code = res_jsonArray[i][s.key_desig_code].toString();
-            String desig_name = res_jsonArray[i][s.key_desig_name];
-            String dcode = res_jsonArray[i][s.key_dcode].toString();
-            String bcode = res_jsonArray[i][s.key_bcode].toString();
-            String office_address = res_jsonArray[i][s.key_office_address];
-            String email = res_jsonArray[i][s.key_email];
-            String profile_image = res_jsonArray[i][s.key_profile_image];
-            String role_code = res_jsonArray[i][s.key_role_code].toString();
 
-            if (!(profile_image == ("null") || profile_image == (""))) {
-              Uint8List bytes = Base64Codec().decode(profile_image);
-              prefs.setString(s.key_profile_image, profile_image);
-            } else {
-              prefs.setString(s.key_profile_image, "");
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("ProfileData Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("ProfileData responceSignature -  $responceSignature");
+
+      print("ProfileData responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          if (res_jsonArray.length > 0) {
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              String name = res_jsonArray[i][s.key_name];
+              String mobile = res_jsonArray[i][s.key_mobile];
+              String gender = res_jsonArray[i][s.key_gender];
+              String level = res_jsonArray[i][s.key_level];
+              String desig_code = res_jsonArray[i][s.key_desig_code].toString();
+              String desig_name = res_jsonArray[i][s.key_desig_name];
+              String dcode = res_jsonArray[i][s.key_dcode].toString();
+              String bcode = res_jsonArray[i][s.key_bcode].toString();
+              String office_address = res_jsonArray[i][s.key_office_address];
+              String email = res_jsonArray[i][s.key_email];
+              String profile_image = res_jsonArray[i][s.key_profile_image];
+              String role_code = res_jsonArray[i][s.key_role_code].toString();
+
+              if (!(profile_image == ("null") || profile_image == (""))) {
+                Uint8List bytes = Base64Codec().decode(profile_image);
+                prefs.setString(s.key_profile_image, profile_image);
+              } else {
+                prefs.setString(s.key_profile_image, "");
+              }
+
+              prefs.setString(s.key_desig_name, desig_name);
+              prefs.setString(s.key_desig_code, desig_code);
+              prefs.setString(s.key_name, name);
+              prefs.setString(s.key_role_code, role_code);
+              prefs.setString(s.key_level, level);
+              prefs.setString(s.key_dcode, dcode);
+              prefs.setString(s.key_bcode, bcode);
             }
-
-            prefs.setString(s.key_desig_name, desig_name);
-            prefs.setString(s.key_desig_code, desig_code);
-            prefs.setString(s.key_name, name);
-            prefs.setString(s.key_role_code, role_code);
-            prefs.setString(s.key_level, level);
-            prefs.setString(s.key_dcode, dcode);
-            prefs.setString(s.key_bcode, bcode);
           }
+        } else {
+          utils.customAlert(context, "E", userData[s.key_message]);
         }
       }
     }
@@ -838,76 +877,110 @@ class LoginState extends State<Login> {
   Future<void> getDashboardData() async {
     utils.showProgress(context, 1);
     late Map json_request;
+
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
     json_request = {
       s.key_service_id: s.service_key_current_finyear_wise_status_count
     };
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: json_request,
     };
-    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+
+    String jsonString = jsonEncode(encrpted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    print("DashboardData_url>>" + url.main_service.toString());
-    print("DashboardData_request_json>>" + json_request.toString());
-    print("DashboardData_request_encrpt>>" + encrpted_request.toString());
-    utils.hideProgress(context);
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("DashboardData_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data =
-          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        if (res_jsonArray.length > 0) {
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            String satisfied_count =
-                res_jsonArray[i][s.key_satisfied].toString();
-            String un_satisfied_count =
-                res_jsonArray[i][s.key_unsatisfied].toString();
-            String need_improvement_count =
-                res_jsonArray[i][s.key_need_improvement].toString();
-            String fin_year = res_jsonArray[i][s.key_fin_year];
-            String inspection_type = res_jsonArray[i][s.key_inspection_type];
-            if (satisfied_count == ("")) {
-              satisfied_count = "0";
-            }
-            if (un_satisfied_count == ("")) {
-              un_satisfied_count = "0";
-            }
-            if (need_improvement_count == ("")) {
-              need_improvement_count = "0";
-            }
-            int total_inspection_count = int.parse(satisfied_count) +
-                int.parse(un_satisfied_count) +
-                int.parse(need_improvement_count);
 
-            if (inspection_type == ("rdpr")) {
-              prefs.setString(s.satisfied_count, satisfied_count);
-              prefs.setString(s.un_satisfied_count, un_satisfied_count);
-              prefs.setString(s.need_improvement_count, need_improvement_count);
-              prefs.setString(s.total_rdpr, total_inspection_count.toString());
-              prefs.setString(s.financial_year, fin_year);
-            } else {
-              prefs.setString(s.satisfied_count_other, satisfied_count);
-              prefs.setString(s.un_satisfied_count_other, un_satisfied_count);
-              prefs.setString(
-                  s.need_improvement_count_other, need_improvement_count);
-              prefs.setString(s.total_other, total_inspection_count.toString());
-              prefs.setString(s.financial_year, fin_year);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
+    var response = await _ioClient.post(url.main_service_jwt,
+        headers: header, body: json.encode(encrpted_request));
+
+    print("DashboardData_url>>" + url.main_service.toString());
+    print("DashboardData_request_encrpt>>" + encrpted_request.toString());
+
+    utils.hideProgress(context);
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+
+      print("DashboardData_response>>" + data);
+
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("DashboardData Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("DashboardData responceSignature -  $responceSignature");
+
+      print("DashboardData responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          if (res_jsonArray.isNotEmpty) {
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              String satisfied_count =
+                  res_jsonArray[i][s.key_satisfied].toString();
+              String un_satisfied_count =
+                  res_jsonArray[i][s.key_unsatisfied].toString();
+              String need_improvement_count =
+                  res_jsonArray[i][s.key_need_improvement].toString();
+              String fin_year = res_jsonArray[i][s.key_fin_year];
+              String inspection_type = res_jsonArray[i][s.key_inspection_type];
+              if (satisfied_count == ("")) {
+                satisfied_count = "0";
+              }
+              if (un_satisfied_count == ("")) {
+                un_satisfied_count = "0";
+              }
+              if (need_improvement_count == ("")) {
+                need_improvement_count = "0";
+              }
+              int total_inspection_count = int.parse(satisfied_count) +
+                  int.parse(un_satisfied_count) +
+                  int.parse(need_improvement_count);
+
+              if (inspection_type == ("rdpr")) {
+                prefs.setString(s.satisfied_count, satisfied_count);
+                prefs.setString(s.un_satisfied_count, un_satisfied_count);
+                prefs.setString(
+                    s.need_improvement_count, need_improvement_count);
+                prefs.setString(
+                    s.total_rdpr, total_inspection_count.toString());
+                prefs.setString(s.financial_year, fin_year);
+              } else {
+                prefs.setString(s.satisfied_count_other, satisfied_count);
+                prefs.setString(s.un_satisfied_count_other, un_satisfied_count);
+                prefs.setString(
+                    s.need_improvement_count_other, need_improvement_count);
+                prefs.setString(
+                    s.total_other, total_inspection_count.toString());
+                prefs.setString(s.financial_year, fin_year);
+              }
             }
           }
         }

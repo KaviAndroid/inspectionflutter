@@ -789,16 +789,16 @@ class LoginState extends State<Login> {
     String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
 
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = IOClient(_client);
 
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
 
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrpted_request), headers: header);
@@ -829,6 +829,7 @@ class LoginState extends State<Login> {
       print("ProfileData responceData -  $responceData");
 
       if (responceSignature == responceData) {
+        print("ProfileData responceSignature - Token Verified");
         var userData = jsonDecode(data);
 
         var status = userData[s.key_status];
@@ -868,6 +869,7 @@ class LoginState extends State<Login> {
             }
           }
         } else {
+          print("ProfileData responceSignature - Token Not Verified");
           utils.customAlert(context, "E", userData[s.key_message]);
         }
       }

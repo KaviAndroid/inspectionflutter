@@ -779,12 +779,12 @@ class LoginState extends State<Login> {
       s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
-    String jsonString = jsonEncode(encrpted_request);
+    String jsonString = jsonEncode(encrypted_request);
 
     String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
@@ -801,10 +801,11 @@ class LoginState extends State<Login> {
 
 
     var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrpted_request), headers: header);
+        body: jsonEncode(encrypted_request), headers: header);
 
     print("ProfileData_url>>" + url.main_service_jwt.toString());
-    print("ProfileData_request_encrpt>>" + encrpted_request.toString());
+    print("ProfileData_request_json>>" + json_request.toString());
+    print("ProfileData_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
@@ -913,7 +914,8 @@ class LoginState extends State<Login> {
     var response = await _ioClient.post(url.main_service_jwt,
         headers: header, body: json.encode(encrpted_request));
 
-    print("DashboardData_url>>" + url.main_service.toString());
+    print("DashboardData_url>>" + url.main_service_jwt.toString());
+    print("DashboardData_request_json>>" + json_request.toString());
     print("DashboardData_request_encrpt>>" + encrpted_request.toString());
 
     utils.hideProgress(context);
@@ -988,7 +990,10 @@ class LoginState extends State<Login> {
             }
           }
         }
-      }
+    }else {
+      print("saveWorkList responceSignature - Token Not Verified");
+      utils.customAlert(context, "E", s.jsonError);
+    }
     }
   }
 }

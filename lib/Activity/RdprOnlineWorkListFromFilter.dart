@@ -899,6 +899,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   }
 
   Future<void> getSchemeList(String pvcode) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     Map json_request = {};
     if (selectedLevel == 'S') {
       json_request = {
@@ -926,31 +928,53 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       };
     }
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          json.encode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: json_request,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
-    print("SchemeList_url>>" + url.main_service.toString());
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("SchemeList_url>>" + url.main_service_jwt.toString());
     print("SchemeList_request_json>>" + json_request.toString());
-    print("SchemeList_request_encrpt>>" + encrpted_request.toString());
+    print("SchemeList_request_encrpt>>" + encrypted_request.toString());
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
       print("SchemeList_response>>" + data);
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(
-          enc_data.toString(), prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("SchemeList Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("SchemeList responceSignature -  $responceSignature");
+
+      print("SchemeList responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("SchemeList responceSignature - Token Verified");
+        var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var responseValue = userData[s.key_response];
       if (status == s.key_ok && responseValue == s.key_ok) {
@@ -970,6 +994,10 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Scheme Found");
+      }
+      }else {
+        print("SchemeList responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
       }
     }
   }

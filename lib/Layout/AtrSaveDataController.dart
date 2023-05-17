@@ -419,12 +419,12 @@ class AtrSaveDataController with ChangeNotifier{
       'inspection_work_details': inspection_work_details,
     };
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content: main_dataset,
     };
 
-    String jsonString = jsonEncode(encrpted_request);
+    String jsonString = jsonEncode(encrypted_request);
 
     String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
@@ -439,7 +439,10 @@ class AtrSaveDataController with ChangeNotifier{
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrpted_request), headers: header);
+        body: jsonEncode(encrypted_request), headers: header);
+    print("onlineSave_response_url>>" + url.main_service_jwt.toString());
+    print("onlineSave_request_json>>" + main_dataset.toString());
+    print("onlineSave_response_request_encrpt>>" + encrypted_request.toString());
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     // print("onlineSave_url>>${url.main_service}");
     // print("onlineSave_request_json>>$main_dataset");
@@ -466,7 +469,7 @@ class AtrSaveDataController with ChangeNotifier{
       print("onlineSave responceData -  $responceData");
 
       if (responceSignature == responceData) {
-        print("ProfileData responceSignature - Token Verified");
+        print("onlineSave responceSignature - Token Verified");
         var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
@@ -485,7 +488,10 @@ class AtrSaveDataController with ChangeNotifier{
       } else {
         utils.customAlert(context, "E", s.no_data).then((value) => onWillPop(context));
       }
-
+      }else {
+        print("onlineSave responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
+      }
     }
   }
   Future<bool> onWillPop(BuildContext context) async {

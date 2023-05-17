@@ -859,6 +859,8 @@ class _PendingScreenState extends State<PendingScreen> {
   // *************************** GO TO DELETE   *************************** //
 
   gotoUpload(List workList) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     if (await utils.isOnline()) {
       String conditionParam = "";
@@ -954,33 +956,54 @@ class _PendingScreenState extends State<PendingScreen> {
         };
       }
 
-      Map encrpted_request = {
+      Map encrypted_request = {
         s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content: utils.encryption(jsonEncode(main_dataset),
-            prefs.getString(s.userPassKey).toString()),
+        s.key_data_content: main_dataset,
       };
+      String jsonString = jsonEncode(encrypted_request);
 
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
+      };
       HttpClient _client = HttpClient(context: await utils.globalContext);
       _client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
       IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.main_service,
-          body: json.encode(encrpted_request));
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
 
-      print("onlineSave_request>>$main_dataset");
-      print("onlineSave_request_encrpt>>$encrpted_request");
+
+      print("saveWorkList_url>>" + url.main_service_jwt.toString());
+      print("saveWorkList_request_json>>" + main_dataset.toString());
+      print("saveWorkList_request_encrpt>>" + encrypted_request.toString());
       utils.hideProgress(context);
 
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,
         // then parse the JSON.
         String data = response.body;
-        print("onlineSave_response>>$data");
-        var jsonData = jsonDecode(data);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = utils.decryption(
-            enc_data, prefs.getString(s.userPassKey).toString());
-        var userData = jsonDecode(decrpt_data);
+        print("saveWorkList_response>>$data");
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("saveWorkList Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("saveWorkList responceSignature -  $responceSignature");
+
+        print("saveWorkList responceData -  $responceData");
+
+        if (responceSignature == responceData) {
+          print("saveWorkList responceSignature - Token Verified");
+          var userData = jsonDecode(data);
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
         var msg = userData[s.key_message];
@@ -990,6 +1013,10 @@ class _PendingScreenState extends State<PendingScreen> {
           fetchOfflineWorklist();
         } else {
           await utils.customAlert(context, "E", msg);
+        }
+        }else {
+          print("saveWorkList responceSignature - Token Not Verified");
+          utils.customAlert(context, "E", s.jsonError);
         }
       }
     } else {

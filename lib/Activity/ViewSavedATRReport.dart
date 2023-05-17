@@ -1085,6 +1085,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -1122,26 +1124,47 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: json_request,
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
     utils.hideProgress(context);
-    print("ATRWorkList_url>>" + url.main_service.toString());
+    print("ATRWorkList_url>>" + url.main_service_jwt.toString());
     print("ATRWorkList_request_json>>" + json_request.toString());
     print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
     String data = response.body;
     print("ATRWorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrpt_data =
-        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrpt_data);
+    String? authorizationHeader = response.headers['authorization'];
+
+    String? token = authorizationHeader?.split(' ')[1];
+
+    print("ATRWorkList Authorization -  $token");
+
+    String responceSignature = utils.jwt_Decode(key, token!);
+
+    String responceData = utils.generateHmacSha256(data, key, false);
+
+    print("ATRWorkList responceSignature -  $responceSignature");
+
+    print("ATRWorkList responceData -  $responceData");
+
+    if (responceSignature == responceData) {
+      print("ATRWorkList responceSignature - Token Verified");
+      var userData = jsonDecode(data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     // utils.hideProgress(context);
@@ -1227,10 +1250,16 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         usCount = "0";
       });
     }
+    }else {
+      print("ATRWorkList responceSignature - Token Not Verified");
+      utils.customAlert(context, "E", s.jsonError);
+    }
   }
 
   Future<void> get_PDF(
       String work_id, String inspection_id, String action_taken_id) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     var userPassKey = prefs.getString(s.userPassKey);
 
@@ -1242,25 +1271,51 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     };
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-          Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      s.key_data_content:jsonRequest,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+    print("get_PDF_url>>" + url.main_service_jwt.toString());
+    print("get_PDF_request_json>>" + jsonRequest.toString());
+    print("get_PDF_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
     if (response.statusCode == 200) {
-      String responseData = response.body;
+      String data = response.body;
 
-      var jsonData = jsonDecode(responseData);
+      print("get_PDF_response>>" + data);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("get_PDF Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("get_PDF responceSignature -  $responceSignature");
+
+      print("get_PDF responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("get_PDF responceSignature - Token Verified");
+        var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
 
@@ -1279,11 +1334,17 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                   )),
         );
       }
+      }else {
+        print("get_PDF responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
+      }
     }
   }
 
   Future<void> getSavedWorkDetails(
       String work_id, String inspection_id, String action_taken_id) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     prefs = await SharedPreferences.getInstance();
     late Map json_request;
@@ -1302,26 +1363,47 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     }
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: json_request,
     };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
     utils.hideProgress(context);
-    print("ATRSavedWorkList_url>>" + url.main_service.toString());
+    print("ATRSavedWorkList_url>>" + url.main_service_jwt.toString());
     print("ATRSavedWorkList_request_json>>" + json_request.toString());
     print("ATRSavedWorkList_request_encrpt>>" + encrypted_request.toString());
     String data = response.body;
     print("ATRSavedWorkList_response>>" + data);
-    var jsonData = jsonDecode(data);
-    var enc_data = jsonData[s.key_enc_data];
-    var decrypt_data =
-        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-    var userData = jsonDecode(decrypt_data);
+    String? authorizationHeader = response.headers['authorization'];
+
+    String? token = authorizationHeader?.split(' ')[1];
+
+    print("ATRSavedWorkList Authorization -  $token");
+
+    String responceSignature = utils.jwt_Decode(key, token!);
+
+    String responceData = utils.generateHmacSha256(data, key, false);
+
+    print("ATRSavedWorkList responceSignature -  $responceSignature");
+
+    print("ATRSavedWorkList responceData -  $responceData");
+
+    if (responceSignature == responceData) {
+      print("ATRSavedWorkList responceSignature - Token Verified");
+      var userData = jsonDecode(data);
     var status = userData[s.key_status];
     var response_value = userData[s.key_response];
     ImageList.clear();
@@ -1354,6 +1436,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       }
     } else if (status == s.key_ok && response_value == s.key_noRecord) {
       utils.customAlert(context, "E", response_value);
+    }
+    }else {
+      print("ATRSavedWorkList responceSignature - Token Not Verified");
+      utils.customAlert(context, "E", s.jsonError);
     }
   }
 

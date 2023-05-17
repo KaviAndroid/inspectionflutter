@@ -620,6 +620,8 @@ class _DrawerAppState extends State<DrawerApp> {
   }
 
   Future<void> getAll_Stage() async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     try {
     late Map json_request;
@@ -630,18 +632,26 @@ class _DrawerAppState extends State<DrawerApp> {
 
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: json_request,
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrypted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
 
-    print("RefreshWorkStages_url>>${url.main_service}");
+    print("RefreshWorkStages_url>>${url.main_service_jwt}");
     print("RefreshWorkStages_request_json>>$json_request");
     print("RefreshWorkStages_request_encrpt>>$encrypted_request");
     utils.hideProgress(context);
@@ -651,11 +661,23 @@ class _DrawerAppState extends State<DrawerApp> {
         // then parse the JSON.
         String data = response.body;
         print("RefreshWorkStages_response>>$data");
-        var jsonData = jsonDecode(data);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrptData =
-        utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-        var userData = jsonDecode(decrptData);
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("RefreshWorkStages Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("RefreshWorkStages responceSignature -  $responceSignature");
+
+        print("RefreshWorkStages responceData -  $responceData");
+
+        if (responceSignature == responceData) {
+          print("RefreshWorkStages responceSignature - Token Verified");
+          var userData = jsonDecode(data);
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
@@ -684,6 +706,10 @@ class _DrawerAppState extends State<DrawerApp> {
           }
           utils.customAlert(context, "S", s.refresh_work_stages_success);
         }
+        }else {
+          print("RefreshWorkStages responceSignature - Token Not Verified");
+          utils.customAlert(context, "E", s.jsonError);
+        }
       }
     } on Exception catch (exception) {
       utils.hideProgress(context);
@@ -695,38 +721,67 @@ class _DrawerAppState extends State<DrawerApp> {
 
   }
   Future<void> getProfileList() async {
-   utils.showProgress(context, 1);
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
+    utils.showProgress(context, 1);
     var userPassKey = prefs!.getString(s.userPassKey);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
-    Map encrpted_request = {
+    Map encrypted_request = {
       s.key_user_name: prefs?.getString(s.key_user_name),
-      s.key_data_content:
-      Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
+      s.key_data_content: jsonRequest,
     };
 
-    print(json.encode(encrpted_request));
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("ProfileData_url>>" + url.main_service_jwt.toString());
+    print("ProfileData_request_json>>" + jsonRequest.toString());
+    print("ProfileData_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      String responseData = response.body;
+      String data = response.body;
 
-      var jsonData = jsonDecode(responseData);
+      print("ProfileData_response>>" + data);
 
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-      var userData = jsonDecode(decrpt_data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("ProfileData Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("ProfileData responceSignature -  $responceSignature");
+
+      print("ProfileData responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("ProfileData responceSignature - Token Verified");
+        var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
 
@@ -742,6 +797,10 @@ class _DrawerAppState extends State<DrawerApp> {
                   builder: (context) =>
                       Registration(registerFlag: 2,profileJson: res_jsonArray,)));
         }
+      }
+      }else {
+        print("ProfileData responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
       }
     }
   }

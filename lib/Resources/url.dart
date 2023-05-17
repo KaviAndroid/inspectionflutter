@@ -12,7 +12,7 @@ Uri master_service = Uri.parse(
 Uri main_service = Uri.parse(
     'http://10.163.19.137:8090/tnrd/project/webservices_forms/work_inspection/inspection_services_v_1_6.php');
 Uri main_service_jwt = Uri.parse(
-    'http://10.163.19.137:8090/tnrd/project/webservices_forms/work_inspection/inspection_services_v_1_6_jwt.php');
+    'http://10.163.19.158:8090/tnrd/project/webservices_forms/work_inspection/inspection_services_v_1_6_jwt.php');
 Uri open_service = Uri.parse(
     'http://10.163.19.137:8090/tnrd/project/webservices_forms/open_services/open_services.php');
 

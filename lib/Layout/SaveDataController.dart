@@ -303,8 +303,15 @@ class SaveDatacontroller with ChangeNotifier {
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
       int count=i+1;
-      img_jsonArray_val[i].update('serial_no', (value) => count.toString());
-      jsonArray.add(img_jsonArray_val[i]);
+      Map<String, String> mymap = {}; // This created one object in the current scope.
+      // First iteration , i = 0
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] =  count.toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
+      jsonArray.add(mymap);
     }
 
     Map dataset = {
@@ -386,7 +393,7 @@ class SaveDatacontroller with ChangeNotifier {
 
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
     Map<String, String> header = {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json;charset=utf-8",
       "Authorization": "Bearer $header_token"
     };
 
@@ -430,7 +437,7 @@ class SaveDatacontroller with ChangeNotifier {
         utils.customAlert(context, "S", s.online_data_save_success).then((value) => onWillPop(context));
         gotoDelete(selectedwork,true);
       } else {
-        utils.customAlert(context, "E", s.no_data).then((value) => onWillPop(context));
+        utils.customAlert(context, "E", s.failed);
       }
       }else {
         print("saveData responceSignature - Token Not Verified");

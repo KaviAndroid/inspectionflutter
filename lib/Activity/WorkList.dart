@@ -792,29 +792,7 @@ class _WorkListState extends State<WorkList> {
                                                                       workList[index]
                                                                               [
                                                                               s.key_work_id]
-                                                                          .toString());
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          progressFlag
-                                                                              .length;
-                                                                      i++) {
-                                                                    if (i ==
-                                                                        index) {
-                                                                      progressFlag[
-                                                                              i] =
-                                                                          !progressFlag[
-                                                                              index];
-                                                                    } else {
-                                                                      progressFlag[
-                                                                              i] =
-                                                                          false;
-                                                                    }
-                                                                  }
-
-                                                                  setSidebarState();
-                                                                  setState(
-                                                                      () {});
+                                                                          .toString(), index);
                                                                 },
                                                                 child:
                                                                     Container(
@@ -2910,7 +2888,7 @@ class _WorkListState extends State<WorkList> {
     }
   }
 
-  Future<void> getProgressDetails(String workId) async {
+  Future<void> getProgressDetails(String workId, int index) async {
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
@@ -2979,6 +2957,30 @@ class _WorkListState extends State<WorkList> {
             for (int i = 0; i < res_jsonArray.length; i++) {
               progressList.add(res_jsonArray[i]);
             }
+            if(progressList.length>0){
+              for (int i =
+              0;
+              i <
+                  progressFlag
+                      .length;
+              i++) {
+                if (i ==
+                    index) {
+                  progressFlag[
+                  i] =
+                  !progressFlag[
+                  index];
+                } else {
+                  progressFlag[
+                  i] =
+                  false;
+                }
+              }
+
+              setSidebarState();
+
+              setState(() {});
+            }
           } else {
             utils.showAlert(context, s.no_data);
           }
@@ -2990,7 +2992,6 @@ class _WorkListState extends State<WorkList> {
         print("ProfileData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
-      setState(() {});
     }
   }
 

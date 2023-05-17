@@ -704,7 +704,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             get_PDF(
-                                                                workList[0][s.key_other_work_inspection_id]
+                                                                workList[index][s.key_other_work_inspection_id]
                                                                     .toString(),
                                                                 );
                                                           },
@@ -992,7 +992,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                                 onTap: () async {
                                                                                   await getSavedWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
                                                                                   selectedOtherworkList.clear();
-                                                                                  selectedOtherworkList.add(workList[0]);
+                                                                                  selectedOtherworkList.add(workList[index]);
                                                                                   print('selectedOtherworkList>>' + selectedOtherworkList.toString());
                                                                                   Navigator.push(
                                                                                       context,

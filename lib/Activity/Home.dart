@@ -1638,7 +1638,7 @@ class _HomeState extends State<Home> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("photo_count_url>>" + url.main_service.toString());
+    print("photo_count_url>>" + url.main_service_jwt.toString());
     print("photo_count_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 
@@ -1717,7 +1717,7 @@ class _HomeState extends State<Home> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("fin_year_url>>" + url.main_service.toString());
+    print("fin_year_url>>" + url.main_service_jwt.toString());
     print("fin_year_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 
@@ -1864,7 +1864,7 @@ class _HomeState extends State<Home> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("other_work_category_list_url>>" + url.main_service.toString());
+    print("other_work_category_list_url>>" + url.main_service_jwt.toString());
     print("other_work_category_list_request_encrpt>>" +
         encrypted_request.toString());
     utils.hideProgress(context);
@@ -2155,7 +2155,7 @@ class _HomeState extends State<Home> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("WorkStages_url>>" + url.main_service.toString());
+    print("WorkStages_url>>" + url.main_service_jwt.toString());
     print("WorkStages_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 

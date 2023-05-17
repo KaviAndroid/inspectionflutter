@@ -337,7 +337,15 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
-      jsonArray.add(img_jsonArray_val[i]);
+      Map<String, String> mymap = {}; // This created one object in the current scope.
+      // First iteration , i = 0
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] =  img_jsonArray_val[i][s.key_serial_no].toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
+      jsonArray.add(mymap);
     }
        Map dataset = {
          s.key_dcode: selectedwork[0][s.key_dcode],
@@ -433,7 +441,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       if (status == s.key_ok && response_value == s.key_ok) {
         utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop(context));
       } else {
-        utils.customAlert(context, "E", s.no_data).then((value) => _onWillPop(context));
+        utils.customAlert(context, "E", s.failed);
       }
       }else {
         print("saveData responceSignature - Token Not Verified");
@@ -449,8 +457,15 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
       int count=i+1;
-      img_jsonArray_val[i].update('serial_no', (value) => count.toString());
-      jsonArray.add(img_jsonArray_val[i]);
+      Map<String, String> mymap = {}; // This created one object in the current scope.
+      // First iteration , i = 0
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] =  count.toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
+      jsonArray.add(mymap);
     }
       Map dataset = {
         s.key_dcode: widgetdcode,
@@ -539,7 +554,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       if (status == s.key_ok && response_value == s.key_ok) {
         utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop(context));
       } else {
-        utils.customAlert(context, "E", s.no_data).then((value) => _onWillPop(context));
+        utils.customAlert(context, "E", s.failed);
       }
       }else {
         print("saveData responceSignature - Token Not Verified");

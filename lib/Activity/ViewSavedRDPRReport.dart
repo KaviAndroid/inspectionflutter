@@ -1016,7 +1016,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                                 () async {
                                                                               await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString());
                                                                               selectedRDPRworkList.clear();
-                                                                              selectedRDPRworkList.add(workList[0]);
+                                                                              selectedRDPRworkList.add(workList[index]);
                                                                               print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
                                                                               Navigator.push(
                                                                                   context,
@@ -1186,7 +1186,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         body: json.encode(encrypted_request), headers: header);
 
     utils.hideProgress(context);
-    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_url>>" + url.main_service_jwt.toString());
     print("WorkList_request_encrpt>>" + encrypted_request.toString());
 
     if (response.statusCode == 200) {
@@ -1446,7 +1446,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
     utils.hideProgress(context);
 
-    print("SavedWorkList_url>>" + url.main_service.toString());
+    print("SavedWorkList_url>>" + url.main_service_jwt.toString());
     print("SavedWorkList_request_encrpt>>" + encrypted_request.toString());
 
     if (response.statusCode == 200) {
@@ -1503,7 +1503,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               print("image_List>>>>>>" + ImageList.toString());
             }
           }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
+        } else  {
           utils.customAlert(context, "E", response_value);
         }
       } else {
@@ -1564,7 +1564,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
     utils.hideProgress(context);
 
-    print("WorkList_url>>" + url.main_service.toString());
+    print("WorkList_url>>" + url.main_service_jwt.toString());
     print("WorkList_request_encrpt>>" + encrypted_request.toString());
 
     if (response.statusCode == 200) {
@@ -1591,7 +1591,6 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
-        ImageList.clear();
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
           if (res_jsonArray.length > 0) {

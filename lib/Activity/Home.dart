@@ -1595,7 +1595,9 @@ class _HomeState extends State<Home> {
           }
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils
+            .customAlert(context, "E", s.jsonError)
+            .then((value) async => await getProfileData());
         print("ProfileData responceSignature - Token Not Verified");
       }
     }
@@ -1672,7 +1674,9 @@ class _HomeState extends State<Home> {
               s.service_key_photo_count, userData[s.key_COUNT].toString());
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils
+            .customAlert(context, "E", s.jsonError)
+            .then((value) async => await getPhotoCount());
         print("photo_count responceSignature - Token Not Verified");
       }
     }
@@ -1760,7 +1764,9 @@ class _HomeState extends State<Home> {
           }
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils
+            .customAlert(context, "E", s.jsonError)
+            .then((value) async => await getFinYearList());
         print("FinancialYear responceSignature - Token Not Verified");
       }
     }
@@ -1770,87 +1776,55 @@ class _HomeState extends State<Home> {
     utils.showProgress(context, 1);
     late Map json_request;
 
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-
     json_request = {
       s.key_service_id: s.service_key_inspection_status,
     };
 
-    Map encrypted_request = {
+    Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
-
-    String jsonString = jsonEncode(encrypted_request);
-
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = IOClient(_client);
-
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
-    print("inspection_status_url>>" + url.main_service_jwt.toString());
-    print("inspection_status_request_encrpt>>" + encrypted_request.toString());
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
+    print("inspection_status_url>>" + url.master_service.toString());
+    print("inspection_status_request_json>>" + json_request.toString());
+    print("inspection_status_request_encrpt>>" + encrpted_request.toString());
     utils.hideProgress(context);
-
     if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
       String data = response.body;
       print("inspection_status_response>>" + data);
-
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("inspection_status Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("inspection_status responceSignature -  $responceSignature");
-
-      print("inspection_status responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("inspection_status responceSignature - Token Verified");
-
-        var userData = jsonDecode(data);
-
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          if (res_jsonArray.length > 0) {
-            dbHelper.delete_table_Status();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_Status +
-                  ' (status_id  , status) VALUES(' +
-                  res_jsonArray[i][s.key_status_id] +
-                  ",'" +
-                  res_jsonArray[i][s.key_status_name] +
-                  "')");
-            }
-            List<Map> list =
-                await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
-            print("table_Status >>" + list.toString());
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Status();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_Status +
+                ' (status_id  , status) VALUES(' +
+                res_jsonArray[i][s.key_status_id] +
+                ",'" +
+                res_jsonArray[i][s.key_status_name] +
+                "')");
           }
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
+          print("table_Status >>" + list.toString());
         }
-      } else {
-        utils.customAlert(context, "E", s.jsonError);
-        print("inspection_status responceSignature - Token Not Verified");
       }
     }
   }
@@ -1945,7 +1919,9 @@ class _HomeState extends State<Home> {
           }
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils
+            .customAlert(context, "E", s.jsonError)
+            .then((value) async => await getCategoryList());
         print(
             "other_work_category_list responceSignature - Token Not Verified");
       }
@@ -1954,290 +1930,192 @@ class _HomeState extends State<Home> {
 
   Future<void> getTownList() async {
     utils.showProgress(context, 1);
-
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-
     Map json_request = {
       s.key_service_id: s.service_key_townpanchayat_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
-    Map encrypted_request = {
+    Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
-
-    String jsonString = jsonEncode(encrypted_request);
-
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = IOClient(_client);
-
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("TownList_url>>" + url.master_service.toString());
-    print("TownList_request_encrpt>>" + encrypted_request.toString());
+    print("TownList_request_json>>" + json_request.toString());
+    print("TownList_request_encrpt>>" + encrpted_request.toString());
     utils.hideProgress(context);
-
     if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
       String data = response.body;
       print("TownList_response>>" + data);
-
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("TownList Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("TownList responceSignature -  $responceSignature");
-
-      print("TownList responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("TownList responceSignature - Token Verified");
-
-        var userData = jsonDecode(data);
-
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          res_jsonArray.sort((a, b) {
-            return a[s.key_townpanchayat_name]
-                .toLowerCase()
-                .compareTo(b[s.key_townpanchayat_name].toLowerCase());
-          });
-          if (res_jsonArray.length > 0) {
-            dbHelper.delete_table_TownList();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_TownList +
-                  ' (dcode  , townpanchayat_id , townpanchayat_name) VALUES(' +
-                  "'" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_townpanchayat_id] +
-                  "' , '" +
-                  res_jsonArray[i][s.key_townpanchayat_name] +
-                  "')");
-            }
-            List<Map> list =
-                await dbClient.rawQuery('SELECT * FROM ' + s.table_TownList);
-            print("table_TownList >>" + list.toString());
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_townpanchayat_name]
+              .toLowerCase()
+              .compareTo(b[s.key_townpanchayat_name].toLowerCase());
+        });
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_TownList();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_TownList +
+                ' (dcode  , townpanchayat_id , townpanchayat_name) VALUES(' +
+                "'" +
+                res_jsonArray[i][s.key_dcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_townpanchayat_id] +
+                "' , '" +
+                res_jsonArray[i][s.key_townpanchayat_name] +
+                "')");
           }
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_TownList);
+          print("table_TownList >>" + list.toString());
         }
-      } else {
-        utils.customAlert(context, "E", s.jsonError);
-        print("TownList responceSignature - Token Not Verified");
       }
     }
   }
 
   Future<void> getMunicipalityList() async {
     utils.showProgress(context, 1);
-
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-
     Map json_request = {
       s.key_service_id: s.service_key_municipality_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
-    Map encrypted_request = {
+    Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
-
-    String jsonString = jsonEncode(encrypted_request);
-
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = IOClient(_client);
-
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("MunicipalityList_url>>" + url.master_service.toString());
-    print("MunicipalityList_request_encrpt>>" + encrypted_request.toString());
+    print("MunicipalityList_request_json>>" + json_request.toString());
+    print("MunicipalityList_request_encrpt>>" + encrpted_request.toString());
     utils.hideProgress(context);
-
     if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
       String data = response.body;
       print("MunicipalityList_response>>" + data);
-
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("MunicipalityList Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("MunicipalityList responceSignature -  $responceSignature");
-
-      print("MunicipalityList responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("MunicipalityList responceSignature - Token Verified");
-
-        var userData = jsonDecode(data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          res_jsonArray.sort((a, b) {
-            return a[s.key_municipality_name]
-                .toLowerCase()
-                .compareTo(b[s.key_municipality_name].toLowerCase());
-          });
-          if (res_jsonArray.length > 0) {
-            dbHelper.delete_table_Municipality();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_Municipality +
-                  ' (dcode  , municipality_id , municipality_name) VALUES(' +
-                  "'" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_municipality_id] +
-                  "' , '" +
-                  res_jsonArray[i][s.key_municipality_name] +
-                  "')");
-            }
-            List<Map> list = await dbClient
-                .rawQuery('SELECT * FROM ' + s.table_Municipality);
-            print("table_Municipality >>" + list.toString());
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_municipality_name]
+              .toLowerCase()
+              .compareTo(b[s.key_municipality_name].toLowerCase());
+        });
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Municipality();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_Municipality +
+                ' (dcode  , municipality_id , municipality_name) VALUES(' +
+                "'" +
+                res_jsonArray[i][s.key_dcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_municipality_id] +
+                "' , '" +
+                res_jsonArray[i][s.key_municipality_name] +
+                "')");
           }
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_Municipality);
+          print("table_Municipality >>" + list.toString());
         }
-      } else {
-        utils.customAlert(context, "E", s.jsonError);
-        print("MunicipalityList responceSignature - Token Not Verified");
       }
     }
   }
 
   Future<void> getCorporationList() async {
     utils.showProgress(context, 1);
-
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-
     Map json_request = {
       s.key_service_id: s.service_key_corporation_list_district_wise,
       s.key_dcode: prefs.getString(s.key_dcode),
     };
 
-    Map encrypted_request = {
+    Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
-
-    String jsonString = jsonEncode(encrypted_request);
-
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = IOClient(_client);
-
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("CorporationList_url>>" + url.master_service.toString());
-    print("CorporationList_request_encrpt>>" + encrypted_request.toString());
+    print("CorporationList_request_json>>" + json_request.toString());
+    print("CorporationList_request_encrpt>>" + encrpted_request.toString());
     utils.hideProgress(context);
-
     if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
       String data = response.body;
       print("CorporationList_response>>" + data);
-
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("CorporationList Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("CorporationList responceSignature -  $responceSignature");
-
-      print("CorporationList responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("CorporationList responceSignature - Token Verified");
-
-        var userData = jsonDecode(data);
-
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          res_jsonArray.sort((a, b) {
-            return a[s.key_corporation_name]
-                .toLowerCase()
-                .compareTo(b[s.key_corporation_name].toLowerCase());
-          });
-          if (res_jsonArray.length > 0) {
-            dbHelper.delete_table_Corporation();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_Corporation +
-                  ' (dcode  , corporation_id , corporation_name) VALUES(' +
-                  "'" +
-                  res_jsonArray[i][s.key_dcode].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_corporation_id] +
-                  "' , '" +
-                  res_jsonArray[i][s.key_corporation_name] +
-                  "')");
-            }
-            List<Map> list =
-                await dbClient.rawQuery('SELECT * FROM ' + s.table_Corporation);
-            print("table_Corporation >>" + list.toString());
+      var jsonData = jsonDecode(data);
+      var enc_data = jsonData[s.key_enc_data];
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var userData = jsonDecode(decrpt_data);
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        res_jsonArray.sort((a, b) {
+          return a[s.key_corporation_name]
+              .toLowerCase()
+              .compareTo(b[s.key_corporation_name].toLowerCase());
+        });
+        if (res_jsonArray.length > 0) {
+          dbHelper.delete_table_Corporation();
+          for (int i = 0; i < res_jsonArray.length; i++) {
+            await dbClient.rawInsert('INSERT INTO ' +
+                s.table_Corporation +
+                ' (dcode  , corporation_id , corporation_name) VALUES(' +
+                "'" +
+                res_jsonArray[i][s.key_dcode].toString() +
+                "' , '" +
+                res_jsonArray[i][s.key_corporation_id] +
+                "' , '" +
+                res_jsonArray[i][s.key_corporation_name] +
+                "')");
           }
+          List<Map> list =
+              await dbClient.rawQuery('SELECT * FROM ' + s.table_Corporation);
+          print("table_Corporation >>" + list.toString());
         }
-      } else {
-        utils.customAlert(context, "E", s.jsonError);
-        print("CorporationList responceSignature - Token Not Verified");
       }
     }
   }
@@ -2338,7 +2216,9 @@ class _HomeState extends State<Home> {
           utils.hideProgress(context);
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils
+            .customAlert(context, "E", s.jsonError)
+            .then((value) async => await getAll_Stage());
         print("WorkStages responceSignature - Token Not Verified");
       }
     }

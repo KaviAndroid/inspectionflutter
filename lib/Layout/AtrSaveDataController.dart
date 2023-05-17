@@ -369,6 +369,8 @@ class AtrSaveDataController with ChangeNotifier{
   // *************************** SAVE DATA *************************** //
 
   Future<void> onlineSave(BuildContext context) async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
     isSpinnerLoading = true;
     notifyListeners();
     List<dynamic> jsonArray = [];
@@ -419,16 +421,25 @@ class AtrSaveDataController with ChangeNotifier{
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: utils.encryption(
-          jsonEncode(main_dataset), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: main_dataset,
+    };
+
+    String jsonString = jsonEncode(encrpted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
     };
 
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service,
-        body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrpted_request), headers: header);
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     // print("onlineSave_url>>${url.main_service}");
     // print("onlineSave_request_json>>$main_dataset");
@@ -440,11 +451,23 @@ class AtrSaveDataController with ChangeNotifier{
       // then parse the JSON.
       String data = response.body;
       print("onlineSave_response>>$data");
-      var jsonData = jsonDecode(data);
-      var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data =
-      utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
-      var userData = jsonDecode(decrpt_data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("onlineSave Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("onlineSave responceSignature -  $responceSignature");
+
+      print("onlineSave responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("ProfileData responceSignature - Token Verified");
+        var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       var msg = userData[s.key_message];
@@ -462,6 +485,7 @@ class AtrSaveDataController with ChangeNotifier{
       } else {
         utils.customAlert(context, "E", s.no_data).then((value) => onWillPop(context));
       }
+
     }
   }
   Future<bool> onWillPop(BuildContext context) async {

@@ -869,9 +869,11 @@ class LoginState extends State<Login> {
             }
           }
         } else {
-          print("ProfileData responceSignature - Token Not Verified");
           utils.customAlert(context, "E", userData[s.key_message]);
         }
+      }else {
+        print("ProfileData responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
       }
     }
   }

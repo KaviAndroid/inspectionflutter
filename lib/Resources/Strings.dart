@@ -242,6 +242,9 @@ String select_date = "Select Date";
 String or = "(OR)";
 String inspection_taken = "Inspection Taken";
 String other_inspection_taken = "Other Inspection Taken";
+String previous_login_alert="Previous login was not logged out properly.So login again with";
+String password_alert="and ***password";
+String logout_alert=" then click logout icon in home page to successfully logout the previous session";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";

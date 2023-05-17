@@ -1629,7 +1629,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                     ),
                                     pointColorMapper: (ChartData data, _) =>
                                         data.color,
-                                    explode: false,
+                                    explode: true,
                                   )
                                 ],
                               ),

@@ -345,7 +345,8 @@ class _PendingScreenState extends State<PendingScreen> {
                                         height: 10,
                                       ),
                                       Visibility(
-                                        visible: flag,
+                                        visible:flagTaped==2?!flag:flag,
+                                        // visible: flag,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -403,7 +404,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                         height: 10,
                                       ),
                                       Visibility(
-                                        visible: !flag,
+                                        visible: flagTaped==2?flag:!flag,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -461,7 +462,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                         height: 10,
                                       ),
                                       Visibility(
-                                        visible: !flag,
+                                        visible: flagTaped==2?flag:!flag,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -620,22 +621,21 @@ class _PendingScreenState extends State<PendingScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 15),
                                     child: Text(
-                                        flag &&
+                                        flagTaped==2 &&
                                                 defaultWorklist[index]
                                                         [s.key_rural_urban] ==
                                                     "R"
                                             ? s.atr_for_rural
-                                            : flag &&
-                                                    defaultWorklist[index][s
-                                                            .key_rural_urban] ==
+                                            : flagTaped==2 &&
+                                                    defaultWorklist[index][s.key_rural_urban] ==
                                                         "U"
                                                 ? s.atr_for_urban
-                                                : !flag &&
+                                                : flagTaped==1 &&
                                                         defaultWorklist[index][s
                                                                 .key_rural_urban] ==
                                                             "R"
                                                     ? s.ins_rural_work
-                                                    : !flag &&
+                                                    : flagTaped==1 &&
                                                             defaultWorklist[index][s
                                                                     .key_rural_urban] ==
                                                                 "U"

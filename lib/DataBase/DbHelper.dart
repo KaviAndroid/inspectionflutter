@@ -157,7 +157,7 @@ class DbHelper {
     myDb?.execute("DELETE FROM $table_save_images");
   }
 
-  void deleteAll() {
+  Future<void> deleteAll() async {
     delete_table_District();
     delete_table_Block();
     delete_table_Village();

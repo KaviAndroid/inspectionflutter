@@ -868,7 +868,8 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                               .topStart,
                                                       child: Text(
                                                         defaultWorklist[index]
-                                                            [s.key_reported_by],
+                                                        [s.key_reported_by]!=null?defaultWorklist[index]
+                                                            [s.key_reported_by]:'',
                                                         style: TextStyle(
                                                             color: c
                                                                 .primary_text_color2),

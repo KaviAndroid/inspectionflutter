@@ -2167,8 +2167,6 @@ class _HomeState extends State<Home> {
       String data = response.body;
       print("WorkStages_response>>" + data);
 
-      print("ProfileData_response>>" + data);
-
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];

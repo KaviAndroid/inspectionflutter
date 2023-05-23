@@ -62,7 +62,6 @@ class _RegistrationState extends State<Registration> {
   String? edit_name;
   String? edit_mobile;
   String? edit_gender;
-  String? edit_level;
   String? edit_desig_code;
   String? edit_desig_name;
   String? edit_dcode;
@@ -637,10 +636,8 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: edit_level == "D" ||
-                                  edit_level == "B" ||
-                                  cugValid && selectedLevel == "D" ||
-                                  selectedLevel == "B"
+                          visible: (cugValid || widget.registerFlag == 2) && (selectedLevel == "D" ||
+                                  selectedLevel == "B")
                               ? true
                               : false,
                           child: Column(
@@ -687,6 +684,7 @@ class _RegistrationState extends State<Registration> {
                                           .toList(),
                                       onChanged: (value) {
                                         if (value != "0") {
+                                          print("val>>"+value.toString());
                                           isLoadingDcode = true;
                                           ___loadUIBlock(value.toString());
                                           setState(() {});
@@ -744,7 +742,7 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: selectedLevel == "B" || edit_level == "B"
+                          visible: selectedLevel == "B"
                               ? true
                               : false,
                           child: Column(
@@ -1220,10 +1218,9 @@ class _RegistrationState extends State<Registration> {
       if (widget.registerFlag == 2) {
         selectedGender = edit_gender;
         selectedDesignation = edit_desig_code;
-        selectedLevel = edit_level;
-        if (edit_level == "D") {
+        if (selectedLevel == "D") {
           selectedDistrict = edit_dcode;
-        } else if (edit_level == "B") {
+        } else if (selectedLevel == "B") {
           selectedDistrict = edit_dcode;
           selectedBlock = edit_bcode;
         }
@@ -1255,11 +1252,11 @@ class _RegistrationState extends State<Registration> {
 
   void ___loadUIBlock(String value) async {
     await getBlockList(value);
+    isLoadingDcode = false;
+    districtError = false;
+    selectedDistrict = value.toString();
+    selectedBlock = defaultSelectedBlock['bcode'];
     setState(() {
-      isLoadingDcode = false;
-      districtError = false;
-      selectedDistrict = value.toString();
-      selectedBlock = defaultSelectedBlock['bcode'];
     });
   }
 
@@ -1366,7 +1363,7 @@ class _RegistrationState extends State<Registration> {
       print(data);
       var status = data[s.key_status];
       var responseValue = data[s.key_response];
-
+      levelItems=[];
       if (status == s.key_ok && responseValue == s.key_ok) {
         levelItems = data[s.key_json_data];
       }
@@ -1482,6 +1479,7 @@ class _RegistrationState extends State<Registration> {
           blockItems = [];
           blockItems.add(defaultSelectedBlock);
           blockItems.addAll(sort_block);
+          print("blockItems>>"+ blockItems.toString());
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Block Found");
@@ -1499,7 +1497,7 @@ class _RegistrationState extends State<Registration> {
             edit_name = res_jsonArray[i][s.key_name];
             edit_mobile = res_jsonArray[i][s.key_mobile];
             edit_gender = res_jsonArray[i][s.key_gender];
-            edit_level = res_jsonArray[i][s.key_level];
+            selectedLevel = res_jsonArray[i][s.key_level];
             edit_desig_code = res_jsonArray[i][s.key_desig_code].toString();
             edit_dcode = res_jsonArray[i][s.key_dcode].toString();
             edit_bcode = res_jsonArray[i][s.key_bcode].toString();
@@ -1659,7 +1657,7 @@ class _RegistrationState extends State<Registration> {
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
+        body: jsonString, headers: header);
 
     print("EditProfileData_url>>" + url.main_service_jwt.toString());
     print("EditProfileData_request_json>>" + jsonRequest.toString());
@@ -1683,7 +1681,7 @@ class _RegistrationState extends State<Registration> {
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
-      String responceData = utils.generateHmacSha256(data, key, false);
+      String responceData = utils.generateHmacSha256(jsonEncode(data), key, false);
 
       print("EditProfileData responceSignature -  $responceSignature");
 
@@ -1694,17 +1692,21 @@ class _RegistrationState extends State<Registration> {
         var userData = jsonDecode(data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          print(status);
+          print(response_value);
+          utils.customAlert(context, "S", s.edit_profile_success).then((value) =>
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => Login(
+                      )),
+                      (route) => false)
 
-      print(status);
-      print(response_value);
-      utils.customAlert(context, "S", s.edit_profile_success).then((value) =>
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => Login(
-                  )),
-                  (route) => false)
+          );
+        }else{
+          utils.customAlert(context, "E", s.jsonError);
+        }
 
-    );
       }else {
         print("EditProfileData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
@@ -1838,11 +1840,11 @@ class _RegistrationState extends State<Registration> {
   Future<void> mapEditedValues() async {
     await getGenderList();
     await getStageLevelList();
-    await getDesignationList(edit_level.toString());
+    await getDesignationList(selectedLevel.toString());
 
-    if (edit_level == "D") {
+    if (selectedLevel == "D") {
       await getDistrictList();
-    } else if (edit_level == "B") {
+    } else if (selectedLevel == "B") {
       await getDistrictList();
       await getBlockList(edit_dcode.toString());
     }

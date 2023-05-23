@@ -2142,12 +2142,13 @@ class _HomeState extends State<Home> {
 
     String jsonString = jsonEncode(encrypted_request);
 
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+    String headerSignature = utils.generateHmacSha256(encrypted_request.toString(), key!, true);
 
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
 
     Map<String, String> header = {
       "Content-Type": "application/json",
+      "Accept": "application/json",
       "Authorization": "Bearer $header_token"
     };
 
@@ -2157,7 +2158,7 @@ class _HomeState extends State<Home> {
     IOClient _ioClient = new IOClient(_client);
 
     var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
+        body: encrypted_request, headers: header);
 
     print("WorkStages_url>>" + url.main_service_jwt.toString());
     print("WorkStages_request_encrpt>>" + encrypted_request.toString());

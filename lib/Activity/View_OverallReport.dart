@@ -2399,7 +2399,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
             };
 
             defaultWorklist.add(villageDashboard);
-            isPiechartAvailable = false;
+            isPiechartAvailable = true;
             isWorklistAvailable = true;
             tempsatisfied_count = 0;
             tempunSatisfied_count = 0;

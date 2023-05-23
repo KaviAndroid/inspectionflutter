@@ -284,6 +284,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
     Map<String, String> header = {
       "Content-Type": "application/json",
+      "Accept": "application/json",
       "Authorization": "Bearer $header_token"
     };
 

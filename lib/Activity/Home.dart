@@ -1940,13 +1940,17 @@ class _HomeState extends State<Home> {
       s.key_data_content: utils.encryption(
           jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
     HttpClient _client = HttpClient(context: await utils.globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.master_service,
-        body: json.encode(encrpted_request));
+        body: json.encode(encrpted_request),headers: header);
     print("TownList_url>>" + url.master_service.toString());
     print("TownList_request_json>>" + json_request.toString());
     print("TownList_request_encrpt>>" + encrpted_request.toString());

@@ -1618,33 +1618,42 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       if (responceSignature == responceData) {
         print("SchemeList responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var responseValue = userData[s.key_response];
-      schemeList.clear();
-      if (status == s.key_ok && responseValue == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        res_jsonArray.sort((a, b) {
-          return a[s.key_scheme_name]
-              .toLowerCase()
-              .compareTo(b[s.key_scheme_name].toLowerCase());
-        });
-        if (res_jsonArray.length > 0) {
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            schemeList.add(FlutterLimitedCheckBoxModel(
-                isSelected: false,
-                selectTitle: res_jsonArray[i][s.key_scheme_name],
-                selectId: res_jsonArray[i][s.key_scheme_id]));
+        var status = userData[s.key_status];
+        var responseValue = userData[s.key_response];
+        schemeList.clear();
+        if (status == s.key_ok && responseValue == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_scheme_name]
+                .toLowerCase()
+                .compareTo(b[s.key_scheme_name].toLowerCase());
+          });
+          if (res_jsonArray.length > 0) {
+
+
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              String schName=res_jsonArray[i][s.key_scheme_name];
+              if(schName.length >=38){
+                List<String> splitS=splitStringByLength(schName,38);
+                String fir=splitS[0];
+                String sec=splitS[1];
+                schName=fir+'\n'+sec;
+              }
+              schemeList.add(FlutterLimitedCheckBoxModel(
+                  isSelected: false,
+                  selectTitle: schName,
+                  selectId: res_jsonArray[i][s.key_scheme_id]));
+            }
+            schemeFlag = true;
+            submitFlag = false;
+            schList = [];
+            schIdList = [];
+            print("schemeList>>" + schemeList.toString());
           }
-          schemeFlag = true;
-          submitFlag = false;
-          schList = [];
-          schIdList = [];
-          print("schemeList>>" + schemeList.toString());
+        } else if (status == s.key_ok && responseValue == s.key_noRecord) {
+          Utils().showAlert(context, "No Scheme Found");
         }
-      } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        Utils().showAlert(context, "No Scheme Found");
-      }
-      }else {
+      } else {
         print("SchemeList responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
@@ -1727,113 +1736,171 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       if (responceSignature == responceData) {
         print("WorkList responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        res_jsonArray.sort((a, b) {
-          return a[s.key_work_id].compareTo(b[s.key_work_id]);
-        });
-        if (res_jsonArray.length > 0) {
-          dbHelper.delete_table_RdprWorkList('R');
-          dbHelper.delete_table_SchemeList('R');
-          for (int i = 0; i < selectedSchemeArray.length; i++) {
-            await dbClient.rawInsert('INSERT INTO ' +
-                s.table_SchemeList +
-                ' (rural_urban, scheme_id , scheme_name ) VALUES(' +
-                "'" +
-                "R" +
-                "' , '" +
-                selectedSchemeArray[i][s.key_scheme_id].toString() +
-                "' , '" +
-                selectedSchemeArray[i][s.key_scheme_name].toString() +
-                "')");
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_work_id].compareTo(b[s.key_work_id]);
+          });
+          if (res_jsonArray.isNotEmpty) {
+            dbHelper.delete_table_RdprWorkList('R');
+            dbHelper.delete_table_SchemeList('R');
+
+            String sql_scheme =
+                'INSERT INTO ${s.table_SchemeList} (rural_urban, scheme_id , scheme_name ) VALUES ';
+
+            List<String> valueSets_scheme = [];
+
+            for (var row in selectedSchemeArray) {
+              String values =
+                  "( 'R', '${utils.checkNull(row[s.key_scheme_id])}', '${utils.checkNull(row[s.key_scheme_name])}')";
+              valueSets_scheme.add(values);
+            }
+
+            sql_scheme += valueSets_scheme.join(', ');
+
+            await dbHelper.myDb?.execute(sql_scheme);
+
+            String sql_worklist =
+                'INSERT INTO ${s.table_RdprWorkList} (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name) VALUES ';
+
+            List<String> valueSets_worklist = [];
+
+            for (var row in res_jsonArray) {
+              String values =
+                  " ( 'R', '0', '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvcode])}', '${row[s.key_pvname]}', '${utils.checkNull(row[s.key_hab_code])}', '${row[s.key_scheme_group_id]}', '${utils.checkNull(row[s.key_scheme_id])}', '${utils.checkNull(row[s.key_scheme_name])}', '${utils.checkNull(row[s.key_work_group_id])}', '${utils.checkNull(row[s.key_work_type_id])}', '${utils.checkNull(row[s.key_fin_year])}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.work_name])}', '${utils.checkNull(row[s.key_as_value])}', '${utils.checkNull(row[s.key_ts_value])}', '${utils.checkNull(row[s.key_current_stage_of_work])}', '${utils.checkNull(row[s.key_is_high_value])}', '${utils.checkNull(row[s.key_stage_name])}', '${utils.checkNull(row[s.key_as_date])}', '${utils.checkNull(row[s.key_ts_date])}', '${utils.checkNull(row[s.key_upd_date])}', '${utils.checkNull(row[s.key_work_order_date])}', '${utils.checkNull(row[s.key_work_type_name])}', '0', '0', '0', '0', '0', '0') ";
+              valueSets_worklist.add(values);
+            }
+
+            sql_worklist += valueSets_worklist.join(', ');
+
+            await dbHelper.myDb?.execute(sql_worklist);
+
+            /* for (int i = 0; i < selectedSchemeArray.length; i++) {
+              await dbClient.rawInsert('INSERT INTO ' +
+                  s.table_SchemeList +
+                  ' (rural_urban, scheme_id , scheme_name ) VALUES(' +
+                  "'" +
+                  "R" +
+                  "' , '" +
+                  selectedSchemeArray[i][s.key_scheme_id].toString() +
+                  "' , '" +
+                  selectedSchemeArray[i][s.key_scheme_name].toString() +
+                  "')");
+            } 
+
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              await dbClient.rawInsert('INSERT INTO ' +
+                  s.table_RdprWorkList +
+                  ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
+                  "'" +
+                  "R" +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  res_jsonArray[i][s.key_dcode].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_dname].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_bcode].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_bname].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_pvcode].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_pvname].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_hab_code].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_scheme_group_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_scheme_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_scheme_name].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_group_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_type_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_fin_year].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_id].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_name].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_as_value].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_ts_value].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_current_stage_of_work].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_is_high_value].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_stage_name].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_as_date].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_ts_date].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_upd_date].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_order_date].toString() +
+                  "' , '" +
+                  res_jsonArray[i][s.key_work_type_name].toString() +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  "0" +
+                  "' , '" +
+                  "0" +
+                  "')");
+            } */
+
+            List<Map> list = await dbClient
+                .rawQuery('SELECT * FROM ${s.table_RdprWorkList}');
+
+            if (list.isNotEmpty) {
+              customAlertwithOk(context, "1", s.download_success, schIdList);
+            }
+          } else {
+            utils.showAlert(context, s.no_data);
           }
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            await dbClient.rawInsert('INSERT INTO ' +
-                s.table_RdprWorkList +
-                ' (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name  ) VALUES(' +
-                "'" +
-                "R" +
-                "' , '" +
-                "0" +
-                "' , '" +
-                res_jsonArray[i][s.key_dcode].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_dname].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_bcode].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_bname].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_pvcode].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_pvname].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_hab_code].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_scheme_group_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_scheme_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_scheme_name].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_group_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_type_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_fin_year].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_id].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_name].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_as_value].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_ts_value].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_current_stage_of_work].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_is_high_value].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_stage_name].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_as_date].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_ts_date].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_upd_date].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_order_date].toString() +
-                "' , '" +
-                res_jsonArray[i][s.key_work_type_name].toString() +
-                "' , '" +
-                "0" +
-                "' , '" +
-                "0" +
-                "' , '" +
-                "0" +
-                "' , '" +
-                "0" +
-                "' , '" +
-                "0" +
-                "' , '" +
-                "0" +
-                "')");
-          }
-          customAlertwithOk(context, "1", s.download_success, schIdList);
         } else {
           utils.showAlert(context, s.no_data);
         }
       } else {
-        utils.showAlert(context, s.no_data);
-      }
-      }else {
         print("WorkList responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
+  }
+
+  List<String> splitStringByLength(String str, int length) {
+    List<String> data = [];
+    int len=length;
+    if(str[length]!=' '){
+      for(int i=0;i<length;i++){
+        String s=str[length-(i+1)];
+        if(s==' '){
+          len=length-(i+1);
+          print("length"+len.toString());
+          break;
+        }
+      }
+    }
+    data.add( str.substring(0, len) );
+    data.add( str.substring( len) );
+    print("length>>>>>>"+len.toString());
+    return data;
+
   }
 
   Future<void> customAlertwithOk(

@@ -61,415 +61,447 @@ class LoginState extends State<Login> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          color: c.colorAccentverylight,
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Expanded(
-                    child: Column(children: <Widget>[
-                  Stack(
-                    children: <Widget>[
-                      Container(
-                        transform: Matrix4.translationValues(0.0, -60.0, 0.0),
-                        height: 200,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              color: c.colorPrimary,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        color: c.colorAccentverylight,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            Container(
+                              transform:
+                                  Matrix4.translationValues(0.0, -60.0, 0.0),
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: c.colorPrimary,
+                                  ),
+                                  color: c.colorPrimary,
+                                  borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(200),
+                                      bottomRight: Radius.circular(200))),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 40),
                             ),
-                            color: c.colorPrimary,
-                            borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(200),
-                                bottomRight: Radius.circular(200))),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Text(
-                          "LOGIN",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 18),
-                          textAlign: TextAlign.left,
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              child: Text(
+                                "LOGIN",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 18),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 110, 0, 0),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: Align(
+                                  alignment: AlignmentDirectional.topCenter,
+                                  child: Image.asset(
+                                    imagePath.logo,
+                                    height: 60,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 110, 0, 0),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          child: Align(
-                            alignment: AlignmentDirectional.topCenter,
-                            child: Image.asset(
-                              imagePath.logo,
-                              height: 60,
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+                            child: Align(
+                              alignment: AlignmentDirectional.topCenter,
+                              child: Text(
+                                s.appName,
+                                style: TextStyle(
+                                    color: c.grey_8,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-                      child: Align(
-                        alignment: AlignmentDirectional.topCenter,
-                        child: Text(
-                          s.appName,
-                          style: TextStyle(
-                              color: c.grey_8,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Stack(children: <Widget>[
-                    Container(
-                      transform: Matrix4.translationValues(0.0, -15.0, 0.0),
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        // clipBehavior is necessary because, without it, the InkWell's animation
-                        // will extend beyond the rounded edges of the [Card] (see https://github.com/flutter/flutter/issues/109776)
-                        // This comes with a small performance cost, and you should not set [clipBehavior]
-                        // unless you need it.
-                        clipBehavior: Clip.hardEdge,
-                        margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                  child: Text(
-                                    s.mobileNumber,
-                                    style: TextStyle(
-                                        color: c.grey_8, fontSize: 15),
-                                    textAlign: TextAlign.left,
-                                  )),
-                              Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border:
-                                        Border.all(color: c.grey_3, width: 2),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: const Radius.circular(15),
-                                      topRight: const Radius.circular(15),
-                                      bottomLeft: const Radius.circular(15),
-                                      bottomRight: const Radius.circular(15),
-                                    )),
-                                margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                alignment: AlignmentDirectional.centerStart,
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  controller: user_name,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    isDense: true,
-                                    hintText: s.mobileNumber,
-                                    hintStyle: TextStyle(
-                                        fontSize: 14.0, color: c.grey_6),
-                                    border: InputBorder.none,
-                                    prefixIcon: SvgPicture.asset(
-                                      imagePath.ic_user,
-                                      color: c.colorPrimary,
-                                      height: 15,
-                                      width: 15,
-                                    ),
-                                    prefixIconConstraints: BoxConstraints(
-                                      minHeight: 20,
-                                      minWidth: 30,
-                                    ),
-                                  ),
-                                ),
+                        Stack(children: <Widget>[
+                          Container(
+                            transform:
+                                Matrix4.translationValues(0.0, -15.0, 0.0),
+                            child: Card(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                                  child: Text(
-                                    s.password,
-                                    style: TextStyle(
-                                        color: c.grey_8, fontSize: 15),
-                                    textAlign: TextAlign.left,
-                                  )),
-                              Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border:
-                                        Border.all(color: c.grey_3, width: 2),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: const Radius.circular(15),
-                                      topRight: const Radius.circular(15),
-                                      bottomLeft: const Radius.circular(15),
-                                      bottomRight: const Radius.circular(15),
-                                    )),
-                                alignment: AlignmentDirectional.center,
-                                margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  controller: user_password,
-                                  obscureText: !_passwordVisible,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    isDense: true,
-                                    hintText: s.password,
-                                    hintStyle: TextStyle(
-                                        fontSize: 14.0, color: c.grey_6),
-                                    border: InputBorder.none,
-                                    prefixIcon: SvgPicture.asset(
-                                      imagePath.ic_user,
-                                      color: c.colorPrimary,
-                                      height: 15,
-                                      width: 15,
-                                    ),
-                                    prefixIconConstraints: BoxConstraints(
-                                      minHeight: 20,
-                                      minWidth: 30,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        // Based on passwordVisible state choose the icon
-                                        _passwordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: c.grey_8,
+                              // clipBehavior is necessary because, without it, the InkWell's animation
+                              // will extend beyond the rounded edges of the [Card] (see https://github.com/flutter/flutter/issues/109776)
+                              // This comes with a small performance cost, and you should not set [clipBehavior]
+                              // unless you need it.
+                              clipBehavior: Clip.hardEdge,
+                              margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 20, 20, 0),
+                                        child: Text(
+                                          s.mobileNumber,
+                                          style: TextStyle(
+                                              color: c.grey_8, fontSize: 15),
+                                          textAlign: TextAlign.left,
+                                        )),
+                                    Container(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: c.grey_3, width: 2),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: const Radius.circular(15),
+                                            topRight: const Radius.circular(15),
+                                            bottomLeft:
+                                                const Radius.circular(15),
+                                            bottomRight:
+                                                const Radius.circular(15),
+                                          )),
+                                      margin:
+                                          EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
+                                      child: TextField(
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        controller: user_name,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          isDense: true,
+                                          hintText: s.mobileNumber,
+                                          hintStyle: TextStyle(
+                                              fontSize: 14.0, color: c.grey_6),
+                                          border: InputBorder.none,
+                                          prefixIcon: SvgPicture.asset(
+                                            imagePath.ic_user,
+                                            color: c.colorPrimary,
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                          prefixIconConstraints: BoxConstraints(
+                                            minHeight: 20,
+                                            minWidth: 30,
+                                          ),
+                                        ),
                                       ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          _passwordVisible = !_passwordVisible;
-                                        });
-                                      },
+                                    ),
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 10, 20, 0),
+                                        child: Text(
+                                          s.password,
+                                          style: TextStyle(
+                                              color: c.grey_8, fontSize: 15),
+                                          textAlign: TextAlign.left,
+                                        )),
+                                    Container(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: c.grey_3, width: 2),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: const Radius.circular(15),
+                                            topRight: const Radius.circular(15),
+                                            bottomLeft:
+                                                const Radius.circular(15),
+                                            bottomRight:
+                                                const Radius.circular(15),
+                                          )),
+                                      alignment: AlignmentDirectional.center,
+                                      margin:
+                                          EdgeInsets.fromLTRB(20, 10, 20, 20),
+                                      child: TextField(
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        controller: user_password,
+                                        obscureText: !_passwordVisible,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          isDense: true,
+                                          hintText: s.password,
+                                          hintStyle: TextStyle(
+                                              fontSize: 14.0, color: c.grey_6),
+                                          border: InputBorder.none,
+                                          prefixIcon: SvgPicture.asset(
+                                            imagePath.ic_user,
+                                            color: c.colorPrimary,
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                          prefixIconConstraints: BoxConstraints(
+                                            minHeight: 20,
+                                            minWidth: 30,
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: c.grey_8,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      alignment: Alignment.centerRight,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ForgotPassword(
+                                                        isForgotPassword:
+                                                            "forgot_password",
+                                                      )));
+                                        }, // Handle your callback
+                                        child: Text(
+                                          s.forgot_password,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: c.full_transparent,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor: c.colorPrimaryDark,
+                                            shadows: [
+                                              Shadow(
+                                                  color: c.colorPrimaryDark,
+                                                  offset: Offset(0, -3))
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            width: MediaQuery.of(context).size.width,
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                alignment: Alignment.bottomCenter,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: c.colorPrimary),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Align(
+                                    alignment: AlignmentDirectional.topCenter,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        /* loginScreenBinding.userName.setText("9080873403");
+          loginScreenBinding.password.setText("Crd555#&");// local block*/
+                                        /*  loginScreenBinding.userName.setText("7877979787");
+          loginScreenBinding.password.setText("Crd123#$");// local district*/
+
+                                        /* loginScreenBinding.userName.setText("9751337424");
+          loginScreenBinding.password.setText("Test88#$");// local state*/
+                                        //prod
+                                        /* loginScreenBinding.userName.setText("9750895078");
+          loginScreenBinding.password.setText("Test1234#$");//block prod*/
+
+                                        String ss = String.fromCharCodes(
+                                            Runes('\u0024'));
+                                        user_name.text = "9750895078";
+                                        user_password.text = "Test1234#" + ss;
+                                        if (user_name.text.isNotEmpty) {
+                                          if (user_password.text.isNotEmpty) {
+                                            // utils.showToast(context, string.success);
+
+                                            if (await utils.isOnline()) {
+                                              utils.hideSoftKeyBoard(context);
+                                              if( await utils.isAutoDatetimeisEnable()) {
+                                                login(context);
+                                              } else {
+                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
+                                                {
+                                                  if (Platform.isAndroid) {
+                                                    utils.openDateTimeSettings()
+                                                  }
+                                                });
+                                              }
+                                            } else {
+                                              utils.showalertforOffline(
+                                                  context,
+                                                  s.internet_error,
+                                                  user_name.text,
+                                                  user_password.text);
+                                            }
+                                          } else {
+                                            utils.showToast(
+                                                context, s.password_empty);
+                                          }
+                                        } else {
+                                          utils.showToast(
+                                              context, s.user_name_empty);
+                                        }
+                                      }, // Image tapped
+                                      child: Image.asset(
+                                        imagePath.right_arrow_icon,
+                                        color: Colors.white,
+                                        height: 45,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                alignment: Alignment.centerRight,
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                child: InkWell(
+                            ),
+                          )
+                        ]),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.only(top: 20, bottom: 20),
+                          // Handle your callback
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                  child: Text(
+                                    s.new_user,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: c.d_grey2,
+                                        fontSize: 13),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                InkWell(
                                   onTap: () {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                ForgotPassword(
-                                                  isForgotPassword:
-                                                      "forgot_password",
+                                            builder: (context) => Registration(
+                                                  registerFlag: 1,
+                                                  profileJson: [],
                                                 )));
-                                  }, // Handle your callback
-                                  child: Text(
-                                    s.forgot_password,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: c.full_transparent,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: c.colorPrimaryDark,
-                                      shadows: [
-                                        Shadow(
-                                            color: c.colorPrimaryDark,
-                                            offset: Offset(0, -3))
-                                      ],
+
+                                    // utils.showToast(context, "click register");
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: Text(
+                                      s.register,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: c.colorPrimaryDark,
+                                          fontSize: 13),
+                                      textAlign: TextAlign.left,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ]),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      width: MediaQuery.of(context).size.width,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          alignment: Alignment.bottomCenter,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: c.colorPrimary),
+                              ]),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          alignment: Alignment.center,
                           child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Align(
-                              alignment: AlignmentDirectional.topCenter,
-                              child: InkWell(
-                                onTap: () async {
-                                  /* loginScreenBinding.userName.setText("9080873403");
-          loginScreenBinding.password.setText("Crd555#&");// local block*/
-                                  /*  loginScreenBinding.userName.setText("7877979787");
-          loginScreenBinding.password.setText("Crd123#$");// local district*/
-
-                                  /* loginScreenBinding.userName.setText("9751337424");
-          loginScreenBinding.password.setText("Test88#$");// local state*/
-                                  //prod
-                                  /* loginScreenBinding.userName.setText("9750895078");
-          loginScreenBinding.password.setText("Test1234#$");//block prod*/
-
-                                  String ss =
-                                      String.fromCharCodes(Runes('\u0024'));
-                                  user_name.text = "9750895078";
-                                  user_password.text = "Test1234#" + ss;
-                                  if (user_name.text.isNotEmpty) {
-                                    if (user_password.text.isNotEmpty) {
-                                      // utils.showToast(context, string.success);
-
-                                      if (await utils.isOnline()) {
-                                        utils.hideSoftKeyBoard(context);
-                                        login(context);
-                                      } else {
-                                        utils.showalertforOffline(
-                                            context,
-                                            s.internet_error,
-                                            user_name.text,
-                                            user_password.text);
-                                      }
-                                    } else {
-                                      utils.showToast(
-                                          context, s.password_empty);
-                                    }
-                                  } else {
-                                    utils.showToast(context, s.user_name_empty);
-                                  }
-                                }, // Image tapped
-                                child: Image.asset(
-                                  imagePath.right_arrow_icon,
-                                  color: Colors.white,
-                                  height: 45,
-                                ),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style:
+                                    TextStyle(fontSize: 15, color: c.d_grey3),
+                                children: [
+                                  TextSpan(
+                                    text: s.otp_validation1,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                  TextSpan(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Handle the tap event
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OTPVerification(
+                                                    Flag: "login",
+                                                  )),
+                                        );
+                                      },
+                                    text: s.otp_validation2,
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 15,
+                                        fontWeight:
+                                            FontWeight.bold), //<-- SEE HERE
+                                  ),
+                                  TextSpan(
+                                    text: s.otp_validation3,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ]),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(top: 20, bottom: 20),
-                    // Handle your callback
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: Text(
-                              s.new_user,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: c.d_grey2,
-                                  fontSize: 16),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Registration(
-                                            registerFlag: 1,
-                                            profileJson: [],
-                                          )));
-
-                              // utils.showToast(context, "click register");
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: Text(
-                                s.register,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: c.colorPrimaryDark,
-                                    fontSize: 17),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ),
-                        ]),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(fontSize: 15, color: c.d_grey3),
-                          children: [
-                            TextSpan(
-                              text: s.otp_validation1,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Handle the tap event
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => OTPVerification(
-                                              Flag: "login",
-                                            )),
-                                  );
-                                },
-                              text: s.otp_validation2,
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold), //<-- SEE HERE
-                            ),
-                            TextSpan(
-                              text: s.otp_validation3,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ])),
+                ],
+              ),
+            ),
+            Container(
+                alignment: AlignmentDirectional.bottomCenter,
+                child: Column(children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text(
+                      version,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.d_grey2,
+                          fontSize: 12),
+                      textAlign: TextAlign.left,
                     ),
                   ),
-                ])),
-                Container(
-                    alignment: AlignmentDirectional.bottomCenter,
-                    child: Column(children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                        child: Text(
-                          version,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: c.d_grey2,
-                              fontSize: 16),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                        child: Text(
-                          s.software_designed_and,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: c.grey_8,
-                              fontSize: 17),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ]))
-              ],
-            ),
-          ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    child: Text(
+                      s.software_designed_and,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.grey_8,
+                          fontSize: 14),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ]))
+          ],
         ),
       ),
     );
@@ -606,6 +638,8 @@ class LoginState extends State<Login> {
       var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, userDecriptKey);
       var userData = jsonDecode(decrpt_data);
+      print("DistrictList_response>> $userData");
+
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
@@ -617,7 +651,22 @@ class LoginState extends State<Login> {
         });
         if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_District();
-          for (int i = 0; i < res_jsonArray.length; i++) {
+
+          String sql = 'INSERT INTO ${s.table_District} (dcode, dname) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_dname])}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /* for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_District +
                 ' (dcode, dname) VALUES(' +
@@ -625,7 +674,8 @@ class LoginState extends State<Login> {
                 ",'" +
                 res_jsonArray[i][s.key_dname] +
                 "')");
-          }
+          } */
+
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
           print("table_District" + list.toString());
@@ -673,6 +723,8 @@ class LoginState extends State<Login> {
       var enc_data = jsonData[s.key_enc_data];
       var decrpt_data = utils.decryption(enc_data, userDecriptKey);
       var userData = jsonDecode(decrpt_data);
+      print("BlockList_response>> $userData");
+
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
@@ -684,6 +736,23 @@ class LoginState extends State<Login> {
         });
         if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_Block();
+
+          String sql =
+              'INSERT INTO ${s.table_Block} (dcode, bcode, bname) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_bname])}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /*
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_Block +
@@ -694,7 +763,8 @@ class LoginState extends State<Login> {
                 ",'" +
                 res_jsonArray[i][s.key_bname] +
                 "')");
-          }
+          } */
+
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
           print("table_Block >>" + list.toString());
@@ -747,6 +817,23 @@ class LoginState extends State<Login> {
         });
         if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_Village();
+
+          String sql =
+              'INSERT INTO ${s.table_Village} (dcode, bcode, pvcode, pvname) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_pvcode])}', '${utils.checkNull(row[s.key_pvname])}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /*
           for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_Village +
@@ -759,7 +846,8 @@ class LoginState extends State<Login> {
                 ",'" +
                 res_jsonArray[i][s.key_pvname] +
                 "')");
-          }
+          } */
+
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_Village);
           print("table_Village >>" + list.toString());
@@ -798,7 +886,6 @@ class LoginState extends State<Login> {
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = IOClient(_client);
-
 
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
@@ -872,7 +959,7 @@ class LoginState extends State<Login> {
         } else {
           utils.customAlert(context, "E", userData[s.key_message]);
         }
-      }else {
+      } else {
         print("ProfileData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
@@ -990,10 +1077,10 @@ class LoginState extends State<Login> {
             }
           }
         }
-    }else {
-      print("saveWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
-    }
+      } else {
+        print("saveWorkList responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
+      }
     }
   }
 }

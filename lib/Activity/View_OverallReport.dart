@@ -456,14 +456,24 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   TableCell(
                                     child: GestureDetector(
                                       onTap: () async {
-                                        tmcType = "T";
-                                        await fetchTMCWorklist();
-                                        urbanUI = false;
-                                        urbanworkListUI = true;
-                                        await __ModifiyUI();
-                                        setState(() {});
+                                        if (urban_tp_TC > 0) {
+                                          tmcType = "T";
+                                          await fetchTMCWorklist();
+                                          urbanUI = false;
+                                          urbanworkListUI = true;
+                                          await __ModifiyUI();
+                                          setState(() {});
+                                        } else {
+                                          utils.customAlert(context, "E",
+                                              s.no_data_available);
+                                        }
                                       },
-                                      child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
+                                      child: Image.asset(
+                                        imagePath.arrow_right,
+                                        color: c.primary_text_color2,
+                                        height: 22,
+                                        width: 22,
+                                      ),
                                     ),
                                   ),
                                 ]),
@@ -536,14 +546,24 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   TableCell(
                                     child: GestureDetector(
                                       onTap: () async {
-                                        tmcType = "M";
-                                        await fetchTMCWorklist();
-                                        urbanUI = false;
-                                        urbanworkListUI = true;
-                                        await __ModifiyUI();
-                                        setState(() {});
+                                        if (urban_mun_TC > 0) {
+                                          tmcType = "M";
+                                          await fetchTMCWorklist();
+                                          urbanUI = false;
+                                          urbanworkListUI = true;
+                                          await __ModifiyUI();
+                                          setState(() {});
+                                        } else {
+                                          utils.customAlert(context, "E",
+                                              s.no_data_available);
+                                        }
                                       },
-                                      child:Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
+                                      child: Image.asset(
+                                        imagePath.arrow_right,
+                                        color: c.primary_text_color2,
+                                        height: 22,
+                                        width: 22,
+                                      ),
                                     ),
                                   ),
                                 ]),
@@ -616,14 +636,24 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   TableCell(
                                     child: GestureDetector(
                                       onTap: () async {
-                                        tmcType = "C";
-                                        await fetchTMCWorklist();
-                                        urbanUI = false;
-                                        urbanworkListUI = true;
-                                        await __ModifiyUI();
-                                        setState(() {});
+                                        if (urban_corp_TC > 0) {
+                                          tmcType = "C";
+                                          await fetchTMCWorklist();
+                                          urbanUI = false;
+                                          urbanworkListUI = true;
+                                          await __ModifiyUI();
+                                          setState(() {});
+                                        } else {
+                                          utils.customAlert(context, "E",
+                                              s.no_data_available);
+                                        }
                                       },
-                                      child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
+                                      child: Image.asset(
+                                        imagePath.arrow_right,
+                                        color: c.primary_text_color2,
+                                        height: 22,
+                                        width: 22,
+                                      ),
                                     ),
                                   ),
                                 ]),
@@ -888,7 +918,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
                                               setState(() {});
                                             },
-                                            child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
+                                            child: Image.asset(
+                                              imagePath.arrow_right,
+                                              color: c.primary_text_color2,
+                                              height: 22,
+                                              width: 22,
+                                            ),
                                           ),
                                         ),
                                       ]),
@@ -1113,6 +1148,9 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         TableCell(
                                           child: GestureDetector(
                                             onTap: () async {
+                                              print(defaultWorklist[index]
+                                                      [s.total_inspected_works]
+                                                  .runtimeType);
                                               selectedDcode =
                                                   defaultWorklist[index]
                                                       [s.key_dcode];
@@ -1125,7 +1163,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
                                               setState(() {});
                                             },
-                                            child: Image.asset(imagePath.arrow_right,color: c.primary_text_color2,height: 22,width: 22,),
+                                            child: Image.asset(
+                                              imagePath.arrow_right,
+                                              color: c.primary_text_color2,
+                                              height: 22,
+                                              width: 22,
+                                            ),
                                           ),
                                         ),
                                       ]),
@@ -1205,15 +1248,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            s.satisfied,
-                            style: TextStyle(
-                                color: c.grey_8,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400),
-                          ),
+                        Text(
+                          s.satisfied,
+                          style: TextStyle(
+                              color: c.grey_8,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400),
                         )
                       ],
                     ),
@@ -1230,15 +1270,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(
-                            s.un_satisfied,
-                            style: TextStyle(
-                                color: c.grey_8,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400),
-                          ),
+                        Text(
+                          s.un_satisfied,
+                          style: TextStyle(
+                              color: c.grey_8,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400),
                         )
                       ],
                     ),
@@ -1256,15 +1293,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            s.need_improvement,
-                            style: TextStyle(
-                                color: c.grey_8,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400),
-                          ),
+                        Text(
+                          s.need_improvement,
+                          style: TextStyle(
+                              color: c.grey_8,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400),
                         )
                       ],
                     ),
@@ -1346,16 +1380,20 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewWorklist(
-                                                          worklist: item,
-                                                          flag: "S",
-                                                          fromDate: from_Date,
-                                                          toDate: to_Date,
-                                                        )));
+                                            item[s.key_satisfied] > 0
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ViewWorklist(
+                                                              worklist: item,
+                                                              flag: "S",
+                                                              fromDate:
+                                                                  from_Date,
+                                                              toDate: to_Date,
+                                                            )))
+                                                : utils.customAlert(context,
+                                                    "E", s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,
@@ -1404,16 +1442,20 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewWorklist(
-                                                          worklist: item,
-                                                          flag: "US",
-                                                          fromDate: from_Date,
-                                                          toDate: to_Date,
-                                                        )));
+                                            item[s.key_unsatisfied] > 0
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ViewWorklist(
+                                                              worklist: item,
+                                                              flag: "US",
+                                                              fromDate:
+                                                                  from_Date,
+                                                              toDate: to_Date,
+                                                            )))
+                                                : utils.customAlert(context,
+                                                    "E", s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,
@@ -1462,16 +1504,20 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewWorklist(
-                                                          worklist: item,
-                                                          flag: "NI",
-                                                          fromDate: from_Date,
-                                                          toDate: to_Date,
-                                                        )));
+                                            item[s.key_need_improvement] > 0
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ViewWorklist(
+                                                              worklist: item,
+                                                              flag: "NI",
+                                                              fromDate:
+                                                                  from_Date,
+                                                              toDate: to_Date,
+                                                            )))
+                                                : utils.customAlert(context,
+                                                    "E", s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,
@@ -1534,8 +1580,8 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
           alignment: Alignment.topCenter,
           children: [
             Container(
-                margin: EdgeInsets.only(top: 18),
-                width: screenWidth * 0.9,
+                margin: EdgeInsets.only(top: 18, left: 10, right: 10),
+                // width: screenWidth * 0.9,
                 child: Card(
                   color: c.white,
                   shape: RoundedRectangleBorder(
@@ -1620,6 +1666,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                     ],
                                     legendIconType: LegendIconType.circle,
                                     dataLabelSettings: DataLabelSettings(
+                                      showZeroValue: false,
                                       isVisible: true,
                                       labelPosition:
                                           ChartDataLabelPosition.outside,
@@ -1781,7 +1828,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
             TMCworkList.addAll(tmc_details);
           }
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "W", s.no_data);
+          utils.customAlert(context, "E", s.no_data);
 
           setState(() {
             totalWorksCount = "0";
@@ -2041,7 +2088,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
       Map encrypted_request = {
         s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:jsonRequest,
+        s.key_data_content: jsonRequest,
       };
 
       String jsonString = jsonEncode(encrypted_request);
@@ -2087,26 +2134,26 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
         if (responceSignature == responceData) {
           print("OverallWroklist responceSignature - Token Verified");
           var userData = jsonDecode(data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
 
-        if (status == s.key_ok && response_value == s.key_ok) {
-          work_details = [];
+          if (status == s.key_ok && response_value == s.key_ok) {
+            work_details = [];
 
-          Map res_jsonArray = userData[s.key_json_data];
-          work_details = res_jsonArray[s.key_inspection_details];
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "E", s.no_data);
-          setState(() {
-            totalWorksCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-            atrCount = "0";
-            sCount = "0";
-            isWorklistAvailable = false;
-          });
-        }
-        }else {
+            Map res_jsonArray = userData[s.key_json_data];
+            work_details = res_jsonArray[s.key_inspection_details];
+          } else if (status == s.key_ok && response_value == s.key_noRecord) {
+            utils.customAlert(context, "E", s.no_data);
+            setState(() {
+              totalWorksCount = "0";
+              nimpCount = "0";
+              usCount = "0";
+              atrCount = "0";
+              sCount = "0";
+              isWorklistAvailable = false;
+            });
+          }
+        } else {
           print("OverallWroklist responceSignature - Token Not Verified");
           utils.customAlert(context, "E", s.jsonError);
         }

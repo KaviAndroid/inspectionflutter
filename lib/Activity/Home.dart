@@ -1373,7 +1373,7 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
@@ -1506,7 +1506,7 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
@@ -1534,6 +1534,8 @@ class _HomeState extends State<Home> {
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
+      utils.showProgress(context, 1);
+
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
@@ -1554,8 +1556,11 @@ class _HomeState extends State<Home> {
 
       print("ProfileData responceData -  $responceData");
 
+      utils.hideProgress(context);
+
       if (responceSignature == responceData) {
         print("ProfileData responceSignature - Token Verified");
+        utils.showProgress(context, 1);
 
         var userData = jsonDecode(data);
 
@@ -1594,6 +1599,7 @@ class _HomeState extends State<Home> {
             }
           }
         }
+        utils.hideProgress(context);
       } else {
         utils
             .customAlert(context, "E", s.jsonError)
@@ -1615,7 +1621,7 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
@@ -1694,7 +1700,7 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
@@ -1748,16 +1754,32 @@ class _HomeState extends State<Home> {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
             dbHelper.delete_table_FinancialYear();
-            for (int i = 0; i < res_jsonArray.length; i++) {
+
+            String sql =
+                'INSERT INTO ${s.table_FinancialYear} (fin_year) VALUES ';
+
+            List<String> valueSets = [];
+
+            for (var row in res_jsonArray) {
+              String values = " ('${row[s.service_key_fin_year]}')";
+              valueSets.add(values);
+            }
+
+            sql += valueSets.join(', ');
+
+            await dbHelper.myDb?.execute(sql);
+
+            /* for (int i = 0; i < res_jsonArray.length; i++) {
               await dbClient.rawInsert('INSERT INTO ' +
                   s.table_FinancialYear +
                   ' (fin_year) VALUES(' +
                   "'" +
                   res_jsonArray[i][s.service_key_fin_year] +
                   "')");
-            }
+            } */
+
             List<Map> list = await dbClient
                 .rawQuery('SELECT * FROM ' + s.table_FinancialYear);
             print("table_FinancialYear >>" + list.toString());
@@ -1841,7 +1863,7 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
@@ -1901,9 +1923,25 @@ class _HomeState extends State<Home> {
                 .toLowerCase()
                 .compareTo(b[s.key_other_work_category_name].toLowerCase());
           });
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
             dbHelper.delete_table_OtherCategory();
-            for (int i = 0; i < res_jsonArray.length; i++) {
+
+            String sql =
+                'INSERT INTO ${s.table_OtherCategory} (other_work_category_id  , other_work_category_name) VALUES ';
+
+            List<String> valueSets = [];
+
+            for (var row in res_jsonArray) {
+              String values =
+                  " ('${row[s.key_other_work_category_id]}', '${row[s.key_other_work_category_name]}')";
+              valueSets.add(values);
+            }
+
+            sql += valueSets.join(', ');
+
+            await dbHelper.myDb?.execute(sql);
+
+            /* for (int i = 0; i < res_jsonArray.length; i++) {
               await dbClient.rawInsert('INSERT INTO ' +
                   s.table_OtherCategory +
                   ' (other_work_category_id  , other_work_category_name) VALUES(' +
@@ -1912,7 +1950,8 @@ class _HomeState extends State<Home> {
                   "' , '" +
                   res_jsonArray[i][s.key_other_work_category_name] +
                   "')");
-            }
+            } */
+
             List<Map> list = await dbClient
                 .rawQuery('SELECT * FROM ' + s.table_OtherCategory);
             print("table_OtherCategory >>" + list.toString());
@@ -1950,7 +1989,7 @@ class _HomeState extends State<Home> {
         (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
     var response = await _ioClient.post(url.master_service,
-        body: json.encode(encrpted_request),headers: header);
+        body: json.encode(encrpted_request), headers: header);
     print("TownList_url>>" + url.master_service.toString());
     print("TownList_request_json>>" + json_request.toString());
     print("TownList_request_encrpt>>" + encrpted_request.toString());
@@ -1974,9 +2013,25 @@ class _HomeState extends State<Home> {
               .toLowerCase()
               .compareTo(b[s.key_townpanchayat_name].toLowerCase());
         });
-        if (res_jsonArray.length > 0) {
+        if (res_jsonArray.isNotEmpty) {
           dbHelper.delete_table_TownList();
-          for (int i = 0; i < res_jsonArray.length; i++) {
+
+          String sql =
+              'INSERT INTO ${s.table_TownList} (dcode  , townpanchayat_id , townpanchayat_name) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${row[s.key_dcode]}', '${row[s.key_townpanchayat_id]}','${row[s.key_townpanchayat_name]}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /*for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_TownList +
                 ' (dcode  , townpanchayat_id , townpanchayat_name) VALUES(' +
@@ -1987,7 +2042,8 @@ class _HomeState extends State<Home> {
                 "' , '" +
                 res_jsonArray[i][s.key_townpanchayat_name] +
                 "')");
-          }
+          } */
+
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_TownList);
           print("table_TownList >>" + list.toString());
@@ -2040,7 +2096,23 @@ class _HomeState extends State<Home> {
         });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Municipality();
-          for (int i = 0; i < res_jsonArray.length; i++) {
+
+          String sql =
+              'INSERT INTO ${s.table_Municipality} (dcode  , municipality_id , municipality_name) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${row[s.key_dcode]}', '${row[s.key_municipality_id]}','${row[s.key_municipality_name]}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /* for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_Municipality +
                 ' (dcode  , municipality_id , municipality_name) VALUES(' +
@@ -2051,7 +2123,8 @@ class _HomeState extends State<Home> {
                 "' , '" +
                 res_jsonArray[i][s.key_municipality_name] +
                 "')");
-          }
+          } */
+
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_Municipality);
           print("table_Municipality >>" + list.toString());
@@ -2104,7 +2177,23 @@ class _HomeState extends State<Home> {
         });
         if (res_jsonArray.length > 0) {
           dbHelper.delete_table_Corporation();
-          for (int i = 0; i < res_jsonArray.length; i++) {
+
+          String sql =
+              'INSERT INTO ${s.table_Corporation} (dcode  , corporation_id , corporation_name) VALUES ';
+
+          List<String> valueSets = [];
+
+          for (var row in res_jsonArray) {
+            String values =
+                " ('${row[s.key_dcode]}', '${row[s.key_corporation_id]}','${row[s.key_corporation_name]}')";
+            valueSets.add(values);
+          }
+
+          sql += valueSets.join(', ');
+
+          await dbHelper.myDb?.execute(sql);
+
+          /* for (int i = 0; i < res_jsonArray.length; i++) {
             await dbClient.rawInsert('INSERT INTO ' +
                 s.table_Corporation +
                 ' (dcode  , corporation_id , corporation_name) VALUES(' +
@@ -2115,7 +2204,7 @@ class _HomeState extends State<Home> {
                 "' , '" +
                 res_jsonArray[i][s.key_corporation_name] +
                 "')");
-          }
+          } */
           List<Map> list =
               await dbClient.rawQuery('SELECT * FROM ' + s.table_Corporation);
           print("table_Corporation >>" + list.toString());
@@ -2136,13 +2225,13 @@ class _HomeState extends State<Home> {
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_user_name: userName,
       s.key_data_content: json_request,
     };
 
     String jsonString = jsonEncode(encrypted_request);
 
-    String headerSignature = utils.generateHmacSha256(encrypted_request.toString(), key!, true);
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
 
@@ -2158,13 +2247,15 @@ class _HomeState extends State<Home> {
     IOClient _ioClient = new IOClient(_client);
 
     var response = await _ioClient.post(url.main_service_jwt,
-        body: encrypted_request, headers: header);
+        body: jsonEncode(encrypted_request), headers: header);
 
     print("WorkStages_url>>" + url.main_service_jwt.toString());
     print("WorkStages_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
+      utils.showProgress(context, 1);
+
       String data = response.body;
       print("WorkStages_response>>" + data);
 
@@ -2182,7 +2273,11 @@ class _HomeState extends State<Home> {
 
       print("WorkStages responceData -  $responceData");
 
+      utils.hideProgress(context);
+
       if (responceSignature == responceData) {
+        utils.showProgress(context, 1);
+
         print("WorkStages responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
@@ -2193,31 +2288,48 @@ class _HomeState extends State<Home> {
           res_jsonArray.sort((a, b) {
             return a[s.key_work_stage_code].compareTo(b[s.key_work_stage_code]);
           });
-          utils.showProgress(context, 1);
           if (res_jsonArray.length > 0) {
             dbHelper.delete_table_WorkStages();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_WorkStages +
-                  ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
-                  res_jsonArray[i][s.key_work_group_id].toString() +
-                  ',' +
-                  res_jsonArray[i][s.key_work_type_id].toString() +
-                  ',' +
-                  res_jsonArray[i][s.key_work_stage_order].toString() +
-                  ',' +
-                  res_jsonArray[i][s.key_work_stage_code].toString() +
-                  ",'" +
-                  res_jsonArray[i][s.key_work_stage_name] +
-                  "')");
+
+            String sql =
+                'INSERT INTO ${s.table_WorkStages} (work_group_id, work_type_id, work_stage_order, work_stage_code, work_stage_name) VALUES ';
+
+            List<String> valueSets = [];
+
+            for (var row in res_jsonArray) {
+              String values =
+                  " ('${row[s.key_work_group_id]}', '${row[s.key_work_type_id]}', '${row[s.key_work_stage_order]}', '${row[s.key_work_stage_code]}', '${row[s.key_work_stage_name]}')";
+              valueSets.add(values);
             }
+
+            sql += valueSets.join(', ');
+
+            await dbHelper.myDb?.execute(sql);
+
+            // for (int i = 0; i < res_jsonArray.length; i++) {
+            //   await dbClient.rawInsert('INSERT INTO ' +
+            //       s.table_WorkStages +
+            //       ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
+            //       res_jsonArray[i][s.key_work_group_id].toString() +
+            //       ',' +
+            //       res_jsonArray[i][s.key_work_type_id].toString() +
+            //       ',' +
+            //       res_jsonArray[i][s.key_work_stage_order].toString() +
+            //       ',' +
+            //       res_jsonArray[i][s.key_work_stage_code].toString() +
+            //       ",'" +
+            //       res_jsonArray[i][s.key_work_stage_name] +
+            //       "')");
+            // }
+
             List<Map> list =
                 await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
+
             print("table_WorkStages >>" + list.toString());
             print("table_WorkStages size >>" + res_jsonArray.length.toString());
           }
-          utils.hideProgress(context);
         }
+        utils.hideProgress(context);
       } else {
         utils
             .customAlert(context, "E", s.jsonError)
@@ -2368,32 +2480,35 @@ class _HomeState extends State<Home> {
                               ),
                               Visibility(
                                 visible: type == "W" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.green_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    dbHelper.deleteAll();
-                                    prefs.clear();
-                                    Navigator.pop(context, true);
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Login()));
-                                  },
-                                  child: Text(
-                                    "Ok",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
+                                child: SizedBox(
+                                  width: 82,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.green_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      dbHelper.deleteAll();
+                                      prefs.clear();
+                                      Navigator.pop(context, true);
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Login()));
+                                    },
+                                    child: Text(
+                                      "Ok",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -2404,26 +2519,29 @@ class _HomeState extends State<Home> {
                                   )),
                               Visibility(
                                 visible: type == "W" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.red_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: Text(
-                                    "Cancel",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
+                                child: SizedBox(
+                                  width: 82,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.red_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: Text(
+                                      "Cancel",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
                                   ),
                                 ),
                               ),

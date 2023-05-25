@@ -313,7 +313,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               width: 17,
                               height: 17,
                             ),
-                            Text("Town Pancha...",
+                            Text("Town Pan...",
                                 style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
@@ -604,6 +604,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                             ],
                             legendIconType: LegendIconType.circle,
                             dataLabelSettings: DataLabelSettings(
+                              showZeroValue: false,
                               isVisible: true,
                               labelPosition: ChartDataLabelPosition.outside,
                               connectorLineSettings:
@@ -1014,21 +1015,35 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                           child: InkWell(
                                                                             onTap:
                                                                                 () async {
-                                                                              await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString());
-                                                                              selectedRDPRworkList.clear();
-                                                                              selectedRDPRworkList.add(workList[index]);
-                                                                              print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
-                                                                              Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => SaveWorkDetails(
-                                                                                            selectedworkList: selectedRDPRworkList,
-                                                                                            imagelist: ImageList,
-                                                                                            flag: "edit",
-                                                                                            onoff_type: "online",
-                                                                                            townType: town_type,
-                                                                                            rural_urban: area_type,
-                                                                                          )));
+
+                                                                              if(await utils.isAutoDatetimeisEnable()) {
+
+                                                                                await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString());
+                                                                                selectedRDPRworkList.clear();
+                                                                                selectedRDPRworkList.add(workList[index]);
+                                                                                print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
+                                                                                Navigator.push(
+                                                                                    context,
+                                                                                    MaterialPageRoute(
+                                                                                        builder: (context) => SaveWorkDetails(
+                                                                                          selectedworkList: selectedRDPRworkList,
+                                                                                          imagelist: ImageList,
+                                                                                          flag: "edit",
+                                                                                          onoff_type: "online",
+                                                                                          townType: town_type,
+                                                                                          rural_urban: area_type,
+                                                                                        )));
+
+                                                                              } else {
+                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
+                                                                                {
+                                                                                  if (Platform.isAndroid) {
+                                                                                    utils.openDateTimeSettings()
+                                                                                  }
+                                                                                });
+                                                                              }
+
+
                                                                               /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];

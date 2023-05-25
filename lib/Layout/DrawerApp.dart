@@ -97,11 +97,10 @@ class _DrawerAppState extends State<DrawerApp> {
       }
     } else if (level == "B") {
       if (prefs.getString(s.key_role_code) != null &&
-          prefs.getString(s.key_role_code) != "" &&
-          prefs.getString(s.key_role_code) == "9052" ||
+              prefs.getString(s.key_role_code) != "" &&
+              prefs.getString(s.key_role_code) == "9052" ||
           prefs.getString(s.key_role_code) == "9042") {
         atrFlag = true;
-
       } else {
         atrFlag = false;
       }
@@ -122,7 +121,7 @@ class _DrawerAppState extends State<DrawerApp> {
         prefs.getString(s.key_rural_urban) == "U") {
       area_type = s.urban_area;
     }
-    version =s.version+" "+ await utils.getVersion();
+    version = s.version + " " + await utils.getVersion();
     setState(() {});
   }
 
@@ -152,20 +151,20 @@ class _DrawerAppState extends State<DrawerApp> {
                       alignment: AlignmentDirectional.topStart,
                       children: [
                         Container(
-                            width: 120,
-                            height: 120,
-                            decoration: new BoxDecoration(
-                                color: c.white,
-                                border: Border.all(color: c.white, width: 2),
-                                borderRadius: new BorderRadius.only(
-                                  topLeft: const Radius.circular(0),
-                                  topRight: const Radius.circular(0),
-                                  bottomLeft: const Radius.circular(0),
-                                  bottomRight: const Radius.circular(110),
-                                )),
-                            alignment: AlignmentDirectional.topStart,
-                            margin: EdgeInsets.fromLTRB(0, 10, 15, 0),
-                            child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: new BoxDecoration(
+                              color: c.white,
+                              border: Border.all(color: c.white, width: 2),
+                              borderRadius: new BorderRadius.only(
+                                topLeft: const Radius.circular(0),
+                                topRight: const Radius.circular(0),
+                                bottomLeft: const Radius.circular(0),
+                                bottomRight: const Radius.circular(110),
+                              )),
+                          alignment: AlignmentDirectional.topStart,
+                          margin: EdgeInsets.fromLTRB(0, 10, 15, 0),
+                          child: Container(
                               margin: EdgeInsets.all(10),
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
@@ -177,46 +176,45 @@ class _DrawerAppState extends State<DrawerApp> {
                                       ],
                                       begin: Alignment.bottomLeft,
                                       end: Alignment.topRight)),
-                                  child: profile_image != null &&
-                                          profile_image != ""
-                                      ? InkWell(
-                                          onTap: () => showDialog(
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    insetPadding:
-                                                        EdgeInsets.all(2),
-                                                    title: Container(
-                                                      decoration:
-                                                          BoxDecoration(),
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      child: Expanded(
-                                                        child: Image.memory(
-                                                          base64.decode(profile_image.replaceAll(RegExp(r'\s+'), '')),
-                                                          fit: BoxFit.fitWidth,
-                                                        ),
-                                                      ),
+                              child: profile_image != null &&
+                                      profile_image != ""
+                                  ? InkWell(
+                                      onTap: () => showDialog(
+                                          builder: (BuildContext context) =>
+                                              AlertDialog(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                insetPadding: EdgeInsets.all(2),
+                                                title: Container(
+                                                  decoration: BoxDecoration(),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: Expanded(
+                                                    child: Image.memory(
+                                                      base64.decode(
+                                                          profile_image
+                                                              .replaceAll(
+                                                                  RegExp(
+                                                                      r'\s+'),
+                                                                  '')),
+                                                      fit: BoxFit.fitWidth,
                                                     ),
                                                   ),
-                                              context: context),
-                                          child: CircleAvatar(
-                                              backgroundImage:MemoryImage(
-                                                base64.decode(profile_image),
+                                                ),
                                               ),
-                                              radius: 30.0
-                                          )
-                                        )
-                                      : CircleAvatar(
-                                      backgroundImage:AssetImage(
+                                          context: context),
+                                      child: CircleAvatar(
+                                          backgroundImage: MemoryImage(
+                                            base64.decode(profile_image),
+                                          ),
+                                          radius: 30.0))
+                                  : CircleAvatar(
+                                      backgroundImage: AssetImage(
                                         imagePath.user,
                                       ),
-                                      radius: 30.0
-                                  )),
-                            ),
+                                      radius: 30.0)),
+                        ),
                         Container(
                           margin: EdgeInsets.fromLTRB(5, 20, 10, 0),
                           alignment: Alignment.topRight,
@@ -335,7 +333,7 @@ class _DrawerAppState extends State<DrawerApp> {
                               width: 10,
                             ),
                             Text(
-                              s.over_all_inspection_report,
+                              level=="S"?s.over_all_inspection_report+level_value:level=="B"?s.over_all_inspection_report + level_value:s.over_all_inspection_report+level_value,
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: c.darkblue,
@@ -346,42 +344,43 @@ class _DrawerAppState extends State<DrawerApp> {
                     )),
                 Divider(color: c.grey_6),
                 Container(
-                    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                    child: Visibility(
+                  margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+                  child: Visibility(
                       visible: atrFlag,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewSavedATRReport(Flag: area_type)));
-                          },
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  imagePath.atr_logo,
-                                  height: 25,
-                                  width: 25,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  s.atr_report,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      color: c.darkblue,
-                                      fontSize: 13),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ]),
-                        )
-                    ),),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  ViewSavedATRReport(Flag: area_type)));
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                imagePath.atr_logo,
+                                height: 25,
+                                width: 25,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                s.atr_report,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: c.darkblue,
+                                    fontSize: 13),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]),
+                      )),
+                ),
                 Visibility(
                   visible: atrFlag,
-                  child: Divider(color: c.grey_6),),
+                  child: Divider(color: c.grey_6),
+                ),
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
@@ -487,10 +486,8 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        stageApi();
-                        // getAll_Stage();
+                      onTap: () async {
+                        await getAll_Stage();
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -585,16 +582,16 @@ class _DrawerAppState extends State<DrawerApp> {
 
   logout() async {
     if (await checkLocalData()) {
-      customAlertWithOkCancel(context,"E", s.logout_message);
-    }else{
+      customAlertWithOkCancel(context, "E", s.logout_message);
+    } else {
       if (await utils.isOnline()) {
-        customAlertWithOkCancel(context,"W", s.logout);
+        customAlertWithOkCancel(context, "W", s.logout);
       } else {
-        utils.customAlertWithOkCancel(context,"W", s.logout_msg);
+        utils.customAlertWithOkCancel(context, "W", s.logout_msg);
       }
-
     }
   }
+
   Future<bool> checkLocalData() async {
     bool syncFlag = false;
     var isExists = await dbClient
@@ -624,39 +621,41 @@ class _DrawerAppState extends State<DrawerApp> {
     String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
     try {
-    late Map json_request;
+      late Map json_request;
 
-    json_request = {
-      s.key_service_id: s.service_key_work_type_stage_link,
-    };
+      json_request = {
+        s.key_service_id: s.service_key_work_type_stage_link,
+      };
 
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
-    };
-    String jsonString = jsonEncode(encrypted_request);
+      Map encrypted_request = {
+        s.key_user_name: userName,
+        s.key_data_content: json_request,
+      };
+      String jsonString = jsonEncode(encrypted_request);
 
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
+      };
+      // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+      HttpClient _client = HttpClient(context: await utils.globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
 
-    print("RefreshWorkStages_url>>${url.main_service_jwt}");
-    print("RefreshWorkStages_request_json>>$json_request");
-    print("RefreshWorkStages_request_encrpt>>$encrypted_request");
-    utils.hideProgress(context);
+      print("RefreshWorkStages_url>>${url.main_service_jwt}");
+      print("RefreshWorkStages_request_json>>$json_request");
+      print("RefreshWorkStages_request_encrpt>>$encrypted_request");
+      utils.hideProgress(context);
 
       if (response.statusCode == 200) {
+        utils.showProgress(context, 1);
+
         // If the server did return a 201 CREATED response,
         // then parse the JSON.
         String data = response.body;
@@ -675,64 +674,92 @@ class _DrawerAppState extends State<DrawerApp> {
 
         print("RefreshWorkStages responceData -  $responceData");
 
+        utils.hideProgress(context);
+
         if (responceSignature == responceData) {
+          utils.showProgress(context, 1);
+
           print("RefreshWorkStages responceSignature - Token Verified");
           var userData = jsonDecode(data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          if (res_jsonArray.length > 0) {
-            dbHelper.delete_table_WorkStages();
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_WorkStages +
-                  ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
-                  "'" +
-                  res_jsonArray[i][s.key_work_group_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_type_id].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_stage_order].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_stage_code].toString() +
-                  "' , '" +
-                  res_jsonArray[i][s.key_work_stage_name] +
-                  "')");
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+          if (status == s.key_ok && response_value == s.key_ok) {
+            List<dynamic> res_jsonArray = userData[s.key_json_data];
+            if (res_jsonArray.isNotEmpty) {
+              dbHelper.delete_table_WorkStages();
+
+              String sql =
+                  'INSERT INTO ${s.table_WorkStages} (work_group_id, work_type_id, work_stage_order, work_stage_code, work_stage_name) VALUES ';
+
+              List<String> valueSets = [];
+
+              for (var row in res_jsonArray) {
+                String values =
+                    " ('${row[s.key_work_group_id]}', '${row[s.key_work_type_id]}', '${row[s.key_work_stage_order]}', '${row[s.key_work_stage_code]}', '${row[s.key_work_stage_name]}')";
+                valueSets.add(values);
+              }
+
+              sql += valueSets.join(', ');
+
+              await dbHelper.myDb?.execute(sql);
+
+              // for (int i = 0; i < res_jsonArray.length; i++) {
+              //   await dbClient.rawInsert('INSERT INTO ' +
+              //       s.table_WorkStages +
+              //       ' (work_group_id , work_type_id , work_stage_order , work_stage_code , work_stage_name) VALUES(' +
+              //       "'" +
+              //       res_jsonArray[i][s.key_work_group_id].toString() +
+              //       "' , '" +
+              //       res_jsonArray[i][s.key_work_type_id].toString() +
+              //       "' , '" +
+              //       res_jsonArray[i][s.key_work_stage_order].toString() +
+              //       "' , '" +
+              //       res_jsonArray[i][s.key_work_stage_code].toString() +
+              //       "' , '" +
+              //       res_jsonArray[i][s.key_work_stage_name] +
+              //       "')");
+              // }
+
+              List<Map> list = await dbClient
+                  .rawQuery('SELECT * FROM ' + s.table_WorkStages);
+
+              if (list.isNotEmpty) {
+                utils.customAlert(context, "S", s.refresh_work_stages_success);
+              }
             }
-            List<Map> list =
-            await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
-            print("table_WorkStages >>" + list.toString());
+            utils.hideProgress(context);
           }
-          utils.customAlert(context, "S", s.refresh_work_stages_success);
-        }
-        }else {
+        } else {
           print("RefreshWorkStages responceSignature - Token Not Verified");
           utils.customAlert(context, "E", s.jsonError);
         }
       }
     } on Exception catch (exception) {
       utils.hideProgress(context);
-      utils.customAlert(context, "E", s.failed); // only executed if error is of type Exception
+      utils.customAlert(context, "E",
+          s.failed); // only executed if error is of type Exception
     } catch (error) {
       utils.hideProgress(context);
-      utils.customAlert(context, "E", s.failed); // executed for errors of all types other than Exception
+      utils.customAlert(context, "E",
+          s.failed); // executed for errors of all types other than Exception
     }
 
+    Navigator.pop(context);
   }
+
   Future<void> getProfileList() async {
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
 
     utils.showProgress(context, 1);
-    var userPassKey = prefs!.getString(s.userPassKey);
+    var userPassKey = prefs.getString(s.userPassKey);
 
     Map jsonRequest = {
       s.key_service_id: s.service_key_work_inspection_profile_list,
     };
 
     Map encrypted_request = {
-      s.key_user_name: prefs?.getString(s.key_user_name),
+      s.key_user_name: prefs.getString(s.key_user_name),
       s.key_data_content: jsonRequest,
     };
 
@@ -746,7 +773,6 @@ class _DrawerAppState extends State<DrawerApp> {
       "Authorization": "Bearer $header_token"
     };
 
-
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
@@ -757,8 +783,11 @@ class _DrawerAppState extends State<DrawerApp> {
     print("ProfileData_url>>" + url.main_service_jwt.toString());
     print("ProfileData_request_json>>" + jsonRequest.toString());
     print("ProfileData_request_encrpt>>" + encrypted_request.toString());
+
     utils.hideProgress(context);
     if (response.statusCode == 200) {
+      utils.showProgress(context, 1);
+
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
@@ -779,32 +808,38 @@ class _DrawerAppState extends State<DrawerApp> {
 
       print("ProfileData responceData -  $responceData");
 
+      utils.hideProgress(context);
+
       if (responceSignature == responceData) {
         print("ProfileData responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
 
-      print(status);
-      print(response_value);
-      if (status == s.key_ok && response_value == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        if (res_jsonArray.length > 0) {
-          Navigator.pop(context);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Registration(registerFlag: 2,profileJson: res_jsonArray,)));
+        print(status);
+        print(response_value);
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          if (res_jsonArray.isNotEmpty) {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Registration(
+                          registerFlag: 2,
+                          profileJson: res_jsonArray,
+                        )));
+          }
         }
-      }
-      }else {
+      } else {
         print("ProfileData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
   }
-  Future<void> customAlertWithOkCancel(BuildContext context, String type, String msg) async {
+
+  Future<void> customAlertWithOkCancel(
+      BuildContext context, String type, String msg) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return showDialog<void>(
       context: context,
@@ -834,8 +869,8 @@ class _DrawerAppState extends State<DrawerApp> {
                         color: type == "W"
                             ? c.yellow_new
                             : type == "S"
-                            ? c.green_new
-                            : c.red_new,
+                                ? c.green_new
+                                : c.red_new,
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15))),
@@ -844,8 +879,8 @@ class _DrawerAppState extends State<DrawerApp> {
                         type == "W"
                             ? imagePath.warning
                             : type == "S"
-                            ? imagePath.success
-                            : imagePath.error,
+                                ? imagePath.success
+                                : imagePath.error,
                         height: type == "W" ? 60 : 100,
                         width: type == "W" ? 60 : 100,
                         fit: BoxFit.cover,
@@ -866,8 +901,8 @@ class _DrawerAppState extends State<DrawerApp> {
                               type == "W"
                                   ? "Warning"
                                   : type == "S"
-                                  ? "Success"
-                                  : "Oops...",
+                                      ? "Success"
+                                      : "Oops...",
                               style: GoogleFonts.getFont('Prompt',
                                   decoration: TextDecoration.none,
                                   fontWeight: FontWeight.w600,
@@ -890,18 +925,17 @@ class _DrawerAppState extends State<DrawerApp> {
                             children: [
                               Visibility(
                                 visible:
-                                type == "S" || type == "E" ? true : false,
+                                    type == "S" || type == "E" ? true : false,
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          c.primary_text_color2),
+                                          MaterialStateProperty.all<Color>(
+                                              c.primary_text_color2),
                                       shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                              RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(15),
-                                          ))),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
                                   onPressed: () {
                                     Navigator.pop(context, true);
                                   },
@@ -920,20 +954,21 @@ class _DrawerAppState extends State<DrawerApp> {
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          c.green_new),
+                                          MaterialStateProperty.all<Color>(
+                                              c.green_new),
                                       shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                              RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(15),
-                                          ))),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
                                   onPressed: () {
                                     dbHelper.deleteAll();
                                     prefs.clear();
-                                    Navigator.pop(context,true);
+                                    Navigator.pop(context, true);
                                     Navigator.pushReplacement(
-                                        context, MaterialPageRoute(builder: (context) => Login()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Login()));
                                   },
                                   child: Text(
                                     "Ok",
@@ -955,14 +990,13 @@ class _DrawerAppState extends State<DrawerApp> {
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          c.red_new),
+                                          MaterialStateProperty.all<Color>(
+                                              c.red_new),
                                       shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                              RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(15),
-                                          ))),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
                                   onPressed: () {
                                     Navigator.pop(context, false);
                                   },

@@ -44,7 +44,7 @@ String inspection_status = "Inspection Status";
 String total_inspection_done_by_you = "Total inspection done by you";
 String edit_profile = "Edit Profile";
 String edit_profile_success = "Profile Updated Successfully!";
-String over_all_inspection_report = "View all inspected works";
+String over_all_inspection_report = "View all inspected works in";
 String user_name_empty = "User Name is Empty";
 String password_empty = "User Password is Empty";
 String software_designed_and = "Software Designed & Developed By NIC";
@@ -58,6 +58,7 @@ String view_inspected_other_work = "View Inspected Other Work";
 String change_password = "Change Password";
 String log_out = "Log Out";
 String refresh_work_stages_success = "Stages Refreshed Successfully!";
+String worklist_download_success = "Work List Downloaded Successfully!";
 String refresh_work_stages_up_to_date = "Refresh Work Stages Up to Date";
 String get_village_list = "Get Village List";
 String village_list = "Village List";
@@ -69,6 +70,7 @@ String click_here_to_get_villages_through_selection =
 String enter_distance_in_km = "Enter distance in km";
 String no_village = "No Villages Found!";
 String no_data = "No Data Found !";
+String no_data_available = "No Data Available !";
 String send_otp = "Send OTP";
 String otp = "OTP";
 String newpassword = "New Password";
@@ -242,9 +244,11 @@ String select_date = "Select Date";
 String or = "(OR)";
 String inspection_taken = "Inspection Taken";
 String other_inspection_taken = "Other Inspection Taken";
-String previous_login_alert="Previous login was not logged out properly.So login again with";
-String password_alert="and ***password";
-String logout_alert=" then click logout icon in home page to successfully logout the previous session";
+String previous_login_alert =
+    "Previous login was not logged out properly.So login again with";
+String password_alert = "and ***password";
+String logout_alert =
+    " then click logout icon in home page to successfully logout the previous session";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";

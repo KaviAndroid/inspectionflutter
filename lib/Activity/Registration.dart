@@ -28,7 +28,7 @@ import 'Login.dart';
 class Registration extends StatefulWidget {
   final registerFlag;
   final profileJson;
-  Registration({this.registerFlag,this.profileJson});
+  Registration({this.registerFlag, this.profileJson});
   @override
   State<Registration> createState() => _RegistrationState();
 }
@@ -121,7 +121,6 @@ class _RegistrationState extends State<Registration> {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
   }
-
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -636,8 +635,8 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: (cugValid || widget.registerFlag == 2) && (selectedLevel == "D" ||
-                                  selectedLevel == "B")
+                          visible: (cugValid || widget.registerFlag == 2) &&
+                                  (selectedLevel == "D" || selectedLevel == "B")
                               ? true
                               : false,
                           child: Column(
@@ -684,7 +683,7 @@ class _RegistrationState extends State<Registration> {
                                           .toList(),
                                       onChanged: (value) {
                                         if (value != "0") {
-                                          print("val>>"+value.toString());
+                                          print("val>>" + value.toString());
                                           isLoadingDcode = true;
                                           ___loadUIBlock(value.toString());
                                           setState(() {});
@@ -742,9 +741,7 @@ class _RegistrationState extends State<Registration> {
                           ),
                         ),
                         Visibility(
-                          visible: selectedLevel == "B"
-                              ? true
-                              : false,
+                          visible: selectedLevel == "B" ? true : false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1021,35 +1018,40 @@ class _RegistrationState extends State<Registration> {
       child: Stack(
         children: <Widget>[
           Container(
-            alignment: Alignment.topCenter,
-            child: Image.asset(
-              imagePath.bg_curve,
-              width: screenWidth,
-              height: screenWidth * 0.3,
-              fit: BoxFit.fill,
-            )),
+              alignment: Alignment.topCenter,
+              child: Image.asset(
+                imagePath.bg_curve,
+                width: screenWidth,
+                height: screenWidth * 0.3,
+                fit: BoxFit.fill,
+              )),
           Align(
               alignment: Alignment.bottomCenter,
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: c.white,
                 child: ClipOval(
-                    child: _imageFile != null ? Image.file(
-                      _imageFile!,
-                      width: 120,
-                      height: 120,
-                      fit: BoxFit.cover,): edit_profile_image!=null?Image.memory(
-                      edit_profile_image!,
-                      // base64.decode(edit_profile_image.toString()),
-                      width: screenWidth,
-                      height: screenWidth * 0.3,
-                      fit: BoxFit.fitWidth,
-                    ) :Image.asset(
-                      imagePath.regUser,
-                      color: c.colorPrimary,
-                      width: 100,
-                    )
-                  /*                    child: widget.registerFlag == 1 ?
+                    child: _imageFile != null
+                        ? Image.file(
+                            _imageFile!,
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          )
+                        : edit_profile_image != null
+                            ? Image.memory(
+                                edit_profile_image!,
+                                // base64.decode(edit_profile_image.toString()),
+                                width: screenWidth,
+                                height: screenWidth * 0.3,
+                                fit: BoxFit.fitWidth,
+                              )
+                            : Image.asset(
+                                imagePath.regUser,
+                                color: c.colorPrimary,
+                                width: 100,
+                              )
+                    /*                    child: widget.registerFlag == 1 ?
                     _imageFile == null ? Image.asset(
                             imagePath.regUser,
                             color: c.colorPrimary,
@@ -1069,7 +1071,8 @@ class _RegistrationState extends State<Registration> {
                       width: screenWidth,
                       height: screenWidth * 0.3,
                       fit: BoxFit.fitWidth,
-                    )*/),
+                    )*/
+                    ),
               ))
         ],
       ),
@@ -1158,10 +1161,7 @@ class _RegistrationState extends State<Registration> {
       if (await gotoCamera()) {
         // final pickedFile = await _picker.pickImage(source: source);
         final pickedFile = await _picker.pickImage(
-            source: source,
-            imageQuality: 80,
-            maxHeight: 400,
-            maxWidth: 400);
+            source: source, imageQuality: 80, maxHeight: 400, maxWidth: 400);
         if (pickedFile == null) {
           Navigator.pop(context);
 
@@ -1179,10 +1179,7 @@ class _RegistrationState extends State<Registration> {
       if (await gotoStorage()) {
         // final pickedFile = await _picker.pickImage(source: source);
         final pickedFile = await _picker.pickImage(
-            source: source,
-            imageQuality: 80,
-            maxHeight: 400,
-            maxWidth: 400);
+            source: source, imageQuality: 80, maxHeight: 400, maxWidth: 400);
         if (pickedFile == null) {
           Navigator.pop(context);
 
@@ -1256,8 +1253,7 @@ class _RegistrationState extends State<Registration> {
     districtError = false;
     selectedDistrict = value.toString();
     selectedBlock = defaultSelectedBlock['bcode'];
-    setState(() {
-    });
+    setState(() {});
   }
 
   /// ************************** Service Call *****************************/
@@ -1363,7 +1359,7 @@ class _RegistrationState extends State<Registration> {
       print(data);
       var status = data[s.key_status];
       var responseValue = data[s.key_response];
-      levelItems=[];
+      levelItems = [];
       if (status == s.key_ok && responseValue == s.key_ok) {
         levelItems = data[s.key_json_data];
       }
@@ -1479,7 +1475,7 @@ class _RegistrationState extends State<Registration> {
           blockItems = [];
           blockItems.add(defaultSelectedBlock);
           blockItems.addAll(sort_block);
-          print("blockItems>>"+ blockItems.toString());
+          print("blockItems>>" + blockItems.toString());
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
         Utils().showAlert(context, "No Block Found");
@@ -1490,38 +1486,36 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Profile API *****************************/
 
   Future<void> getProfileList() async {
+    List<dynamic> res_jsonArray = widget.profileJson;
+    if (res_jsonArray.length > 0) {
+      for (int i = 0; i < res_jsonArray.length; i++) {
+        edit_name = res_jsonArray[i][s.key_name];
+        edit_mobile = res_jsonArray[i][s.key_mobile];
+        edit_gender = res_jsonArray[i][s.key_gender];
+        selectedLevel = res_jsonArray[i][s.key_level];
+        edit_desig_code = res_jsonArray[i][s.key_desig_code].toString();
+        edit_dcode = res_jsonArray[i][s.key_dcode].toString();
+        edit_bcode = res_jsonArray[i][s.key_bcode].toString();
+        edit_office_address = res_jsonArray[i][s.key_office_address];
+        edit_email = res_jsonArray[i][s.key_email];
+        String profile_image = res_jsonArray[i][s.key_profile_image];
 
-        List<dynamic> res_jsonArray = widget.profileJson;
-        if (res_jsonArray.length > 0) {
-          for (int i = 0; i < res_jsonArray.length; i++) {
-            edit_name = res_jsonArray[i][s.key_name];
-            edit_mobile = res_jsonArray[i][s.key_mobile];
-            edit_gender = res_jsonArray[i][s.key_gender];
-            selectedLevel = res_jsonArray[i][s.key_level];
-            edit_desig_code = res_jsonArray[i][s.key_desig_code].toString();
-            edit_dcode = res_jsonArray[i][s.key_dcode].toString();
-            edit_bcode = res_jsonArray[i][s.key_bcode].toString();
-            edit_office_address = res_jsonArray[i][s.key_office_address];
-            edit_email = res_jsonArray[i][s.key_email];
-            String profile_image = res_jsonArray[i][s.key_profile_image];
-
-            if (!(profile_image == ("null") || profile_image == (""))) {
-              profileImage=profile_image;
-              // edit_profile_image = Base64Codec().decode(profile_image);
-              // edit_profile_image = base64Decode(profile_image);
-              edit_profile_image=base64.decode(profile_image.replaceAll(RegExp(r'\s+'), ''));
-
-            }
-          }
-          await __initializeBodyUI();
-          setState(() {
-            nameController.text = edit_name!;
-            emailController.text = edit_email!;
-            officeController.text = edit_office_address!;
-            mobileController.text = edit_mobile!;
-          });
+        if (!(profile_image == ("null") || profile_image == (""))) {
+          profileImage = profile_image;
+          // edit_profile_image = Base64Codec().decode(profile_image);
+          // edit_profile_image = base64Decode(profile_image);
+          edit_profile_image =
+              base64.decode(profile_image.replaceAll(RegExp(r'\s+'), ''));
         }
-
+      }
+      await __initializeBodyUI();
+      setState(() {
+        nameController.text = edit_name!;
+        emailController.text = edit_email!;
+        officeController.text = edit_office_address!;
+        mobileController.text = edit_mobile!;
+      });
+    }
   }
 /*
   Future<void> getProfileList() async {
@@ -1612,7 +1606,6 @@ class _RegistrationState extends State<Registration> {
       isSpinnerLoading = true;
       gotToTop();
     });
-    var userPassKey = prefs!.getString(s.userPassKey);
 
     Map jsonRequest, reqBlock, reqDist;
 
@@ -1626,19 +1619,24 @@ class _RegistrationState extends State<Registration> {
       s.key_designation: selectedDesignation,
       s.key_office_address: officeController.text.trim(),
       s.key_email: emailController.text.trim(),
+      if (selectedLevel == "B" || selectedLevel == "D")
+        s.key_dcode: selectedDistrict,
+      if (selectedLevel == "B") s.key_bcode: selectedBlock,
     };
 
-    if (selectedLevel == "B") {
-      reqBlock = {s.key_dcode: selectedDistrict, s.key_bcode: selectedBlock};
-      jsonRequest.addAll(reqBlock);
-    } else if (selectedLevel == "D") {
-      reqDist = {s.key_dcode: selectedDistrict};
-      jsonRequest.addAll(reqDist);
-    }
+    // if (selectedLevel == "B") {
+    //   reqBlock = {s.key_dcode: selectedDistrict, s.key_bcode: selectedBlock};
+    //   jsonRequest.addAll(reqBlock);
+    // } else if (selectedLevel == "D") {
+    //   reqDist = {s.key_dcode: selectedDistrict};
+    //   jsonRequest.addAll(reqDist);
+    // }
+
+    print("Prof image >> $profileImage");
 
     Map encrypted_request = {
-      s.key_user_name: prefs?.getString(s.key_user_name),
-      s.key_data_content:jsonRequest,
+      s.key_user_name: userName,
+      s.key_data_content: jsonRequest,
     };
 
     String jsonString = jsonEncode(encrypted_request);
@@ -1651,7 +1649,6 @@ class _RegistrationState extends State<Registration> {
       "Authorization": "Bearer $header_token"
     };
 
-
     HttpClient _client = HttpClient(context: await Utils().globalContext);
     _client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => false;
@@ -1661,7 +1658,7 @@ class _RegistrationState extends State<Registration> {
 
     print("EditProfileData_url>>" + url.main_service_jwt.toString());
     print("EditProfileData_request_json>>" + jsonRequest.toString());
-    print("EditProfileData_request_encrpt>>" + encrypted_request.toString());
+    print("EditProfileData_request_encrpt>> ${jsonEncode(encrypted_request)}");
     setState(() {
       isSpinnerLoading = false;
     });
@@ -1681,7 +1678,7 @@ class _RegistrationState extends State<Registration> {
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
-      String responceData = utils.generateHmacSha256(jsonEncode(data), key, false);
+      String responceData = utils.generateHmacSha256(data, key, false);
 
       print("EditProfileData responceSignature -  $responceSignature");
 
@@ -1690,24 +1687,19 @@ class _RegistrationState extends State<Registration> {
       if (responceSignature == responceData) {
         print("EditProfileData responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           print(status);
           print(response_value);
-          utils.customAlert(context, "S", s.edit_profile_success).then((value) =>
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Login(
-                      )),
-                      (route) => false)
-
-          );
-        }else{
+          utils.customAlert(context, "S", s.edit_profile_success).then(
+              (value) => Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Login()),
+                  (route) => false));
+        } else {
           utils.customAlert(context, "E", s.jsonError);
         }
-
-      }else {
+      } else {
         print("EditProfileData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
@@ -1733,15 +1725,19 @@ class _RegistrationState extends State<Registration> {
       s.key_designation: selectedDesignation,
       s.key_office_address: officeController.text.trim(),
       s.key_email: emailController.text.trim(),
+      if (selectedLevel == "B" || selectedLevel == "D")
+        s.key_dcode: selectedDistrict,
+      if (selectedLevel == "B") s.key_bcode: selectedBlock,
     };
 
-    if (selectedLevel == "B") {
-      reqBlock = {s.key_dcode: selectedDistrict, s.key_bcode: selectedBlock};
-      jsonRequest.addAll(reqBlock);
-    } else if (selectedLevel == "D") {
-      reqDist = {s.key_dcode: selectedDistrict};
-      jsonRequest.addAll(reqDist);
-    }
+    // if (selectedLevel == "B") {
+    //   reqBlock = {s.key_dcode: selectedDistrict, s.key_bcode: selectedBlock};
+    //   jsonRequest.addAll(reqBlock);
+    // } else if (selectedLevel == "D") {
+    //   reqDist = {s.key_dcode: selectedDistrict};
+    //   jsonRequest.addAll(reqDist);
+    // }
+
     print('save>>>>>>>>${jsonRequest}');
 
     HttpClient _client = HttpClient(context: await Utils().globalContext);

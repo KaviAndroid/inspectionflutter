@@ -345,7 +345,11 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
+    utils.hideProgress(context);
+
     if (response.statusCode == 200) {
+      utils.showProgress(context, 1);
+
       String data = response.body;
 
       print("Get_PDF_response>>" + data);
@@ -364,6 +368,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
       print("Get_PDF responceData -  $responceData");
 
+      utils.hideProgress(context);
+
       if (responceSignature == responceData) {
         print("Get_PDF responceSignature - Token Verified");
 
@@ -373,6 +379,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
         if (status == s.key_ok && response_value == s.key_ok) {
           var pdftoString = userData[s.key_json_data];
+          print("Get_PDF responceSignature - $pdftoString");
+
           pdf = const Base64Codec().decode(pdftoString['pdf_string']);
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -388,7 +396,6 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
         print("Get_PDF responceSignature - Token Not Verified");
       }
     }
-    utils.hideProgress(context);
   }
   // *************************** API call Ends here *************************** //
 

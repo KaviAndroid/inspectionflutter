@@ -4,8 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:android_intent/android_intent.dart';
 import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
@@ -14,7 +14,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
-import 'package:inspection_flutter_app/Activity/Pdf_Viewer.dart';
 import 'package:intl/intl.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -28,9 +27,26 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
-import '../Resources/global.dart';
 
 class Utils {
+
+  Future<bool> isAutoDatetimeisEnable() async {
+
+    bool isAutoDateTimeEnabled = false;
+    if (Platform.isAndroid || Platform.isIOS) {
+      isAutoDateTimeEnabled = Platform.environment['AUTO_TIME'] == 'true';
+    }
+    // return isAutoDateTimeEnabled;
+    return true;
+  }
+
+  void openDateTimeSettings() async {
+    AndroidIntent intent = AndroidIntent(
+      action: 'android.settings.DATE_SETTINGS',
+    );
+    intent.launch();
+  }
+
   Future<bool> isOnline() async {
     bool online = false;
     try {
@@ -1181,5 +1197,9 @@ class Utils {
     }
 
     return signature;
+  }
+
+  String checkNull(dynamic value) {
+    return value == null ? '' : value.toString();
   }
 }

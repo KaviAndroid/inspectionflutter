@@ -307,7 +307,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                               width: 17,
                               height: 17,
                             ),
-                            Text("Town Pancha...",
+                            Text("Town Pan...",
                                 style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 13,
@@ -538,7 +538,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
   _Piechart() {
     return Container(
-        width: 370,
+        margin: EdgeInsets.only(top: 18,left: 10,right: 10),
         child: Visibility(
             visible: isPiechartLoading,
             child: Card(
@@ -598,6 +598,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                             ],
                             legendIconType: LegendIconType.circle,
                             dataLabelSettings: DataLabelSettings(
+                              showZeroValue: false,
                               isVisible: true,
                               labelPosition: ChartDataLabelPosition.outside,
                               connectorLineSettings:
@@ -990,26 +991,38 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                               ),
                                                                               child: InkWell(
                                                                                 onTap: () async {
-                                                                                  await getSavedWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
-                                                                                  selectedOtherworkList.clear();
-                                                                                  selectedOtherworkList.add(workList[index]);
-                                                                                  print('selectedOtherworkList>>' + selectedOtherworkList.toString());
-                                                                                  Navigator.push(
-                                                                                      context,
-                                                                                      MaterialPageRoute(
-                                                                                          builder: (context) =>OtherWork_Save(
-                                                                                            selectedworkList: selectedOtherworkList,
-                                                                                            flag: "edit",
-                                                                                            onoff_type: "online",
-                                                                                            townType: town_type,
-                                                                                            imagelist: ImageList,
-                                                                                            category: "",
-                                                                                            finYear: "",
-                                                                                            dcode:"",
-                                                                                            bcode:"",
-                                                                                            pvcode:"",
-                                                                                            tmccode: "",
-                                                                                          )));
+                                                                                  if(await utils.isAutoDatetimeisEnable()) {
+
+                                                                                    await getSavedWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
+                                                                                    selectedOtherworkList.clear();
+                                                                                    selectedOtherworkList.add(workList[index]);
+                                                                                    print('selectedOtherworkList>>' + selectedOtherworkList.toString());
+                                                                                    Navigator.push(
+                                                                                        context,
+                                                                                        MaterialPageRoute(
+                                                                                            builder: (context) =>OtherWork_Save(
+                                                                                              selectedworkList: selectedOtherworkList,
+                                                                                              flag: "edit",
+                                                                                              onoff_type: "online",
+                                                                                              townType: town_type,
+                                                                                              imagelist: ImageList,
+                                                                                              category: "",
+                                                                                              finYear: "",
+                                                                                              dcode:"",
+                                                                                              bcode:"",
+                                                                                              pvcode:"",
+                                                                                              tmccode: "",
+                                                                                            )));
+
+                                                                                  } else {
+                                                                                    utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
+                                                                                    {
+                                                                                      if (Platform.isAndroid) {
+                                                                                        utils.openDateTimeSettings()
+                                                                                      }
+                                                                                    });
+                                                                                  }
+
                                                                                   /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];

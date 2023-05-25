@@ -103,7 +103,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 : s.select_from_to_date
             : null;
 
-    fetchOfflineWorklist();
+    await fetchOfflineWorklist();
     setState(() {});
   }
 
@@ -296,12 +296,13 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    utils.hideProgress(context);
 
     print("Online_Work_List_url>>" + url.main_service_jwt.toString());
     print("Online_Work_List_request_encrpt>>" + encrypted_request.toString());
+    utils.hideProgress(context);
 
     if (response.statusCode == 200) {
+
       String data = response.body;
 
       print("Online_Work_List_response>>" + data);
@@ -321,6 +322,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       print("Online_Work_List responceData -  $responceData");
 
       if (responceSignature == responceData) {
+
         print("Online_Work_List responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
@@ -342,7 +344,30 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             } else if (widget.Flag == "R") {
               dbHelper.delete_table_AtrWorkList('R');
             }
-            for (int i = 0; i < inspection_details.length; i++) {
+
+            String sql =
+                'INSERT INTO ${s.table_AtrWorkList} (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES ';
+
+            List<String> valueSets = [];
+
+            for (var row in inspection_details) {
+              String values =
+                  " ( '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_pvcode])}', '${utils.checkNull(row[s.key_inspection_id])}', '${row[s.key_inspection_date]}', '${row[s.key_status_id]}', '${row[s.key_status_name]}', '${row[s.key_description]}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_name])}', '${utils.checkNull(row[s.key_desig_name])}', '${utils.checkNull(row[s.key_work_type_name])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvname])}', '${utils.checkNull(row[s.key_rural_urban])}', '${utils.checkNull(row[s.key_town_type])}', '${utils.checkNull(row[s.key_tpcode])}', '${utils.checkNull(row[s.key_townpanchayat_name])}', '${utils.checkNull(row[s.key_muncode])}', '${utils.checkNull(row[s.key_municipality_name])}', '${utils.checkNull(row[s.key_corcode])}', '${utils.checkNull(row[s.key_corporation_name])}') ";
+              valueSets.add(values);
+            }
+
+            sql += valueSets.join(', ');
+
+            await dbHelper.myDb?.execute(sql);
+
+            List<Map> list =
+                await dbClient.rawQuery('SELECT * FROM ${s.table_AtrWorkList}');
+
+            if (list.isNotEmpty) {
+              utils.customAlert(context, "S", s.worklist_download_success);
+            }
+
+            /* for (int i = 0; i < inspection_details.length; i++) {
               await dbClient.rawInsert('INSERT INTO ' +
                   s.table_AtrWorkList +
                   ' (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES(' +
@@ -395,8 +420,9 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   "' , '" +
                   inspection_details[i][s.key_corporation_name] +
                   "')");
-            }
-            fetchOfflineWorklist();
+            } */
+
+            await fetchOfflineWorklist();
           }
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
           setState(() {
@@ -412,6 +438,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         print("Online_Work_List responceSignature - Token Not Verified");
       }
     }
+
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
@@ -456,6 +483,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       utils.hideProgress(context);
 
       if (response.statusCode == 200) {
+        utils.showProgress(context, 1);
+
         String data = response.body;
 
         print("Get_PDF_response>>" + data);
@@ -473,6 +502,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         print("Get_PDF responceSignature -  $responceSignature");
 
         print("Get_PDF responceData -  $responceData");
+
+        utils.hideProgress(context);
 
         if (responceSignature == responceData) {
           print("Get_PDF responceSignature - Token Verified");
@@ -510,7 +541,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
-    utils.showProgress(context, 1);
     list = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' ");
 
@@ -566,7 +596,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     setState(() {
       SDBText = "Block - ${prefs.getString(s.key_bname)}";
     });
-    utils.hideProgress(context);
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //
@@ -585,7 +614,9 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         utils.showAlert(context, "End Date should be greater than Start Date");
       } else {
         dateController.text = "$startDate  To  $endDate";
-        fetchOnlineATRWroklist(startDate, endDate);
+        await utils.isOnline()
+            ? fetchOnlineATRWroklist(startDate, endDate)
+            : utils.customAlert(context, "E", s.no_internet);
       }
     }
   }

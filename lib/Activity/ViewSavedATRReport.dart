@@ -607,6 +607,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                             ],
                             legendIconType: LegendIconType.circle,
                             dataLabelSettings: DataLabelSettings(
+                              showZeroValue: false,
                               isVisible: true,
                               labelPosition: ChartDataLabelPosition.outside,
                               connectorLineSettings:
@@ -978,20 +979,32 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                           child: InkWell(
                                                                             onTap:
                                                                                 () async {
-                                                                              await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString(), workList[index][s.key_action_taken_id].toString());
-                                                                              selectedATRworkList.clear();
-                                                                              selectedATRworkList.add(workList[index]);
-                                                                              print('selectedATRworkList>>' + selectedATRworkList.toString());
-                                                                              Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => ATR_Save(
-                                                                                            selectedWorklist: selectedATRworkList,
-                                                                                            flag: "edit",
-                                                                                            onoff_type: "online",
-                                                                                            rural_urban: area_type,
-                                                                                            imagelist: ImageList,
-                                                                                          )));
+                                                                              if(await utils.isAutoDatetimeisEnable()) {
+
+                                                                                await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString(), workList[index][s.key_action_taken_id].toString());
+                                                                                selectedATRworkList.clear();
+                                                                                selectedATRworkList.add(workList[index]);
+                                                                                print('selectedATRworkList>>' + selectedATRworkList.toString());
+                                                                                Navigator.push(
+                                                                                    context,
+                                                                                    MaterialPageRoute(
+                                                                                        builder: (context) => ATR_Save(
+                                                                                          selectedWorklist: selectedATRworkList,
+                                                                                          flag: "edit",
+                                                                                          onoff_type: "online",
+                                                                                          rural_urban: area_type,
+                                                                                          imagelist: ImageList,
+                                                                                        )));
+
+                                                                              } else {
+                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
+                                                                                {
+                                                                                  if (Platform.isAndroid) {
+                                                                                    utils.openDateTimeSettings()
+                                                                                  }
+                                                                                });
+                                                                              }
+
                                                                               /*   if(await utils.isOnline())
                                                                               {
                                                                                inspection_date= workList[index]["inspection_date"];

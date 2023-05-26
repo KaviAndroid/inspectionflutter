@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info/device_info.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'dart:io';
@@ -46,16 +47,27 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   // ********************************************* Download PDF Func ***************************************//
 
   Future<void> downloadPDF(Uint8List pdfBytes) async {
-    // Check if we have storage permission
-    var status = await Permission.storage.status;
-    if (status != PermissionStatus.granted) {
-      status = await Permission.storage.request();
-      if (status != PermissionStatus.granted) {
-        throw Exception('Permission denied');
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var sdkInt = androidInfo.version.sdkInt;
+      // Check if we have storage permission
+      if (sdkInt < 33) {
+        var status = await Permission.storage.status;
+        if (status != PermissionStatus.granted) {
+          status = await Permission.storage.request();
+
+          if (status != PermissionStatus.granted) {
+            throw Exception('Permission denied');
+          }
+        }
       }
     }
 
     Directory? downloadDirectory;
+
+    final directoryCheck = await getApplicationDocumentsDirectory();
+
+    print("object>>> $directoryCheck");
 
     if (Platform.isAndroid) {
       List<Directory>? storageDirectories =
@@ -78,7 +90,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     //     ? await getExternalStorageDirectory()
     //     : await getDownloadsDirectory();
 
-    String downloadsPath = '${downloadDirectory.path}/Download';
+    String downloadsPath = '${downloadDirectory.path}';
 
     Directory downloadsDir = Directory(downloadsPath);
     if (!downloadsDir.existsSync()) {
@@ -91,8 +103,26 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     File pdfFile = File('${downloadsDir.path}/$fileName.pdf');
     try {
       await pdfFile.writeAsBytes(pdfBytes);
-      showNotification(
-          "Inspection App", "PDF file saved successfully", pdfFile.path);
+
+      await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+        //It would be more appropriate if you can show your own dialog
+        //to the user before requesting the notifications permissons.
+        if (!isAllowed) {
+          AwesomeNotifications().requestPermissionToSendNotifications(
+            permissions: [
+              NotificationPermission.Alert,
+              NotificationPermission.Sound,
+              NotificationPermission.Badge,
+              NotificationPermission.Vibration,
+              NotificationPermission.Light,
+              NotificationPermission.FullScreenIntent,
+            ],
+          );
+        } else {
+          showNotification(
+              "Inspection App", "PDF file saved successfully", pdfFile.path);
+        }
+      });
     } catch (e) {
       print('Error writing PDF to file: $e');
       return;
@@ -120,23 +150,6 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
       debug: true,
     );
 
-    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      //It would be more appropriate if you can show your own dialog
-      //to the user before requesting the notifications permissons.
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications(
-          permissions: [
-            NotificationPermission.Alert,
-            NotificationPermission.Sound,
-            NotificationPermission.Badge,
-            NotificationPermission.Vibration,
-            NotificationPermission.Light,
-            NotificationPermission.FullScreenIntent,
-          ],
-        );
-      }
-    });
-
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 10,
@@ -157,7 +170,6 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
       onActionReceivedMethod: (receivedAction) {
         print("${receivedAction.buttonKeyPressed} - action here");
         if (receivedAction.buttonKeyPressed == "view") {
-          print("Success");
           _openFilePath(payload);
         }
         throw ("DOne");

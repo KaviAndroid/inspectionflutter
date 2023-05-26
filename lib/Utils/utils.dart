@@ -1202,4 +1202,32 @@ class Utils {
   String checkNull(dynamic value) {
     return value == null ? '' : value.toString();
   }
+  String splitStringByLength(String str, int length) {
+    String sname='';
+    if(str.length>length)
+      {
+        int len=length;
+        if(str[length]!=' '){
+          for(int i=0;i<length;i++){
+            String s=str[length-(i+1)];
+            if(s==' '){
+              len=length-(i+1);
+              print("length"+len.toString());
+              break;
+            }
+          }
+        }
+
+        String fir=str.substring(0, len);
+        String sec=str.substring( len);
+        sname=fir+'\n'+sec;
+      }
+    else
+      {
+        sname=str;
+      }
+
+    return sname;
+
+  }
 }

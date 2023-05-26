@@ -313,11 +313,19 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               width: 17,
                               height: 17,
                             ),
-                            Text("Town Pan...",
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                    color: townActive ? c.white : c.grey_6)),
+                          /*  Expanded(
+                              child: Text('Town Panchayat', maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: townActive ? c.white : c.grey_6)),
+                            ),*/
+                            Text('Town Pan...', style: GoogleFonts.getFont('Roboto',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: townActive ? c.white : c.grey_6)
+                               ),
                           ])),
                 ),
               ),
@@ -599,7 +607,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               ChartData('Satisfied', sCount, satisfied_color),
                               ChartData(
                                   'UnSatisfied', usCount, unsatisfied_color),
-                              ChartData('Need Improvement', nimpCount,
+                              ChartData('Need Impr..', nimpCount,
                                   need_improvement_color),
                             ],
                             legendIconType: LegendIconType.circle,
@@ -851,7 +859,16 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             softWrap: true,
                                                           ),
                                                         ),
-                                                        Expanded(
+                                                          Expanded(
+                                                          child: Text(workList[index][s
+                                                              .key_work_name], maxLines: 3,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                                                  fontWeight: FontWeight.normal,
+                                                                  fontSize: 13,
+                                                                  color: townActive ? c.white : c.grey_6)),
+                                                        ),
+                                                      /*  Expanded(
                                                           flex: 1,
                                                           child: Text(
                                                             workList[index][s
@@ -860,7 +877,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             style: TextStyle(
                                                                 color: c.white),
                                                           ),
-                                                        ),
+                                                        ),*/
                                                       ],
                                                     ),
                                                     SizedBox(

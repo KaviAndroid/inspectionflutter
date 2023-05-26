@@ -1648,6 +1648,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   alignment: ChartAlignment.near,
                                   orientation: LegendItemOrientation.horizontal,
                                   position: LegendPosition.bottom,
+
                                 ),
                                 series: <CircularSeries>[
                                   DoughnutSeries<ChartData, String>(
@@ -1661,7 +1662,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                           c.satisfied_color),
                                       ChartData('UnSatisfied', usCount,
                                           c.unsatisfied_color),
-                                      ChartData('Need Improvement', nimpCount,
+                                      ChartData('Need Impr..', nimpCount,
                                           c.need_improvement_color),
                                     ],
                                     legendIconType: LegendIconType.circle,

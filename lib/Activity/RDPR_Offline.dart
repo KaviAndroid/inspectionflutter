@@ -1634,10 +1634,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             for (int i = 0; i < res_jsonArray.length; i++) {
               String schName=res_jsonArray[i][s.key_scheme_name];
               if(schName.length >=38){
-                List<String> splitS=splitStringByLength(schName,38);
-                String fir=splitS[0];
-                String sec=splitS[1];
-                schName=fir+'\n'+sec;
+                schName=utils.splitStringByLength(schName,38);
+
               }
               schemeList.add(FlutterLimitedCheckBoxModel(
                   isSelected: false,
@@ -1883,25 +1881,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     }
   }
 
-  List<String> splitStringByLength(String str, int length) {
-    List<String> data = [];
-    int len=length;
-    if(str[length]!=' '){
-      for(int i=0;i<length;i++){
-        String s=str[length-(i+1)];
-        if(s==' '){
-          len=length-(i+1);
-          print("length"+len.toString());
-          break;
-        }
-      }
-    }
-    data.add( str.substring(0, len) );
-    data.add( str.substring( len) );
-    print("length>>>>>>"+len.toString());
-    return data;
 
-  }
 
   Future<void> customAlertwithOk(
       BuildContext context, String type, String msg, List schArray) async {
@@ -2008,12 +1988,13 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                                     tmccode: '',
                                                     townType: '',
                                                     selectedschemeList: [],
-                                                  ))).then((value) {
+                                                  )));
+                                      /*.then((value) {
                                         utils.gotoHomePage(
                                             context, "RDPRUrban");
                                         // you can do what you need here
                                         // setState etc.
-                                      });
+                                      });*/
                                     }
                                   },
                                   child: Text(

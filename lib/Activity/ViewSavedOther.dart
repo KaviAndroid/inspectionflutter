@@ -593,7 +593,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                               ChartData('Satisfied', sCount, satisfied_color),
                               ChartData(
                                   'UnSatisfied', usCount, unsatisfied_color),
-                              ChartData('Need Improvement', nimpCount,
+                              ChartData('Need Impr..', nimpCount,
                                   need_improvement_color),
                             ],
                             legendIconType: LegendIconType.circle,

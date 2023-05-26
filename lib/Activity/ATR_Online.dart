@@ -880,16 +880,27 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                           const SizedBox(
                                             width: 5,
                                           ),
-                                          Text(
-                                            defaultWorklist[index][s.key_name],
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: c.primary_text_color2),
-                                            overflow: TextOverflow.clip,
-                                            maxLines: 1,
-                                            softWrap: true,
-                                          ),
+                                         SizedBox(
+                                           width: 80,
+                                          /* child:Expanded(
+                                             child: Text(defaultWorklist[index][s.key_name], maxLines: 1,
+                                                 overflow: TextOverflow.ellipsis,
+                                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                                     fontWeight: FontWeight.w600,
+                                                     fontSize: 13,
+                                                    )),
+                                           ),*/
+                                           child:  Text(
+                                             utils.splitStringByLength(defaultWorklist[index][s.key_name],35),
+                                             style: TextStyle(
+                                                 fontSize: 13,
+                                                 fontWeight: FontWeight.bold,
+                                                 color: c.primary_text_color2),
+                                             overflow: TextOverflow.clip,
+                                             maxLines: 1,
+                                             softWrap: true,
+                                           ),
+                                         )
                                         ],
                                       ),
                                       const SizedBox(

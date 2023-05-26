@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -422,20 +423,29 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                 fontWeight: FontWeight.bold,
                                                 color: c.grey_8),
                                             overflow: TextOverflow.clip,
-                                            maxLines: 1,
+                                            maxLines: 2,
                                             softWrap: true,
                                           ),
                                           const SizedBox(
                                             width: 5,
                                           ),
+                                       /*   Expanded(
+                                            child: Text(defaultWorklist[index][s.key_name], maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13,
+                                                  color: c.primary_text_color2
+                                                    )),
+                                          ),*/
                                           Text(
-                                            defaultWorklist[index][s.key_name],
+                                            utils.splitStringByLength(defaultWorklist[index][s.key_name],25),
                                             style: TextStyle(
                                                 fontSize: 13.5,
                                                 fontWeight: FontWeight.w700,
                                                 color: c.primary_text_color2),
                                             overflow: TextOverflow.clip,
-                                            maxLines: 1,
+                                            maxLines: 2,
                                             softWrap: true,
                                           ),
                                         ],

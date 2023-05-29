@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
@@ -202,7 +203,13 @@ class _HomeState extends State<Home> {
                   child: Text('No'),
                 ),
                 ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(true),
+                  onPressed: () {
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else if (Platform.isIOS) {
+                      exit(0);
+                    }
+                  },
                   //return true when click on "Yes"
                   child: Text('Yes'),
                 ),

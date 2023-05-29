@@ -745,7 +745,7 @@ class Utils {
           child: Center(
             child: Container(
               height: 320,
-              margin: EdgeInsets.all(50),
+              margin: EdgeInsets.all(30),
               decoration: BoxDecoration(
                   color: c.white,
                   borderRadius: BorderRadius.circular(15),

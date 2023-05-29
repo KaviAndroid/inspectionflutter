@@ -4,11 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Layout/AppUpdate.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
@@ -23,6 +25,8 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   Utils utils = Utils();
   late SharedPreferences prefs;
+  final LocalAuthentication auth = LocalAuthentication();
+  String msg = "You are not authorized.";
 
   @override
   void initState(){
@@ -33,7 +37,72 @@ class _SplashState extends State<Splash> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     // checkVersion(context);
-    utils.gotoLoginPageFromSplash(context);
+    if(prefs.getString(s.key_user_name)!=null&&prefs.getString(s.key_user_pwd)!=null){
+      checkBiometricSupport();
+    }else {
+      utils.gotoLoginPageFromSplash(context);
+    }
+
+  }
+  Future<void> checkBiometricSupport() async {
+
+    try {
+      bool hasbiometrics = await auth.canCheckBiometrics; //check if there is authencations,
+
+      if(hasbiometrics){
+        List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+        if (availableBiometrics.contains(BiometricType.face) || availableBiometrics.contains(BiometricType.fingerprint)) {
+          bool pass = await auth.authenticate(
+              localizedReason: 'Authenticate with fingerprint/face',
+              biometricOnly: true );
+          if(pass){
+            msg = "You are Authenicated.";
+            setState(() {
+
+            });
+            utils.gotoHomePage(context, "Splash");
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Authentication failed. Please use user name and password to login. "),
+            ));
+            utils.gotoLoginPageFromSplash(context);
+          }
+        }
+      }else{
+        msg = "You are not alowed to access biometrics.";
+        try {
+
+          bool pass = await auth.authenticate(
+              localizedReason: 'Authenticate with pattern/pin/passcode',
+              biometricOnly: false );
+          if(pass){
+            msg = "You are Authenticated.";
+            setState(() {
+
+            });
+            utils.gotoHomePage(context, "Splash");
+          }
+
+        } on PlatformException catch (e) {
+          msg = "Error while opening fingerprint/face scanner";
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Authentication failed. Please use user name and password to login. "),
+          ));
+          utils.gotoLoginPageFromSplash(context);
+        }
+
+      }
+
+
+    } on PlatformException catch (e) {
+      msg = "Error while opening fingerprint/face scanner";
+      msg = e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Authentication failed. Please use user name and password to login. "),
+      ));
+      utils.gotoLoginPageFromSplash(context);
+    }
+    print("Mess>>"+msg);
   }
 
   @override

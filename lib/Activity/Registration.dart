@@ -966,20 +966,25 @@ class _RegistrationState extends State<Registration> {
                                         RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ))),
-                                onPressed: () {
+                                onPressed: () async {
                                   dropDownValidation();
                                   if (_formKey.currentState!.validate()) {
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
 
-                                    boolFlag
-                                        ? profileImage == null
-                                            ? Utils().showAlert(
-                                                context, s.please_upload_image)
-                                            : widget.registerFlag == 1
-                                                ? goToSave()
-                                                : goToEdit()
-                                        : print("object Error");
+                                    if (await utils.isOnline()) {
+                                      boolFlag
+                                          ? profileImage == null
+                                              ? Utils().showAlert(context,
+                                                  s.please_upload_image)
+                                              : widget.registerFlag == 1
+                                                  ? goToSave()
+                                                  : goToEdit()
+                                          : print("object Error");
+                                    } else {
+                                      utils.customAlert(
+                                          context, "E", s.no_internet);
+                                    }
                                   }
                                 },
                                 child: Text(

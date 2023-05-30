@@ -1,23 +1,20 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_new, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_types_as_parameter_names
 
-import 'dart:convert';
 import 'dart:core';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/ViewWorklistScreen.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-
 import '../DataBase/DbHelper.dart';
+import '../Layout/OverallWorklistController.dart';
 import '../Utils/utils.dart';
 
 class ViewOverallReport extends StatefulWidget {
@@ -29,9 +26,12 @@ class ViewOverallReport extends StatefulWidget {
 }
 
 class _ViewOverallReportState extends State<ViewOverallReport> {
+  // controller
+  OverallWorklistController controllerOverall = OverallWorklistController();
   //Bool Values
   bool isWorklistAvailable = false;
   bool isPiechartAvailable = false;
+  bool stateTableUI = false;
   bool stateUI = false;
   bool districtUI = false;
   bool blockUI = false;
@@ -49,14 +49,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
   late List<ChartData> data;
   List defaultWorklist = [];
   List selectedworkList = [];
-  List villageworkList = [];
-  List districtworkList = [];
-  List blockworkList = [];
-  List TMCworkList = [];
   List _filteredVillage = [];
-
-  //List Dynamic
-  List<dynamic> work_details = [];
 
   //String Vlues
   String header_name = "";
@@ -68,7 +61,9 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
   String from_Date = "";
   String to_Date = "";
   String selectedDcode = "";
+  String selectedDname = "";
   String selectedBcode = "";
+  String selectedBname = "";
   String tmcType = "";
   String dynamicTMC_ID = "";
   String dynamicTMC_Name = "";
@@ -92,18 +87,29 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
+  ScrollController scrollController = ScrollController();
 
   Future<bool> _onWillPop() async {
     if (prefs.getString(s.key_rural_urban) == "U") {
-      if (isWorklistAvailable) {
+      if (blockUI) {
         goToBack();
       } else {
         Navigator.of(context, rootNavigator: true).pop(context);
       }
     } else {
-      if (isWorklistAvailable && widget.flag != "B") {
-        goToBack();
-      } else {
+      if (widget.flag == "S") {
+        if (blockUI || districtUI) {
+          goToBack();
+        } else {
+          Navigator.of(context, rootNavigator: true).pop(context);
+        }
+      } else if (widget.flag == "D") {
+        if (blockUI) {
+          goToBack();
+        } else {
+          Navigator.of(context, rootNavigator: true).pop(context);
+        }
+      } else if (widget.flag == "B") {
         Navigator.of(context, rootNavigator: true).pop(context);
       }
     }
@@ -127,17 +133,49 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
   }
 
   Future<void> goToBack() async {
-    isWorklistAvailable = false;
     if (prefs.getString(s.key_rural_urban) == "U") {
       urbanworkListUI = false;
       urbanUI = true;
-      await fetchTMCWorklist();
+      await controllerOverall.fetchTMCWorklist(context, tmcType);
     } else {
-      selectedBcode = "";
-      blockUI = false;
-      districtUI = true;
-      await fetchBlockWorklist();
+      if (widget.flag == "S") {
+        print("asdasdasd");
+        print(stateUI);
+        print(blockUI);
+        print(districtUI);
+        print("asdasdasd");
+
+        if (blockUI) {
+          isWorklistAvailable = false;
+          blockUI = false;
+          selectedBcode = "";
+          districtUI = true;
+
+          await controllerOverall.fetchBlockWorklist(
+              context, widget.flag, selectedDcode);
+          controllerOverall.PieUpdation(selectedDname, "D");
+        } else if (districtUI) {
+          selectedDcode = "";
+          districtUI = false;
+          stateTableUI = true;
+          stateUI = true;
+          await controllerOverall.fetchDistrictWorklist(context);
+          controllerOverall.PieUpdation("Tamil Nadu", "S");
+        }
+      } else if (widget.flag == "D") {
+        if (isWorklistAvailable) {
+          isWorklistAvailable = false;
+          selectedBcode = "";
+          blockUI = false;
+          districtUI = true;
+
+          await controllerOverall.fetchBlockWorklist(
+              context, widget.flag, selectedDcode);
+          controllerOverall.PieUpdation(selectedDname, "D");
+        }
+      }
     }
+
     await __ModifiyUI();
 
     setState(() {});
@@ -153,29 +191,35 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
     if (!urbanUI) {
       if (widget.flag == "B") {
-        await fetchVillageWorklist();
-        header_name = "Block - ${prefs.getString(s.key_bname)}";
+        print("<<< Village >>>>");
+        await controllerOverall.fetchVillageWorklist(
+            context, widget.flag, selectedDcode, selectedBcode);
+        controllerOverall.PieUpdation(
+            prefs.getString(s.key_bname)!, widget.flag);
         stateUI = false;
         districtUI = false;
         blockUI = true;
       } else if (widget.flag == "D") {
-        await fetchBlockWorklist();
-        header_name = "District - ${prefs.getString(s.key_dname)}";
+        await controllerOverall.fetchBlockWorklist(
+            context, widget.flag, selectedDcode);
+        controllerOverall.PieUpdation(
+            prefs.getString(s.key_dname)!, widget.flag);
         stateUI = false;
         districtUI = true;
         blockUI = false;
       } else if (widget.flag == "S") {
-        await fetchDistrictWorklist();
-        header_name = "State - Tamil Nadu";
+        await controllerOverall.fetchDistrictWorklist(context);
+        controllerOverall.PieUpdation("Tamil Nadu", widget.flag);
         stateUI = true;
         districtUI = false;
         blockUI = false;
       }
     }
 
-    await fetchOnlineOverallWroklist(from_Date, to_Date);
+    await controllerOverall.fetchOnlineOverallWroklist(
+        from_Date, to_Date, context);
 
-    __ModifiyUI();
+    await __ModifiyUI();
 
     setState(() {});
   }
@@ -200,7 +244,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       _searchQuery = query;
       _filteredVillage = defaultWorklist.where((item) {
         final name = item[compareVilageName].toLowerCase();
-        final lowerCaseQuery = query.toLowerCase();
+        final lowerCaseQuery = _searchQuery.toLowerCase();
         return name.contains(lowerCaseQuery);
       }).toList();
     });
@@ -220,9 +264,10 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
         utils.showAlert(context, "End Date should be greater than Start Date");
       } else {
         dateController.text = "$from_Date  To  $to_Date";
-        await fetchOnlineOverallWroklist(from_Date, to_Date);
+        await controllerOverall.fetchOnlineOverallWroklist(
+            from_Date, to_Date, context);
 
-        __ModifiyUI();
+        await __ModifiyUI();
       }
     }
   }
@@ -265,6 +310,15 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
   // *************************** Date  Functions Ends here *************************** //
 
+  void gotToTop() {
+    scrollController.animateTo(
+        //go to top of scroll
+        0, //scroll offset to go
+        duration: Duration(milliseconds: 500), //duration of scroll
+        curve: Curves.fastOutSlowIn //scroll type
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -277,11 +331,12 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
             centerTitle: true, // like this!
           ),
           body: SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               children: [
                 isPiechartAvailable ? _Piechart() : SizedBox(),
                 urbanUI ? __TMCTable() : SizedBox(),
-                stateUI ? __districtTable() : SizedBox(),
+                stateTableUI ? __districtTable() : SizedBox(),
                 districtUI ? __blockTable() : SizedBox(),
                 isWorklistAvailable ? __workListLoder() : SizedBox(),
               ],
@@ -458,7 +513,9 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                       onTap: () async {
                                         if (urban_tp_TC > 0) {
                                           tmcType = "T";
-                                          await fetchTMCWorklist();
+                                          await controllerOverall
+                                              .fetchTMCWorklist(
+                                                  context, tmcType);
                                           urbanUI = false;
                                           urbanworkListUI = true;
                                           await __ModifiyUI();
@@ -548,7 +605,9 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                       onTap: () async {
                                         if (urban_mun_TC > 0) {
                                           tmcType = "M";
-                                          await fetchTMCWorklist();
+                                          await controllerOverall
+                                              .fetchTMCWorklist(
+                                                  context, tmcType);
                                           urbanUI = false;
                                           urbanworkListUI = true;
                                           await __ModifiyUI();
@@ -638,7 +697,9 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                       onTap: () async {
                                         if (urban_corp_TC > 0) {
                                           tmcType = "C";
-                                          await fetchTMCWorklist();
+                                          await controllerOverall
+                                              .fetchTMCWorklist(
+                                                  context, tmcType);
                                           urbanUI = false;
                                           urbanworkListUI = true;
                                           await __ModifiyUI();
@@ -706,9 +767,13 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                     onTap: () async {
                                       selectedDcode = "";
                                       stateUI = true;
+                                      stateTableUI = true;
                                       districtUI = false;
+                                      controllerOverall.PieUpdation(
+                                          "Tamil Nadu", "S");
 
-                                      await fetchDistrictWorklist();
+                                      await controllerOverall
+                                          .fetchDistrictWorklist(context);
                                       await __ModifiyUI();
 
                                       setState(() {});
@@ -901,6 +966,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         TableCell(
                                           child: GestureDetector(
                                             onTap: () async {
+                                              gotToTop();
                                               selectedBcode =
                                                   defaultWorklist[index]
                                                       [s.key_bcode];
@@ -908,12 +974,25 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                               selectedDcode =
                                                   defaultWorklist[index]
                                                       [s.key_dcode];
+                                              selectedBname =
+                                                  defaultWorklist[index]
+                                                      [s.key_bname];
 
                                               stateUI = false;
+                                              stateTableUI = false;
                                               districtUI = false;
                                               blockUI = true;
 
-                                              await fetchVillageWorklist();
+                                              await controllerOverall
+                                                  .fetchVillageWorklist(
+                                                      context,
+                                                      widget.flag,
+                                                      selectedDcode,
+                                                      selectedBcode);
+
+                                              controllerOverall.PieUpdation(
+                                                  selectedBname, "B");
+
                                               await __ModifiyUI();
 
                                               setState(() {});
@@ -1148,17 +1227,27 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                         TableCell(
                                           child: GestureDetector(
                                             onTap: () async {
-                                              print(defaultWorklist[index]
-                                                      [s.total_inspected_works]
-                                                  .runtimeType);
+                                              gotToTop();
+
                                               selectedDcode =
                                                   defaultWorklist[index]
                                                       [s.key_dcode];
+                                              selectedDname =
+                                                  defaultWorklist[index]
+                                                      [s.key_dname];
 
                                               stateUI = false;
+                                              stateTableUI = false;
                                               districtUI = true;
 
-                                              await fetchBlockWorklist();
+                                              await controllerOverall
+                                                  .fetchBlockWorklist(
+                                                      context,
+                                                      widget.flag,
+                                                      selectedDcode);
+                                              controllerOverall.PieUpdation(
+                                                  selectedDname, "D");
+
                                               await __ModifiyUI();
 
                                               setState(() {});
@@ -1599,7 +1688,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                         child: Align(
                           alignment: AlignmentDirectional.topCenter,
                           child: Text(
-                            header_name,
+                            controllerOverall.headerName,
                             style: TextStyle(
                                 color: c.grey_9,
                                 fontSize: 13,
@@ -1648,7 +1737,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   alignment: ChartAlignment.near,
                                   orientation: LegendItemOrientation.horizontal,
                                   position: LegendPosition.bottom,
-
                                 ),
                                 series: <CircularSeries>[
                                   DoughnutSeries<ChartData, String>(
@@ -1762,413 +1850,13 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
     );
   }
 
-  // *************************************** API call Starts here *************************************** //
-
-  Future<void> fetchTMCWorklist() async {
-    try {
-      utils.showProgress(context, 1);
-
-      var userPassKey = prefs.getString(s.userPassKey);
-
-      String service_key_tmc = "";
-      String dynamicTMC_Name = "";
-      if (tmcType == "T") {
-        service_key_tmc = s.service_key_townpanchayat_list_district_wise;
-        dynamicTMC_Name = s.key_townpanchayat_name;
-      } else if (tmcType == "M") {
-        service_key_tmc = s.service_key_municipality_list_district_wise;
-        dynamicTMC_Name = s.key_municipality_name;
-      } else if (tmcType == "C") {
-        service_key_tmc = s.service_key_corporation_list_district_wise;
-        dynamicTMC_Name = s.key_corporation_name;
-      }
-
-      Map jsonRequest = {
-        s.key_service_id: service_key_tmc,
-        s.key_dcode: prefs.getString(s.key_dcode),
-      };
-
-      Map encrpted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-      };
-
-      print(" ENCCCC Request >>> $encrpted_request");
-
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.master_service,
-          body: json.encode(encrpted_request));
-
-      utils.hideProgress(context);
-
-      if (response.statusCode == 200) {
-        String responseData = response.body;
-
-        var jsonData = jsonDecode(responseData);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> tmc_details = userData[s.key_json_data];
-
-          if (tmc_details.isNotEmpty) {
-            //Empty the Worklist
-            TMCworkList = [];
-
-            tmc_details.sort((a, b) {
-              return a[dynamicTMC_Name].compareTo(b[dynamicTMC_Name]);
-            });
-
-            TMCworkList.addAll(tmc_details);
-          }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "E", s.no_data);
-
-          setState(() {
-            totalWorksCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-          });
-        }
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-  }
-
-  Future<void> fetchDistrictWorklist() async {
-    try {
-      utils.showProgress(context, 1);
-
-      var userPassKey = prefs.getString(s.userPassKey);
-
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_district_list_all,
-        s.key_statecode: prefs.getString(s.key_statecode),
-      };
-
-      Map encrpted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-      };
-
-      print(" ENCCCC Request >>> $encrpted_request");
-
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.master_service,
-          body: json.encode(encrpted_request));
-
-      utils.hideProgress(context);
-      if (response.statusCode == 200) {
-        String responseData = response.body;
-
-        var jsonData = jsonDecode(responseData);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> district_details = userData[s.key_json_data];
-
-          if (district_details.isNotEmpty) {
-            //Empty the Worklist
-            districtworkList = [];
-
-            district_details.sort((a, b) {
-              return a[s.key_dname].compareTo(b[s.key_dname]);
-            });
-
-            districtworkList.addAll(district_details);
-          }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "W", s.no_data);
-
-          setState(() {
-            totalWorksCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-          });
-        }
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-  }
-
-  Future<void> fetchBlockWorklist() async {
-    try {
-      String d_code = "";
-
-      utils.showProgress(context, 1);
-
-      widget.flag == "S"
-          ? d_code = selectedDcode
-          : d_code = prefs.getString(s.key_dcode).toString();
-
-      var userPassKey = prefs.getString(s.userPassKey);
-
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_block_list_district_wise,
-        s.key_statecode: prefs.getString(s.key_statecode),
-        s.key_dcode: d_code
-      };
-
-      Map encrpted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-      };
-
-      print(" Json Request >>> $jsonRequest");
-
-      print(" ENCCCC Request >>> $encrpted_request");
-
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.master_service,
-          body: json.encode(encrpted_request));
-
-      utils.hideProgress(context);
-      if (response.statusCode == 200) {
-        String responseData = response.body;
-
-        var jsonData = jsonDecode(responseData);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> block_details = userData[s.key_json_data];
-
-          if (block_details.isNotEmpty) {
-            //Empty the Worklist
-            blockworkList = [];
-
-            block_details.sort((a, b) {
-              return a[s.key_bname].compareTo(b[s.key_bname]);
-            });
-
-            blockworkList.addAll(block_details);
-          }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "W", s.no_data);
-
-          setState(() {
-            totalWorksCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-          });
-        }
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-  }
-
-  Future<void> fetchVillageWorklist() async {
-    try {
-      utils.showProgress(context, 1);
-
-      String? d_code = "";
-      String? b_code = "";
-
-      if (widget.flag == "B") {
-        d_code = prefs.getString(s.key_dcode);
-        b_code = prefs.getString(s.key_bcode);
-      } else if (widget.flag == "D") {
-        d_code = prefs.getString(s.key_dcode);
-        b_code = selectedBcode;
-      } else if (widget.flag == "S") {
-        d_code = selectedDcode;
-        b_code = selectedBcode;
-      }
-
-      var userPassKey = prefs.getString(s.userPassKey);
-
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_village_list_district_block_wise,
-        s.key_dcode: d_code,
-        s.key_bcode: b_code,
-      };
-
-      Map encrpted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-      };
-
-      print(" ENCCCC Request >>> $encrpted_request");
-
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.master_service,
-          body: json.encode(encrpted_request));
-
-      utils.hideProgress(context);
-      if (response.statusCode == 200) {
-        String responseData = response.body;
-
-        var jsonData = jsonDecode(responseData);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> village_details = userData[s.key_json_data];
-
-          if (village_details.isNotEmpty) {
-            //Empty the Worklist
-            villageworkList = [];
-
-            village_details.sort((a, b) {
-              return a[s.key_pvname].compareTo(b[s.key_pvname]);
-            });
-
-            villageworkList.addAll(village_details);
-          }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "W", s.no_data);
-
-          setState(() {
-            totalWorksCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-          });
-        }
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-  }
-
-  Future<void> fetchOnlineOverallWroklist(
-      String fromDate, String toDate) async {
-    try {
-      utils.showProgress(context, 1);
-      String? key = prefs.getString(s.userPassKey);
-      String? userName = prefs.getString(s.key_user_name);
-
-      var userPassKey = prefs.getString(s.userPassKey);
-      var rural_urban = prefs.getString(s.key_rural_urban);
-
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_overall_inspection_details_for_atr,
-        s.key_from_date: fromDate,
-        s.key_to_date: toDate,
-        s.key_rural_urban: rural_urban,
-      };
-
-      Map encrypted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content: jsonRequest,
-      };
-
-      String jsonString = jsonEncode(encrypted_request);
-
-      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-      Map<String, String> header = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $header_token"
-      };
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.main_service_jwt,
-          body: jsonEncode(encrypted_request), headers: header);
-
-      print("OverallWroklist_url>>" + url.main_service_jwt.toString());
-      print("OverallWroklist_request_json>>" + jsonRequest.toString());
-      print("OverallWroklist_request_encrpt>>" + encrypted_request.toString());
-
-      utils.hideProgress(context);
-      if (response.statusCode == 200) {
-        String data = response.body;
-
-        print("OverallWroklist_response>>" + data);
-
-        String? authorizationHeader = response.headers['authorization'];
-
-        String? token = authorizationHeader?.split(' ')[1];
-
-        print("OverallWroklist Authorization -  $token");
-
-        String responceSignature = utils.jwt_Decode(key, token!);
-
-        String responceData = utils.generateHmacSha256(data, key, false);
-
-        print("OverallWroklist responceSignature -  $responceSignature");
-
-        print("OverallWroklist responceData -  $responceData");
-
-        if (responceSignature == responceData) {
-          print("OverallWroklist responceSignature - Token Verified");
-          var userData = jsonDecode(data);
-          var status = userData[s.key_status];
-          var response_value = userData[s.key_response];
-
-          if (status == s.key_ok && response_value == s.key_ok) {
-            work_details = [];
-
-            Map res_jsonArray = userData[s.key_json_data];
-            work_details = res_jsonArray[s.key_inspection_details];
-          } else if (status == s.key_ok && response_value == s.key_noRecord) {
-            utils.customAlert(context, "E", s.no_data);
-            setState(() {
-              totalWorksCount = "0";
-              nimpCount = "0";
-              usCount = "0";
-              atrCount = "0";
-              sCount = "0";
-              isWorklistAvailable = false;
-            });
-          }
-        } else {
-          print("OverallWroklist responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
-        }
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-  }
-
   // *************************************** Modifiy UI Starts here *************************************** //
 
   __ModifiyUI() {
+    utils.showProgress(context, 1);
+
+    List<dynamic> work_details = controllerOverall.retriveWorklist();
+
     if (work_details.isNotEmpty) {
       Map<String, dynamic> villageDashboard = {};
       Map<String, dynamic> districtDashboard = {};
@@ -2266,21 +1954,11 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
           }
         }
 
-        // int tempTotCount = urban_tp_s +
-        //     urban_tp_us +
-        //     urban_tp_nm +
-        //     urban_mun_s +
-        //     urban_mun_us +
-        //     urban_mun_nm +
-        //     urban_corp_s +
-        //     urban_corp_us +
-        //     urban_corp_nm;
-
         urban_tp_TC = urban_tp_s + urban_tp_us + urban_tp_nm;
         urban_mun_TC = urban_mun_s + urban_mun_us + urban_mun_nm;
         urban_corp_TC = urban_corp_s + urban_corp_us + urban_corp_nm;
 
-        print(
+        /*print(
             "######### TOWN ############ -  $urban_tp_TC = $urban_tp_s + $urban_tp_us + $urban_tp_nm");
         print(
             "######### MUN ############ -  $urban_mun_TC = $urban_mun_s + $urban_mun_us + $urban_mun_nm");
@@ -2291,12 +1969,15 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
         print("UNSATISFIED -  $unSatisfied_count");
 
-        print("NEED IMP -  $needImprovement_count");
+        print("NEED IMP -  $needImprovement_count");*/
 
         isPiechartAvailable = true;
+        isWorklistAvailable = false;
       }
 
       if (stateUI) {
+        List districtworkList = controllerOverall.districtworkList;
+
         for (int i = 0; i < districtworkList.length; i++) {
           for (int j = 0; j < work_details.length; j++) {
             if (work_details[j][s.key_dcode].toString() ==
@@ -2325,9 +2006,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
               tempneedImprovement_count;
 
           if (tempTotCount > 0) {
-            print(
-                " $tempTotCount = $tempsatisfied_count + $tempunSatisfied_count + $tempneedImprovement_count ");
-
             districtDashboard = {
               s.key_dcode: districtworkList[i][s.key_dcode],
               s.key_dname: districtworkList[i][s.key_dname],
@@ -2339,6 +2017,8 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
             defaultWorklist.add(districtDashboard);
             isPiechartAvailable = true;
+            stateTableUI = true;
+            isWorklistAvailable = false;
             tempsatisfied_count = 0;
             tempunSatisfied_count = 0;
             tempneedImprovement_count = 0;
@@ -2347,6 +2027,8 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       }
 
       if (districtUI) {
+        List blockworkList = controllerOverall.blockworkList;
+
         for (int i = 0; i < blockworkList.length; i++) {
           for (int j = 0; j < work_details.length; j++) {
             if (work_details[j][s.key_dcode].toString() ==
@@ -2377,9 +2059,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
               tempneedImprovement_count;
 
           if (tempTotCount > 0) {
-            print(
-                " $tempTotCount = $tempsatisfied_count + $tempunSatisfied_count + $tempneedImprovement_count ");
-
             blockDashboard = {
               s.key_dcode: blockworkList[i][s.key_dcode],
               s.key_bcode: blockworkList[i][s.key_bcode],
@@ -2392,6 +2071,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
             defaultWorklist.add(blockDashboard);
             isPiechartAvailable = true;
+            isWorklistAvailable = false;
 
             tempsatisfied_count = 0;
             tempunSatisfied_count = 0;
@@ -2401,6 +2081,8 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       }
 
       if (blockUI) {
+        List villageworkList = controllerOverall.villageworkList;
+
         for (int i = 0; i < villageworkList.length; i++) {
           for (int j = 0; j < work_details.length; j++) {
             if (work_details[j][s.key_dcode].toString() ==
@@ -2432,9 +2114,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
               tempneedImprovement_count;
 
           if (tempTotCount > 0) {
-            print(
-                " $tempTotCount = $tempsatisfied_count + $tempunSatisfied_count + $tempneedImprovement_count ");
-
             villageDashboard = {
               s.key_dcode: villageworkList[i][s.key_dcode],
               s.key_bcode: villageworkList[i][s.key_bcode],
@@ -2457,6 +2136,8 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       }
 
       if (urbanworkListUI) {
+        List TMCworkList = controllerOverall.TMCworkList;
+
         String dynamicTMC_workList_ID = "";
         if (tmcType == "T") {
           dynamicTMC_workList_ID = s.key_tpcode;
@@ -2504,9 +2185,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
               tempneedImprovement_count;
 
           if (tempTotCount > 0) {
-            print(
-                " $tempTotCount = $tempsatisfied_count + $tempunSatisfied_count + $tempneedImprovement_count ");
-
             tmcDashboard = {
               s.key_dcode: TMCworkList[i][s.key_dcode],
               dynamicTMC_ID: TMCworkList[i][dynamicTMC_ID],
@@ -2528,16 +2206,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
         }
       }
 
-      print(
-          "*********************************** Block Worklist *******************************************");
-
-      print(blockworkList);
-
-      print(
-          "*********************************** Overall Worklist *******************************************");
-
-      print(work_details);
-
       int tot_count =
           satisfied_count + unSatisfied_count + needImprovement_count;
 
@@ -2549,6 +2217,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
         totalWorksCount = tot_count.toString();
       });
     }
+    utils.hideProgress(context);
   }
 
   // *************************************** Modifiy UI ends here *************************************** //

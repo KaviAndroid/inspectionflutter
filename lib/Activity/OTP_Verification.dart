@@ -170,16 +170,21 @@ class _OTPVerificationState extends State<OTPVerification> {
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: InkWell(
-                                onTap: () {
-                                  prefs
-                                          .getString(s.key_mobile)
-                                          .toString()
-                                          .isNotEmpty
-                                      ? send_OTP(prefs
-                                          .getString(s.key_mobile)
-                                          .toString())
-                                      : utils.showAlert(
-                                          context, s.please_enter_otp);
+                                onTap: () async {
+                                  if (await utils.isOnline()) {
+                                    prefs
+                                            .getString(s.key_mobile)
+                                            .toString()
+                                            .isNotEmpty
+                                        ? send_OTP(prefs
+                                            .getString(s.key_mobile)
+                                            .toString())
+                                        : utils.showAlert(
+                                            context, s.please_enter_otp);
+                                  } else {
+                                    utils.customAlert(
+                                        context, "E", s.no_internet);
+                                  }
                                 },
                                 child: Align(
                                   alignment: Alignment.centerRight,
@@ -213,27 +218,34 @@ class _OTPVerificationState extends State<OTPVerification> {
                                             borderRadius:
                                                 BorderRadius.circular(15),
                                           ))),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
 
-                                        design_flag == "login"
-                                            ? (utils.isNumberValid(mobileNumber
-                                                        .text
-                                                        .toString()) &&
-                                                    (mobileNumber.text
-                                                        .toString()
-                                                        .isNotEmpty))
-                                                ? send_OTP(mobileNumber.text
-                                                    .toString())
-                                                : utils.showAlert(context,
-                                                    s.please_enter_valid_num)
-                                            : design_flag == "OTP"
-                                                ? otp.text.toString().isNotEmpty
-                                                    ? verify_OTP()
-                                                    : utils.showAlert(context,
-                                                        s.please_enter_otp)
-                                                : null;
+                                        if (await utils.isOnline()) {
+                                          design_flag == "login"
+                                              ? (utils.isNumberValid(
+                                                          mobileNumber.text
+                                                              .toString()) &&
+                                                      (mobileNumber.text
+                                                          .toString()
+                                                          .isNotEmpty))
+                                                  ? send_OTP(mobileNumber.text
+                                                      .toString())
+                                                  : utils.showAlert(context,
+                                                      s.please_enter_valid_num)
+                                              : design_flag == "OTP"
+                                                  ? otp.text
+                                                          .toString()
+                                                          .isNotEmpty
+                                                      ? verify_OTP()
+                                                      : utils.showAlert(context,
+                                                          s.please_enter_otp)
+                                                  : null;
+                                        } else {
+                                          utils.customAlert(
+                                              context, "E", s.no_internet);
+                                        }
                                       },
                                       child: Text(
                                         design_flag == "OTP"

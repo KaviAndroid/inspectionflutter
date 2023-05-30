@@ -5,13 +5,13 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection_flutter_app/Resources/global.dart' as global;
 import '../Layout/ReadMoreLess.dart';
 import '../Utils/utils.dart';
 import 'ATR_Save.dart';
@@ -26,6 +26,12 @@ class ViewWorklist extends StatefulWidget {
 }
 
 class _ViewWorklistState extends State<ViewWorklist> {
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
   //Bool Values
   bool isWorklistAvailable = false;
   bool saveEnable = false;
@@ -37,20 +43,11 @@ class _ViewWorklistState extends State<ViewWorklist> {
   List defaultWorklist = [];
   List selectedWorklist = [];
 
-  //List Dynamic
-  List<dynamic> work_details = [];
-
   Utils utils = Utils();
   late SharedPreferences prefs;
 
   //pdf
   Uint8List? pdf;
-
-  @override
-  void initState() {
-    super.initState();
-    initialize();
-  }
 
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
@@ -66,7 +63,9 @@ class _ViewWorklistState extends State<ViewWorklist> {
       }
     }
 
-    await fetchOnlineOverallWroklist(widget.fromDate, widget.toDate);
+    print("object >>>> $myWorklist");
+
+    // await fetchOnlineOverallWroklist(widget.fromDate, widget.toDate);
 
     await __ModifiyUI();
 
@@ -76,6 +75,12 @@ class _ViewWorklistState extends State<ViewWorklist> {
   // ************************************* UI Changes Starts here ************************************ //
 
   __ModifiyUI() {
+    utils.showProgress(context, 1);
+
+    List<dynamic> work_details = global.workDetails;
+
+    print("Controller WOrklist $work_details");
+
     var rural_urban = prefs.getString(s.key_rural_urban);
     String Status_ID = "";
 
@@ -100,6 +105,10 @@ class _ViewWorklistState extends State<ViewWorklist> {
             work_details[i][s.key_status_id].toString() == Status_ID) {
           defaultWorklist.add(work_details[i]);
         }
+      }
+
+      if (defaultWorklist.isNotEmpty) {
+        isWorklistAvailable = true;
       }
     } else {
       String dynamicTMC_workList_ID = "";
@@ -130,108 +139,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
         }
       }
     }
-    print(defaultWorklist);
-  }
-
-  // ************************************* API call Starts here ************************************ //
-
-  Future<void> fetchOnlineOverallWroklist(
-      String fromDate, String toDate) async {
-    try {
-      utils.showProgress(context, 1);
-
-      var userPassKey = prefs.getString(s.userPassKey);
-      var rural_urban = prefs.getString(s.key_rural_urban);
-      String? key = prefs.getString(s.userPassKey);
-      String? userName = prefs.getString(s.key_user_name);
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_overall_inspection_details_for_atr,
-        s.key_from_date: fromDate,
-        s.key_to_date: toDate,
-        s.key_rural_urban: rural_urban,
-      };
-
-      Map encrypted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content: jsonRequest
-      };
-
-      print('Request >>>>>>>> $jsonRequest ');
-
-      print(" ENC Request >>> $encrypted_request");
-      String jsonString = jsonEncode(encrypted_request);
-
-      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-      Map<String, String> header = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $header_token"
-      };
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      var response = await _ioClient.post(url.main_service_jwt,
-          body: jsonEncode(encrypted_request), headers: header);
-
-      print("fetchworklist_url>>" + url.main_service_jwt.toString());
-      print("fetchworklist_request_encrpt>>" + encrypted_request.toString());
-
-      utils.hideProgress(context);
-      if (response.statusCode == 200) {
-        String data = response.body;
-
-        print("fetchworklist_response>>" + data);
-
-        String? authorizationHeader = response.headers['authorization'];
-
-        String? token = authorizationHeader?.split(' ')[1];
-
-        print("fetchworklist Authorization -  $token");
-
-        String responceSignature = utils.jwt_Decode(key, token!);
-
-        String responceData = utils.generateHmacSha256(data, key, false);
-
-        print("fetchworklist responceSignature -  $responceSignature");
-
-        print("fetchworklist responceData -  $responceData");
-
-        if (responceSignature == responceData) {
-          print("fetchworklist responceSignature - Token Verified");
-          var userData = jsonDecode(data);
-
-          var status = userData[s.key_status];
-          var response_value = userData[s.key_response];
-
-          if (status == s.key_ok && response_value == s.key_ok) {
-            work_details = [];
-            Map res_jsonArray = userData[s.key_json_data];
-            work_details = res_jsonArray[s.key_inspection_details];
-
-            if (work_details.isNotEmpty) {
-              isWorklistAvailable = true;
-            }
-          } else if (status == s.key_ok && response_value == s.key_noRecord) {
-            utils.customAlert(context, "E", s.no_data);
-            setState(() {
-              isWorklistAvailable = false;
-            });
-          }
-        }
-        else {
-          print("fetchworklist responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
-        }
-      }
-
-    } catch (e) {
-      if (e is FormatException) {
-        print(e);
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
+    utils.hideProgress(context);
   }
 
   @override
@@ -331,22 +239,19 @@ class _ViewWorklistState extends State<ViewWorklist> {
           var status = userData[s.key_status];
           var response_value = userData[s.key_response];
 
-
           if (status == s.key_ok && response_value == s.key_ok) {
             var pdftoString = userData[s.key_json_data];
             pdf = const Base64Codec().decode(pdftoString['pdf_string']);
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (context) =>
-                      PDF_Viewer(
+                  builder: (context) => PDF_Viewer(
                         pdfBytes: pdf,
                         workID: work_id,
                         inspectionID: inspection_id,
                       )),
             );
           }
-        }
-        else {
+        } else {
           print("ProgressDetails responceSignature - Token Not Verified");
           utils.customAlert(context, "E", s.jsonError);
         }
@@ -429,7 +334,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                           const SizedBox(
                                             width: 5,
                                           ),
-                                       /*   Expanded(
+                                          /*   Expanded(
                                             child: Text(defaultWorklist[index][s.key_name], maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
@@ -439,7 +344,10 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                     )),
                                           ),*/
                                           Text(
-                                            utils.splitStringByLength(defaultWorklist[index][s.key_name],25),
+                                            utils.splitStringByLength(
+                                                defaultWorklist[index]
+                                                    [s.key_name],
+                                                25),
                                             style: TextStyle(
                                                 fontSize: 13.5,
                                                 fontWeight: FontWeight.w700,
@@ -877,9 +785,13 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                           AlignmentDirectional
                                                               .topStart,
                                                       child: Text(
-                                                        defaultWorklist[index]
-                                                        [s.key_reported_by]!=null?defaultWorklist[index]
-                                                            [s.key_reported_by]:'',
+                                                        defaultWorklist[index][s
+                                                                    .key_reported_by] !=
+                                                                null
+                                                            ? defaultWorklist[
+                                                                    index][
+                                                                s.key_reported_by]
+                                                            : '',
                                                         style: TextStyle(
                                                             color: c
                                                                 .primary_text_color2),

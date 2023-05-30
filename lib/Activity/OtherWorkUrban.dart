@@ -52,9 +52,8 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   bool corpActive = false;
   String town_type = "T";
   String onOffType = "";
-  int finCount=0;
-  int schemeCount=0;
-
+  int finCount = 0;
+  int schemeCount = 0;
 
   Map<String, String> defaultSelectedDistrict = {
     s.key_dcode: "0",
@@ -86,58 +85,63 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     super.initState();
     initialize();
   }
+
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    onOffType=prefs.getString(s.onOffType)!;
+    onOffType = prefs.getString(s.onOffType)!;
 
-    if(onOffType=="online"){
-      finCount=1;
-      schemeCount=1;
-    }else{
-      finCount=2;
-      schemeCount=5;
+    if (onOffType == "online") {
+      finCount = 1;
+      schemeCount = 1;
+    } else {
+      finCount = 2;
+      schemeCount = 5;
     }
     List<Map> list =
-    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     print(list.toString());
     for (int i = 0; i < list.length; i++) {
       Map<String, String> map = {
-        s.flag:"0",
-        s.key_fin_year:list[i][s.key_fin_year]
+        s.flag: "0",
+        s.key_fin_year: list[i][s.key_fin_year]
       };
       finYearList.add(map);
     }
-     List<Map> listother =
+    List<Map> listother =
         await dbClient.rawQuery('SELECT * FROM ' + s.table_OtherCategory);
-        print(listother.toString());
-        for (int i = 0; i < listother.length; i++) {
-          Map<String, String> map = {
-            s.flag:"0",
-            s.key_other_work_category_id: listother[i][s.key_other_work_category_id],
-            s.key_other_work_category_name:listother[i][s.key_other_work_category_name]
-          };
-          schemeList.add(map);
-        }
+    print(listother.toString());
+    for (int i = 0; i < listother.length; i++) {
+      Map<String, String> map = {
+        s.flag: "0",
+        s.key_other_work_category_id: listother[i]
+            [s.key_other_work_category_id],
+        s.key_other_work_category_name: listother[i]
+            [s.key_other_work_category_name]
+      };
+      schemeList.add(map);
+    }
 
     selectedLevel = prefs.getString(s.key_level)!;
 
-    print("finYearList>>"+finYearList.toString());
+    print("finYearList>>" + finYearList.toString());
     if (selectedLevel == 'S') {
       districtFlag = true;
       List<Map> list =
-      await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
+          await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
       print(list.toString());
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
       selectedTMC = "";
     } else {
-      selectedDistrict=prefs.getString(s.key_dcode).toString();
+      selectedDistrict = prefs.getString(s.key_dcode).toString();
       districtFlag = false;
       townList = await dbClient.rawQuery('SELECT * FROM ' + s.table_TownList);
-      municipalityList = await dbClient.rawQuery('SELECT * FROM ' + s.table_Municipality);
-      corporationList = await dbClient.rawQuery('SELECT * FROM ' + s.table_Corporation);
+      municipalityList =
+          await dbClient.rawQuery('SELECT * FROM ' + s.table_Municipality);
+      corporationList =
+          await dbClient.rawQuery('SELECT * FROM ' + s.table_Corporation);
       tmcItems.add(defaultSelectedT);
       tmcItems.addAll(townList);
       selectedTMC = defaultSelectedT[s.key_townpanchayat_id]!;
@@ -174,13 +178,11 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                   child: Container(
                     transform: Matrix4.translationValues(-30.0, 0.0, 0.0),
                     alignment: Alignment.center,
-                    child: Text(
-                        s.filter_work_list,
+                    child: Text(s.filter_work_list,
                         style: GoogleFonts.getFont('Roboto',
                             fontWeight: FontWeight.w800,
                             fontSize: 15,
-                            color: c.white)
-                    ),
+                            color: c.white)),
                   ),
                 ),
               ],
@@ -207,7 +209,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                           children: [
                             Padding(
                               padding:
-                              const EdgeInsets.only(top: 15, bottom: 15),
+                                  const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.selectDistrict,
                                 style: GoogleFonts.getFont('Roboto',
@@ -232,16 +234,17 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                     isExpanded: true,
                                     items: districtItems
                                         .map((item) => DropdownMenuItem<String>(
-                                      value:
-                                      item[s.key_dcode].toString(),
-                                      child: Text(
-                                        item[s.key_dname].toString(),
-                                        style: GoogleFonts.getFont('Roboto',
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 12,
-                                            color: c.grey_8),
-                                      ),
-                                    ))
+                                              value:
+                                                  item[s.key_dcode].toString(),
+                                              child: Text(
+                                                item[s.key_dname].toString(),
+                                                style: GoogleFonts.getFont(
+                                                    'Roboto',
+                                                    fontWeight: FontWeight.w800,
+                                                    fontSize: 12,
+                                                    color: c.grey_8),
+                                              ),
+                                            ))
                                         .toList(),
                                     onChanged: (value) {
                                       if (value != "0") {
@@ -256,16 +259,24 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                         });
                                       }
                                       setState(() {
-                                        schemeFlag=false;
-                                        selectedScheme="";
-                                        for(int i=0;i<schemeList.length;i++){
-                                          schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                          schemeList[i][s.flag] ="0";                                        }
+                                        schemeFlag = false;
+                                        selectedScheme = "";
+                                        for (int i = 0;
+                                            i < schemeList.length;
+                                            i++) {
+                                          schemeList[i][s.flag] == "1"
+                                              ? schemeList[i][s.flag] = "0"
+                                              : schemeList[i][s.flag] = "0";
+                                        }
 
-                                        selectedFinyear="";
-                                        for(int i=0;i<finYearList.length;i++){
-                                          finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                          finYearList[i][s.flag] ="0";                                        }
+                                        selectedFinyear = "";
+                                        for (int i = 0;
+                                            i < finYearList.length;
+                                            i++) {
+                                          finYearList[i][s.flag] == "1"
+                                              ? finYearList[i][s.flag] = "0"
+                                              : finYearList[i][s.flag] = "0";
+                                        }
 
                                         submitFlag = false;
                                       });
@@ -277,15 +288,15 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                     iconStyleData: IconStyleData(
                                       icon: isLoadingD
                                           ? SpinKitCircle(
-                                        color: c.colorPrimary,
-                                        size: 30,
-                                        duration: const Duration(
-                                            milliseconds: 1200),
-                                      )
+                                              color: c.colorPrimary,
+                                              size: 30,
+                                              duration: const Duration(
+                                                  milliseconds: 1200),
+                                            )
                                           : const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black45,
+                                            ),
                                       iconSize: 30,
                                     ),
                                     dropdownStyleData: DropdownStyleData(
@@ -342,51 +353,72 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                       corpActive = false;
                                       await loadTMC();
                                       setState(() {
-                                        schemeFlag=false;
-                                        selectedScheme="";
-                                        for(int i=0;i<schemeList.length;i++){
-                                          schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                          schemeList[i][s.flag] ="0";                                        }
+                                        schemeFlag = false;
+                                        selectedScheme = "";
+                                        for (int i = 0;
+                                            i < schemeList.length;
+                                            i++) {
+                                          schemeList[i][s.flag] == "1"
+                                              ? schemeList[i][s.flag] = "0"
+                                              : schemeList[i][s.flag] = "0";
+                                        }
 
-                                        selectedFinyear="";
-                                        for(int i=0;i<finYearList.length;i++){
-                                          finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                          finYearList[i][s.flag] ="0";                                        }
+                                        selectedFinyear = "";
+                                        for (int i = 0;
+                                            i < finYearList.length;
+                                            i++) {
+                                          finYearList[i][s.flag] == "1"
+                                              ? finYearList[i][s.flag] = "0"
+                                              : finYearList[i][s.flag] = "0";
+                                        }
                                         submitFlag = false;
                                       });
                                     },
                                     child: Container(
                                         height: 30,
-                                        margin: const EdgeInsets.only(bottom: 10),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
                                         padding: const EdgeInsets.all(3),
                                         decoration: BoxDecoration(
-                                            color: townActive ? c.colorAccentlight : c.white,
+                                            color: townActive
+                                                ? c.colorAccentlight
+                                                : c.white,
                                             border: Border.all(
-                                                width: townActive ? 0 : 2, color: c.colorPrimary),
-                                            borderRadius: BorderRadius.circular(10),
+                                                width: townActive ? 0 : 2,
+                                                color: c.colorPrimary),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             boxShadow: const [
                                               BoxShadow(
                                                 color: Colors.grey,
-                                                offset: Offset(0.0, 1.0), //(x,y)
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
                                                 blurRadius: 2.0,
                                               ),
                                             ]),
-                                        child: Row(
-                                            children: [
-                                              SizedBox(width: 10,),
-                                              Image.asset(
-                                                imagePath.radio,
-                                                color: townActive ? c.white : c.grey_5,
-                                                width: 15,
-                                                height: 15,
-                                              ),
-                                              SizedBox(width: 10,),
-                                              Text(s.town_panchayat,
-                                                  style: GoogleFonts.getFont('Roboto',
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 11,
-                                                      color: townActive ? c.white : c.grey_6)),
-                                            ])),
+                                        child: Row(children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Image.asset(
+                                            imagePath.radio,
+                                            color:
+                                                townActive ? c.white : c.grey_5,
+                                            width: 15,
+                                            height: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(s.town_panchayat,
+                                              style: GoogleFonts.getFont(
+                                                  'Roboto',
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 11,
+                                                  color: townActive
+                                                      ? c.white
+                                                      : c.grey_6)),
+                                        ])),
                                   ),
                                   GestureDetector(
                                     onTap: () async {
@@ -396,52 +428,73 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                       corpActive = false;
                                       await loadTMC();
                                       setState(() {
-                                        schemeFlag=false;
-                                        selectedScheme="";
-                                        for(int i=0;i<schemeList.length;i++){
-                                          schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                          schemeList[i][s.flag] ="0";                                        }
+                                        schemeFlag = false;
+                                        selectedScheme = "";
+                                        for (int i = 0;
+                                            i < schemeList.length;
+                                            i++) {
+                                          schemeList[i][s.flag] == "1"
+                                              ? schemeList[i][s.flag] = "0"
+                                              : schemeList[i][s.flag] = "0";
+                                        }
 
-                                        selectedFinyear="";
-                                        for(int i=0;i<finYearList.length;i++){
-                                          finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                          finYearList[i][s.flag] ="0";                                        }
+                                        selectedFinyear = "";
+                                        for (int i = 0;
+                                            i < finYearList.length;
+                                            i++) {
+                                          finYearList[i][s.flag] == "1"
+                                              ? finYearList[i][s.flag] = "0"
+                                              : finYearList[i][s.flag] = "0";
+                                        }
 
                                         submitFlag = false;
                                       });
                                     },
                                     child: Container(
                                         height: 30,
-                                        margin: const EdgeInsets.only(bottom: 10),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
                                         padding: const EdgeInsets.all(3),
                                         decoration: BoxDecoration(
-                                            color: munActive ? c.colorAccentlight : c.white,
+                                            color: munActive
+                                                ? c.colorAccentlight
+                                                : c.white,
                                             border: Border.all(
-                                                width: munActive ? 0 : 2, color: c.colorPrimary),
-                                            borderRadius: BorderRadius.circular(10),
+                                                width: munActive ? 0 : 2,
+                                                color: c.colorPrimary),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             boxShadow: const [
                                               BoxShadow(
                                                 color: Colors.grey,
-                                                offset: Offset(0.0, 1.0), //(x,y)
-                                                blurRadius:2.0,
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
+                                                blurRadius: 2.0,
                                               ),
                                             ]),
-                                        child: Row(
-                                            children: [
-                                              SizedBox(width: 10,),
-                                              Image.asset(
-                                                imagePath.radio,
-                                                color: munActive ? c.white : c.grey_5,
-                                                width: 15,
-                                                height: 15,
-                                              ),
-                                              SizedBox(width: 10,),
-                                              Text(s.municipality,
-                                                  style: GoogleFonts.getFont('Roboto',
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 11,
-                                                      color: munActive ? c.white : c.grey_6)),
-                                            ])),
+                                        child: Row(children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Image.asset(
+                                            imagePath.radio,
+                                            color:
+                                                munActive ? c.white : c.grey_5,
+                                            width: 15,
+                                            height: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(s.municipality,
+                                              style: GoogleFonts.getFont(
+                                                  'Roboto',
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 11,
+                                                  color: munActive
+                                                      ? c.white
+                                                      : c.grey_6)),
+                                        ])),
                                   ),
                                   GestureDetector(
                                     onTap: () async {
@@ -451,57 +504,77 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                       corpActive = true;
                                       await loadTMC();
                                       setState(() {
-                                        schemeFlag=false;
-                                        selectedScheme="";
-                                        for(int i=0;i<schemeList.length;i++){
-                                          schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                          schemeList[i][s.flag] ="0";                                        }
+                                        schemeFlag = false;
+                                        selectedScheme = "";
+                                        for (int i = 0;
+                                            i < schemeList.length;
+                                            i++) {
+                                          schemeList[i][s.flag] == "1"
+                                              ? schemeList[i][s.flag] = "0"
+                                              : schemeList[i][s.flag] = "0";
+                                        }
 
-                                        selectedFinyear="";
-                                        for(int i=0;i<finYearList.length;i++){
-                                          finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                          finYearList[i][s.flag] ="0";                                        }
+                                        selectedFinyear = "";
+                                        for (int i = 0;
+                                            i < finYearList.length;
+                                            i++) {
+                                          finYearList[i][s.flag] == "1"
+                                              ? finYearList[i][s.flag] = "0"
+                                              : finYearList[i][s.flag] = "0";
+                                        }
 
                                         submitFlag = false;
                                       });
                                     },
                                     child: Container(
                                         height: 30,
-                                        margin: const EdgeInsets.only(bottom: 10),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
                                         padding: const EdgeInsets.all(3),
                                         decoration: BoxDecoration(
-                                            color: corpActive ? c.colorAccentlight : c.white,
+                                            color: corpActive
+                                                ? c.colorAccentlight
+                                                : c.white,
                                             border: Border.all(
-                                                width: corpActive ? 0 : 2, color: c.colorPrimary),
-                                            borderRadius: BorderRadius.circular(10),
+                                                width: corpActive ? 0 : 2,
+                                                color: c.colorPrimary),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             boxShadow: const [
                                               BoxShadow(
                                                 color: Colors.grey,
-                                                offset: Offset(0.0, 1.0), //(x,y)
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
                                                 blurRadius: 2.0,
                                               ),
                                             ]),
-                                        child: Row(
-
-                                            children: [
-                                              SizedBox(width: 10,),
-                                              Image.asset(
-                                                imagePath.radio,
-                                                color: corpActive ? c.white : c.grey_5,
-                                                width: 15,
-                                                height: 15,
-                                              ),
-                                              SizedBox(width: 10,),
-                                              Text(s.corporation,
-                                                  style: GoogleFonts.getFont('Roboto',
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 11,
-                                                      color: corpActive ? c.white : c.grey_6)),
-                                            ])),
+                                        child: Row(children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Image.asset(
+                                            imagePath.radio,
+                                            color:
+                                                corpActive ? c.white : c.grey_5,
+                                            width: 15,
+                                            height: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(s.corporation,
+                                              style: GoogleFonts.getFont(
+                                                  'Roboto',
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 11,
+                                                  color: corpActive
+                                                      ? c.white
+                                                      : c.grey_6)),
+                                        ])),
                                   ),
-
                                 ],
-                              ),),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -511,8 +584,13 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5, bottom: 10),
                             child: Text(
-                              town_type == "T" ?s.select_town:
-                              town_type == "M" ?s.select_municipality:town_type == "C" ?s.select_corporation:s.select_town,
+                              town_type == "T"
+                                  ? s.select_town
+                                  : town_type == "M"
+                                      ? s.select_municipality
+                                      : town_type == "C"
+                                          ? s.select_corporation
+                                          : s.select_town,
                               style: GoogleFonts.getFont('Roboto',
                                   fontWeight: FontWeight.w800,
                                   fontSize: 12,
@@ -535,21 +613,36 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                   isExpanded: true,
                                   items: tmcItems
                                       .map((item) => DropdownMenuItem<String>(
-                                    value: town_type == "T" ?item[s.key_townpanchayat_id].toString():
-                                    town_type == "M" ?item[s.key_municipality_id]
-                                        .toString():town_type == "C" ?item[s.key_corporation_id]
-                                        .toString():item[s.key_townpanchayat_id].toString(),
-                                    child: Text(
-                                      town_type == "T" ?item[s.key_townpanchayat_name].toString():
-                                      town_type == "M" ?item[s.key_municipality_name]
-                                          .toString():town_type == "C" ?item[s.key_corporation_name]
-                                          .toString():item[s.key_townpanchayat_name].toString(),
-                                      style: GoogleFonts.getFont('Roboto',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 12,
-                                          color: c.grey_8),
-                                    ),
-                                  ))
+                                            value: town_type == "T"
+                                                ? item[s.key_townpanchayat_id]
+                                                    .toString()
+                                                : town_type == "M"
+                                                    ? item[s.key_municipality_id]
+                                                        .toString()
+                                                    : town_type == "C"
+                                                        ? item[s.key_corporation_id]
+                                                            .toString()
+                                                        : item[s.key_townpanchayat_id]
+                                                            .toString(),
+                                            child: Text(
+                                              town_type == "T"
+                                                  ? item[s.key_townpanchayat_name]
+                                                      .toString()
+                                                  : town_type == "M"
+                                                      ? item[s.key_municipality_name]
+                                                          .toString()
+                                                      : town_type == "C"
+                                                          ? item[s.key_corporation_name]
+                                                              .toString()
+                                                          : item[s.key_townpanchayat_name]
+                                                              .toString(),
+                                              style: GoogleFonts.getFont(
+                                                  'Roboto',
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 12,
+                                                  color: c.grey_8),
+                                            ),
+                                          ))
                                       .toList(),
                                   onChanged: (value) {
                                     if (value != "0") {
@@ -565,16 +658,24 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                       });
                                     }
                                     setState(() {
-                                      schemeFlag=false;
-                                      selectedScheme="";
-                                      for(int i=0;i<schemeList.length;i++){
-                                        schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                        schemeList[i][s.flag] ="0";                                        }
+                                      schemeFlag = false;
+                                      selectedScheme = "";
+                                      for (int i = 0;
+                                          i < schemeList.length;
+                                          i++) {
+                                        schemeList[i][s.flag] == "1"
+                                            ? schemeList[i][s.flag] = "0"
+                                            : schemeList[i][s.flag] = "0";
+                                      }
 
-                                      selectedFinyear="";
-                                      for(int i=0;i<finYearList.length;i++){
-                                        finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                        finYearList[i][s.flag] ="0";                                        }
+                                      selectedFinyear = "";
+                                      for (int i = 0;
+                                          i < finYearList.length;
+                                          i++) {
+                                        finYearList[i][s.flag] == "1"
+                                            ? finYearList[i][s.flag] = "0"
+                                            : finYearList[i][s.flag] = "0";
+                                      }
 
                                       submitFlag = false;
                                     });
@@ -586,15 +687,15 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                   iconStyleData: IconStyleData(
                                     icon: isLoadingTMC
                                         ? SpinKitCircle(
-                                      color: c.colorPrimary,
-                                      size: 30,
-                                      duration: const Duration(
-                                          milliseconds: 1200),
-                                    )
+                                            color: c.colorPrimary,
+                                            size: 30,
+                                            duration: const Duration(
+                                                milliseconds: 1200),
+                                          )
                                         : const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black45,
-                                    ),
+                                            Icons.arrow_drop_down,
+                                            color: Colors.black45,
+                                          ),
                                     iconSize: 30,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
@@ -633,8 +734,18 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                 fontSize: 12,
                                 color: c.grey_8),
                             children: <TextSpan>[
-                              new TextSpan(text: s.select_financial_year,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
-                              new TextSpan(text:onOffType == "online" ?" (Any One)":"(Any Two)", style: new TextStyle(fontWeight: FontWeight.bold,color: c.subscription_type_red_color)),
+                              new TextSpan(
+                                  text: s.select_financial_year,
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: c.grey_8)),
+                              new TextSpan(
+                                  text: onOffType == "online"
+                                      ? " (Any One)"
+                                      : "(Any Two)",
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: c.subscription_type_red_color)),
                             ],
                           ),
                         ),
@@ -644,16 +755,27 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                           primary: false,
                           crossAxisCount: 3,
                           childAspectRatio: (1 / .4),
-                          children: List.generate(finYearList == null ? 0 : finYearList.length, (index) {
+                          children: List.generate(
+                              finYearList == null ? 0 : finYearList.length,
+                              (index) {
                             return Column(children: [
                               Container(
                                   height: 30,
                                   margin: const EdgeInsets.all(5),
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                      color: finYearList[index][s.flag] =="1" ? c.colorAccentlight : c.white,
+                                      color: finYearList[index][s.flag] == "1"
+                                          ? c.colorAccentlight
+                                          : c.white,
                                       border: Border.all(
-                                          width: finYearList[index][s.flag]=="1"  ? 1 : 1, color:finYearList[index][s.flag] =="1" ? c.colorPrimary:c.grey),
+                                          width:
+                                              finYearList[index][s.flag] == "1"
+                                                  ? 1
+                                                  : 1,
+                                          color:
+                                              finYearList[index][s.flag] == "1"
+                                                  ? c.colorPrimary
+                                                  : c.grey),
                                       borderRadius: BorderRadius.circular(20),
                                       boxShadow: const [
                                         BoxShadow(
@@ -663,65 +785,81 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                         ),
                                       ]),
                                   child: InkWell(
-                                    onTap: (){
-
-                                      if(selectedTMC != null && selectedTMC != "0"&& selectedTMC != ""){
-
-                                        if(finYearList[index][s.flag] == "1"){
-                                          finYearList[index][s.flag] ="0";
-                                          selectedFinyear="";
-                                          schemeFlag=false;
-                                          selectedScheme="";
-                                          for(int i=0;i<schemeList.length;i++){
-                                            schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                            schemeList[i][s.flag] ="0";                                        }
-
-                                        }else{
-                                          finYearList[index][s.flag] ="1";
-                                          for(int i=0;i<finYearList.length;i++){
-                                            if(i != index){
-                                              finYearList[i][s.flag] == "1" ? finYearList[i][s.flag] ="0":
-                                              finYearList[i][s.flag] ="0";
+                                    onTap: () {
+                                      if (selectedTMC != null &&
+                                          selectedTMC != "0" &&
+                                          selectedTMC != "") {
+                                        if (finYearList[index][s.flag] == "1") {
+                                          finYearList[index][s.flag] = "0";
+                                          selectedFinyear = "";
+                                          schemeFlag = false;
+                                          selectedScheme = "";
+                                          for (int i = 0;
+                                              i < schemeList.length;
+                                              i++) {
+                                            schemeList[i][s.flag] == "1"
+                                                ? schemeList[i][s.flag] = "0"
+                                                : schemeList[i][s.flag] = "0";
+                                          }
+                                        } else {
+                                          finYearList[index][s.flag] = "1";
+                                          for (int i = 0;
+                                              i < finYearList.length;
+                                              i++) {
+                                            if (i != index) {
+                                              finYearList[i][s.flag] == "1"
+                                                  ? finYearList[i][s.flag] = "0"
+                                                  : finYearList[i][s.flag] =
+                                                      "0";
                                             }
                                           }
 
-                                          selectedFinyear=finYearList[index][s.key_fin_year];
-                                          schemeFlag=true;
+                                          selectedFinyear = finYearList[index]
+                                              [s.key_fin_year];
+                                          schemeFlag = true;
                                         }
-                                        print("Fin>>"+selectedFinyear.toString());
-
-                                      }else{
-                                        utils.showAlert(context, s.first_select_tmc);
+                                        print("Fin>>" +
+                                            selectedFinyear.toString());
+                                      } else {
+                                        utils.showAlert(
+                                            context, s.first_select_tmc);
                                       }
-                                      setState(() {
-                                      });
-
+                                      setState(() {});
                                     },
                                     child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Image.asset(
-                                            finYearList[index][s.flag]=="0" ?imagePath.radio:imagePath.tick,
-                                            color: finYearList[index][s.flag] =="0"? c.grey_5 : null,
+                                            finYearList[index][s.flag] == "0"
+                                                ? imagePath.radio
+                                                : imagePath.tick,
+                                            color: finYearList[index][s.flag] ==
+                                                    "0"
+                                                ? c.grey_5
+                                                : null,
                                             width: 15,
                                             height: 15,
                                           ),
-                                          Text( finYearList[index]
-                                          [
-                                          s.key_fin_year]
-                                              .toString(),
-                                              style: GoogleFonts.getFont('Roboto',
+                                          Text(
+                                              finYearList[index][s.key_fin_year]
+                                                  .toString(),
+                                              style: GoogleFonts.getFont(
+                                                  'Roboto',
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 11,
-                                                  color: finYearList[index][s.flag]=="1" ? c.white : c.grey_6)),
-                                        ]),)),
-
-                            ]);                          }
-                          )
-                      ),
+                                                  color: finYearList[index]
+                                                              [s.flag] ==
+                                                          "1"
+                                                      ? c.white
+                                                      : c.grey_6)),
+                                        ]),
+                                  )),
+                            ]);
+                          })),
                       Visibility(
                         visible: schemeFlag,
-                        child:Padding(
+                        child: Padding(
                           padding: const EdgeInsets.only(top: 10, bottom: 10),
                           child: RichText(
                             text: new TextSpan(
@@ -732,29 +870,51 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                   fontSize: 12,
                                   color: c.grey_8),
                               children: <TextSpan>[
-                                new TextSpan(text: s.select_other,style: new TextStyle(fontWeight: FontWeight.bold,color: c.grey_8)),
-                                new TextSpan(text:onOffType == "online" ?" (Any One)":"", style: new TextStyle(fontWeight: FontWeight.bold,color: c.subscription_type_red_color)),
+                                new TextSpan(
+                                    text: s.select_other,
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: c.grey_8)),
+                                new TextSpan(
+                                    text: onOffType == "online"
+                                        ? " (Any One)"
+                                        : "",
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: c.subscription_type_red_color)),
                               ],
                             ),
                           ),
-                        ),),
+                        ),
+                      ),
                       Visibility(
                         visible: schemeFlag,
-                        child:GridView.count(
+                        child: GridView.count(
                             shrinkWrap: true,
                             primary: false,
                             crossAxisCount: 1,
                             childAspectRatio: (1 / .13),
-                            children: List.generate(schemeList == null ? 0 : schemeList.length, (index) {
+                            children: List.generate(
+                                schemeList == null ? 0 : schemeList.length,
+                                (index) {
                               return Column(children: [
                                 Container(
                                     height: 30,
                                     margin: const EdgeInsets.all(5),
                                     padding: const EdgeInsets.all(3),
                                     decoration: BoxDecoration(
-                                        color: schemeList[index][s.flag] =="1" ? c.colorAccentlight : c.white,
+                                        color: schemeList[index][s.flag] == "1"
+                                            ? c.colorAccentlight
+                                            : c.white,
                                         border: Border.all(
-                                            width: schemeList[index][s.flag]=="1"  ? 1 : 1, color:schemeList[index][s.flag] =="1" ? c.colorPrimary:c.grey),
+                                            width:
+                                                schemeList[index][s.flag] == "1"
+                                                    ? 1
+                                                    : 1,
+                                            color:
+                                                schemeList[index][s.flag] == "1"
+                                                    ? c.colorPrimary
+                                                    : c.grey),
                                         borderRadius: BorderRadius.circular(20),
                                         boxShadow: const [
                                           BoxShadow(
@@ -764,55 +924,66 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                           ),
                                         ]),
                                     child: InkWell(
-                                      onTap: (){
-
-                                        if(schemeList[index][s.flag] == "1"){
-                                          schemeList[index][s.flag] ="0";
-                                          selectedScheme="";
-                                          submitFlag=false;
-                                        }else{
-                                          schemeList[index][s.flag] ="1";
-                                          for(int i=0;i<schemeList.length;i++){
-                                            if(i != index){
-                                              schemeList[i][s.flag] == "1" ? schemeList[i][s.flag] ="0":
-                                              schemeList[i][s.flag] ="0";
+                                      onTap: () {
+                                        if (schemeList[index][s.flag] == "1") {
+                                          schemeList[index][s.flag] = "0";
+                                          selectedScheme = "";
+                                          submitFlag = false;
+                                        } else {
+                                          schemeList[index][s.flag] = "1";
+                                          for (int i = 0;
+                                              i < schemeList.length;
+                                              i++) {
+                                            if (i != index) {
+                                              schemeList[i][s.flag] == "1"
+                                                  ? schemeList[i][s.flag] = "0"
+                                                  : schemeList[i][s.flag] = "0";
                                             }
                                           }
 
-                                          selectedScheme=schemeList[index][s.key_other_work_category_id];
-                                          submitFlag=true;
+                                          selectedScheme = schemeList[index]
+                                              [s.key_other_work_category_id];
+                                          submitFlag = true;
                                         }
-                                        print("scheme>>"+selectedScheme.toString());
-                                        setState(() {
-                                        });
-
-
-
+                                        print("scheme>>" +
+                                            selectedScheme.toString());
+                                        setState(() {});
                                       },
-                                      child: Row(
-                                          children: [
-                                            SizedBox(width: 10,),
-                                            Image.asset(
-                                              schemeList[index][s.flag]=="0" ?imagePath.radio:imagePath.tick,
-                                              color: schemeList[index][s.flag] =="0"? c.grey_5 : null,
-                                              width: 15,
-                                              height: 15,
-                                            ),
-                                            SizedBox(width: 10,),
-                                            Text( schemeList[index]
-                                            [
-                                            s.key_other_work_category_name]
+                                      child: Row(children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Image.asset(
+                                          schemeList[index][s.flag] == "0"
+                                              ? imagePath.radio
+                                              : imagePath.tick,
+                                          color:
+                                              schemeList[index][s.flag] == "0"
+                                                  ? c.grey_5
+                                                  : null,
+                                          width: 15,
+                                          height: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                            schemeList[index][s
+                                                    .key_other_work_category_name]
                                                 .toString(),
-                                                style: GoogleFonts.getFont('Roboto',
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 11,
-                                                    color: schemeList[index][s.flag]=="1" ? c.white : c.grey_6)),
-                                          ]),)),
-
-                              ]);                          }
-                            )
-                        ),),
-
+                                            style: GoogleFonts.getFont('Roboto',
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 11,
+                                                color: schemeList[index]
+                                                            [s.flag] ==
+                                                        "1"
+                                                    ? c.white
+                                                    : c.grey_6)),
+                                      ]),
+                                    )),
+                              ]);
+                            })),
+                      ),
                       Visibility(
                         visible: submitFlag,
                         child: Container(
@@ -821,34 +992,33 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                             child: ElevatedButton(
                               style: ButtonStyle(
                                   backgroundColor:
-                                  MaterialStateProperty.all<Color>(
-                                      c.colorPrimary),
+                                      MaterialStateProperty.all<Color>(
+                                          c.colorPrimary),
                                   shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
+                                          RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                onPressed: (){
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => OtherWork_Save(
-                                            category: selectedScheme,
-                                            finYear: selectedFinyear,
-                                            dcode: selectedDistrict,
-                                            townType: town_type,
-                                            tmccode: selectedTMC,
-                                            onoff_type: onOffType,
-                                            flag: 'other',
-                                            pvcode:"",
-                                            bcode: "",
-                                            imagelist: [],
-                                            selectedworkList: [],
-                                          )));
-
-                                },
+                                    borderRadius: BorderRadius.circular(15),
+                                  ))),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OtherWork_Save(
+                                              category: selectedScheme,
+                                              finYear: selectedFinyear,
+                                              dcode: selectedDistrict,
+                                              townType: town_type,
+                                              tmccode: selectedTMC,
+                                              onoff_type: onOffType,
+                                              flag: 'other',
+                                              pvcode: "",
+                                              bcode: "",
+                                              imagelist: [],
+                                              selectedworkList: [],
+                                            )));
+                              },
                               child: Text(
-                                onOffType=="online"?s.submit:s.download,
+                                onOffType == "online" ? s.submit : s.download,
                                 style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w800,
                                     fontSize: 15,
@@ -870,36 +1040,41 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   }
 
   Future<void> loadTMCBlock() async {
-    await  getTownList();
-    await getMunicipalityList();
-    await getCorporationList();
-    townActive = true;
-    town_type = "T";
-    munActive = false;
-    corpActive = false;
-    isLoadingD = false;
-    await loadTMC();
-    setState(() {
-
-    });
+    if (await utils.isOnline()) {
+      await getTownList();
+      await getMunicipalityList();
+      await getCorporationList();
+      townActive = true;
+      town_type = "T";
+      munActive = false;
+      corpActive = false;
+      isLoadingD = false;
+      await loadTMC();
+      setState(() {});
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
+
   Future<void> getTownList() async {
     utils.showProgress(context, 1);
     Map json_request = {
       s.key_service_id: s.service_key_townpanchayat_list_district_wise,
-      s.key_dcode:selectedDistrict,
+      s.key_dcode: selectedDistrict,
     };
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("TownList_url>>" + url.master_service.toString());
     print("TownList_request_json>>" + json_request.toString());
     print("TownList_request_encrpt>>" + encrpted_request.toString());
@@ -911,15 +1086,18 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       print("TownList_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      townList=[];
+      townList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_townpanchayat_name].toLowerCase().compareTo(b[s.key_townpanchayat_name].toLowerCase());
+          return a[s.key_townpanchayat_name]
+              .toLowerCase()
+              .compareTo(b[s.key_townpanchayat_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
           for (int i = 0; i < res_jsonArray.length; i++) {
@@ -940,14 +1118,16 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("MunicipalityList_url>>" + url.master_service.toString());
     print("MunicipalityList_request_json>>" + json_request.toString());
     print("MunicipalityList_request_encrpt>>" + encrpted_request.toString());
@@ -959,18 +1139,20 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       print("MunicipalityList_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      municipalityList=[];
+      municipalityList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_municipality_name].toLowerCase().compareTo(b[s.key_municipality_name].toLowerCase());
+          return a[s.key_municipality_name]
+              .toLowerCase()
+              .compareTo(b[s.key_municipality_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-
           for (int i = 0; i < res_jsonArray.length; i++) {
             municipalityList.add(res_jsonArray[i]);
           }
@@ -989,14 +1171,16 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
 
     Map encrpted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:
-      utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
+      s.key_data_content: utils.encryption(
+          jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context:await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
     IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    var response = await _ioClient.post(url.master_service,
+        body: json.encode(encrpted_request));
     print("CorporationList_url>>" + url.master_service.toString());
     print("CorporationList_request_json>>" + json_request.toString());
     print("CorporationList_request_encrpt>>" + encrpted_request.toString());
@@ -1008,18 +1192,20 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       print("CorporationList_response>>" + data);
       var jsonData = jsonDecode(data);
       var enc_data = jsonData[s.key_enc_data];
-      var decrpt_data = utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
+      var decrpt_data =
+          utils.decryption(enc_data, prefs.getString(s.userPassKey).toString());
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      corporationList=[];
+      corporationList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
         res_jsonArray.sort((a, b) {
-          return a[s.key_corporation_name].toLowerCase().compareTo(b[s.key_corporation_name].toLowerCase());
+          return a[s.key_corporation_name]
+              .toLowerCase()
+              .compareTo(b[s.key_corporation_name].toLowerCase());
         });
         if (res_jsonArray.length > 0) {
-
           for (int i = 0; i < res_jsonArray.length; i++) {
             corporationList.add(res_jsonArray[i]);
           }
@@ -1029,26 +1215,20 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     }
   }
 
-
-  Future<void>  loadTMC() async{
+  Future<void> loadTMC() async {
     tmcItems = [];
-    if(town_type=="T"){
+    if (town_type == "T") {
       tmcItems.add(defaultSelectedT);
       tmcItems.addAll(townList);
       selectedTMC = defaultSelectedT[s.key_townpanchayat_id]!;
-
-    }else if(town_type=="M"){
+    } else if (town_type == "M") {
       tmcItems.add(defaultSelectedM);
       tmcItems.addAll(municipalityList);
       selectedTMC = defaultSelectedM[s.key_municipality_id]!;
-
-    }else if(town_type=="C"){
+    } else if (town_type == "C") {
       tmcItems.add(defaultSelectedC);
       tmcItems.addAll(corporationList);
       selectedTMC = defaultSelectedC[s.key_corporation_id]!;
-
     }
   }
-
-
 }

@@ -313,7 +313,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               width: 17,
                               height: 17,
                             ),
-                          /*  Expanded(
+                            /*  Expanded(
                               child: Text('Town Panchayat', maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
@@ -321,11 +321,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                       fontSize: 13,
                                       color: townActive ? c.white : c.grey_6)),
                             ),*/
-                            Text('Town Pan...', style: GoogleFonts.getFont('Roboto',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: townActive ? c.white : c.grey_6)
-                               ),
+                            Text('Town Pan...',
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: townActive ? c.white : c.grey_6)),
                           ])),
                 ),
               ),
@@ -670,12 +670,17 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               horizontalOffset: 200.0,
                               child: FlipAnimation(
                                 child: InkWell(
-                                  onTap: () {
-                                    selectedRDPRworkList.clear();
-                                    selectedRDPRworkList.add(workList[index]);
-                                    print("SELECTED_RDPR_WORKLIST>>>>" +
-                                        selectedRDPRworkList.toString());
-                                    getRDPRWorkDetails();
+                                  onTap: () async {
+                                    if (await utils.isOnline()) {
+                                      selectedRDPRworkList.clear();
+                                      selectedRDPRworkList.add(workList[index]);
+                                      print("SELECTED_RDPR_WORKLIST>>>>" +
+                                          selectedRDPRworkList.toString());
+                                      getRDPRWorkDetails();
+                                    } else {
+                                      utils.customAlert(
+                                          context, "E", s.no_internet);
+                                    }
                                   },
                                   child: Card(
                                       elevation: 5,
@@ -725,14 +730,20 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                 ),
                                                 Expanded(
                                                     child: InkWell(
-                                                  onTap: () {
-                                                    get_PDF(
-                                                        workList[index]
-                                                                [s.key_work_id]
-                                                            .toString(),
-                                                        workList[index][s
-                                                                .key_inspection_id]
-                                                            .toString());
+                                                  onTap: () async {
+                                                    if (await utils
+                                                        .isOnline()) {
+                                                      get_PDF(
+                                                          workList[index][
+                                                                  s.key_work_id]
+                                                              .toString(),
+                                                          workList[index][s
+                                                                  .key_inspection_id]
+                                                              .toString());
+                                                    } else {
+                                                      utils.customAlert(context,
+                                                          "E", s.no_internet);
+                                                    }
                                                   },
                                                   child: Align(
                                                     alignment:
@@ -859,16 +870,28 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                             softWrap: true,
                                                           ),
                                                         ),
-                                                          Expanded(
-                                                          child: Text(workList[index][s
-                                                              .key_work_name], maxLines: 3,
-                                                              overflow: TextOverflow.ellipsis,
-                                                              textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
-                                                                  fontWeight: FontWeight.normal,
+                                                        Expanded(
+                                                          child: Text(
+                                                              workList[index][s
+                                                                  .key_work_name],
+                                                              maxLines: 3,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .justify,
+                                                              style: GoogleFonts.getFont(
+                                                                  'Roboto',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
                                                                   fontSize: 13,
-                                                                  color: townActive ? c.white : c.grey_6)),
+                                                                  color: townActive
+                                                                      ? c.white
+                                                                      : c.grey_6)),
                                                         ),
-                                                      /*  Expanded(
+                                                        /*  Expanded(
                                                           flex: 1,
                                                           child: Text(
                                                             workList[index][s
@@ -1032,34 +1055,34 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                           child: InkWell(
                                                                             onTap:
                                                                                 () async {
-
-                                                                              if(await utils.isAutoDatetimeisEnable()) {
-
-                                                                                await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString());
-                                                                                selectedRDPRworkList.clear();
-                                                                                selectedRDPRworkList.add(workList[index]);
-                                                                                print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
-                                                                                Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(
-                                                                                        builder: (context) => SaveWorkDetails(
-                                                                                          selectedworkList: selectedRDPRworkList,
-                                                                                          imagelist: ImageList,
-                                                                                          flag: "edit",
-                                                                                          onoff_type: "online",
-                                                                                          townType: town_type,
-                                                                                          rural_urban: area_type,
-                                                                                        )));
-
+                                                                              if (await utils.isAutoDatetimeisEnable()) {
+                                                                                if (await utils.isOnline()) {
+                                                                                  await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString());
+                                                                                  selectedRDPRworkList.clear();
+                                                                                  selectedRDPRworkList.add(workList[index]);
+                                                                                  print('selectedRDPRworkList>>' + selectedRDPRworkList.toString());
+                                                                                  Navigator.push(
+                                                                                      context,
+                                                                                      MaterialPageRoute(
+                                                                                          builder: (context) => SaveWorkDetails(
+                                                                                                selectedworkList: selectedRDPRworkList,
+                                                                                                imagelist: ImageList,
+                                                                                                flag: "edit",
+                                                                                                onoff_type: "online",
+                                                                                                townType: town_type,
+                                                                                                rural_urban: area_type,
+                                                                                              )));
+                                                                                } else {
+                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                }
                                                                               } else {
-                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
-                                                                                {
-                                                                                  if (Platform.isAndroid) {
-                                                                                    utils.openDateTimeSettings()
-                                                                                  }
-                                                                                });
+                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) => {
+                                                                                      if (Platform.isAndroid)
+                                                                                        {
+                                                                                          utils.openDateTimeSettings()
+                                                                                        }
+                                                                                    });
                                                                               }
-
 
                                                                               /*   if(await utils.isOnline())
                                                                               {
@@ -1152,188 +1175,193 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
-    utils.showProgress(context, 1);
+    if (await utils.isOnline()) {
+      utils.showProgress(context, 1);
 
-    prefs = await SharedPreferences.getInstance();
-    setState(() {
-      workList = [];
-      isSpinnerLoading = true;
-      isWorklistAvailable = false;
-      isSatisfiedActive = false;
-      isNeedImprovementActive = false;
-      isUnSatisfiedActive = false;
-      isPiechartLoading = false;
-    });
+      prefs = await SharedPreferences.getInstance();
+      setState(() {
+        workList = [];
+        isSpinnerLoading = true;
+        isWorklistAvailable = false;
+        isSatisfiedActive = false;
+        isNeedImprovementActive = false;
+        isUnSatisfiedActive = false;
+        isPiechartLoading = false;
+      });
 
-    late Map json_request;
+      late Map json_request;
 
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
 
-    work_id = workid.text.toString();
+      work_id = workid.text.toString();
 
-    if (!work_id.isEmpty) {
-      json_request = {
-        s.key_work_id: work_id,
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_type: 1
+      if (!work_id.isEmpty) {
+        json_request = {
+          s.key_work_id: work_id,
+          s.key_service_id: s.service_key_date_wise_inspection_details_view,
+          s.key_rural_urban: prefs.getString(s.key_rural_urban),
+          s.key_type: 1
+        };
+      } else if (dateController.text.toString().isNotEmpty) {
+        json_request = {
+          s.key_service_id: s.service_key_date_wise_inspection_details_view,
+          s.key_rural_urban: prefs.getString(s.key_rural_urban),
+          s.key_from_date: fromDate,
+          s.key_to_date: toDate,
+          s.key_type: 2
+        };
+      }
+      if (widget.Flag == "Urban Area") {
+        Map urbanRequest = {s.key_town_type: town_type};
+        json_request.addAll(urbanRequest);
+      }
+
+      Map encrypted_request = {
+        s.key_user_name: prefs.getString(s.key_user_name),
+        s.key_data_content: json_request,
       };
-    } else if (dateController.text.toString().isNotEmpty) {
-      json_request = {
-        s.key_service_id: s.service_key_date_wise_inspection_details_view,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_from_date: fromDate,
-        s.key_to_date: toDate,
-        s.key_type: 2
+
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+      HttpClient _client = HttpClient(context: await utils.globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
       };
-    }
-    if (widget.Flag == "Urban Area") {
-      Map urbanRequest = {s.key_town_type: town_type};
-      json_request.addAll(urbanRequest);
-    }
 
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
-    };
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: json.encode(encrypted_request), headers: header);
 
-    String jsonString = jsonEncode(encrypted_request);
+      utils.hideProgress(context);
+      print("WorkList_url>>" + url.main_service_jwt.toString());
+      print("WorkList_request_encrpt>>" + encrypted_request.toString());
 
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+      if (response.statusCode == 200) {
+        String data = response.body;
+        print("WorkList_response>>" + data);
 
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+        print("WorkList_response>>" + data);
 
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+        String? authorizationHeader = response.headers['authorization'];
 
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
+        String? token = authorizationHeader?.split(' ')[1];
 
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: json.encode(encrypted_request), headers: header);
+        print("WorkList Authorization -  $token");
 
-    utils.hideProgress(context);
-    print("WorkList_url>>" + url.main_service_jwt.toString());
-    print("WorkList_request_encrpt>>" + encrypted_request.toString());
+        String responceSignature = utils.jwt_Decode(key, token!);
 
-    if (response.statusCode == 200) {
-      String data = response.body;
-      print("WorkList_response>>" + data);
+        String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("WorkList_response>>" + data);
+        print("WorkList responceSignature -  $responceSignature");
 
-      String? authorizationHeader = response.headers['authorization'];
+        print("WorkList responceData -  $responceData");
 
-      String? token = authorizationHeader?.split(' ')[1];
+        if (responceSignature == responceData) {
+          print("WorkList responceSignature - Token Verified");
+          var userData = jsonDecode(data);
 
-      print("WorkList Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("WorkList responceSignature -  $responceSignature");
-
-      print("WorkList responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("WorkList responceSignature - Token Verified");
-        var userData = jsonDecode(data);
-
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-        if (status == s.key_ok && response_value == s.key_ok) {
-          isWorklistAvailable = true;
-          Map res_jsonArray = userData[s.key_json_data];
-          List<dynamic> RdprWorkList = res_jsonArray[s.key_inspection_details];
-          if (RdprWorkList.isNotEmpty) {
-            satisfiedWorkList = [];
-            unSatisfiedWorkList = [];
-            needImprovementWorkList = [];
-            DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
-            RdprWorkList.sort((a, b) {
-              //sorting in ascending order
-              return inputFormat
-                  .parse(b[s.key_ins_date])
-                  .compareTo(inputFormat.parse(a[s.key_ins_date]));
-            });
-            for (int i = 0; i < RdprWorkList.length; i++) {
-              inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
-              print("inspectionid>>>>" + inspectionid);
-              if (RdprWorkList[i][s.key_status_id] == 1) {
-                satisfiedWorkList.add(RdprWorkList[i]);
-              } else if (RdprWorkList[i][s.key_status_id] == 2) {
-                unSatisfiedWorkList.add(RdprWorkList[i]);
-              } else if (RdprWorkList[i][s.key_status_id] == 3) {
-                needImprovementWorkList.add(RdprWorkList[i]);
-              }
-              if (RdprWorkList[i][s.key_rural_urban] == "U") {
-                print("Image>>>>" + ImageList.toString());
-                workList.add(RdprWorkList[i]);
-                if (town_type == "T") {
-                  TownWorkList = workList;
-                } else if (town_type == "M") {
-                  MunicipalityWorkList = workList;
-                } else if (town_type == "C") {
-                  corporationWorklist = workList;
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+          if (status == s.key_ok && response_value == s.key_ok) {
+            isWorklistAvailable = true;
+            Map res_jsonArray = userData[s.key_json_data];
+            List<dynamic> RdprWorkList =
+                res_jsonArray[s.key_inspection_details];
+            if (RdprWorkList.isNotEmpty) {
+              satisfiedWorkList = [];
+              unSatisfiedWorkList = [];
+              needImprovementWorkList = [];
+              DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+              RdprWorkList.sort((a, b) {
+                //sorting in ascending order
+                return inputFormat
+                    .parse(b[s.key_ins_date])
+                    .compareTo(inputFormat.parse(a[s.key_ins_date]));
+              });
+              for (int i = 0; i < RdprWorkList.length; i++) {
+                inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
+                print("inspectionid>>>>" + inspectionid);
+                if (RdprWorkList[i][s.key_status_id] == 1) {
+                  satisfiedWorkList.add(RdprWorkList[i]);
+                } else if (RdprWorkList[i][s.key_status_id] == 2) {
+                  unSatisfiedWorkList.add(RdprWorkList[i]);
+                } else if (RdprWorkList[i][s.key_status_id] == 3) {
+                  needImprovementWorkList.add(RdprWorkList[i]);
                 }
+                if (RdprWorkList[i][s.key_rural_urban] == "U") {
+                  print("Image>>>>" + ImageList.toString());
+                  workList.add(RdprWorkList[i]);
+                  if (town_type == "T") {
+                    TownWorkList = workList;
+                  } else if (town_type == "M") {
+                    MunicipalityWorkList = workList;
+                  } else if (town_type == "C") {
+                    corporationWorklist = workList;
+                  }
+                } else {
+                  workList.add(RdprWorkList[i]);
+                }
+              }
+            }
+            totalWorksCount = workList.length.toString();
+            sCount = satisfiedWorkList.length.toString();
+            usCount = unSatisfiedWorkList.length.toString();
+            nimpCount = needImprovementWorkList.length.toString();
+            setState(() {
+              if (prefs.getString(s.key_rural_urban) == "U") {
+                if (satisfiedWorkList.isNotEmpty) {
+                  isSatisfiedActive = true;
+                  workList = satisfiedWorkList;
+                  print("satisfied>>>" + workList.toString());
+                } else if (unSatisfiedWorkList.isNotEmpty) {
+                  isUnSatisfiedActive = true;
+                  workList = unSatisfiedWorkList;
+                  print("unSatisfied>>>" + workList.toString());
+                } else if (needImprovementWorkList.isNotEmpty) {
+                  isNeedImprovementActive = true;
+                  workList = needImprovementWorkList;
+                  print("needImprovement>>>" + workList.toString());
+                }
+              }
+              if (workid.text.isNotEmpty) {
+                isSpinnerLoading = false;
+                isPiechartLoading = false;
+                isWorklistAvailable = true;
               } else {
-                workList.add(RdprWorkList[i]);
+                isSpinnerLoading = false;
+                isPiechartLoading = true;
+                isWorklistAvailable = true;
               }
-            }
-          }
-          totalWorksCount = workList.length.toString();
-          sCount = satisfiedWorkList.length.toString();
-          usCount = unSatisfiedWorkList.length.toString();
-          nimpCount = needImprovementWorkList.length.toString();
-          setState(() {
-            if (prefs.getString(s.key_rural_urban) == "U") {
-              if (satisfiedWorkList.isNotEmpty) {
-                isSatisfiedActive = true;
-                workList = satisfiedWorkList;
-                print("satisfied>>>" + workList.toString());
-              } else if (unSatisfiedWorkList.isNotEmpty) {
-                isUnSatisfiedActive = true;
-                workList = unSatisfiedWorkList;
-                print("unSatisfied>>>" + workList.toString());
-              } else if (needImprovementWorkList.isNotEmpty) {
-                isNeedImprovementActive = true;
-                workList = needImprovementWorkList;
-                print("needImprovement>>>" + workList.toString());
-              }
-            }
-            if (workid.text.isNotEmpty) {
+            });
+          } else if (status == s.key_ok && response_value == s.key_noRecord) {
+            setState(() {
               isSpinnerLoading = false;
               isPiechartLoading = false;
-              isWorklistAvailable = true;
-            } else {
-              isSpinnerLoading = false;
-              isPiechartLoading = true;
-              isWorklistAvailable = true;
-            }
-          });
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          setState(() {
-            isSpinnerLoading = false;
-            isPiechartLoading = false;
-            totalWorksCount = "0";
-            townCount = "0";
-            munCount = "0";
-            corpCount = "0";
-            sCount = "0";
-            nimpCount = "0";
-            usCount = "0";
-          });
+              totalWorksCount = "0";
+              townCount = "0";
+              munCount = "0";
+              corpCount = "0";
+              sCount = "0";
+              nimpCount = "0";
+              usCount = "0";
+            });
+          }
+        } else {
+          print("WorkList responceSignature - Token Not Verified");
+          utils.customAlert(context, "E", s.jsonError);
         }
-      } else {
-        print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
       }
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 
@@ -1535,7 +1563,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               print("image_List>>>>>>" + ImageList.toString());
             }
           }
-        } else  {
+        } else {
           utils.customAlert(context, "E", response_value);
         }
       } else {

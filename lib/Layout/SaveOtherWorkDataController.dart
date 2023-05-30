@@ -15,7 +15,6 @@ import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
 import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 
-
 class SaveOtherWorkDatacontroller with ChangeNotifier {
   Utils utils = Utils();
   late SharedPreferences prefs;
@@ -52,37 +51,38 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   bool speech = false;
   String _lastWords = '';
   String lang = 'en_US';
-  String widgetcategory="";
-  String widgetfinYear="";
-  String widgetdcode="";
-  String widgetbcode="";
-  String widgetpvcode="";
-  String widgetflag="";
-  String widgettmccode="";
-  String widgettownType="";
+  String widgetcategory = "";
+  String widgetfinYear = "";
+  String widgetdcode = "";
+  String widgetbcode = "";
+  String widgetpvcode = "";
+  String widgetflag = "";
+  String widgettmccode = "";
+  String widgettownType = "";
   String onoffType = '';
-  List widgetselectedworkList=[];
+  List widgetselectedworkList = [];
   List selectedwork = [];
-  List widgetimagelist=[];
-  List imageList=[];
-  bool stagevisibility=false;
-  bool statusvisibility=false;
-  String widgetonoff_type="";
-  int max_img_count=0;
+  List widgetimagelist = [];
+  List imageList = [];
+  bool stagevisibility = false;
+  bool statusvisibility = false;
+  String widgetonoff_type = "";
+  int max_img_count = 0;
 
-  SaveOtherWorkDatacontroller(category, finYear, dcode, bcode, pvcode, tmccode, townType, flag,selectedworkList,imagelist,onoff_type) {
-     widgetcategory=category;
-     widgetfinYear=finYear;
-     widgetdcode=dcode;
-     widgetbcode=bcode;
-     widgetpvcode=pvcode;
-     widgetflag=flag;
-     widgettmccode=tmccode;
-     widgettownType=townType;
-     widgetselectedworkList.addAll(selectedworkList);
-     widgetimagelist.addAll(imagelist);
-     widgetonoff_type=onoff_type;
-     initialize();
+  SaveOtherWorkDatacontroller(category, finYear, dcode, bcode, pvcode, tmccode,
+      townType, flag, selectedworkList, imagelist, onoff_type) {
+    widgetcategory = category;
+    widgetfinYear = finYear;
+    widgetdcode = dcode;
+    widgetbcode = bcode;
+    widgetpvcode = pvcode;
+    widgetflag = flag;
+    widgettmccode = tmccode;
+    widgettownType = townType;
+    widgetselectedworkList.addAll(selectedworkList);
+    widgetimagelist.addAll(imagelist);
+    widgetonoff_type = onoff_type;
+    initialize();
     initSpeech();
   }
   @override
@@ -97,41 +97,39 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     dbClient = await dbHelper.db;
     txtFlag = true;
     selectedwork = widgetselectedworkList;
-    print("IMAGE>>>>>>"+widgetimagelist.toString());
+    print("IMAGE>>>>>>" + widgetimagelist.toString());
 
-    if(widgetflag=="edit")
-      {
-        statusvisibility;
-        selectedStatus = defaultSelectedStatus[s.key_status_id]!;
-        selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
-        descriptionController.text=selectedwork[0]['description'];
-        otherWorkDetailsController.text=selectedwork[0]['other_work_detail'];
-      }
-    else
-      {
-        stagevisibility=true;
-        statusvisibility=true;
-        List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
-        print(list.toString());
-        selectedStatus = defaultSelectedStatus[s.key_status_id]!;
-        selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
-        statusItems.add(defaultSelectedStatus);
-        statusItems.addAll(list);
-        print('status>>' + statusItems.toString());
-      }
+    if (widgetflag == "edit") {
+      statusvisibility;
+      selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+      selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+      descriptionController.text = selectedwork[0]['description'];
+      otherWorkDetailsController.text = selectedwork[0]['other_work_detail'];
+    } else {
+      stagevisibility = true;
+      statusvisibility = true;
+      List<Map> list =
+          await dbClient.rawQuery('SELECT * FROM ' + s.table_Status);
+      print(list.toString());
+      selectedStatus = defaultSelectedStatus[s.key_status_id]!;
+      selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
+      statusItems.add(defaultSelectedStatus);
+      statusItems.addAll(list);
+      print('status>>' + statusItems.toString());
+    }
     await loadImageList();
     notifyListeners();
-
   }
 
   Future<bool> _onWillPop(BuildContext context) async {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
   }
+
   void initSpeech() async {
     speechEnabled = false;
     _speechToText.initialize();
-   notifyListeners();
+    notifyListeners();
   }
 
   /// Each time to start a speech recognition session
@@ -143,7 +141,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
         localeId: lang,
         listenFor: Duration(minutes: 10));
     print("start");
-   notifyListeners();
+    notifyListeners();
   }
 
   /// Manually stop the active speech recognition session
@@ -167,6 +165,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     notifyListeners();
     print("start" + descriptionController.text);
   }
+
   Future<void> showAlert(BuildContext context, String msg, int i) async {
     if (msg != null && msg != '0') {
       remark.text = msg;
@@ -192,7 +191,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
               decoration: InputDecoration(
                 hintText: s.enter_description,
                 contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 border: InputBorder.none,
               ),
             ),
@@ -245,14 +244,14 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     print("longitude>>" + position.longitude.toString());
     if (position.latitude != null && position.longitude != null) {
       TakePhoto(ImageSource.camera, i, position.latitude.toString(),
-          position.longitude.toString(),context);
+          position.longitude.toString(), context);
     } else {
       utils.showAlert(context, "Try Again...");
     }
   }
 
-  Future<void> TakePhoto(
-      ImageSource source, int i, String latitude, String longitude, BuildContext context) async {
+  Future<void> TakePhoto(ImageSource source, int i, String latitude,
+      String longitude, BuildContext context) async {
     final pickedFile = await _picker.pickImage(
         source: ImageSource.camera,
         imageQuality: 80,
@@ -282,50 +281,51 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   // *************************** Validation here *************************** //
 
   Future<void> validate(BuildContext context) async {
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       if (await checkImageList(img_jsonArray)) {
+        if (otherWorkDetailsController.text.isNotEmpty &&
+            otherWorkDetailsController.text != '') {
+          if (descriptionController.text.isNotEmpty &&
+              descriptionController.text != '') {
+            if (await utils.isOnline()) {
+              editsaveData(context);
+            } else {
+              utils.customAlert(context, "E", s.no_internet);
+            }
+          } else {
+            utils.showAlert(context, "Please Enter Description");
+          }
+        } else {
+          utils.showAlert(context, "Please Enter Other Work Details");
+        }
+      } else {
+        utils.showAlert(context, "At least Capture one Photo");
+      }
+    } else {
+      if (await checkImageList(img_jsonArray)) {
+        if (selectedStatus.isNotEmpty && selectedStatus != '0') {
           if (otherWorkDetailsController.text.isNotEmpty &&
               otherWorkDetailsController.text != '') {
-            if (!descriptionController.text.isEmpty &&
+            if (descriptionController.text.isNotEmpty &&
                 descriptionController.text != '') {
-              editsaveData(context);
-          }
-            else {
+              if (await utils.isOnline()) {
+                saveData(context);
+              } else {
+                utils.customAlert(context, "E", s.no_internet);
+              }
+            } else {
               utils.showAlert(context, "Please Enter Description");
             }
-        }
-          else {
+          } else {
             utils.showAlert(context, "Please Enter Other Work Details");
           }
-
+        } else {
+          utils.showAlert(context, "Please Select Status");
+        }
       } else {
         utils.showAlert(context, "At least Capture one Photo");
       }
     }
-    else
-      {
-        if (await checkImageList(img_jsonArray)) {
-          if (selectedStatus.isNotEmpty && selectedStatus != '0') {
-            if (otherWorkDetailsController.text.isNotEmpty &&
-                otherWorkDetailsController.text != '') {
-              if (descriptionController.text.isNotEmpty &&
-                  descriptionController.text != '') {
-                saveData(context);
-              } else {
-                utils.showAlert(context, "Please Enter Description");
-              }
-            } else {
-              utils.showAlert(context, "Please Enter Other Work Details");
-            }
-          } else {
-            utils.showAlert(context, "Please Select Status");
-          }
-        } else {
-          utils.showAlert(context, "At least Capture one Photo");
-        }
-
-      }
   }
 
   // *************************** API Call here *************************** //
@@ -337,56 +337,63 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
-      Map<String, String> mymap = {}; // This created one object in the current scope.
+      Map<String, String> mymap =
+          {}; // This created one object in the current scope.
       // First iteration , i = 0
-      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] =  img_jsonArray_val[i][s.key_serial_no].toString();
-      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = img_jsonArray_val[i][s.key_serial_no].toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
       // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
       jsonArray.add(mymap);
     }
-       Map dataset = {
-         s.key_dcode: selectedwork[0][s.key_dcode],
-         s.key_rural_urban: prefs.getString(s.key_rural_urban),
-         s.key_status_id: selectedwork[0][s.key_status_id],
-         s.key_fin_year: selectedwork[0][s.key_fin_year],
-         'other_work_category_id':selectedwork[0][s.key_other_work_category_id],
-         'description': descriptionController.text.toString(),
-         'other_work_detail': otherWorkDetailsController.text.toString(),
-       };
+    Map dataset = {
+      s.key_dcode: selectedwork[0][s.key_dcode],
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_status_id: selectedwork[0][s.key_status_id],
+      s.key_fin_year: selectedwork[0][s.key_fin_year],
+      'other_work_category_id': selectedwork[0][s.key_other_work_category_id],
+      'description': descriptionController.text.toString(),
+      'other_work_detail': otherWorkDetailsController.text.toString(),
+    };
 
-       Map ruralset = {};
-       Map urbanset = {};
-       Map imgset = { 'image_details': jsonArray,};
-       if(widgetflag=="edit")
-       {
-         Map set = {
-           s.key_other_work_inspection_id: selectedwork[0][s.key_other_work_inspection_id],
-         };
-         dataset.addAll(set);
-       }
+    Map ruralset = {};
+    Map urbanset = {};
+    Map imgset = {
+      'image_details': jsonArray,
+    };
+    if (widgetflag == "edit") {
+      Map set = {
+        s.key_other_work_inspection_id: selectedwork[0]
+            [s.key_other_work_inspection_id],
+      };
+      dataset.addAll(set);
+    }
 
-       if (prefs.getString(s.key_rural_urban) == "U") {
-         urbanset = {
-           s.key_town_type: widgettownType,
-           s.key_tpcode: widgettmccode,
-         };
-         dataset.addAll(urbanset);
-       }else{
-         ruralset = {
-           s.key_bcode: selectedwork[0][s.key_bcode],
-           s.key_pvcode:selectedwork[0][s.key_pvcode],
-           s.key_hab_code:"",
-         };
-         dataset.addAll(ruralset);
-       }
-       dataset.addAll(imgset);
-       inspection_work_details.add(dataset);
+    if (prefs.getString(s.key_rural_urban) == "U") {
+      urbanset = {
+        s.key_town_type: widgettownType,
+        s.key_tpcode: widgettmccode,
+      };
+      dataset.addAll(urbanset);
+    } else {
+      ruralset = {
+        s.key_bcode: selectedwork[0][s.key_bcode],
+        s.key_pvcode: selectedwork[0][s.key_pvcode],
+        s.key_hab_code: "",
+      };
+      dataset.addAll(ruralset);
+    }
+    dataset.addAll(imgset);
+    inspection_work_details.add(dataset);
 
     Map main_dataset = {
-    s.key_service_id: s.service_key_other_work_inspection_details_update,
+      s.key_service_id: s.service_key_other_work_inspection_details_update,
       'other_inspection_work_details': inspection_work_details,
     };
     Map encrypted_request = {
@@ -436,19 +443,22 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       if (responceSignature == responceData) {
         print("saveData responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop(context));
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          utils
+              .customAlert(context, "S", s.online_data_save_success)
+              .then((value) => _onWillPop(context));
+        } else {
+          utils.customAlert(context, "E", s.failed);
+        }
       } else {
-        utils.customAlert(context, "E", s.failed);
-      }
-      }else {
         print("saveData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
   }
+
   Future<void> saveData(BuildContext context) async {
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
@@ -456,46 +466,53 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
-      int count=i+1;
-      Map<String, String> mymap = {}; // This created one object in the current scope.
+      int count = i + 1;
+      Map<String, String> mymap =
+          {}; // This created one object in the current scope.
       // First iteration , i = 0
-      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] =  count.toString();
-      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = count.toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
       // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
       jsonArray.add(mymap);
     }
-      Map dataset = {
-        s.key_dcode: widgetdcode,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_status_id: selectedStatus,
-        s.key_fin_year: widgetfinYear,
-        'other_work_category_id':widgetcategory,
-        'description': descriptionController.text.toString(),
-        'other_work_detail': otherWorkDetailsController.text.toString(),
-      };
+    Map dataset = {
+      s.key_dcode: widgetdcode,
+      s.key_rural_urban: prefs.getString(s.key_rural_urban),
+      s.key_status_id: selectedStatus,
+      s.key_fin_year: widgetfinYear,
+      'other_work_category_id': widgetcategory,
+      'description': descriptionController.text.toString(),
+      'other_work_detail': otherWorkDetailsController.text.toString(),
+    };
 
-      Map ruralset = {};
-      Map urbanset = {};
-      Map imgset = { 'image_details': jsonArray,};
-      if (prefs.getString(s.key_rural_urban) == "U") {
-        urbanset = {
-          s.key_town_type: widgettownType,
-          s.key_tpcode: widgettmccode,
-        };
-        dataset.addAll(urbanset);
-      }else{
-        ruralset = {
-          s.key_bcode: widgetbcode,
-          s.key_pvcode:widgetpvcode,
-          s.key_hab_code:"",
-        };
-        dataset.addAll(ruralset);
-      }
-      dataset.addAll(imgset);
-      inspection_work_details.add(dataset);
+    Map ruralset = {};
+    Map urbanset = {};
+    Map imgset = {
+      'image_details': jsonArray,
+    };
+    if (prefs.getString(s.key_rural_urban) == "U") {
+      urbanset = {
+        s.key_town_type: widgettownType,
+        s.key_tpcode: widgettmccode,
+      };
+      dataset.addAll(urbanset);
+    } else {
+      ruralset = {
+        s.key_bcode: widgetbcode,
+        s.key_pvcode: widgetpvcode,
+        s.key_hab_code: "",
+      };
+      dataset.addAll(ruralset);
+    }
+    dataset.addAll(imgset);
+    inspection_work_details.add(dataset);
 
     Map main_dataset = {
       s.key_service_id: s.service_key_other_work_inspection_details_save,
@@ -549,61 +566,70 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       if (responceSignature == responceData) {
         print("saveData responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        utils.customAlert(context, "S", s.online_data_save_success).then((value) => _onWillPop(context));
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          utils
+              .customAlert(context, "S", s.online_data_save_success)
+              .then((value) => _onWillPop(context));
+        } else {
+          utils.customAlert(context, "E", s.failed);
+        }
       } else {
-        utils.customAlert(context, "E", s.failed);
-      }
-      }else {
         print("saveData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
   }
-  Future<void> setStatus(var value)async{
+
+  Future<void> setStatus(var value) async {
     selectedStatus = value.toString();
-    int sIndex = statusItems
-        .indexWhere((f) => f[s.key_status_id] == selectedStatus);
+    int sIndex =
+        statusItems.indexWhere((f) => f[s.key_status_id] == selectedStatus);
     selectedStatusName = statusItems[sIndex][s.key_status_name];
     value != '0' ? statusError = false : statusError = true;
     notifyListeners();
   }
-  Future<void> loadImageList()async {
+
+  Future<void> loadImageList() async {
     img_jsonArray.clear();
-    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    max_img_count =
+        int.parse(prefs.getString(s.service_key_photo_count).toString());
     imageList.clear();
 
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       imageList.addAll(widgetimagelist);
     }
     for (int i = 0; i < imageList.length; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
+          {}; // This created one object in the current scope.
 
       // First iteration , i = 0
-      mymap["latitude"] = imageList[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = imageList[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = imageList[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = imageList[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = imageList[i][s.key_serial_no]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = imageList[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
       mymap["image"] = imageList[i][s.key_image].toString();
-      mymap["image_path"] = imageList[i][s.key_image_path].toString();// Now mymap = { name: 'test0' };
+      mymap["image_path"] = imageList[i][s.key_image_path]
+          .toString(); // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
 
     for (int i = img_jsonArray.length; i < max_img_count; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
-      int count=i+1;
+          {}; // This created one object in the current scope.
+      int count = i + 1;
       // First iteration , i = 0
       mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
       mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
       mymap["serial_no"] = count.toString(); // Now mymap = { name: 'test0' };
       mymap["image_description"] = ''; // Now mymap = { name: 'test0' };
       mymap["image"] = '0';
-      mymap["image_path"] = '0';// Now mymap = { name: 'test0' };
+      mymap["image_path"] = '0'; // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
     print("Img>>" + img_jsonArray.toString());
@@ -614,7 +640,5 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
       noDataFlag = true;
       imageListFlag = false;
     }
-
   }
-
 }

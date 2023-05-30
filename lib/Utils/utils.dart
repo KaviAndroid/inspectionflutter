@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, use_build_context_synchronously
+// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, use_build_context_synchronously, nullable_type_in_catch_clause
 
 import 'dart:async';
 import 'dart:convert';
@@ -29,9 +29,7 @@ import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import '../DataBase/DbHelper.dart';
 
 class Utils {
-
   Future<bool> isAutoDatetimeisEnable() async {
-
     bool isAutoDateTimeEnabled = false;
     if (Platform.isAndroid || Platform.isIOS) {
       isAutoDateTimeEnabled = Platform.environment['AUTO_TIME'] == 'true';
@@ -1190,10 +1188,10 @@ class Utils {
       List<int> bytes = base64.decode(head_sign);
 
       signature = utf8.decode(bytes);
-    } on JWTExpiredError {
+    } on JWTExpiredException {
       print('jwt expired');
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on JWTException catch (e) {
+      print(e.message);
     }
 
     return signature;
@@ -1202,32 +1200,29 @@ class Utils {
   String checkNull(dynamic value) {
     return value == null ? '' : value.toString();
   }
+
   String splitStringByLength(String str, int length) {
-    String sname='';
-    if(str.length>length)
-      {
-        int len=length;
-        if(str[length]!=' '){
-          for(int i=0;i<length;i++){
-            String s=str[length-(i+1)];
-            if(s==' '){
-              len=length-(i+1);
-              print("length"+len.toString());
-              break;
-            }
+    String sname = '';
+    if (str.length > length) {
+      int len = length;
+      if (str[length] != ' ') {
+        for (int i = 0; i < length; i++) {
+          String s = str[length - (i + 1)];
+          if (s == ' ') {
+            len = length - (i + 1);
+            print("length" + len.toString());
+            break;
           }
         }
+      }
 
-        String fir=str.substring(0, len);
-        String sec=str.substring( len);
-        sname=fir+'\n'+sec;
-      }
-    else
-      {
-        sname=str;
-      }
+      String fir = str.substring(0, len);
+      String sec = str.substring(len);
+      sname = fir + '\n' + sec;
+    } else {
+      sname = str;
+    }
 
     return sname;
-
   }
 }

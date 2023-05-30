@@ -168,23 +168,25 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                           ),
                                           side:
                                               BorderSide(color: Colors.cyan)))),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (!mobile_number.text.isEmpty) {
                                   if (mobile_number.text.length != 10) {
                                     utils.showToast(context,
                                         s.mobile_number_must_be_of_10_digits);
                                   } else {
-                                    // print("Isforgotpassword"+widget.isForgotPassword);
-                                    if (widget.isForgotPassword ==
-                                        "forgot_password") {
-                                      print("Isforgotpassword   " +
-                                          widget.isForgotPassword);
-                                      FORGOT_PASSWORD_send_otp();
-                                    } else if (widget.isForgotPassword ==
-                                        "change_password") {
-                                      change_password_send_otpParams();
-                                    } else {
-                                      sendOtp(mobile_number.text.toString());
+                                    if (await utils.isOnline()) {
+                                      // print("Isforgotpassword"+widget.isForgotPassword);
+                                      if (widget.isForgotPassword ==
+                                          "forgot_password") {
+                                        print("Isforgotpassword   " +
+                                            widget.isForgotPassword);
+                                        FORGOT_PASSWORD_send_otp();
+                                      } else if (widget.isForgotPassword ==
+                                          "change_password") {
+                                        change_password_send_otpParams();
+                                      } else {
+                                        sendOtp(mobile_number.text.toString());
+                                      }
                                     }
                                   }
                                 } else {
@@ -278,15 +280,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   TextStyle(color: c.colorAccent, fontSize: 13),
                               textAlign: TextAlign.end,
                             ),
-                            onPressed: () {
-                              if (widget.isForgotPassword ==
-                                  "forgot_password") {
-                                ResendOtpForgotPasswordParams();
-                              } else if (widget.isForgotPassword ==
-                                  "change_password") {
-                                change_password_Resend_otpParams(context);
+                            onPressed: () async {
+                              if (await utils.isOnline()) {
+                                if (widget.isForgotPassword ==
+                                    "forgot_password") {
+                                  ResendOtpForgotPasswordParams();
+                                } else if (widget.isForgotPassword ==
+                                    "change_password") {
+                                  change_password_Resend_otpParams(context);
+                                } else {
+                                  resend_otp(context);
+                                }
                               } else {
-                                resend_otp(context);
+                                utils.customAlert(context, "E", s.no_internet);
                               }
                             },
                           )),
@@ -320,17 +326,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                           bottomRight: Radius.circular(25),
                                         ),
                                         side: BorderSide(color: Colors.cyan)))),
-                            onPressed: () {
+                            onPressed: () async {
                               if (!otp.text.isEmpty) {
                                 if (otp.text.length == 6) {
-                                  if (widget.isForgotPassword ==
-                                      "forgot_password") {
-                                    FORGOT_PASSWORD_OTP_Params();
-                                  } else if (widget.isForgotPassword ==
-                                      "change_password") {
-                                    change_password_OTP_Params();
+                                  if (await utils.isOnline()) {
+                                    if (widget.isForgotPassword ==
+                                        "forgot_password") {
+                                      FORGOT_PASSWORD_OTP_Params();
+                                    } else if (widget.isForgotPassword ==
+                                        "change_password") {
+                                      change_password_OTP_Params();
+                                    } else {
+                                      otp_params();
+                                    }
                                   } else {
-                                    otp_params();
+                                    utils.customAlert(
+                                        context, "E", s.no_internet);
                                   }
                                 } else {
                                   utils.showToast(
@@ -491,6 +502,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             } else if (widget.isForgotPassword == "change_password") {
               changepassword_params();
             }
+          } else {
+            utils.customAlert(context, "E", s.no_internet);
           }
         } else {
           utils.showToast(

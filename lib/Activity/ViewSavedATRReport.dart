@@ -314,11 +314,11 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                               width: 17,
                               height: 17,
                             ),
-                            Text('Town Pan...', style: GoogleFonts.getFont('Roboto',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: townActive ? c.white : c.grey_6)
-                            ),
+                            Text('Town Pan...',
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: townActive ? c.white : c.grey_6)),
                           ])),
                 ),
               ),
@@ -667,15 +667,20 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                               horizontalOffset: 200.0,
                               child: FlipAnimation(
                                 child: InkWell(
-                                  onTap: () {
-                                    selectedATRworkList.clear();
-                                    selectedATRworkList.add(workList[index]);
-                                    print("SELECTED_ATR_WORKLIST>>>>" +
-                                        selectedATRworkList.toString());
-                                    print("WORK_ID###" +
-                                        selectedATRworkList[0][s.key_work_id]
-                                            .toString());
-                                    getAtrWorkDetails();
+                                  onTap: () async {
+                                    if (await utils.isOnline()) {
+                                      selectedATRworkList.clear();
+                                      selectedATRworkList.add(workList[index]);
+                                      print("SELECTED_ATR_WORKLIST>>>>" +
+                                          selectedATRworkList.toString());
+                                      print("WORK_ID###" +
+                                          selectedATRworkList[0][s.key_work_id]
+                                              .toString());
+                                      getAtrWorkDetails();
+                                    } else {
+                                      utils.customAlert(
+                                          context, "E", s.no_internet);
+                                    }
                                   },
                                   child: Card(
                                       elevation: 5,
@@ -725,17 +730,23 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                 ),
                                                 Expanded(
                                                     child: InkWell(
-                                                  onTap: () {
-                                                    get_PDF(
-                                                        workList[index]
-                                                                [s.key_work_id]
-                                                            .toString(),
-                                                        workList[index][s
-                                                                .key_inspection_id]
-                                                            .toString(),
-                                                        workList[index][s
-                                                                .key_action_taken_id]
-                                                            .toString());
+                                                  onTap: () async {
+                                                    if (await utils
+                                                        .isOnline()) {
+                                                      get_PDF(
+                                                          workList[index][
+                                                                  s.key_work_id]
+                                                              .toString(),
+                                                          workList[index][s
+                                                                  .key_inspection_id]
+                                                              .toString(),
+                                                          workList[index][s
+                                                                  .key_action_taken_id]
+                                                              .toString());
+                                                    } else {
+                                                      utils.customAlert(context,
+                                                          "E", s.no_internet);
+                                                    }
                                                   },
                                                   child: Align(
                                                     alignment:
@@ -979,30 +990,32 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                           child: InkWell(
                                                                             onTap:
                                                                                 () async {
-                                                                              if(await utils.isAutoDatetimeisEnable()) {
-
-                                                                                await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString(), workList[index][s.key_action_taken_id].toString());
-                                                                                selectedATRworkList.clear();
-                                                                                selectedATRworkList.add(workList[index]);
-                                                                                print('selectedATRworkList>>' + selectedATRworkList.toString());
-                                                                                Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(
-                                                                                        builder: (context) => ATR_Save(
-                                                                                          selectedWorklist: selectedATRworkList,
-                                                                                          flag: "edit",
-                                                                                          onoff_type: "online",
-                                                                                          rural_urban: area_type,
-                                                                                          imagelist: ImageList,
-                                                                                        )));
-
+                                                                              if (await utils.isAutoDatetimeisEnable()) {
+                                                                                if (await utils.isOnline()) {
+                                                                                  await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString(), workList[index][s.key_action_taken_id].toString());
+                                                                                  selectedATRworkList.clear();
+                                                                                  selectedATRworkList.add(workList[index]);
+                                                                                  print('selectedATRworkList>>' + selectedATRworkList.toString());
+                                                                                  Navigator.push(
+                                                                                      context,
+                                                                                      MaterialPageRoute(
+                                                                                          builder: (context) => ATR_Save(
+                                                                                                selectedWorklist: selectedATRworkList,
+                                                                                                flag: "edit",
+                                                                                                onoff_type: "online",
+                                                                                                rural_urban: area_type,
+                                                                                                imagelist: ImageList,
+                                                                                              )));
+                                                                                } else {
+                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                }
                                                                               } else {
-                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
-                                                                                {
-                                                                                  if (Platform.isAndroid) {
-                                                                                    utils.openDateTimeSettings()
-                                                                                  }
-                                                                                });
+                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) => {
+                                                                                      if (Platform.isAndroid)
+                                                                                        {
+                                                                                          utils.openDateTimeSettings()
+                                                                                        }
+                                                                                    });
                                                                               }
 
                                                                               /*   if(await utils.isOnline())
@@ -1098,174 +1111,178 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-    utils.showProgress(context, 1);
-    prefs = await SharedPreferences.getInstance();
-    setState(() {
-      workList = [];
-      isSpinnerLoading = true;
-      isWorklistAvailable = false;
-      isSatisfiedActive = false;
-      isNeedImprovementActive = false;
-      isUnSatisfiedActive = false;
-    });
+    if (await utils.isOnline()) {
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
+      utils.showProgress(context, 1);
+      prefs = await SharedPreferences.getInstance();
+      setState(() {
+        workList = [];
+        isSpinnerLoading = true;
+        isWorklistAvailable = false;
+        isSatisfiedActive = false;
+        isNeedImprovementActive = false;
+        isUnSatisfiedActive = false;
+      });
 
-    late Map json_request;
-    work_id = workid.text.toString();
-    if (!work_id.isEmpty) {
-      json_request = {
-        s.key_work_id: work_id,
-        s.key_service_id:
-            s.service_key_date_wise_inspection_action_taken_details_view,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_type: 1
+      late Map json_request;
+      work_id = workid.text.toString();
+      if (!work_id.isEmpty) {
+        json_request = {
+          s.key_work_id: work_id,
+          s.key_service_id:
+              s.service_key_date_wise_inspection_action_taken_details_view,
+          s.key_rural_urban: prefs.getString(s.key_rural_urban),
+          s.key_type: 1
+        };
+      } else if (dateController.text.toString().isNotEmpty) {
+        json_request = {
+          s.key_service_id:
+              s.service_key_date_wise_inspection_action_taken_details_view,
+          s.key_rural_urban: prefs.getString(s.key_rural_urban),
+          s.key_from_date: fromDate,
+          s.key_to_date: toDate,
+          s.key_type: 2
+        };
+      }
+      if (prefs.getString(s.key_rural_urban) == "U") {
+        Map urbanRequest = {s.key_town_type: town_type};
+        json_request.addAll(urbanRequest);
+      }
+      Map encrypted_request = {
+        s.key_user_name: prefs.getString(s.key_user_name),
+        s.key_data_content: json_request,
       };
-    } else if (dateController.text.toString().isNotEmpty) {
-      json_request = {
-        s.key_service_id:
-            s.service_key_date_wise_inspection_action_taken_details_view,
-        s.key_rural_urban: prefs.getString(s.key_rural_urban),
-        s.key_from_date: fromDate,
-        s.key_to_date: toDate,
-        s.key_type: 2
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
       };
-    }
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      Map urbanRequest = {s.key_town_type: town_type};
-      json_request.addAll(urbanRequest);
-    }
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
-    };
-    String jsonString = jsonEncode(encrypted_request);
+      HttpClient _client = HttpClient(context: await utils.globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
 
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+      utils.hideProgress(context);
+      print("ATRWorkList_url>>" + url.main_service_jwt.toString());
+      print("ATRWorkList_request_json>>" + json_request.toString());
+      print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
+      String data = response.body;
+      print("ATRWorkList_response>>" + data);
+      String? authorizationHeader = response.headers['authorization'];
 
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
+      String? token = authorizationHeader?.split(' ')[1];
 
-    utils.hideProgress(context);
-    print("ATRWorkList_url>>" + url.main_service_jwt.toString());
-    print("ATRWorkList_request_json>>" + json_request.toString());
-    print("ATRWorkList_request_encrpt>>" + encrypted_request.toString());
-    String data = response.body;
-    print("ATRWorkList_response>>" + data);
-    String? authorizationHeader = response.headers['authorization'];
+      print("ATRWorkList Authorization -  $token");
 
-    String? token = authorizationHeader?.split(' ')[1];
+      String responceSignature = utils.jwt_Decode(key, token!);
 
-    print("ATRWorkList Authorization -  $token");
+      String responceData = utils.generateHmacSha256(data, key, false);
 
-    String responceSignature = utils.jwt_Decode(key, token!);
+      print("ATRWorkList responceSignature -  $responceSignature");
 
-    String responceData = utils.generateHmacSha256(data, key, false);
+      print("ATRWorkList responceData -  $responceData");
 
-    print("ATRWorkList responceSignature -  $responceSignature");
-
-    print("ATRWorkList responceData -  $responceData");
-
-    if (responceSignature == responceData) {
-      print("ATRWorkList responceSignature - Token Verified");
-      var userData = jsonDecode(data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
-    // utils.hideProgress(context);
-    if (status == s.key_ok && response_value == s.key_ok) {
-      isWorklistAvailable = true;
-      Map res_jsonArray = userData[s.key_json_data];
-      List<dynamic> RdprWorkList =
-          res_jsonArray[s.key_inspection_action_taken_details];
-      if (RdprWorkList.isNotEmpty) {
-        satisfiedWorkList = [];
-        unSatisfiedWorkList = [];
-        needImprovementWorkList = [];
-        /* RdprWorkList.sort((a,b ) {
+      if (responceSignature == responceData) {
+        print("ATRWorkList responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        // utils.hideProgress(context);
+        if (status == s.key_ok && response_value == s.key_ok) {
+          isWorklistAvailable = true;
+          Map res_jsonArray = userData[s.key_json_data];
+          List<dynamic> RdprWorkList =
+              res_jsonArray[s.key_inspection_action_taken_details];
+          if (RdprWorkList.isNotEmpty) {
+            satisfiedWorkList = [];
+            unSatisfiedWorkList = [];
+            needImprovementWorkList = [];
+            /* RdprWorkList.sort((a,b ) {
           return a[s.key_ins_date].compareTo(b[s.key_ins_date]);
         });*/
-        DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
-        RdprWorkList.sort((a, b) {
-          //sorting in ascending order
-          return inputFormat
-              .parse(b[s.key_ins_date])
-              .compareTo(inputFormat.parse(a[s.key_ins_date]));
-        });
+            DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+            RdprWorkList.sort((a, b) {
+              //sorting in ascending order
+              return inputFormat
+                  .parse(b[s.key_ins_date])
+                  .compareTo(inputFormat.parse(a[s.key_ins_date]));
+            });
 
-        for (int i = 0; i < RdprWorkList.length; i++) {
-          inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
-          print("inspectionid>>>>" + inspectionid);
-          if (RdprWorkList[i][s.key_status_id] == 1) {
-            satisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id] == 2) {
-            unSatisfiedWorkList.add(RdprWorkList[i]);
-          } else if (RdprWorkList[i][s.key_status_id] == 3) {
-            needImprovementWorkList.add(RdprWorkList[i]);
-          }
-          if (RdprWorkList[i][s.key_rural_urban] == "U") {
-            print("Image>>>>" + ImageList.toString());
-            workList.add(RdprWorkList[i]);
-            if (town_type == "T") {
-              TownWorkList = workList;
-            } else if (town_type == "M") {
-              MunicipalityWorkList = workList;
-            } else if (town_type == "C") {
-              corporationWorklist = workList;
+            for (int i = 0; i < RdprWorkList.length; i++) {
+              inspectionid = RdprWorkList[i][s.key_inspection_id].toString();
+              print("inspectionid>>>>" + inspectionid);
+              if (RdprWorkList[i][s.key_status_id] == 1) {
+                satisfiedWorkList.add(RdprWorkList[i]);
+              } else if (RdprWorkList[i][s.key_status_id] == 2) {
+                unSatisfiedWorkList.add(RdprWorkList[i]);
+              } else if (RdprWorkList[i][s.key_status_id] == 3) {
+                needImprovementWorkList.add(RdprWorkList[i]);
+              }
+              if (RdprWorkList[i][s.key_rural_urban] == "U") {
+                print("Image>>>>" + ImageList.toString());
+                workList.add(RdprWorkList[i]);
+                if (town_type == "T") {
+                  TownWorkList = workList;
+                } else if (town_type == "M") {
+                  MunicipalityWorkList = workList;
+                } else if (town_type == "C") {
+                  corporationWorklist = workList;
+                }
+              } else {
+                workList.add(RdprWorkList[i]);
+              }
             }
-          } else {
-            workList.add(RdprWorkList[i]);
           }
+          totalWorksCount = workList.length.toString();
+          sCount = satisfiedWorkList.length.toString();
+          usCount = unSatisfiedWorkList.length.toString();
+          nimpCount = needImprovementWorkList.length.toString();
+          setState(() {
+            if (prefs.getString(s.key_rural_urban) == "U") {
+              if (satisfiedWorkList.isNotEmpty) {
+                isSatisfiedActive = true;
+                workList = satisfiedWorkList;
+                print("satisfied>>>" + workList.toString());
+              } else if (unSatisfiedWorkList.isNotEmpty) {
+                isUnSatisfiedActive = true;
+                workList = unSatisfiedWorkList;
+                print("unSatisfied>>>" + workList.toString());
+              } else if (needImprovementWorkList.isNotEmpty) {
+                isNeedImprovementActive = true;
+                workList = needImprovementWorkList;
+                print("needImprovement>>>" + workList.toString());
+              }
+            }
+            isSpinnerLoading = false;
+            isPiechartLoading = true;
+            isWorklistAvailable = true;
+          });
+        } else if (status == s.key_ok && response_value == s.key_noRecord) {
+          setState(() {
+            isSpinnerLoading = false;
+            isPiechartLoading = false;
+            totalWorksCount = "0";
+            townCount = "0";
+            munCount = "0";
+            corpCount = "0";
+            sCount = "0";
+            nimpCount = "0";
+            usCount = "0";
+          });
         }
+      } else {
+        print("ATRWorkList responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
       }
-      totalWorksCount = workList.length.toString();
-      sCount = satisfiedWorkList.length.toString();
-      usCount = unSatisfiedWorkList.length.toString();
-      nimpCount = needImprovementWorkList.length.toString();
-      setState(() {
-        if (prefs.getString(s.key_rural_urban) == "U") {
-          if (satisfiedWorkList.isNotEmpty) {
-            isSatisfiedActive = true;
-            workList = satisfiedWorkList;
-            print("satisfied>>>" + workList.toString());
-          } else if (unSatisfiedWorkList.isNotEmpty) {
-            isUnSatisfiedActive = true;
-            workList = unSatisfiedWorkList;
-            print("unSatisfied>>>" + workList.toString());
-          } else if (needImprovementWorkList.isNotEmpty) {
-            isNeedImprovementActive = true;
-            workList = needImprovementWorkList;
-            print("needImprovement>>>" + workList.toString());
-          }
-        }
-        isSpinnerLoading = false;
-        isPiechartLoading = true;
-        isWorklistAvailable = true;
-      });
-    } else if (status == s.key_ok && response_value == s.key_noRecord) {
-      setState(() {
-        isSpinnerLoading = false;
-        isPiechartLoading = false;
-        totalWorksCount = "0";
-        townCount = "0";
-        munCount = "0";
-        corpCount = "0";
-        sCount = "0";
-        nimpCount = "0";
-        usCount = "0";
-      });
-    }
-    }else {
-      print("ATRWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 
@@ -1284,7 +1301,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     };
     Map encrypted_request = {
       s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content:jsonRequest,
+      s.key_data_content: jsonRequest,
     };
 
     String jsonString = jsonEncode(encrypted_request);
@@ -1329,25 +1346,25 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       if (responceSignature == responceData) {
         print("get_PDF responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
 
-      if (status == s.key_ok && response_value == s.key_ok) {
-        var pdftoString = userData[s.key_json_data];
-        pdf = const Base64Codec().decode(pdftoString['pdf_string']);
-        setState(() {
-          isSpinnerLoading = false;
-        });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => PDF_Viewer(
-                    pdfBytes: pdf,
-                    workID: work_id,
-                    inspectionID: inspection_id,
-                  )),
-        );
-      }
-      }else {
+        if (status == s.key_ok && response_value == s.key_ok) {
+          var pdftoString = userData[s.key_json_data];
+          pdf = const Base64Codec().decode(pdftoString['pdf_string']);
+          setState(() {
+            isSpinnerLoading = false;
+          });
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PDF_Viewer(
+                      pdfBytes: pdf,
+                      workID: work_id,
+                      inspectionID: inspection_id,
+                    )),
+          );
+        }
+      } else {
         print("get_PDF responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
@@ -1417,40 +1434,41 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     if (responceSignature == responceData) {
       print("ATRSavedWorkList responceSignature - Token Verified");
       var userData = jsonDecode(data);
-    var status = userData[s.key_status];
-    var response_value = userData[s.key_response];
-    ImageList.clear();
-    if (status == s.key_ok && response_value == s.key_ok) {
-      List<dynamic> res_jsonArray = userData[s.key_json_data];
-      if (res_jsonArray.length > 0) {
-        for (int i = 0; i < res_jsonArray.length; i++) {
+      var status = userData[s.key_status];
+      var response_value = userData[s.key_response];
+      ImageList.clear();
+      if (status == s.key_ok && response_value == s.key_ok) {
+        List<dynamic> res_jsonArray = userData[s.key_json_data];
+        if (res_jsonArray.length > 0) {
           for (int i = 0; i < res_jsonArray.length; i++) {
-            List res_image = res_jsonArray[i][s.key_inspection_image];
-            List<Map<String, String>> img_jsonArray = [];
-            for (int j = 0; j < res_image.length; j++) {
-              Map<String, String> mymap =
-                  {}; // This created one object in the current scope.
-              // First iteration , i = 0
-              mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
-              mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
-              mymap["serial_no"] = res_image[j][s.key_serial_no]
-                  .toString(); // Now mymap = { name: 'test0' };
-              mymap["image_description"] = res_image[j][s.key_image_description]
-                  .toString(); // Now mymap = { name: 'test0' };
-              mymap["image"] = res_image[j][s.key_image].toString();
-              mymap["image_path"] = '0'; // Now mymap = { name: 'test0' };
-              img_jsonArray.add(mymap);
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              List res_image = res_jsonArray[i][s.key_inspection_image];
+              List<Map<String, String>> img_jsonArray = [];
+              for (int j = 0; j < res_image.length; j++) {
+                Map<String, String> mymap =
+                    {}; // This created one object in the current scope.
+                // First iteration , i = 0
+                mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
+                mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
+                mymap["serial_no"] = res_image[j][s.key_serial_no]
+                    .toString(); // Now mymap = { name: 'test0' };
+                mymap["image_description"] = res_image[j]
+                        [s.key_image_description]
+                    .toString(); // Now mymap = { name: 'test0' };
+                mymap["image"] = res_image[j][s.key_image].toString();
+                mymap["image_path"] = '0'; // Now mymap = { name: 'test0' };
+                img_jsonArray.add(mymap);
+              }
+              print("Res image>>>" + res_image.toString());
+              ImageList.addAll(res_image);
+              print("image_List>>>>>>" + ImageList.toString());
             }
-            print("Res image>>>" + res_image.toString());
-            ImageList.addAll(res_image);
-            print("image_List>>>>>>" + ImageList.toString());
           }
         }
+      } else if (status == s.key_ok && response_value == s.key_noRecord) {
+        utils.customAlert(context, "E", response_value);
       }
-    } else if (status == s.key_ok && response_value == s.key_noRecord) {
-      utils.customAlert(context, "E", response_value);
-    }
-    }else {
+    } else {
       print("ATRSavedWorkList responceSignature - Token Not Verified");
       utils.customAlert(context, "E", s.jsonError);
     }
@@ -1533,8 +1551,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      Work_detailed_ViewScreen(
+                  builder: (context) => Work_detailed_ViewScreen(
                         selectedATRWorkList: res_jsonArray,
                         flag: "atr",
                         imagelist: [],
@@ -1546,7 +1563,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
         utils.customAlert(context, "E", response_value);
       }
-    }else {
+    } else {
       print("ATRWorkList responceSignature - Token Not Verified");
       utils.customAlert(context, "E", s.jsonError);
     }

@@ -718,12 +718,11 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
                                               bcode: selectedBlock,
                                               pvcode: selectedVillage,
                                               flag: 'other',
-                                               tmccode: "",
-                                               townType: "",
-                                               selectedworkList: [],
-                                               imagelist:[],
-                                               onoff_type:"",
-
+                                              tmccode: "",
+                                              townType: "",
+                                              selectedworkList: [],
+                                              imagelist: [],
+                                              onoff_type: "",
                                             )));
                               },
                               child: Text(
@@ -751,35 +750,47 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
   // *************************** UI Design starts here *************************** //
 
   void loadUIBlock(String value) async {
-    selectedDistrict = value.toString();
-    await getBlockList(value);
-    setState(() {});
+    if (await utils.isOnline()) {
+      selectedDistrict = value.toString();
+      await getBlockList(value);
+      setState(() {});
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
 
   void loadUIVillage(String value) async {
-    await getVillageList(value);
-    setState(() {
-      isLoadingB = false;
-      blockError = false;
-      selectedBlock = value.toString();
-    });
+    if (await utils.isOnline()) {
+      await getVillageList(value);
+      setState(() {
+        isLoadingB = false;
+        blockError = false;
+        selectedBlock = value.toString();
+      });
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
 
   void loadUICategory(String value) async {
-    if (selectedFinYear != s.select_financial_year) {
-      await getCategoryList(value);
-      setState(() {
-        isLoadingV = false;
-        villageError = false;
-        selectedVillage = value.toString();
-      });
+    if (await utils.isOnline()) {
+      if (selectedFinYear != s.select_financial_year) {
+        await getCategoryList(value);
+        setState(() {
+          isLoadingV = false;
+          villageError = false;
+          selectedVillage = value.toString();
+        });
+      } else {
+        setState(() {
+          isLoadingV = false;
+          villageError = true;
+          selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
+          utils.showAlert(context, s.please_select_financial_year);
+        });
+      }
     } else {
-      setState(() {
-        isLoadingV = false;
-        villageError = true;
-        selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
-        utils.showAlert(context, s.please_select_financial_year);
-      });
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 

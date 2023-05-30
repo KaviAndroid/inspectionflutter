@@ -717,7 +717,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               tmccode: '',
                                               townType: '',
                                               flag: 'rdpr_online',
-                                          selectedschemeList:[],
+                                              selectedschemeList: [],
                                             )));
                               },
                               child: Text(
@@ -743,37 +743,47 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   }
 
   void loadUIBlock(String value) async {
-    selectedDistrict = value.toString();
-    await getBlockList(value);
-    setState(() {
-
-    });
+    if (await utils.isOnline()) {
+      selectedDistrict = value.toString();
+      await getBlockList(value);
+      setState(() {});
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
 
   void loadUIVillage(String value) async {
-    await getVillageList(value);
-    setState(() {
-      isLoadingB = false;
-      blockError = false;
-      selectedBlock = value.toString();
-    });
+    if (await utils.isOnline()) {
+      await getVillageList(value);
+      setState(() {
+        isLoadingB = false;
+        blockError = false;
+        selectedBlock = value.toString();
+      });
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
 
   void loadUIScheme(String value) async {
-    if (selectedFinYear != s.select_financial_year) {
-      await getSchemeList(value);
-      setState(() {
-        isLoadingV = false;
-        villageError = false;
-        selectedVillage = value.toString();
-      });
+    if (await utils.isOnline()) {
+      if (selectedFinYear != s.select_financial_year) {
+        await getSchemeList(value);
+        setState(() {
+          isLoadingV = false;
+          villageError = false;
+          selectedVillage = value.toString();
+        });
+      } else {
+        setState(() {
+          isLoadingV = false;
+          villageError = true;
+          selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
+          utils.showAlert(context, s.please_select_financial_year);
+        });
+      }
     } else {
-      setState(() {
-        isLoadingV = false;
-        villageError = true;
-        selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
-        utils.showAlert(context, s.please_select_financial_year);
-      });
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 
@@ -838,9 +848,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       }
       isLoadingD = false;
       districtError = false;
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
@@ -975,27 +983,27 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       if (responceSignature == responceData) {
         print("SchemeList responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var responseValue = userData[s.key_response];
-      if (status == s.key_ok && responseValue == s.key_ok) {
-        List<dynamic> res_jsonArray = userData[s.key_json_data];
-        res_jsonArray.sort((a, b) {
-          return a[s.key_scheme_name]
-              .toLowerCase()
-              .compareTo(b[s.key_scheme_name].toLowerCase());
-        });
-        if (res_jsonArray.length > 0) {
-          schemeItems = [];
-          schemeItems.add(defaultSelectedScheme);
-          schemeItems.addAll(res_jsonArray);
-          selectedScheme = defaultSelectedScheme[s.key_scheme_id]!;
-          schemeFlag = true;
-          print("schemeItems>>" + schemeItems.toString());
+        var status = userData[s.key_status];
+        var responseValue = userData[s.key_response];
+        if (status == s.key_ok && responseValue == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_scheme_name]
+                .toLowerCase()
+                .compareTo(b[s.key_scheme_name].toLowerCase());
+          });
+          if (res_jsonArray.length > 0) {
+            schemeItems = [];
+            schemeItems.add(defaultSelectedScheme);
+            schemeItems.addAll(res_jsonArray);
+            selectedScheme = defaultSelectedScheme[s.key_scheme_id]!;
+            schemeFlag = true;
+            print("schemeItems>>" + schemeItems.toString());
+          }
+        } else if (status == s.key_ok && responseValue == s.key_noRecord) {
+          Utils().showAlert(context, "No Scheme Found");
         }
-      } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        Utils().showAlert(context, "No Scheme Found");
-      }
-      }else {
+      } else {
         print("SchemeList responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }

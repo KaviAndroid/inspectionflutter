@@ -129,22 +129,34 @@ class _WorkListState extends State<WorkList> {
       }
     }
     if (widget.flag == 'rdpr_online') {
-      selectedScheme = widget.scheme;
-      schemeFlag = true;
-      await getWorkList(widget.finYear, widget.dcode, widget.bcode,
-          widget.pvcode, widget.scheme);
+      if (await utils.isOnline()) {
+        selectedScheme = widget.scheme;
+        schemeFlag = true;
+        await getWorkList(widget.finYear, widget.dcode, widget.bcode,
+            widget.pvcode, widget.scheme);
+      } else {
+        utils.customAlert(context, "E", s.no_internet);
+      }
     } else if (widget.flag == 'rdpr_offline') {
       selectedScheme = widget.scheme;
       schemeFlag = true;
       await fetchOfflineWorkList(areaType, widget.scheme);
     } else if (widget.flag == 'geo') {
-      schemeFlag = false;
-      await getWorkListByVillage(widget.dcode, widget.bcode, widget.pvcode);
+      if (await utils.isOnline()) {
+        schemeFlag = false;
+        await getWorkListByVillage(widget.dcode, widget.bcode, widget.pvcode);
+      } else {
+        utils.customAlert(context, "E", s.no_internet);
+      }
     } else if (widget.flag == 'tmc_online') {
-      selectedScheme = widget.scheme;
-      schemeFlag = true;
-      await getWorkListByTMC(widget.dcode, widget.tmccode, widget.townType,
-          widget.selectedschemeList, widget.finYear);
+      if (await utils.isOnline()) {
+        selectedScheme = widget.scheme;
+        schemeFlag = true;
+        await getWorkListByTMC(widget.dcode, widget.tmccode, widget.townType,
+            widget.selectedschemeList, widget.finYear);
+      } else {
+        utils.customAlert(context, "E", s.no_internet);
+      }
     } else if (widget.flag == 'tmc_offline') {
       selectedScheme = widget.scheme;
       schemeFlag = true;
@@ -260,24 +272,34 @@ class _WorkListState extends State<WorkList> {
                                   isLoadingScheme = true;
                                   selectedScheme = value.toString();
                                   if (widget.flag == 'rdpr_online') {
-                                    await getWorkList(
-                                        widget.finYear,
-                                        widget.dcode,
-                                        widget.bcode,
-                                        widget.pvcode,
-                                        selectedScheme);
+                                    if (await utils.isOnline()) {
+                                      await getWorkList(
+                                          widget.finYear,
+                                          widget.dcode,
+                                          widget.bcode,
+                                          widget.pvcode,
+                                          selectedScheme);
+                                    } else {
+                                      utils.customAlert(
+                                          context, "E", s.no_internet);
+                                    }
                                   } else if (widget.flag == 'tmc_online') {
-                                    List schemeArray = [];
-                                    Map<String, String> map = {
-                                      s.key_scheme_id: selectedScheme,
-                                    };
-                                    schemeArray.add(map);
-                                    await getWorkListByTMC(
-                                        widget.dcode,
-                                        widget.tmccode,
-                                        widget.townType,
-                                        schemeArray,
-                                        widget.finYear);
+                                    if (await utils.isOnline()) {
+                                      List schemeArray = [];
+                                      Map<String, String> map = {
+                                        s.key_scheme_id: selectedScheme,
+                                      };
+                                      schemeArray.add(map);
+                                      await getWorkListByTMC(
+                                          widget.dcode,
+                                          widget.tmccode,
+                                          widget.townType,
+                                          schemeArray,
+                                          widget.finYear);
+                                    } else {
+                                      utils.customAlert(
+                                          context, "E", s.no_internet);
+                                    }
                                   } else if (widget.flag == 'tmc_offline' ||
                                       widget.flag == 'rdpr_offline') {
                                     await fetchOfflineWorkList(
@@ -799,7 +821,11 @@ class _WorkListState extends State<WorkList> {
                                                                           children: [
                                                                             InkWell(
                                                                               onTap: () async {
-                                                                                await getProgressDetails(workList[index][s.key_work_id].toString(), index);
+                                                                                if (await utils.isOnline()) {
+                                                                                  await getProgressDetails(workList[index][s.key_work_id].toString(), index);
+                                                                                } else {
+                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                }
                                                                               },
                                                                               child: Container(
                                                                                 transform: Matrix4.translationValues(-10.0, 0.0, 0.0),

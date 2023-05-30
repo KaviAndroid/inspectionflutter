@@ -15,7 +15,6 @@ import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
 import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 
-
 class SaveDatacontroller with ChangeNotifier {
   Utils utils = Utils();
   late SharedPreferences prefs;
@@ -48,9 +47,9 @@ class SaveDatacontroller with ChangeNotifier {
   bool stageError = false;
   final _picker = ImagePicker();
   var _imageFile;
-  List imageList=[];
-  bool stagevisibility=false;
-  bool statusvisibility=false;
+  List imageList = [];
+  bool stagevisibility = false;
+  bool statusvisibility = false;
   bool syncFlag = false;
 
   Map<String, String> defaultSelectedStatus = {
@@ -69,17 +68,18 @@ class SaveDatacontroller with ChangeNotifier {
   bool speech = false;
   String lastWords = '';
   String lang = 'en_US';
-  int max_img_count=0;
+  int max_img_count = 0;
 
-  SaveDatacontroller(rural_urban, onoff_type, selectedworkList, townType, flag, imagelist) {
-     widgetonoff_type = onoff_type;
-     widgetrural_urban = rural_urban;
-     widgettownType = townType;
-     widgetflag = flag;
-     widgetselectedworkList.addAll(selectedworkList);
-     widgetimagelist.addAll(imagelist);
+  SaveDatacontroller(
+      rural_urban, onoff_type, selectedworkList, townType, flag, imagelist) {
+    widgetonoff_type = onoff_type;
+    widgetrural_urban = rural_urban;
+    widgettownType = townType;
+    widgetflag = flag;
+    widgetselectedworkList.addAll(selectedworkList);
+    widgetimagelist.addAll(imagelist);
 
-     initialize();
+    initialize();
     initSpeech();
   }
 
@@ -87,41 +87,42 @@ class SaveDatacontroller with ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     txtFlag = true;
-    onoffType=widgetonoff_type;
-    rural_urban=widgetrural_urban;
+    onoffType = widgetonoff_type;
+    rural_urban = widgetrural_urban;
     selectedwork = widgetselectedworkList;
-    print("selectedwork"+selectedwork.toString());
-    if(widgetflag=="edit")
-    {
+    print("selectedwork" + selectedwork.toString());
+    if (widgetflag == "edit") {
       stagevisibility;
       statusvisibility;
       selectedStatus = defaultSelectedStatus[s.key_status_id]!;
       selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
       selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
-      selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
-      descriptionController.text=selectedwork[0]['description'];
+      selectedStageName =
+          defaultSelectedStage[s.key_work_stage_name].toString();
+      descriptionController.text = selectedwork[0]['description'];
       // imageList.addAll(widget.);
-    }
-    else
-    {
-      stagevisibility=true;
-      statusvisibility=true;
+    } else {
+      stagevisibility = true;
+      statusvisibility = true;
       var isExists = await dbClient.rawQuery(
           "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
       if (isExists[0]['cnt'] > 0) {
         print("exists>>>>");
-        List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_work_details+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
-        selectedStatus=list[0]['work_status_id'];
-        selectedStatusName=list[0]['work_status'];
-        selectedStage=list[0]['work_stage_id'];
-        selectedStageName=list[0]['work_stage'];
-        descriptionController.text=list[0]['description'];
-      }else{
+        List<Map> list = await dbClient.rawQuery('SELECT * FROM ' +
+            s.table_save_work_details +
+            " WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+        selectedStatus = list[0]['work_status_id'];
+        selectedStatusName = list[0]['work_status'];
+        selectedStage = list[0]['work_stage_id'];
+        selectedStageName = list[0]['work_stage'];
+        descriptionController.text = list[0]['description'];
+      } else {
         selectedStatus = defaultSelectedStatus[s.key_status_id]!;
         selectedStatusName = defaultSelectedStatus[s.key_status_name]!;
         selectedStage = defaultSelectedStage[s.key_work_stage_code].toString();
-        selectedStageName = defaultSelectedStage[s.key_work_stage_name].toString();
-        descriptionController.text="";
+        selectedStageName =
+            defaultSelectedStage[s.key_work_stage_name].toString();
+        descriptionController.text = "";
       }
     }
     await loadImageList();
@@ -188,14 +189,14 @@ class SaveDatacontroller with ChangeNotifier {
     print("longitude>>" + position.longitude.toString());
     if (position.latitude != null && position.longitude != null) {
       TakePhoto(ImageSource.camera, i, position.latitude.toString(),
-          position.longitude.toString(),context);
+          position.longitude.toString(), context);
     } else {
       utils.showAlert(context, "Try Again...");
     }
   }
 
-  Future<void> TakePhoto(
-      ImageSource source, int i, String latitude, String longitude, BuildContext context) async {
+  Future<void> TakePhoto(ImageSource source, int i, String latitude,
+      String longitude, BuildContext context) async {
     // final pickedFile = await _picker.pickImage(source: source);
     final pickedFile = await _picker.pickImage(
         source: ImageSource.camera,
@@ -224,7 +225,7 @@ class SaveDatacontroller with ChangeNotifier {
 
   Future<void> loadStages() async {
     List<Map> stageList =
-    await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_WorkStages);
     print(stageList.toString());
     stageItemsAll.addAll(stageList);
     stageItems.add(defaultSelectedStage);
@@ -235,7 +236,7 @@ class SaveDatacontroller with ChangeNotifier {
     // stageItems.addAll(stageItemsAll);
     for (int i = 0; i < stageItemsAll.length; i++) {
       if (stageItemsAll[i][s.key_work_group_id].toString() ==
-          selectedwork[0][s.key_work_group_id].toString() &&
+              selectedwork[0][s.key_work_group_id].toString() &&
           stageItemsAll[i][s.key_work_type_id].toString() ==
               selectedwork[0][s.key_work_type_id].toString()) {
         stageItems.add(stageItemsAll[i]);
@@ -246,40 +247,48 @@ class SaveDatacontroller with ChangeNotifier {
   }
 
   Future<void> validate(BuildContext context) async {
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       if (await checkImageList(img_jsonArray)) {
         if (!descriptionController.text.isEmpty &&
             descriptionController.text != '') {
-          onoffType=="online"?saveData(context):saveDataOffline(context);
-
-        } else {
-          utils.showAlert(context, "Please Enter Description");
-        }
-
-      } else {
-        utils.showAlert(context, "At least Capture one Photo");
-      }
-
-    }else{
-    if (await checkImageList(img_jsonArray)) {
-      if (!selectedStage.isEmpty && selectedStage != '00') {
-        if (!descriptionController.text.isEmpty &&
-            descriptionController.text != '') {
-          if (!selectedStatus.isEmpty && selectedStatus != '0') {
-            onoffType=="online"?saveData(context):saveDataOffline(context);
+          if (await utils.isOnline()) {
+            onoffType == "online"
+                ? saveData(context)
+                : saveDataOffline(context);
           } else {
-            utils.showAlert(context, "Please Select Status");
+            utils.customAlert(context, "E", s.no_internet);
           }
         } else {
           utils.showAlert(context, "Please Enter Description");
         }
       } else {
-        utils.showAlert(context, "Please Select Stage");
+        utils.showAlert(context, "At least Capture one Photo");
       }
     } else {
-      utils.showAlert(context, "At least Capture one Photo");
-    }
+      if (await checkImageList(img_jsonArray)) {
+        if (!selectedStage.isEmpty && selectedStage != '00') {
+          if (!descriptionController.text.isEmpty &&
+              descriptionController.text != '') {
+            if (!selectedStatus.isEmpty && selectedStatus != '0') {
+              if (await utils.isOnline()) {
+                onoffType == "online"
+                    ? saveData(context)
+                    : saveDataOffline(context);
+              } else {
+                utils.customAlert(context, "E", s.no_internet);
+              }
+            } else {
+              utils.showAlert(context, "Please Select Status");
+            }
+          } else {
+            utils.showAlert(context, "Please Enter Description");
+          }
+        } else {
+          utils.showAlert(context, "Please Select Stage");
+        }
+      } else {
+        utils.showAlert(context, "At least Capture one Photo");
+      }
     }
   }
 
@@ -302,14 +311,19 @@ class SaveDatacontroller with ChangeNotifier {
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
-      int count=i+1;
-      Map<String, String> mymap = {}; // This created one object in the current scope.
+      int count = i + 1;
+      Map<String, String> mymap =
+          {}; // This created one object in the current scope.
       // First iteration , i = 0
-      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] =  count.toString();
-      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = count.toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
       // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
       jsonArray.add(mymap);
     }
@@ -322,50 +336,44 @@ class SaveDatacontroller with ChangeNotifier {
     };
     Map ruralset = {};
     Map urbanset = {};
-    Map imgset = { 'image_details': jsonArray,};
+    Map imgset = {
+      'image_details': jsonArray,
+    };
 
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       Map set = {
         s.key_inspection_id: selectedwork[0][s.key_inspection_id],
       };
       dataset.addAll(set);
-    }
-    else
-    {
+    } else {
       Map set = {
-      s.key_status_id: selectedStatus,
-      s.key_work_stage_code: selectedStage,
-      s.key_work_group_id: selectedwork[0][s.key_work_group_id].toString(),
-      s.key_work_type_id: selectedwork[0][s.key_work_type_id].toString(),
-    };
-    dataset.addAll(set);
-
+        s.key_status_id: selectedStatus,
+        s.key_work_stage_code: selectedStage,
+        s.key_work_group_id: selectedwork[0][s.key_work_group_id].toString(),
+        s.key_work_type_id: selectedwork[0][s.key_work_type_id].toString(),
+      };
+      dataset.addAll(set);
     }
-
 
     if (rural_urban == "U") {
-      if(widgettownType == "T"){
+      if (widgettownType == "T") {
         urbanset = {
           s.key_town_type: widgettownType,
           s.key_tpcode: selectedwork[0][s.key_tpcode],
         };
-
-      }else if(widgettownType == "M"){
+      } else if (widgettownType == "M") {
         urbanset = {
           s.key_town_type: widgettownType,
           s.key_muncode: selectedwork[0][s.key_muncode],
         };
-
-      }else if(widgettownType == "C"){
+      } else if (widgettownType == "C") {
         urbanset = {
           s.key_town_type: widgettownType,
           s.key_corcode: selectedwork[0][s.key_corcode],
         };
-
       }
       dataset.addAll(urbanset);
-    }else{
+    } else {
       ruralset = {
         s.key_bcode: selectedwork[0][s.key_bcode].toString(),
         s.key_pvcode: selectedwork[0][s.key_pvcode].toString(),
@@ -431,21 +439,24 @@ class SaveDatacontroller with ChangeNotifier {
       if (responceSignature == responceData) {
         print("saveData responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        utils.customAlert(context, "S", s.online_data_save_success).then((value) => onWillPop(context));
-        gotoDelete(selectedwork,true);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          utils
+              .customAlert(context, "S", s.online_data_save_success)
+              .then((value) => onWillPop(context));
+          gotoDelete(selectedwork, true);
+        } else {
+          utils.customAlert(context, "E", s.failed);
+        }
       } else {
-        utils.customAlert(context, "E", s.failed);
-      }
-      }else {
         print("saveData responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
   }
-  Future<void> saveDataOffline(BuildContext context) async{
+
+  Future<void> saveDataOffline(BuildContext context) async {
     var count = 0;
     var imageCount = 0;
 
@@ -453,7 +464,7 @@ class SaveDatacontroller with ChangeNotifier {
         "SELECT count(1) as cnt  FROM ${s.table_save_work_details} WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
     if (isExists[0]['cnt'] > 0) {
       print("Edit>>>>");
-      print("Edit>>>>"+isExists.toString());
+      print("Edit>>>>" + isExists.toString());
       for (int i = 0; i < selectedwork.length; i++) {
         count = await dbClient.rawInsert(" UPDATE " +
             s.table_save_work_details +
@@ -468,7 +479,7 @@ class SaveDatacontroller with ChangeNotifier {
             "', work_stage = '" +
             selectedStageName +
             "' WHERE rural_urban = '" +
-            rural_urban.toString()  +
+            rural_urban.toString() +
             "' AND work_id = '" +
             selectedwork[i][s.key_work_id].toString() +
             "'AND flag =  '" +
@@ -477,10 +488,9 @@ class SaveDatacontroller with ChangeNotifier {
             selectedwork[i][s.key_dcode].toString() +
             "'");
       }
-
-    }else{
+    } else {
       for (int i = 0; i < selectedwork.length; i++) {
-        if(rural_urban=="R"){
+        if (rural_urban == "R") {
           count = await dbClient.rawInsert('INSERT INTO ' +
               s.table_save_work_details +
               ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
@@ -523,7 +533,7 @@ class SaveDatacontroller with ChangeNotifier {
               "' , '" +
               descriptionController.text.toString() +
               "' , '" +
-              "0"+
+              "0" +
               "' , '" +
               "0" +
               "' , '" +
@@ -531,8 +541,8 @@ class SaveDatacontroller with ChangeNotifier {
               "' , '" +
               "0" +
               "')");
-        }else{
-          if(widgettownType=="T"){
+        } else {
+          if (widgettownType == "T") {
             count = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_work_details +
                 ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
@@ -575,7 +585,7 @@ class SaveDatacontroller with ChangeNotifier {
                 "' , '" +
                 descriptionController.text.toString() +
                 "' , '" +
-                widgettownType+
+                widgettownType +
                 "' , '" +
                 selectedwork[i][s.key_tpcode].toString() +
                 "' , '" +
@@ -583,8 +593,7 @@ class SaveDatacontroller with ChangeNotifier {
                 "' , '" +
                 "0" +
                 "')");
-          }
-          else if(widgettownType=="M"){
+          } else if (widgettownType == "M") {
             count = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_work_details +
                 ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
@@ -627,16 +636,15 @@ class SaveDatacontroller with ChangeNotifier {
                 "' , '" +
                 descriptionController.text.toString() +
                 "' , '" +
-                widgettownType+
+                widgettownType +
                 "' , '" +
                 "0" +
                 "' , '" +
-                selectedwork[i][s.key_muncode].toString()+
+                selectedwork[i][s.key_muncode].toString() +
                 "' , '" +
                 "0" +
                 "')");
-          }
-          else if(widgettownType=="C"){
+          } else if (widgettownType == "C") {
             count = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_work_details +
                 ' (flag  ,rural_urban  , dcode  , bcode , pvcode , work_id , scheme_id ,work_status_id , work_status , work_stage_id , work_stage ,current_stage_of_work , scheme_group_id , work_group_id , work_type_id , fin_year , work_name , inspection_id , description , town_type , tpcode , muncode , corcode    ) VALUES(' +
@@ -679,7 +687,7 @@ class SaveDatacontroller with ChangeNotifier {
                 "' , '" +
                 descriptionController.text.toString() +
                 "' , '" +
-                widgettownType+
+                widgettownType +
                 "' , '" +
                 "0" +
                 "' , '" +
@@ -689,8 +697,6 @@ class SaveDatacontroller with ChangeNotifier {
                 "')");
           }
         }
-
-
       }
     }
     //Image Data
@@ -730,7 +736,7 @@ class SaveDatacontroller with ChangeNotifier {
               "' AND serial_no = '" +
               serial_count.toString() +
               "' AND flag = '" +
-              "rdpr"+
+              "rdpr" +
               "' AND dcode = '" +
               selectedwork[0][s.key_dcode].toString() +
               "'");
@@ -738,7 +744,7 @@ class SaveDatacontroller with ChangeNotifier {
           print("img ins");
 
           print(img_jsonArray_val[i][s.key_image_path].toString());
-          if(rural_urban.toString()=="R"){
+          if (rural_urban.toString() == "R") {
             imageCount = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_images +
                 ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
@@ -774,8 +780,7 @@ class SaveDatacontroller with ChangeNotifier {
                 "' , '" +
                 img_jsonArray_val[i][s.key_image].toString() +
                 "')");
-          }
-          else{
+          } else {
             imageCount = await dbClient.rawInsert('INSERT INTO ' +
                 s.table_save_images +
                 ' (flag, work_id, inspection_id, image_description, latitude, longitude, serial_no, rural_urban,  dcode, bcode, pvcode, tpcode, muncode, corcode, image_path, image) VALUES('
@@ -812,46 +817,53 @@ class SaveDatacontroller with ChangeNotifier {
                 img_jsonArray_val[i][s.key_image].toString() +
                 "')");
           }
-
         }
       }
     }
     if (count > 0 && imageCount > 0) {
-      utils.customAlert(context, "S", s.save_success).then((value) => {
-        Navigator.pop(context)      });
+      utils
+          .customAlert(context, "S", s.save_success)
+          .then((value) => {Navigator.pop(context)});
     }
   }
-  Future<void> loadImageList()async {
+
+  Future<void> loadImageList() async {
     img_jsonArray.clear();
-    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    max_img_count =
+        int.parse(prefs.getString(s.service_key_photo_count).toString());
     imageList.clear();
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       imageList.addAll(widgetimagelist);
-    }
-    else
-    {
-      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_images+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
+    } else {
+      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' +
+          s.table_save_images +
+          " WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${rural_urban}' and flag='rdpr'");
       imageList.addAll(list);
     }
     for (int i = 0; i < imageList.length; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
+          {}; // This created one object in the current scope.
 
       // First iteration , i = 0
-      mymap["latitude"] = imageList[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = imageList[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = imageList[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
-      mymap["image_path"] = imageList[i][s.key_image_path].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = imageList[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = imageList[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = imageList[i][s.key_serial_no]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = imageList[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = imageList[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image_path"] = imageList[i][s.key_image_path]
+          .toString(); // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
 
     for (int i = img_jsonArray.length; i < max_img_count; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
-      int count=i+1;
+          {}; // This created one object in the current scope.
+      int count = i + 1;
       // First iteration , i = 0
       mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
       mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
@@ -869,36 +881,42 @@ class SaveDatacontroller with ChangeNotifier {
       noDataFlag = true;
       imageListFlag = false;
     }
-
   }
+
   Future<bool> onWillPop(BuildContext context) async {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
   }
-  Future<void> clearRemark()async{
+
+  Future<void> clearRemark() async {
     remark.clear();
     notifyListeners();
   }
-  Future<void> setRemark(int i)async{
-    img_jsonArray[i]
-        .update('image_description', (value) => remark.text);
+
+  Future<void> setRemark(int i) async {
+    img_jsonArray[i].update('image_description', (value) => remark.text);
     remark.clear();
     notifyListeners();
   }
-  Future<void> setStage(var value)async{
+
+  Future<void> setStage(var value) async {
     selectedStage = value.toString();
-    int sIndex = stageItems.indexWhere((f) => f[s.key_work_stage_code] == selectedStage);
+    int sIndex =
+        stageItems.indexWhere((f) => f[s.key_work_stage_code] == selectedStage);
     selectedStageName = stageItems[sIndex][s.key_work_stage_name];
-    value != '00'?stageError = false:stageError = true;
+    value != '00' ? stageError = false : stageError = true;
     notifyListeners();
   }
-  Future<void> setStatus(var value)async{
+
+  Future<void> setStatus(var value) async {
     selectedStatus = value.toString();
-    int sIndex = statusItems.indexWhere((f) => f[s.key_status_id] == selectedStatus);
-   selectedStatusName = statusItems[sIndex][s.key_status_name];
-    value != '0'?statusError = false:statusError = true;
+    int sIndex =
+        statusItems.indexWhere((f) => f[s.key_status_id] == selectedStatus);
+    selectedStatusName = statusItems[sIndex][s.key_status_name];
+    value != '0' ? statusError = false : statusError = true;
     notifyListeners();
   }
+
   gotoDelete(List workList, bool save) async {
     String conditionParam = "";
 
@@ -907,23 +925,22 @@ class SaveDatacontroller with ChangeNotifier {
     String dcode = workList[0][s.key_dcode].toString();
     String rural_urban = widgetrural_urban;
     String inspection_id = workList[0][s.key_inspection_id].toString();
-    print("flag>>>>"+flag.toString());
+    print("flag>>>>" + flag.toString());
 
     if (flag == "ATR") {
       conditionParam =
-      "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
+          "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
     } else {
       conditionParam =
-      "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
+          "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
     }
 
     var imageDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
     var workListDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
-
   }
- /* gotoDelete(List workList,bool save) async {
+  /* gotoDelete(List workList,bool save) async {
     String conditionParam = "";
     String workid = workList[0][s.key_work_id];
     String dcode = workList[0][s.key_dcode];
@@ -946,5 +963,4 @@ class SaveDatacontroller with ChangeNotifier {
           }
         }
   }*/
-
 }

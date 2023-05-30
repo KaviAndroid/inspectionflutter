@@ -16,7 +16,6 @@ import '../Resources/global.dart';
 import '../Utils/utils.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 
-
 class Splash extends StatefulWidget {
   @override
   _SplashState createState() => _SplashState();
@@ -29,80 +28,78 @@ class _SplashState extends State<Splash> {
   String msg = "You are not authorized.";
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     initialize();
     // utils.gotoLoginPageFromSplash(context);
   }
+
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     // checkVersion(context);
-    if(prefs.getString(s.key_user_name)!=null&&prefs.getString(s.key_user_pwd)!=null){
+    if (prefs.getString(s.key_user_name) != null &&
+        prefs.getString(s.key_user_pwd) != null) {
       checkBiometricSupport();
-    }else {
+    } else {
       utils.gotoLoginPageFromSplash(context);
     }
-
   }
+
   Future<void> checkBiometricSupport() async {
-
     try {
-      bool hasbiometrics = await auth.canCheckBiometrics; //check if there is authencations,
+      bool hasbiometrics =
+          await auth.canCheckBiometrics; //check if there is authencations,
 
-      if(hasbiometrics){
-        List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
-        if (availableBiometrics.contains(BiometricType.face) || availableBiometrics.contains(BiometricType.fingerprint)) {
+      if (hasbiometrics) {
+        List<BiometricType> availableBiometrics =
+            await auth.getAvailableBiometrics();
+        if (availableBiometrics.contains(BiometricType.face) ||
+            availableBiometrics.contains(BiometricType.fingerprint)) {
           bool pass = await auth.authenticate(
               localizedReason: 'Authenticate with fingerprint/face',
-              biometricOnly: true );
-          if(pass){
+              biometricOnly: true);
+          if (pass) {
             msg = "You are Authenicated.";
-            setState(() {
-
-            });
-            utils.gotoHomePage(context, "Splash");
-          }else{
+            setState(() {});
+            utils.gotoHomePage(context, "Login");
+          } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Authentication failed. Please use user name and password to login. "),
+              content: Text(
+                  "Authentication failed. Please use user name and password to login. "),
             ));
             utils.gotoLoginPageFromSplash(context);
           }
         }
-      }else{
+      } else {
         msg = "You are not alowed to access biometrics.";
         try {
-
           bool pass = await auth.authenticate(
               localizedReason: 'Authenticate with pattern/pin/passcode',
-              biometricOnly: false );
-          if(pass){
+              biometricOnly: false);
+          if (pass) {
             msg = "You are Authenticated.";
-            setState(() {
-
-            });
+            setState(() {});
             utils.gotoHomePage(context, "Splash");
           }
-
         } on PlatformException catch (e) {
           msg = "Error while opening fingerprint/face scanner";
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Authentication failed. Please use user name and password to login. "),
+            content: Text(
+                "Authentication failed. Please use user name and password to login. "),
           ));
           utils.gotoLoginPageFromSplash(context);
         }
-
       }
-
-
     } on PlatformException catch (e) {
       msg = "Error while opening fingerprint/face scanner";
       msg = e.toString();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Authentication failed. Please use user name and password to login. "),
+        content: Text(
+            "Authentication failed. Please use user name and password to login. "),
       ));
       utils.gotoLoginPageFromSplash(context);
     }
-    print("Mess>>"+msg);
+    print("Mess>>" + msg);
   }
 
   @override
@@ -199,15 +196,15 @@ class _SplashState extends State<Splash> {
       // var decodedData= await json.decode(json.encode(response.body));
       String version = decodedData['version'];
       String app_version = await utils.getVersion();
-      if (decodedData[s.key_app_code]== "WI" && (version != app_version)) {
+      if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => AppUpdate(
-                  type: "W",url:s.download_apk ,
-                )));
-
+                      type: "W",
+                      url: s.download_apk,
+                    )));
       } else {
         utils.gotoLoginPageFromSplash(context);
       }
@@ -217,5 +214,4 @@ class _SplashState extends State<Splash> {
       throw Exception('Failed');
     }
   }
-
 }

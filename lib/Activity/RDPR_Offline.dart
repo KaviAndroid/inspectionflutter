@@ -1204,26 +1204,30 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                         onTap: () async {
                           Navigator.pop(context, 'OK');
                           submitFlag = false;
-                          if (key == "D") {
-                            if (selectedDistrict != "0" &&
-                                selectedDistrict != "") {
-                              await loadBlockList(selectedDistrict);
-                            }
-                          } else if (key == "B") {
-                            if (selectedBlock != "0" && selectedBlock != "") {
-                              if (level == "S" || level == "D") {
-                                await getVillageList(
-                                    selectedDistrict, selectedBlock);
-                              } else if (level == "B") {
-                                await loadVillageList(
-                                    selectedDistrict, selectedBlock);
+                          if (await utils.isOnline()) {
+                            if (key == "D") {
+                              if (selectedDistrict != "0" &&
+                                  selectedDistrict != "") {
+                                await loadBlockList(selectedDistrict);
                               }
+                            } else if (key == "B") {
+                              if (selectedBlock != "0" && selectedBlock != "") {
+                                if (level == "S" || level == "D") {
+                                  await getVillageList(
+                                      selectedDistrict, selectedBlock);
+                                } else if (level == "B") {
+                                  await loadVillageList(
+                                      selectedDistrict, selectedBlock);
+                                }
+                              }
+                            } else if (key == "V") {
+                              await loadSchemeList(selectedDistrict,
+                                  selectedBlock, selectedVillage, finList);
                             }
-                          } else if (key == "V") {
-                            await loadSchemeList(selectedDistrict,
-                                selectedBlock, selectedVillage, finList);
+                            setState(() {});
+                          } else {
+                            utils.customAlert(context, "E", s.no_internet);
                           }
-                          setState(() {});
                         },
                         child: Container(
                           alignment: AlignmentDirectional.bottomEnd,
@@ -1629,13 +1633,10 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 .compareTo(b[s.key_scheme_name].toLowerCase());
           });
           if (res_jsonArray.length > 0) {
-
-
             for (int i = 0; i < res_jsonArray.length; i++) {
-              String schName=res_jsonArray[i][s.key_scheme_name];
-              if(schName.length >=38){
-                schName=utils.splitStringByLength(schName,38);
-
+              String schName = res_jsonArray[i][s.key_scheme_name];
+              if (schName.length >= 38) {
+                schName = utils.splitStringByLength(schName, 38);
               }
               schemeList.add(FlutterLimitedCheckBoxModel(
                   isSelected: false,
@@ -1663,7 +1664,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       getWorkListToDownload(
           finList, selectedDistrict, selectedBlock, selectedVillage, schIdList);
     } else {
-      utils.showAlert(context, s.no_internet);
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 
@@ -1880,8 +1881,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       }
     }
   }
-
-
 
   Future<void> customAlertwithOk(
       BuildContext context, String type, String msg, List schArray) async {

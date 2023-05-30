@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -20,7 +19,7 @@ import '../Activity/ATR_Online.dart';
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
 
-class AtrSaveDataController with ChangeNotifier{
+class AtrSaveDataController with ChangeNotifier {
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
@@ -60,15 +59,16 @@ class AtrSaveDataController with ChangeNotifier{
   String widgetrural_urban = '';
   String widgetflag = '';
   List widgetselectedworkList = [];
-  int max_img_count=0;
-  List imageList=[];
+  int max_img_count = 0;
+  List imageList = [];
   List widgetimagelist = [];
 
-  AtrSaveDataController(rural_urban, onoff_type, selectedworkList,flag, imagelist) {
+  AtrSaveDataController(
+      rural_urban, onoff_type, selectedworkList, flag, imagelist) {
     widgetonoff_type = onoff_type;
     widgetrural_urban = rural_urban;
     widgetselectedworkList.addAll(selectedworkList);
-    widgetflag=flag;
+    widgetflag = flag;
     widgetimagelist.addAll(imagelist);
     initialize();
   }
@@ -77,16 +77,16 @@ class AtrSaveDataController with ChangeNotifier{
     dbClient = await dbHelper.db;
     txtFlag = true;
     selectedwork = widgetselectedworkList;
-    print("IMAGE>>>>>>"+widgetimagelist.toString());
-    if(widgetflag=="edit")
-      {
-        descriptionController.text=selectedwork[0]['description'];
-      }
+    print("IMAGE>>>>>>" + widgetimagelist.toString());
+    if (widgetflag == "edit") {
+      descriptionController.text = selectedwork[0]['description'];
+    }
     print(selectedwork);
     loadImageList();
     await checkData();
     notifyListeners();
   }
+
   void startListening(String txt, BuildContext context) async {
     speechPermission = await Permission.speech.status;
     if (await Permission.speech.request().isGranted) {
@@ -102,7 +102,7 @@ class AtrSaveDataController with ChangeNotifier{
           localeId: lang,
           listenFor: Duration(minutes: 10));
       print("start");
-     notifyListeners();
+      notifyListeners();
     } else if (speechPermission.isDenied ||
         speechPermission.isPermanentlyDenied ||
         speechPermission.isRestricted) {
@@ -131,8 +131,6 @@ class AtrSaveDataController with ChangeNotifier{
     notifyListeners();
     print("start${descriptionController.text}");
   }
-
-
 
   // *************************** Show Alert Starts here *************************** //
 
@@ -194,7 +192,7 @@ class AtrSaveDataController with ChangeNotifier{
               decoration: InputDecoration(
                 hintText: s.enter_description,
                 contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 border: InputBorder.none,
               ),
             ),
@@ -237,13 +235,15 @@ class AtrSaveDataController with ChangeNotifier{
     print("latitude>>${position.latitude}");
     print("longitude>>${position.longitude}");
     if (position.longitude != null) {
-      TakePhoto(i, position.latitude.toString(), position.longitude.toString(),context);
+      TakePhoto(i, position.latitude.toString(), position.longitude.toString(),
+          context);
     } else {
       utils.showAlert(context, "Try Again...");
     }
   }
 
-  Future<void> TakePhoto(int i, String latitude, String longitude, BuildContext context) async {
+  Future<void> TakePhoto(
+      int i, String latitude, String longitude, BuildContext context) async {
     if (await goToCameraPermission(context)) {
       final pickedFile = await _picker.pickImage(
           source: ImageSource.camera,
@@ -271,37 +271,43 @@ class AtrSaveDataController with ChangeNotifier{
   // *************************** Camera Function Ends here *************************** //
 
   // *************************** Validation start here *************************** //
-  Future<void> loadImageList()async {
+  Future<void> loadImageList() async {
     img_jsonArray.clear();
-    max_img_count=int.parse(prefs.getString(s.service_key_photo_count).toString());
+    max_img_count =
+        int.parse(prefs.getString(s.service_key_photo_count).toString());
     imageList.clear();
-    if(widgetflag=="edit")
-    {
+    if (widgetflag == "edit") {
       imageList.addAll(widgetimagelist);
-    }
-    else
-    {
-      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_save_images+" WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${widgetrural_urban}' and flag='rdpr'");
+    } else {
+      List<Map> list = await dbClient.rawQuery('SELECT * FROM ' +
+          s.table_save_images +
+          " WHERE work_id='${selectedwork[0][s.key_work_id].toString()}' and rural_urban='${widgetrural_urban}' and flag='rdpr'");
       imageList.addAll(list);
     }
     for (int i = 0; i < imageList.length; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
+          {}; // This created one object in the current scope.
 
       // First iteration , i = 0
-      mymap["latitude"] = imageList[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = imageList[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] = imageList[i][s.key_serial_no].toString(); // Now mymap = { name: 'test0' };
-      mymap["image_description"] = imageList[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = imageList[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
-      mymap["image_path"] = imageList[i][s.key_image_path].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = imageList[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = imageList[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = imageList[i][s.key_serial_no]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image_description"] = imageList[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = imageList[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image_path"] = imageList[i][s.key_image_path]
+          .toString(); // Now mymap = { name: 'test0' };
       img_jsonArray.add(mymap); // mylist = [mymap];
     }
 
     for (int i = img_jsonArray.length; i < max_img_count; i++) {
       Map<String, String> mymap =
-      {}; // This created one object in the current scope.
-      int count=i+1;
+          {}; // This created one object in the current scope.
+      int count = i + 1;
       // First iteration , i = 0
       mymap["latitude"] = '0'; // Now mymap = { name: 'test0' };
       mymap["longitude"] = '0'; // Now mymap = { name: 'test0' };
@@ -319,8 +325,8 @@ class AtrSaveDataController with ChangeNotifier{
       noDataFlag = true;
       imageListFlag = false;
     }
-
   }
+
   Future<bool> checkImageList(List<Map<String, String>> list) async {
     bool flag = false;
     img_jsonArray_val = [];
@@ -334,34 +340,37 @@ class AtrSaveDataController with ChangeNotifier{
   }
 
   Future<void> validate(BuildContext context) async {
-    if(widgetflag=="edit")
-      {
-        if (await checkImageList(img_jsonArray)) {
-          if (descriptionController.text != "") {
-            if(widgetonoff_type=="online")
-              {
-                await onlineSave(context);
-              }
+    if (widgetflag == "edit") {
+      if (await checkImageList(img_jsonArray)) {
+        if (descriptionController.text != "") {
+          if (widgetonoff_type == "online") {
+            if (await utils.isOnline()) {
+              await onlineSave(context);
+            }
+          } else {
+            utils.customAlert(context, "E", s.no_internet);
           }
-          else {
-            utils.showAlert(context, "Please Enter Discription");
-          }
-          }
+        } else {
+          utils.showAlert(context, "Please Enter Discription");
+        }
       }
-    else
-      {
-        if (await checkImageList(img_jsonArray)) {
-          if (descriptionController.text != "") {
+    } else {
+      if (await checkImageList(img_jsonArray)) {
+        if (descriptionController.text != "") {
+          if (await utils.isOnline()) {
             widgetonoff_type == "offline"
                 ? await offlineSave(context)
                 : await onlineSave(context);
           } else {
-            utils.showAlert(context, "Please Enter Discription");
+            utils.customAlert(context, "E", s.no_internet);
           }
         } else {
-          utils.showAlert(context, "At least Capture one Photo");
+          utils.showAlert(context, "Please Enter Discription");
         }
+      } else {
+        utils.showAlert(context, "At least Capture one Photo");
       }
+    }
   }
 
   // *************************** Validation Ends here *************************** //
@@ -376,14 +385,19 @@ class AtrSaveDataController with ChangeNotifier{
     List<dynamic> jsonArray = [];
     List<dynamic> inspection_work_details = [];
     for (int i = 0; i < img_jsonArray_val.length; i++) {
-      int count=i+1;
-      Map<String, String> mymap = {}; // This created one object in the current scope.
+      int count = i + 1;
+      Map<String, String> mymap =
+          {}; // This created one object in the current scope.
       // First iteration , i = 0
-      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude].toString(); // Now mymap = { name: 'test0' };
-      mymap["serial_no"] =  count.toString();
-      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description].toString(); // Now mymap = { name: 'test0' };
-      mymap["image"] = img_jsonArray_val[i][s.key_image].toString(); // Now mymap = { name: 'test0' };
+      mymap["latitude"] = img_jsonArray_val[i][s.key_latitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["longitude"] = img_jsonArray_val[i][s.key_longitude]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["serial_no"] = count.toString();
+      mymap["image_description"] = img_jsonArray_val[i][s.key_image_description]
+          .toString(); // Now mymap = { name: 'test0' };
+      mymap["image"] = img_jsonArray_val[i][s.key_image]
+          .toString(); // Now mymap = { name: 'test0' };
       // img_jsonArray_val[i].update('serial_no', (value) => count.toString());
       jsonArray.add(mymap);
     }
@@ -409,16 +423,16 @@ class AtrSaveDataController with ChangeNotifier{
       dataset.addAll(urbanRequest);
     }
     Map set = {
-      s.key_service_id:s.service_key_work_id_wise_inspection_action_taken_details_view,
-      s.key_work_id:selectedwork[0][s.key_work_id],
-      s.key_action_taken_id:selectedwork[0][s.key_action_taken_id],
-      s.key_inspection_id:selectedwork[0][s.key_inspection_id],
-      s.key_rural_urban:selectedwork[0][s.key_rural_urban],
+      s.key_service_id:
+          s.service_key_work_id_wise_inspection_action_taken_details_view,
+      s.key_work_id: selectedwork[0][s.key_work_id],
+      s.key_action_taken_id: selectedwork[0][s.key_action_taken_id],
+      s.key_inspection_id: selectedwork[0][s.key_inspection_id],
+      s.key_rural_urban: selectedwork[0][s.key_rural_urban],
     };
-    if(widgetflag=="edit")
-      {
-        dataset.addAll(set);
-      }
+    if (widgetflag == "edit") {
+      dataset.addAll(set);
+    }
     inspection_work_details.add(dataset);
 
     Map main_dataset = {
@@ -449,7 +463,8 @@ class AtrSaveDataController with ChangeNotifier{
         body: jsonEncode(encrypted_request), headers: header);
     print("onlineSave_response_url>>" + url.main_service_jwt.toString());
     print("onlineSave_request_json>>" + main_dataset.toString());
-    print("onlineSave_response_request_encrpt>>" + encrypted_request.toString());
+    print(
+        "onlineSave_response_request_encrpt>>" + encrypted_request.toString());
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     // print("onlineSave_url>>${url.main_service}");
     // print("onlineSave_request_json>>$main_dataset");
@@ -478,12 +493,14 @@ class AtrSaveDataController with ChangeNotifier{
       if (responceSignature == responceData) {
         print("onlineSave responceSignature - Token Verified");
         var userData = jsonDecode(data);
-      var status = userData[s.key_status];
-      var response_value = userData[s.key_response];
-      var msg = userData[s.key_message];
-      if (status == s.key_ok && response_value == s.key_ok) {
-        utils.customAlert(context, "S", s.online_data_save_success).then((value) =>onWillPop(context));
-        gotoDelete(selectedwork,true);
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        var msg = userData[s.key_message];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          utils
+              .customAlert(context, "S", s.online_data_save_success)
+              .then((value) => onWillPop(context));
+          gotoDelete(selectedwork, true);
 /*        Timer(Duration(seconds: 3), () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ATR_Worklist(
@@ -491,16 +508,16 @@ class AtrSaveDataController with ChangeNotifier{
             ),
           ));
         });*/
-
+        } else {
+          utils.customAlert(context, "E", s.failed);
+        }
       } else {
-        utils.customAlert(context, "E", s.failed);
-      }
-      }else {
         print("onlineSave responceSignature - Token Not Verified");
         utils.customAlert(context, "E", s.jsonError);
       }
     }
   }
+
   Future<bool> onWillPop(BuildContext context) async {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
@@ -661,9 +678,9 @@ class AtrSaveDataController with ChangeNotifier{
     notifyListeners();
 
     if (count > 0 && imageCount > 0) {
-      utils.customAlert(context, "S", s.save_success).then((value) => {
-        Navigator.pop(context)
-      });
+      utils
+          .customAlert(context, "S", s.save_success)
+          .then((value) => {Navigator.pop(context)});
     }
   }
 
@@ -688,7 +705,7 @@ class AtrSaveDataController with ChangeNotifier{
         img_jsonArray[i]
             .update(s.key_image, (value) => imageExists[i][s.key_image]);
         img_jsonArray[i].update(s.key_image_description,
-                (value) => imageExists[i][s.key_image_description]);
+            (value) => imageExists[i][s.key_image_description]);
       }
 
       descriptionController.text = isExists[0][s.key_description];
@@ -715,6 +732,7 @@ class AtrSaveDataController with ChangeNotifier{
     }
     return flag;
   }
+
   gotoDelete(List workList, bool save) async {
     String conditionParam = "";
 
@@ -723,20 +741,19 @@ class AtrSaveDataController with ChangeNotifier{
     String dcode = workList[0][s.key_dcode].toString();
     String rural_urban = widgetrural_urban;
     String inspection_id = workList[0][s.key_inspection_id].toString();
-    print("flag>>>>"+flag.toString());
+    print("flag>>>>" + flag.toString());
 
     if (flag == "ATR") {
       conditionParam =
-      "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
+          "WHERE flag='$flag' and rural_urban='$rural_urban' and work_id='$workid' and inspection_id='$inspection_id' and dcode='$dcode'";
     } else {
       conditionParam =
-      "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
+          "WHERE flag='$flag'and rural_urban='$rural_urban' and work_id='$workid' and dcode='$dcode'";
     }
 
     var imageDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
     var workListDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
-
   }
 }

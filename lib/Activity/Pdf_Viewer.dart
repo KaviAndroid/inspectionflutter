@@ -65,17 +65,18 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
     Directory? downloadDirectory;
 
-    final directoryCheck = await getApplicationDocumentsDirectory();
-
-    print("object>>> $directoryCheck");
-
     if (Platform.isAndroid) {
-      List<Directory>? storageDirectories =
+      /* List<Directory>? storageDirectories =
           await getExternalStorageDirectories();
       if (storageDirectories != null && storageDirectories.isNotEmpty) {
         // Choose the first directory which usually represents the primary external storage
         downloadDirectory = Directory('${storageDirectories[0].path}/Download');
         print("ANDROID 1 - $downloadDirectory");
+      } */
+
+      downloadDirectory = Directory('/storage/emulated/0/Download');
+      if (!await downloadDirectory.exists()) {
+        downloadDirectory = await getExternalStorageDirectory();
       }
     } else if (Platform.isIOS) {
       downloadDirectory = await getDownloadsDirectory();
@@ -85,12 +86,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     downloadDirectory ??= await getApplicationDocumentsDirectory();
     print("ANDROID 2 - $downloadDirectory");
 
-    // Get the downloads folder path
-    // Directory? directory = Platform.isAndroid
-    //     ? await getExternalStorageDirectory()
-    //     : await getDownloadsDirectory();
-
-    String downloadsPath = '${downloadDirectory.path}';
+    String downloadsPath = downloadDirectory.path;
 
     Directory downloadsDir = Directory(downloadsPath);
     if (!downloadsDir.existsSync()) {

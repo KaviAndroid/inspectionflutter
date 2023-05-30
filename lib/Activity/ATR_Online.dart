@@ -412,8 +412,12 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       if (sD.compareTo(eD) == 1) {
         utils.showAlert(context, "End Date should be greater than Start Date");
       } else {
-        dateController.text = "$startDate  To  $endDate";
-        fetchOnlineATRWroklist(startDate, endDate);
+        if (await utils.isOnline()) {
+          dateController.text = "$startDate  To  $endDate";
+          fetchOnlineATRWroklist(startDate, endDate);
+        } else {
+          utils.customAlert(context, "E", s.no_internet);
+        }
       }
     }
   }
@@ -880,9 +884,9 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                           const SizedBox(
                                             width: 5,
                                           ),
-                                         SizedBox(
-                                           width: 80,
-                                          /* child:Expanded(
+                                          SizedBox(
+                                            width: 80,
+                                            /* child:Expanded(
                                              child: Text(defaultWorklist[index][s.key_name], maxLines: 1,
                                                  overflow: TextOverflow.ellipsis,
                                                  textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
@@ -890,17 +894,20 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                      fontSize: 13,
                                                     )),
                                            ),*/
-                                           child:  Text(
-                                             utils.splitStringByLength(defaultWorklist[index][s.key_name],35),
-                                             style: TextStyle(
-                                                 fontSize: 13,
-                                                 fontWeight: FontWeight.bold,
-                                                 color: c.primary_text_color2),
-                                             overflow: TextOverflow.clip,
-                                             maxLines: 1,
-                                             softWrap: true,
-                                           ),
-                                         )
+                                            child: Text(
+                                              utils.splitStringByLength(
+                                                  defaultWorklist[index]
+                                                      [s.key_name],
+                                                  35),
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: c.primary_text_color2),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          )
                                         ],
                                       ),
                                       const SizedBox(
@@ -1240,13 +1247,16 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                   bottom: 0,
                                   right: 0,
                                   child: GestureDetector(
-                                    onTap: () {
-                                      get_PDF(
-                                          defaultWorklist[index][s.key_work_id]
-                                              .toString(),
-                                          defaultWorklist[index]
-                                                  [s.key_inspection_id]
-                                              .toString());
+                                    onTap: () async {
+                                      if (await utils.isOnline()) {
+                                        get_PDF(
+                                            defaultWorklist[index]
+                                                    [s.key_work_id]
+                                                .toString(),
+                                            defaultWorklist[index]
+                                                    [s.key_inspection_id]
+                                                .toString());
+                                      }
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(

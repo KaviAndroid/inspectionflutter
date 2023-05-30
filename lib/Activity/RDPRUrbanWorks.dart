@@ -1184,11 +1184,18 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                   })*/
                                       ;
                                 } else {
-                                  String dcode = selectedLevel == 'S'
-                                      ? selectedDistrict
-                                      : prefs.getString(s.key_dcode).toString();
-                                  await getWorkListByTMC(dcode, selectedTMC,
-                                      town_type, schArray, finArray);
+                                  if (await utils.isOnline()) {
+                                    String dcode = selectedLevel == 'S'
+                                        ? selectedDistrict
+                                        : prefs
+                                            .getString(s.key_dcode)
+                                            .toString();
+                                    await getWorkListByTMC(dcode, selectedTMC,
+                                        town_type, schArray, finArray);
+                                  } else {
+                                    utils.customAlert(
+                                        context, "E", s.no_internet);
+                                  }
                                 }
                               },
                               child: Text(
@@ -1214,16 +1221,20 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
   }
 
   Future<void> loadTMCBlock() async {
-    await getTownList();
-    await getMunicipalityList();
-    await getCorporationList();
-    townActive = true;
-    town_type = "T";
-    munActive = false;
-    corpActive = false;
-    isLoadingD = false;
-    await loadTMC();
-    setState(() {});
+    if (await utils.isOnline()) {
+      await getTownList();
+      await getMunicipalityList();
+      await getCorporationList();
+      townActive = true;
+      town_type = "T";
+      munActive = false;
+      corpActive = false;
+      isLoadingD = false;
+      await loadTMC();
+      setState(() {});
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
+    }
   }
 
   Future<void> getTownList() async {
@@ -1380,117 +1391,121 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
   }
 
   Future<void> getSchemeList(List finYear, String dcode, String tmdId) async {
-    String? key = prefs.getString(s.userPassKey);
-    String? userName = prefs.getString(s.key_user_name);
-    utils.showProgress(context, 1);
-    List finArray = [];
-    for (int i = 0; i < finYear.length; i++) {
-      finArray.add(finYear[i][s.key_fin_year]);
-    }
-    Map json_request = {};
-    if (town_type == 'T') {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_townpanchayat_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_townpanchayat_wise,
-      };
-    } else if (town_type == 'M') {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_municipality_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_municipality_wise,
-      };
-    } else if (town_type == 'C') {
-      json_request = {
-        s.key_dcode: dcode,
-        s.key_corporation_id: tmdId,
-        s.key_fin_year: finArray,
-        s.key_service_id: s.service_key_scheme_list_corporation_wise,
-      };
-    }
-
-    Map encrypted_request = {
-      s.key_user_name: prefs.getString(s.key_user_name),
-      s.key_data_content: json_request,
-    };
-
-    String jsonString = jsonEncode(encrypted_request);
-
-    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
-
-    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
-
-    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
-    print("SchemeList_url>>" + url.main_service_jwt.toString());
-    print("SchemeList_request_json>>" + json_request.toString());
-    print("SchemeList_request_encrpt>>" + encrypted_request.toString());
-    utils.hideProgress(context);
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-      print("SchemeList_response>>" + data);
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("SchemeList Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("SchemeList responceSignature -  $responceSignature");
-
-      print("SchemeList responceData -  $responceData");
-
-      if (responceSignature == responceData) {
-        print("SchemeList responceSignature - Token Verified");
-        var userData = jsonDecode(data);
-        var status = userData[s.key_status];
-        var responseValue = userData[s.key_response];
-        schemeList = [];
-        if (status == s.key_ok && responseValue == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          res_jsonArray.sort((a, b) {
-            return a[s.key_scheme_name]
-                .toLowerCase()
-                .compareTo(b[s.key_scheme_name].toLowerCase());
-          });
-          if (res_jsonArray.length > 0) {
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              Map<String, String> map = {
-                s.flag: "0",
-                s.key_scheme_id: res_jsonArray[i][s.key_scheme_id].toString(),
-                s.key_scheme_name: res_jsonArray[i][s.key_scheme_name]
-              };
-              schemeList.add(map);
-            }
-
-            schemeFlag = true;
-            setState(() {});
-            print("schemeItems>>" + schemeList.toString());
-          }
-        } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-          Utils().showAlert(context, "No Scheme Found");
-        }
-      } else {
-        print("SchemeList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+    if (await utils.isOnline()) {
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
+      utils.showProgress(context, 1);
+      List finArray = [];
+      for (int i = 0; i < finYear.length; i++) {
+        finArray.add(finYear[i][s.key_fin_year]);
       }
+      Map json_request = {};
+      if (town_type == 'T') {
+        json_request = {
+          s.key_dcode: dcode,
+          s.key_townpanchayat_id: tmdId,
+          s.key_fin_year: finArray,
+          s.key_service_id: s.service_key_scheme_list_townpanchayat_wise,
+        };
+      } else if (town_type == 'M') {
+        json_request = {
+          s.key_dcode: dcode,
+          s.key_municipality_id: tmdId,
+          s.key_fin_year: finArray,
+          s.key_service_id: s.service_key_scheme_list_municipality_wise,
+        };
+      } else if (town_type == 'C') {
+        json_request = {
+          s.key_dcode: dcode,
+          s.key_corporation_id: tmdId,
+          s.key_fin_year: finArray,
+          s.key_service_id: s.service_key_scheme_list_corporation_wise,
+        };
+      }
+
+      Map encrypted_request = {
+        s.key_user_name: prefs.getString(s.key_user_name),
+        s.key_data_content: json_request,
+      };
+
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
+      };
+
+      // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+      HttpClient _client = HttpClient(context: await utils.globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
+
+      print("SchemeList_url>>" + url.main_service_jwt.toString());
+      print("SchemeList_request_json>>" + json_request.toString());
+      print("SchemeList_request_encrpt>>" + encrypted_request.toString());
+      utils.hideProgress(context);
+      if (response.statusCode == 200) {
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        String data = response.body;
+        print("SchemeList_response>>" + data);
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("SchemeList Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("SchemeList responceSignature -  $responceSignature");
+
+        print("SchemeList responceData -  $responceData");
+
+        if (responceSignature == responceData) {
+          print("SchemeList responceSignature - Token Verified");
+          var userData = jsonDecode(data);
+          var status = userData[s.key_status];
+          var responseValue = userData[s.key_response];
+          schemeList = [];
+          if (status == s.key_ok && responseValue == s.key_ok) {
+            List<dynamic> res_jsonArray = userData[s.key_json_data];
+            res_jsonArray.sort((a, b) {
+              return a[s.key_scheme_name]
+                  .toLowerCase()
+                  .compareTo(b[s.key_scheme_name].toLowerCase());
+            });
+            if (res_jsonArray.length > 0) {
+              for (int i = 0; i < res_jsonArray.length; i++) {
+                Map<String, String> map = {
+                  s.flag: "0",
+                  s.key_scheme_id: res_jsonArray[i][s.key_scheme_id].toString(),
+                  s.key_scheme_name: res_jsonArray[i][s.key_scheme_name]
+                };
+                schemeList.add(map);
+              }
+
+              schemeFlag = true;
+              setState(() {});
+              print("schemeItems>>" + schemeList.toString());
+            }
+          } else if (status == s.key_ok && responseValue == s.key_noRecord) {
+            Utils().showAlert(context, "No Scheme Found");
+          }
+        } else {
+          print("SchemeList responceSignature - Token Not Verified");
+          utils.customAlert(context, "E", s.jsonError);
+        }
+      }
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
     }
   }
 
@@ -2098,7 +2113,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                                     tmccode: '',
                                                     selectedschemeList: [],
                                                   )));
-                                       /*   .then((value) {
+                                      /*   .then((value) {
                                         utils.gotoHomePage(
                                             context, "RDPRUrban");
                                         // you can do what you need here

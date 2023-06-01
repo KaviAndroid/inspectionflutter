@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import 'dart:convert';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/global.dart' as global;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
@@ -15,23 +14,73 @@ import '../Utils/utils.dart';
 class OverallWorklistController extends ChangeNotifier {
   //API CALL List Dynamic
   List<dynamic>? workDetails;
+  List<dynamic>? pieChartDetails;
 
   //DB CALL List
   List districtworkList = [];
   List villageworkList = [];
   List blockworkList = [];
   List TMCworkList = [];
+  Iterable filteredVillage = [];
+
+  //bool Flag
+
+  bool TMCTableUI = false;
+  bool districtTableUI = false;
+  bool BlockTableUI = false;
+  bool villageTableUI = false;
+  bool pieChartUI = false;
+  bool searchEnabled = false;
 
   //String Vlues
   String headerName = "";
+  String? sCount;
+  String? usCount;
+  String? nimpCount;
+  String? atrCount;
+  String? totalWorksCount;
+  String _searchQuery = '';
+
+  //date
+  String? districtFromDate;
+  String? districtToDate;
+  String? blockFromDate;
+  String? blockToDate;
+
+  String? urbanDistrictFromDate;
+  String? urbanDistrictToDate;
+  String? tmcFromDate;
+  String? tmcToDate;
 
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
-  /*
-  *******************************  Constructor *********************************
-  */
+
+  // *************************** Search  Functions Starts here *************************** //
+
+  onSearchQueryChanged(String query, String tmcType) {
+    String compareVilageName = "";
+    if (prefs.getString(s.key_rural_urban) == "U") {
+      if (tmcType == "T") {
+        compareVilageName = s.key_townpanchayat_name;
+      } else if (tmcType == "M") {
+        compareVilageName = s.key_municipality_name;
+      } else if (tmcType == "C") {
+        compareVilageName = s.key_corporation_name;
+      }
+    } else {
+      compareVilageName = s.key_pvname;
+    }
+    searchEnabled = true;
+    _searchQuery = query;
+    filteredVillage = villageworkList.where((item) {
+      final name = item[compareVilageName].toLowerCase();
+      final lowerCaseQuery = _searchQuery.toLowerCase();
+      return name.contains(lowerCaseQuery);
+    });
+    notifyListeners();
+  }
 
   Future<void> initializeDB() async {
     prefs = await SharedPreferences.getInstance();
@@ -44,253 +93,137 @@ class OverallWorklistController extends ChangeNotifier {
     return workDetails ?? [];
   }
 
-  /*
-  *******************************  Database CALL Starts Here *********************************
-  */
-
-  Future<void> fetchDistrictWorklist(BuildContext context) async {
-    utils.showProgress(context, 1);
-    await initializeDB();
-    try {
-      List<Map> districtList =
-          await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
-
-      print(" District List All >>> $districtList");
-
-      if (districtList.isNotEmpty) {
-        //Empty the Worklist
-        districtworkList = [];
-
-        districtworkList.addAll(districtList);
-
-        districtworkList.sort((a, b) {
-          String nameA = a[s.key_dname].toString().toLowerCase();
-          String nameB = b[s.key_dname].toString().toLowerCase();
-          return nameA.compareTo(nameB);
-        });
-
-        notifyListeners();
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-    utils.hideProgress(context);
+  List<dynamic> retrivepieChartDetails() {
+    return pieChartDetails ?? [];
   }
 
-  Future<void> fetchBlockWorklist(
-      BuildContext context, String level, String selectedDcode) async {
-    utils.showProgress(context, 1);
-    await initializeDB();
-
-    try {
-      String? d_code = "";
-
-      level == "S"
-          ? d_code = selectedDcode
-          : d_code = prefs.getString(s.key_dcode).toString();
-
-      List<Map> blockList = await dbClient
-          .rawQuery("SELECT * FROM ${s.table_Block} where dcode = $d_code");
-
-      print(" Block List All >>> $blockList");
-
-      if (blockList.isNotEmpty) {
-        //Empty the Worklist
-        blockworkList = [];
-
-        blockworkList.addAll(blockList);
-
-        blockworkList.sort((a, b) {
-          String nameA = a[s.key_bname].toString().toLowerCase();
-          String nameB = b[s.key_bname].toString().toLowerCase();
-          return nameA.compareTo(nameB);
+  __ModifiyUI(String flag, String fromDate, String toDate) {
+    if (workDetails!.isNotEmpty) {
+      if (prefs.getString(s.key_rural_urban) == "R") {
+        workDetails!.sort((a, b) {
+          // Sorting in ascending order based on name field
+          return a[s.key_dname].compareTo(b[s.key_dname]);
         });
+        if (flag == "D") {
+          districtFromDate = fromDate;
+          districtToDate = toDate;
+          districtworkList.clear();
+          districtworkList.addAll(workDetails!);
 
-        notifyListeners();
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-    utils.hideProgress(context);
-  }
+          districtworkList.sort((a, b) {
+            String nameA = a[s.key_dname].toString().toLowerCase();
+            String nameB = b[s.key_dname].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
+          districtTableUI = true;
+          villageTableUI = false;
+          BlockTableUI = false;
+        } else if (flag == "B") {
+          blockFromDate = fromDate;
+          blockToDate = toDate;
+          blockworkList.clear();
+          blockworkList.addAll(workDetails!);
 
-  Future<void> fetchVillageWorklist(BuildContext context, String level,
-      String selectedDcode, String selectedBcode) async {
-    utils.showProgress(context, 1);
-    await initializeDB();
+          blockworkList.sort((a, b) {
+            String nameA = a[s.key_bname].toString().toLowerCase();
+            String nameB = b[s.key_bname].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
+          districtTableUI = false;
+          BlockTableUI = true;
+          villageTableUI = false;
+        } else if (flag == "V") {
+          villageworkList.clear();
+          villageworkList.addAll(workDetails!);
 
-    try {
-      String? d_code = "";
-      String? b_code = "";
+          villageworkList.sort((a, b) {
+            String nameA = a[s.key_pvname].toString().toLowerCase();
+            String nameB = b[s.key_pvname].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
+          districtTableUI = false;
+          villageTableUI = true;
+          BlockTableUI = false;
+        }
+      } else if (prefs.getString(s.key_rural_urban) == "U") {
+        if (flag == "D") {
+          urbanDistrictFromDate = fromDate;
+          urbanDistrictToDate = toDate;
+          districtworkList.clear();
+          districtworkList.addAll(workDetails!);
 
-      if (level == "B") {
-        d_code = prefs.getString(s.key_dcode);
-        b_code = prefs.getString(s.key_bcode);
-      } else if (level == "D") {
-        d_code = prefs.getString(s.key_dcode);
-        b_code = selectedBcode;
-      } else if (level == "S") {
-        d_code = selectedDcode;
-        b_code = selectedBcode;
-      }
+          districtworkList.sort((a, b) {
+            String nameA = a[s.key_dname].toString().toLowerCase();
+            String nameB = b[s.key_dname].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
+          districtTableUI = true;
+          villageTableUI = false;
+          BlockTableUI = false;
+          TMCTableUI = false;
+        } else if (flag == "tmc") {
+          tmcFromDate = fromDate;
+          tmcToDate = toDate;
+          TMCworkList.clear();
+          TMCworkList.addAll(workDetails!);
 
-      var userPassKey = prefs.getString(s.userPassKey);
+          TMCTableUI = true;
+          districtTableUI = false;
+          villageTableUI = false;
+          BlockTableUI = false;
+        } else if (flag == "T") {
+          villageworkList.clear();
+          villageworkList.addAll(workDetails!);
 
-      Map jsonRequest = {
-        s.key_service_id: s.service_key_village_list_district_block_wise,
-        s.key_dcode: d_code,
-        s.key_bcode: b_code,
-      };
+          villageworkList.sort((a, b) {
+            String nameA = a[s.key_townpanchayat_name].toString().toLowerCase();
+            String nameB = b[s.key_townpanchayat_name].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
+          TMCTableUI = false;
+          districtTableUI = false;
+          villageTableUI = true;
+          BlockTableUI = false;
+        } else if (flag == "M") {
+          villageworkList.clear();
+          villageworkList.addAll(workDetails!);
 
-      Map encrpted_request = {
-        s.key_user_name: prefs.getString(s.key_user_name),
-        s.key_data_content:
-            Utils().encryption(jsonEncode(jsonRequest), userPassKey.toString()),
-      };
+          villageworkList.sort((a, b) {
+            String nameA = a[s.key_municipality_name].toString().toLowerCase();
+            String nameB = b[s.key_municipality_name].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
 
-      print(" ENCCCC Request >>> $encrpted_request");
+          TMCTableUI = false;
+          districtTableUI = false;
+          villageTableUI = true;
+          BlockTableUI = false;
+        } else if (flag == "C") {
+          villageworkList.clear();
+          villageworkList.addAll(workDetails!);
 
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = IOClient(_client);
-      var response = await _ioClient.post(url.master_service,
-          body: json.encode(encrpted_request));
+          villageworkList.sort((a, b) {
+            String nameA = a[s.key_corporation_name].toString().toLowerCase();
+            String nameB = b[s.key_corporation_name].toString().toLowerCase();
+            return nameA.compareTo(nameB);
+          });
 
-      if (response.statusCode == 200) {
-        String responseData = response.body;
-
-        var jsonData = jsonDecode(responseData);
-        var enc_data = jsonData[s.key_enc_data];
-        var decrpt_data = Utils().decryption(enc_data, userPassKey.toString());
-        var userData = jsonDecode(decrpt_data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
-
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> village_details = userData[s.key_json_data];
-
-          if (village_details.isNotEmpty) {
-            //Empty the Worklist
-            villageworkList = [];
-
-            village_details.sort((a, b) {
-              return a[s.key_pvname].compareTo(b[s.key_pvname]);
-            });
-
-            villageworkList.addAll(village_details);
-          }
-        } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "W", s.no_data);
+          TMCTableUI = false;
+          districtTableUI = false;
+          villageTableUI = true;
+          BlockTableUI = false;
         }
       }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
+      notifyListeners();
     }
-    utils.hideProgress(context);
-
-    notifyListeners();
-
-    /*    
-    String? d_code = "";
-    String? b_code = "";
-
-    if (level == "B") {
-      d_code = prefs.getString(s.key_dcode);
-      b_code = prefs.getString(s.key_bcode);
-    } else if (level == "D") {
-      d_code = prefs.getString(s.key_dcode);
-      b_code = selectedBcode;
-    } else if (level == "S") {
-      d_code = selectedDcode;
-      b_code = selectedBcode;
-    }
-
-    var villageList = await dbClient.rawQuery(
-      "SELECT * FROM ${s.table_Village} where dcode = $d_code and bcode = $b_code",
-    );
-
-    print("Village List -  $villageList");
-
-    if (villageList.isNotEmpty) {
-      //Empty the Worklist
-      villageworkList = [];
-
-      villageworkList.addAll(villageList);
-
-      villageworkList.sort((a, b) {
-        String nameA = a[s.key_pvname].toString().toLowerCase();
-        String nameB = b[s.key_pvname].toString().toLowerCase();
-        return nameA.compareTo(nameB);
-      });
-
-      
-
-    }  */
   }
-
-  Future<void> fetchTMCWorklist(BuildContext context, String tmcType) async {
-    utils.showProgress(context, 1);
-    await initializeDB();
-
-    try {
-      String tableName = "";
-      String dynamicTMC_Name = "";
-
-      if (tmcType == "T") {
-        tableName = s.table_TownList;
-        dynamicTMC_Name = s.key_townpanchayat_name;
-      } else if (tmcType == "M") {
-        tableName = s.table_Municipality;
-        dynamicTMC_Name = s.key_municipality_name;
-      } else if (tmcType == "C") {
-        tableName = s.table_Corporation;
-        dynamicTMC_Name = s.key_corporation_name;
-      }
-
-      List<Map> TMCList = await dbClient.rawQuery(
-          "SELECT * FROM $tableName where dcode = ${prefs.getString(s.key_dcode)}");
-
-      print(" TMC List All >>> $TMCList");
-
-      if (TMCList.isNotEmpty) {
-        //Empty the Worklist
-        TMCworkList = [];
-
-        TMCworkList.addAll(TMCList);
-
-        TMCworkList.sort((a, b) {
-          String nameA = a[dynamicTMC_Name].toString().toLowerCase();
-          String nameB = b[dynamicTMC_Name].toString().toLowerCase();
-          return nameA.compareTo(nameB);
-        });
-
-        notifyListeners();
-      }
-    } catch (e) {
-      if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
-      }
-    }
-    utils.hideProgress(context);
-  }
-
-  /*
-  *******************************  Database CALL Ends Here *********************************
-  */
 
   /*
   *******************************  API CALL Starts Here *********************************
   */
 
-  Future<void> fetchOnlineOverallWroklist(
-      String fromDate, String toDate, BuildContext context) async {
+  Future<void> fetchOnlineOverallWroklist(String fromDate, String toDate,
+      String flag, BuildContext context, String dcode, String bcode) async {
     try {
       utils.showProgress(context, 1);
       await initializeDB();
@@ -301,10 +234,13 @@ class OverallWorklistController extends ChangeNotifier {
       var rural_urban = prefs.getString(s.key_rural_urban);
 
       Map jsonRequest = {
-        s.key_service_id: s.service_key_overall_inspection_details_for_atr,
+        s.key_service_id: s.service_key_overall_report,
         s.key_from_date: fromDate,
         s.key_to_date: toDate,
+        s.key_flag: flag,
         s.key_rural_urban: rural_urban,
+        if (flag != "D") s.key_dcode: dcode,
+        if (flag == "V") s.key_bcode: bcode
       };
 
       Map encrypted_request = {
@@ -365,9 +301,31 @@ class OverallWorklistController extends ChangeNotifier {
             workDetails = [];
 
             Map res_jsonArray = userData[s.key_json_data];
-            workDetails = res_jsonArray[s.key_inspection_details];
+            workDetails = res_jsonArray[s.key_level_wise_report];
+            pieChartDetails = res_jsonArray[s.key_status_wise_count];
 
-            global.updateWorkDetails(workDetails!);
+            // Sum the atr_pending_count values using fold
+            int sumAtrPendingCount = 0;
+            for (var report in workDetails!) {
+              var atrCount = report['atr_pending_count'].toString();
+              int? parsedCount = int.tryParse(atrCount);
+              if (parsedCount != null) {
+                sumAtrPendingCount += parsedCount;
+              }
+            }
+
+            sCount = pieChartDetails![0]['satisfied'].toString();
+            usCount = pieChartDetails![0]['unsatisfied'].toString();
+            nimpCount = pieChartDetails![0]['need_improvement'].toString();
+            totalWorksCount = pieChartDetails![0]['totalcount'].toString();
+            atrCount = sumAtrPendingCount.toString();
+
+            if (int.parse(totalWorksCount!) > 0) {
+              pieChartUI = true;
+              notifyListeners();
+            }
+
+            __ModifiyUI(flag, fromDate, toDate);
 
             notifyListeners();
           } else if (status == s.key_ok && response_value == s.key_noRecord) {
@@ -382,6 +340,7 @@ class OverallWorklistController extends ChangeNotifier {
       if (e is FormatException) {
         utils.customAlert(context, "E", s.jsonError);
       }
+      print(e);
     }
   }
 

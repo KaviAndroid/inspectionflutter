@@ -1106,8 +1106,11 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                           width: 10,
                                         ),
                                         Text(
-                                            schemeList[index][s.key_scheme_name]
-                                                .toString(),
+                                            utils.splitStringByLength(
+                                                schemeList[index]
+                                                        [s.key_scheme_name]
+                                                    .toString(),
+                                                35),
                                             style: GoogleFonts.getFont('Roboto',
                                                 fontWeight: FontWeight.w800,
                                                 fontSize: 11,

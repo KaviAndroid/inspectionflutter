@@ -1,7 +1,7 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_new, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_types_as_parameter_names
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, camel_case_types, prefer_const_constructors, use_build_context_synchronously
 
-import 'dart:core';
 import 'package:flutter/material.dart';
+import 'dart:core';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:inspection_flutter_app/Activity/ViewWorklistScreen.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -9,7 +9,6 @@ import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -17,47 +16,34 @@ import '../DataBase/DbHelper.dart';
 import '../Layout/OverallWorklistController.dart';
 import '../Utils/utils.dart';
 
-class ViewOverallReport extends StatefulWidget {
+class Overall_Report_new extends StatefulWidget {
   final flag;
 
-  const ViewOverallReport({Key? key, this.flag}) : super(key: key);
+  const Overall_Report_new({Key? key, this.flag}) : super(key: key);
+
   @override
-  State<ViewOverallReport> createState() => _ViewOverallReportState();
+  State<Overall_Report_new> createState() => _Overall_Report_newState();
 }
 
-class _ViewOverallReportState extends State<ViewOverallReport> {
+class _Overall_Report_newState extends State<Overall_Report_new> {
   // controller
   OverallWorklistController controllerOverall = OverallWorklistController();
   //Bool Values
   bool isWorklistAvailable = false;
-  bool isPiechartAvailable = false;
-  bool stateTableUI = false;
-  bool stateUI = false;
-  bool districtUI = false;
-  bool blockUI = false;
-  bool urbanUI = false;
-  bool searchEnabled = false;
-  bool urbanworkListUI = false;
 
   // Controller Text
   TextEditingController dateController = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
   //Date Time
   List<DateTime>? selectedDateRange;
 
   //List
   late List<ChartData> data;
-  List defaultWorklist = [];
+  List villageworkList = [];
   List selectedworkList = [];
-  List _filteredVillage = [];
 
   //String Vlues
-  String header_name = "";
-  String nimpCount = "";
-  String usCount = "";
-  String sCount = "";
-  String atrCount = "";
-  String totalWorksCount = "";
   String from_Date = "";
   String to_Date = "";
   String selectedDcode = "";
@@ -65,56 +51,14 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
   String selectedBcode = "";
   String selectedBname = "";
   String tmcType = "";
-  String dynamicTMC_ID = "";
   String dynamicTMC_Name = "";
-  String _searchQuery = '';
 
   //Urban int values
-  int urban_tp_s = 0;
-  int urban_mun_s = 0;
-  int urban_corp_s = 0;
-  int urban_tp_us = 0;
-  int urban_mun_us = 0;
-  int urban_corp_us = 0;
-  int urban_tp_nm = 0;
-  int urban_mun_nm = 0;
-  int urban_corp_nm = 0;
-  int urban_tp_TC = 0;
-  int urban_mun_TC = 0;
-  int urban_corp_TC = 0;
 
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
-  ScrollController scrollController = ScrollController();
-
-  Future<bool> _onWillPop() async {
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      if (blockUI) {
-        goToBack();
-      } else {
-        Navigator.of(context, rootNavigator: true).pop(context);
-      }
-    } else {
-      if (widget.flag == "S") {
-        if (blockUI || districtUI) {
-          goToBack();
-        } else {
-          Navigator.of(context, rootNavigator: true).pop(context);
-        }
-      } else if (widget.flag == "D") {
-        if (blockUI) {
-          goToBack();
-        } else {
-          Navigator.of(context, rootNavigator: true).pop(context);
-        }
-      } else if (widget.flag == "B") {
-        Navigator.of(context, rootNavigator: true).pop(context);
-      }
-    }
-    return true;
-  }
 
   @override
   void initState() {
@@ -122,132 +66,117 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
     initialize();
   }
 
+  Future<bool> _onWillPop() async {
+    if (prefs.getString(s.key_rural_urban) == "U") {
+      if (controllerOverall.villageTableUI) {
+        controllerOverall.villageTableUI = false;
+        controllerOverall.TMCTableUI = true;
+        tmcType = "";
+
+        await controllerOverall.fetchOnlineOverallWroklist(
+            controllerOverall.tmcFromDate!,
+            controllerOverall.tmcToDate!,
+            "tmc",
+            context,
+            selectedDcode,
+            "0");
+        dateController.text =
+            "${controllerOverall.tmcFromDate} to ${controllerOverall.tmcToDate}";
+
+        controllerOverall.PieUpdation(selectedDname, "D");
+
+        setState(() {});
+      } else if (controllerOverall.TMCTableUI) {
+        controllerOverall.TMCTableUI = false;
+        controllerOverall.districtTableUI = true;
+        selectedDcode = "";
+
+        await controllerOverall.fetchOnlineOverallWroklist(
+            controllerOverall.urbanDistrictFromDate!,
+            controllerOverall.urbanDistrictToDate!,
+            "D",
+            context,
+            "0",
+            "0");
+
+        dateController.text =
+            "${controllerOverall.urbanDistrictFromDate} to ${controllerOverall.urbanDistrictToDate}";
+
+        controllerOverall.PieUpdation("Tamil Nade", "S");
+
+        setState(() {});
+      } else {
+        Navigator.of(context, rootNavigator: true).pop(context);
+      }
+    } else {
+      if (controllerOverall.villageTableUI) {
+        controllerOverall.villageTableUI = false;
+        controllerOverall.BlockTableUI = true;
+        selectedBcode = "";
+        selectedBname = "";
+
+        await controllerOverall.fetchOnlineOverallWroklist(
+            controllerOverall.blockFromDate!,
+            controllerOverall.blockToDate!,
+            "B",
+            context,
+            selectedDcode,
+            "0");
+
+        dateController.text =
+            "${controllerOverall.blockFromDate} to ${controllerOverall.blockToDate}";
+
+        controllerOverall.PieUpdation(selectedDname, "D");
+
+        setState(() {});
+      } else if (controllerOverall.BlockTableUI) {
+        controllerOverall.BlockTableUI = false;
+        controllerOverall.districtTableUI = true;
+        selectedDcode = "";
+
+        await controllerOverall.fetchOnlineOverallWroklist(
+            controllerOverall.districtFromDate!,
+            controllerOverall.districtToDate!,
+            "D",
+            context,
+            "0",
+            "0");
+
+        dateController.text =
+            "${controllerOverall.districtFromDate} to ${controllerOverall.districtToDate}";
+
+        controllerOverall.PieUpdation("Tamil Nade", "S");
+
+        setState(() {});
+      } else {
+        Navigator.of(context, rootNavigator: true).pop(context);
+      }
+    }
+    return false;
+  }
+
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     prefs.setString(s.onOffType, "online");
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      urbanUI = true;
-    }
     dbClient = await dbHelper.db;
     loadWorkList();
   }
 
-  Future<void> goToBack() async {
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      urbanworkListUI = false;
-      urbanUI = true;
-      await controllerOverall.fetchTMCWorklist(context, tmcType);
-    } else {
-      if (widget.flag == "S") {
-        print("asdasdasd");
-        print(stateUI);
-        print(blockUI);
-        print(districtUI);
-        print("asdasdasd");
-
-        if (blockUI) {
-          isWorklistAvailable = false;
-          blockUI = false;
-          selectedBcode = "";
-          districtUI = true;
-
-          await controllerOverall.fetchBlockWorklist(
-              context, widget.flag, selectedDcode);
-          controllerOverall.PieUpdation(selectedDname, "D");
-        } else if (districtUI) {
-          selectedDcode = "";
-          districtUI = false;
-          stateTableUI = true;
-          stateUI = true;
-          await controllerOverall.fetchDistrictWorklist(context);
-          controllerOverall.PieUpdation("Tamil Nadu", "S");
-        }
-      } else if (widget.flag == "D") {
-        if (isWorklistAvailable) {
-          isWorklistAvailable = false;
-          selectedBcode = "";
-          blockUI = false;
-          districtUI = true;
-
-          await controllerOverall.fetchBlockWorklist(
-              context, widget.flag, selectedDcode);
-          controllerOverall.PieUpdation(selectedDname, "D");
-        }
-      }
-    }
-
-    await __ModifiyUI();
-
-    setState(() {});
-  }
-
   Future<void> loadWorkList() async {
     final endDate = DateTime.now();
-    final fromDate = endDate.subtract(Duration(days: 60));
+    final fromDate = endDate.subtract(const Duration(days: 60));
 
     from_Date = DateFormat('dd-MM-yyyy').format(fromDate);
     to_Date = DateFormat('dd-MM-yyyy').format(endDate);
+
     dateController.text = "$from_Date to $to_Date";
 
-    if (!urbanUI) {
-      if (widget.flag == "B") {
-        print("<<< Village >>>>");
-        await controllerOverall.fetchVillageWorklist(
-            context, widget.flag, selectedDcode, selectedBcode);
-        controllerOverall.PieUpdation(
-            prefs.getString(s.key_bname)!, widget.flag);
-        stateUI = false;
-        districtUI = false;
-        blockUI = true;
-      } else if (widget.flag == "D") {
-        await controllerOverall.fetchBlockWorklist(
-            context, widget.flag, selectedDcode);
-        controllerOverall.PieUpdation(
-            prefs.getString(s.key_dname)!, widget.flag);
-        stateUI = false;
-        districtUI = true;
-        blockUI = false;
-      } else if (widget.flag == "S") {
-        await controllerOverall.fetchDistrictWorklist(context);
-        controllerOverall.PieUpdation("Tamil Nadu", widget.flag);
-        stateUI = true;
-        districtUI = false;
-        blockUI = false;
-      }
-    }
+    controllerOverall.PieUpdation("Tamil Nadu", "S");
 
     await controllerOverall.fetchOnlineOverallWroklist(
-        from_Date, to_Date, context);
-
-    await __ModifiyUI();
+        from_Date, to_Date, "D", context, "0", "0");
 
     setState(() {});
-  }
-
-  // *************************** Search  Functions Starts here *************************** //
-
-  void _onSearchQueryChanged(String query) {
-    String compareVilageName = "";
-    if (prefs.getString(s.key_rural_urban) == "U") {
-      if (tmcType == "T") {
-        compareVilageName = s.key_townpanchayat_name;
-      } else if (tmcType == "M") {
-        compareVilageName = s.key_municipality_name;
-      } else if (tmcType == "C") {
-        compareVilageName = s.key_corporation_name;
-      }
-    } else {
-      compareVilageName = s.key_pvname;
-    }
-    setState(() {
-      searchEnabled = true;
-      _searchQuery = query;
-      _filteredVillage = defaultWorklist.where((item) {
-        final name = item[compareVilageName].toLowerCase();
-        final lowerCaseQuery = _searchQuery.toLowerCase();
-        return name.contains(lowerCaseQuery);
-      }).toList();
-    });
   }
 
   // *************************** Date  Functions Starts here *************************** //
@@ -261,14 +190,60 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       to_Date = DateFormat('dd-MM-yyyy').format(eD);
 
       if (sD.compareTo(eD) == 1) {
-        utils.showAlert(context, "End Date should be greater than Start Date");
+        utils.customAlert(
+            context, "E", "End Date should be greater than Start Date");
       } else {
         dateController.text = "$from_Date  To  $to_Date";
-        await controllerOverall.fetchOnlineOverallWroklist(
-            from_Date, to_Date, context);
 
-        await __ModifiyUI();
+        if (controllerOverall.districtTableUI) {
+          controllerOverall.PieUpdation("Tamil Nadu", "S");
+
+          await controllerOverall.fetchOnlineOverallWroklist(
+              from_Date, to_Date, "D", context, "0", "0");
+        }
+
+        if (controllerOverall.BlockTableUI) {
+          controllerOverall.PieUpdation(selectedDname, "D");
+
+          await controllerOverall.fetchOnlineOverallWroklist(
+              from_Date, to_Date, "B", context, selectedDcode, "0");
+        }
+
+        if (controllerOverall.villageTableUI) {
+          if (prefs.getString(s.key_rural_urban) == "R") {
+            controllerOverall.PieUpdation(selectedBname, "B");
+
+            await controllerOverall.fetchOnlineOverallWroklist(
+                from_Date, to_Date, "V", context, selectedDcode, selectedBcode);
+          } else {
+            if (tmcType == "T") {
+              controllerOverall.PieUpdation(selectedDname, "D");
+
+              await controllerOverall.fetchOnlineOverallWroklist(
+                  from_Date, to_Date, "T", context, selectedDcode, "0");
+            } else if (tmcType == "M") {
+              controllerOverall.PieUpdation(selectedDname, "D");
+
+              await controllerOverall.fetchOnlineOverallWroklist(
+                  from_Date, to_Date, "M", context, selectedDcode, "0");
+            } else if (tmcType == "C") {
+              controllerOverall.PieUpdation(selectedDname, "D");
+
+              await controllerOverall.fetchOnlineOverallWroklist(
+                  from_Date, to_Date, "C", context, selectedDcode, "0");
+            }
+          }
+        }
+
+        if (controllerOverall.TMCTableUI) {
+          controllerOverall.PieUpdation(selectedDname, "D");
+
+          await controllerOverall.fetchOnlineOverallWroklist(
+              from_Date, to_Date, "tmc", context, selectedDcode, "0");
+        }
+        setState(() {});
       }
+      setState(() {});
     }
   }
 
@@ -276,16 +251,11 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
     selectedDateRange = await showOmniDateTimeRangePicker(
       context: context,
       type: OmniDateTimePickerType.date,
-      startInitialDate: DateTime.now(),
+      startInitialDate: DateTime.now().subtract(const Duration(days: 60)),
       startFirstDate: DateTime(2000).subtract(const Duration(days: 3652)),
-      startLastDate: DateTime.now().add(
-        const Duration(days: 3652),
-      ),
+      startLastDate: DateTime.now(),
       endInitialDate: DateTime.now(),
-      endFirstDate: DateTime(2000).subtract(const Duration(days: 3652)),
-      endLastDate: DateTime.now().add(
-        const Duration(days: 3652),
-      ),
+      endLastDate: DateTime.now(),
       borderRadius: const BorderRadius.all(Radius.circular(16)),
       constraints: const BoxConstraints(
         maxWidth: 350,
@@ -334,11 +304,17 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
             controller: scrollController,
             child: Column(
               children: [
-                isPiechartAvailable ? _Piechart() : SizedBox(),
-                urbanUI ? __TMCTable() : SizedBox(),
-                stateTableUI ? __districtTable() : SizedBox(),
-                districtUI ? __blockTable() : SizedBox(),
-                isWorklistAvailable ? __workListLoder() : SizedBox(),
+                controllerOverall.pieChartUI ? _Piechart() : const SizedBox(),
+                controllerOverall.TMCTableUI ? __TMCTable() : const SizedBox(),
+                controllerOverall.districtTableUI
+                    ? __districtTable()
+                    : const SizedBox(),
+                controllerOverall.BlockTableUI
+                    ? __blockTable()
+                    : const SizedBox(),
+                controllerOverall.villageTableUI
+                    ? __workListLoder()
+                    : const SizedBox(),
               ],
             ),
           ),
@@ -349,377 +325,287 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
 
   __TMCTable() {
     return Container(
+        margin: EdgeInsets.only(top: 15),
         width: screenWidth * 0.9,
-        margin: EdgeInsets.only(top: 20),
-        child: AnimationLimiter(
-            child: AnimationConfiguration.staggeredList(
-                duration: const Duration(milliseconds: 800),
-                position: 0,
-                child: SlideAnimation(
-                    horizontalOffset: 200.0,
-                    child: Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 7, horizontal: 0),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+        child: Column(
+          children: [
+            Table(
+                columnWidths: const {
+                  0: FlexColumnWidth(
+                      1.3), // Set width of column 0 to 3 times the width of other columns
+                  1: FlexColumnWidth(
+                      1), // Set width of column 1 to the same as other columns
+                  2: FlexColumnWidth(
+                      1), // Set width of column 1 to the same as other columns
+                  3: FlexColumnWidth(
+                      1.2), // Set width of column 1 to the same as other columns
+                  4: FlexColumnWidth(
+                      0.5), // Set width of column 1 to the same as other columns
+                },
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                children: [
+                  TableRow(
+                      decoration: BoxDecoration(
+                          color: c.dot_light_screen3,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10))),
+                      children: [
+                        TableCell(
+                            child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: widget.flag == "S"
+                                  ? MainAxisAlignment.spaceEvenly
+                                  : MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    selectedDcode = "";
+                                    controllerOverall.districtTableUI = true;
+                                    controllerOverall.TMCTableUI = false;
+
+                                    await controllerOverall
+                                        .fetchOnlineOverallWroklist(
+                                            controllerOverall
+                                                .urbanDistrictFromDate!,
+                                            controllerOverall
+                                                .urbanDistrictToDate!,
+                                            "D",
+                                            context,
+                                            "0",
+                                            "0");
+
+                                    dateController.text =
+                                        "${controllerOverall.urbanDistrictFromDate} to ${controllerOverall.urbanDistrictToDate}";
+
+                                    controllerOverall.PieUpdation(
+                                        "Tamil Nadu", "S");
+
+                                    setState(() {});
+                                  },
+                                  child: Icon(Icons.arrow_back_ios_new_rounded,
+                                      size: 15, color: c.white),
+                                ),
+                                Text(s.block,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: c.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ),
+                        )),
+                        TableCell(
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Text(s.satisfied,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: c.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500)),
+                            ),
+                          ),
                         ),
-                        child: Table(
-                          columnWidths: const {
-                            0: FlexColumnWidth(
-                                1.3), // Set width of column 0 to 3 times the width of other columns
-                            1: FlexColumnWidth(
-                                1), // Set width of column 1 to the same as other columns
-                            2: FlexColumnWidth(
-                                1), // Set width of column 1 to the same as other columns
-                            3: FlexColumnWidth(
-                                1.2), // Set width of column 1 to the same as other columns
-                            4: FlexColumnWidth(
-                                0.5), // Set width of column 1 to the same as other columns
-                          },
-                          defaultVerticalAlignment:
-                              TableCellVerticalAlignment.middle,
-                          children: [
-                            TableRow(
-                                decoration: BoxDecoration(
-                                    color: c.dot_light_screen3,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10))),
-                                children: [
-                                  TableCell(
-                                      child: Container(
-                                    height: 50,
-                                    child: Center(
-                                      child: Text(s.town_type,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: c.white,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500)),
-                                    ),
-                                  )),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(s.satisfied,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.white,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(s.un_satisfied,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.white,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(s.need_improvement,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.white,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                      child: Container(
-                                          height: 50, child: SizedBox())),
-                                ]),
-                            TableRow(
-                                decoration: BoxDecoration(
-                                  color: c.white,
+                        TableCell(
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Text(s.un_satisfied,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: c.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500)),
+                            ),
+                          ),
+                        ),
+                        TableCell(
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Text(s.need_improvement,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: c.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500)),
+                            ),
+                          ),
+                        ),
+                        TableCell(
+                            child: Container(height: 50, child: SizedBox())),
+                      ])
+                ]),
+            AnimationLimiter(
+                child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    primary: false,
+                    itemCount: controllerOverall.TMCworkList.isEmpty
+                        ? 0
+                        : controllerOverall.TMCworkList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = controllerOverall.TMCworkList[index];
+                      return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 800),
+                          child: SlideAnimation(
+                              horizontalOffset: 200.0,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  tmcType = item[s.key_town_type];
+                                  await controllerOverall
+                                      .fetchOnlineOverallWroklist(
+                                          from_Date,
+                                          to_Date,
+                                          tmcType,
+                                          context,
+                                          selectedDcode,
+                                          "");
+
+                                  await controllerOverall.PieUpdation(
+                                      selectedDname, "D");
+
+                                  setState(() {});
+                                },
+                                child: Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(
+                                        1.3), // Set width of column 0 to 3 times the width of other columns
+                                    1: FlexColumnWidth(
+                                        1), // Set width of column 1 to the same as other columns
+                                    2: FlexColumnWidth(
+                                        1), // Set width of column 1 to the same as other columns
+                                    3: FlexColumnWidth(
+                                        1.2), // Set width of column 1 to the same as other columns
+                                    4: FlexColumnWidth(
+                                        0.5), // Set width of column 1 to the same as other columns
+                                  },
+                                  defaultVerticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  children: [
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0
+                                              ? c.white
+                                              : c.full_transparent,
+                                        ),
+                                        children: [
+                                          TableCell(
+                                              child: Container(
+                                            height: 50,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
+                                                    item[s.key_town_type] == 'T'
+                                                        ? s.town_panchayat
+                                                        : item[s.key_town_type] ==
+                                                                'M'
+                                                            ? s.municipality
+                                                            : s.corporation,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: c.grey_10,
+                                                        fontSize: 11,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                                Text(
+                                                    "( ${item[s.totalcount].toString()} )",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: c
+                                                            .primary_text_color2,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                              ],
+                                            ),
+                                          )),
+                                          TableCell(
+                                            child: Container(
+                                              height: 50,
+                                              child: Center(
+                                                child: Text(
+                                                    item[s.key_satisfied]
+                                                        .toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: item[s
+                                                                    .key_satisfied] ==
+                                                                0
+                                                            ? c.grey_10
+                                                            : c
+                                                                .primary_text_color2,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Container(
+                                              height: 50,
+                                              child: Center(
+                                                child: Text(
+                                                    item[s.key_unsatisfied]
+                                                        .toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: item[s
+                                                                    .key_unsatisfied] ==
+                                                                0
+                                                            ? c.grey_10
+                                                            : c
+                                                                .primary_text_color2,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Container(
+                                              height: 50,
+                                              child: Center(
+                                                child: Text(
+                                                    item[s.key_need_improvement]
+                                                        .toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: item[s
+                                                                    .key_need_improvement] ==
+                                                                0
+                                                            ? c.grey_10
+                                                            : c
+                                                                .primary_text_color2,
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                              ),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Image.asset(
+                                              imagePath.arrow_right,
+                                              color: c.primary_text_color2,
+                                              height: 22,
+                                              width: 22,
+                                            ),
+                                          ),
+                                        ]),
+                                  ],
                                 ),
-                                children: [
-                                  TableCell(
-                                      child: Container(
-                                    height: 50,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(s.town_panchayat,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500)),
-                                        Text("( $urban_tp_TC )",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ],
-                                    ),
-                                  )),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_tp_s.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_tp_us.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_tp_nm.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        if (urban_tp_TC > 0) {
-                                          tmcType = "T";
-                                          await controllerOverall
-                                              .fetchTMCWorklist(
-                                                  context, tmcType);
-                                          urbanUI = false;
-                                          urbanworkListUI = true;
-                                          await __ModifiyUI();
-                                          setState(() {});
-                                        } else {
-                                          utils.customAlert(context, "E",
-                                              s.no_data_available);
-                                        }
-                                      },
-                                      child: Image.asset(
-                                        imagePath.arrow_right,
-                                        color: c.primary_text_color2,
-                                        height: 22,
-                                        width: 22,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                            TableRow(
-                                decoration: BoxDecoration(
-                                  color: c.full_transparent,
-                                ),
-                                children: [
-                                  TableCell(
-                                      child: Container(
-                                    height: 50,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(s.municipality,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500)),
-                                        Text("( $urban_mun_TC )",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ],
-                                    ),
-                                  )),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_mun_s.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_mun_us.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_mun_nm.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        if (urban_mun_TC > 0) {
-                                          tmcType = "M";
-                                          await controllerOverall
-                                              .fetchTMCWorklist(
-                                                  context, tmcType);
-                                          urbanUI = false;
-                                          urbanworkListUI = true;
-                                          await __ModifiyUI();
-                                          setState(() {});
-                                        } else {
-                                          utils.customAlert(context, "E",
-                                              s.no_data_available);
-                                        }
-                                      },
-                                      child: Image.asset(
-                                        imagePath.arrow_right,
-                                        color: c.primary_text_color2,
-                                        height: 22,
-                                        width: 22,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                            TableRow(
-                                decoration: BoxDecoration(
-                                  color: c.white,
-                                ),
-                                children: [
-                                  TableCell(
-                                      child: Container(
-                                    height: 50,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(s.corporation,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500)),
-                                        Text("( $urban_corp_TC )",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ],
-                                    ),
-                                  )),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_corp_s.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_corp_us.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(urban_corp_nm.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: c.primary_text_color2,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        if (urban_corp_TC > 0) {
-                                          tmcType = "C";
-                                          await controllerOverall
-                                              .fetchTMCWorklist(
-                                                  context, tmcType);
-                                          urbanUI = false;
-                                          urbanworkListUI = true;
-                                          await __ModifiyUI();
-                                          setState(() {});
-                                        } else {
-                                          utils.customAlert(context, "E",
-                                              s.no_data_available);
-                                        }
-                                      },
-                                      child: Image.asset(
-                                        imagePath.arrow_right,
-                                        color: c.primary_text_color2,
-                                        height: 22,
-                                        width: 22,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                          ],
-                        ))))));
+                              )));
+                    })),
+          ],
+        ));
   }
 
   // ************************************* Block Worklist Loder Design ********************************* //
@@ -762,19 +648,29 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   : MainAxisAlignment.center,
                               children: [
                                 Visibility(
-                                  visible: widget.flag == "S" ? true : false,
+                                  visible: true,
                                   child: GestureDetector(
                                     onTap: () async {
                                       selectedDcode = "";
-                                      stateUI = true;
-                                      stateTableUI = true;
-                                      districtUI = false;
-                                      controllerOverall.PieUpdation(
-                                          "Tamil Nadu", "S");
+                                      selectedDname = "";
+                                      controllerOverall.districtTableUI = true;
+                                      controllerOverall.BlockTableUI = false;
 
                                       await controllerOverall
-                                          .fetchDistrictWorklist(context);
-                                      await __ModifiyUI();
+                                          .fetchOnlineOverallWroklist(
+                                              controllerOverall
+                                                  .districtFromDate!,
+                                              controllerOverall.districtToDate!,
+                                              "D",
+                                              context,
+                                              "0",
+                                              "0");
+
+                                      dateController.text =
+                                          "${controllerOverall.districtFromDate} to ${controllerOverall.districtToDate}";
+
+                                      controllerOverall.PieUpdation(
+                                          "Tamil Nadu", "S");
 
                                       setState(() {});
                                     },
@@ -842,9 +738,11 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     primary: false,
-                    itemCount:
-                        defaultWorklist.isEmpty ? 0 : defaultWorklist.length,
+                    itemCount: controllerOverall.blockworkList.isEmpty
+                        ? 0
+                        : controllerOverall.blockworkList.length,
                     itemBuilder: (BuildContext context, int index) {
+                      final item = controllerOverall.blockworkList[index];
                       return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 800),
@@ -880,8 +778,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Text(
-                                                  "${defaultWorklist[index][s.key_bname]}",
+                                              Text("${item[s.key_bname]}",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       color: c.grey_10,
@@ -889,7 +786,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                                       fontWeight:
                                                           FontWeight.w500)),
                                               Text(
-                                                  "( ${defaultWorklist[index][s.total_inspected_works].toString()} )",
+                                                  "( ${item[s.totalcount].toString()} )",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       color:
@@ -905,19 +802,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_satisfied]
+                                                  item[s.key_satisfied]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_satisfied] ==
+                                                      color: item[s
+                                                                  .key_satisfied] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -926,19 +823,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_unsatisfied]
+                                                  item[s.key_unsatisfied]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_unsatisfied] ==
+                                                      color: item[s
+                                                                  .key_unsatisfied] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -947,19 +844,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index][s
-                                                          .key_need_improvement]
+                                                  item[s.key_need_improvement]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_need_improvement] ==
+                                                      color: item[s
+                                                                  .key_need_improvement] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -968,32 +865,24 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             onTap: () async {
                                               gotToTop();
                                               selectedBcode =
-                                                  defaultWorklist[index]
-                                                      [s.key_bcode];
+                                                  item[s.key_bcode].toString();
 
                                               selectedDcode =
-                                                  defaultWorklist[index]
-                                                      [s.key_dcode];
-                                              selectedBname =
-                                                  defaultWorklist[index]
-                                                      [s.key_bname];
-
-                                              stateUI = false;
-                                              stateTableUI = false;
-                                              districtUI = false;
-                                              blockUI = true;
+                                                  item[s.key_dcode].toString();
+                                              selectedBname = item[s.key_bname];
 
                                               await controllerOverall
-                                                  .fetchVillageWorklist(
+                                                  .fetchOnlineOverallWroklist(
+                                                      from_Date,
+                                                      to_Date,
+                                                      "V",
                                                       context,
-                                                      widget.flag,
                                                       selectedDcode,
                                                       selectedBcode);
 
-                                              controllerOverall.PieUpdation(
-                                                  selectedBname, "B");
-
-                                              await __ModifiyUI();
+                                              await controllerOverall
+                                                  .PieUpdation(
+                                                      selectedBname, "B");
 
                                               setState(() {});
                                             },
@@ -1103,9 +992,11 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     primary: false,
-                    itemCount:
-                        defaultWorklist.isEmpty ? 0 : defaultWorklist.length,
+                    itemCount: controllerOverall.districtworkList.isEmpty
+                        ? 0
+                        : controllerOverall.districtworkList.length,
                     itemBuilder: (BuildContext context, int index) {
+                      final item = controllerOverall.districtworkList[index];
                       return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 800),
@@ -1141,8 +1032,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Text(
-                                                  "${defaultWorklist[index][s.key_dname]}",
+                                              Text("${item[s.key_dname]}",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       color: c.grey_10,
@@ -1150,7 +1040,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                                       fontWeight:
                                                           FontWeight.w500)),
                                               Text(
-                                                  "( ${defaultWorklist[index][s.total_inspected_works].toString()} )",
+                                                  "( ${item[s.totalcount].toString()} )",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       color:
@@ -1166,19 +1056,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_satisfied]
+                                                  item[s.key_satisfied]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_satisfied] ==
+                                                      color: item[s
+                                                                  .key_satisfied] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -1187,19 +1077,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_unsatisfied]
+                                                  item[s.key_unsatisfied]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_unsatisfied] ==
+                                                      color: item[s
+                                                                  .key_unsatisfied] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -1208,19 +1098,19 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                             height: 50,
                                             child: Center(
                                               child: Text(
-                                                  defaultWorklist[index][s
-                                                          .key_need_improvement]
+                                                  item[s.key_need_improvement]
                                                       .toString(),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
-                                                      color: defaultWorklist[
-                                                                      index][
-                                                                  s.key_need_improvement] ==
+                                                      color: item[s
+                                                                  .key_need_improvement] ==
                                                               0
                                                           ? c.grey_10
-                                                          : c.primary_text_color2,
+                                                          : c
+                                                              .primary_text_color2,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.w500)),
+                                                      fontWeight:
+                                                          FontWeight.w500)),
                                             ),
                                           ),
                                         ),
@@ -1230,25 +1120,34 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                               gotToTop();
 
                                               selectedDcode =
-                                                  defaultWorklist[index]
-                                                      [s.key_dcode];
-                                              selectedDname =
-                                                  defaultWorklist[index]
-                                                      [s.key_dname];
+                                                  item[s.key_dcode].toString();
+                                              selectedDname = item[s.key_dname];
 
-                                              stateUI = false;
-                                              stateTableUI = false;
-                                              districtUI = true;
+                                              if (prefs.getString(
+                                                      s.key_rural_urban) ==
+                                                  "R") {
+                                                await controllerOverall
+                                                    .fetchOnlineOverallWroklist(
+                                                        from_Date,
+                                                        to_Date,
+                                                        "B",
+                                                        context,
+                                                        selectedDcode,
+                                                        "0");
+                                              } else {
+                                                await controllerOverall
+                                                    .fetchOnlineOverallWroklist(
+                                                        from_Date,
+                                                        to_Date,
+                                                        "tmc",
+                                                        context,
+                                                        selectedDcode,
+                                                        "0");
+                                              }
 
                                               await controllerOverall
-                                                  .fetchBlockWorklist(
-                                                      context,
-                                                      widget.flag,
-                                                      selectedDcode);
-                                              controllerOverall.PieUpdation(
-                                                  selectedDname, "D");
-
-                                              await __ModifiyUI();
+                                                  .PieUpdation(
+                                                      selectedDname, "D");
 
                                               setState(() {});
                                             },
@@ -1292,7 +1191,11 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: TextField(
-                        onChanged: _onSearchQueryChanged,
+                        onChanged: (String value) async {
+                          await controllerOverall.onSearchQueryChanged(
+                              value, tmcType);
+                          setState(() {});
+                        },
                         decoration: InputDecoration(
                           hintStyle: TextStyle(color: c.white),
                           hintText: 'Search Village...',
@@ -1400,13 +1303,22 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   primary: false,
-                  itemCount: searchEnabled
-                      ? _filteredVillage.length
-                      : defaultWorklist.length,
+                  itemCount: controllerOverall.searchEnabled
+                      ? controllerOverall.filteredVillage.length
+                      : controllerOverall.villageworkList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final item = searchEnabled
-                        ? _filteredVillage[index]
-                        : defaultWorklist[index];
+                    if (prefs.getString(s.key_rural_urban) == "U") {
+                      if (tmcType == "T") {
+                        dynamicTMC_Name = s.key_townpanchayat_name;
+                      } else if (tmcType == "M") {
+                        dynamicTMC_Name = s.key_municipality_name;
+                      } else if (tmcType == "C") {
+                        dynamicTMC_Name = s.key_corporation_name;
+                      }
+                    }
+                    final item = controllerOverall.searchEnabled
+                        ? controllerOverall.filteredVillage.elementAt(index)
+                        : controllerOverall.villageworkList[index];
                     return AnimationConfiguration.staggeredList(
                       position: index,
                       duration: const Duration(milliseconds: 800),
@@ -1429,7 +1341,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   child: Align(
                                     alignment: AlignmentDirectional.topCenter,
                                     child: Text(
-                                      urbanworkListUI
+                                      prefs.getString(s.key_rural_urban) == "U"
                                           ? "${item[dynamicTMC_Name]}"
                                           : "${item[s.key_pvname]}",
                                       style: TextStyle(
@@ -1444,7 +1356,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                   child: Align(
                                     alignment: AlignmentDirectional.topCenter,
                                     child: Text(
-                                      "Total Inspected Works ( ${item[s.total_inspected_works]} )",
+                                      "Total Inspected Works ( ${item[s.totalcount]} )",
                                       style: TextStyle(
                                           color: c.grey_9,
                                           fontSize: 14,
@@ -1701,7 +1613,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                         child: Align(
                           alignment: AlignmentDirectional.topCenter,
                           child: Text(
-                            "Total Inspected Works - $totalWorksCount",
+                            "Total Inspected Works - ${controllerOverall.totalWorksCount}",
                             style: TextStyle(
                                 color: c.grey_9,
                                 fontSize: 14,
@@ -1714,7 +1626,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                         child: Align(
                           alignment: AlignmentDirectional.topCenter,
                           child: Text(
-                            "Total ATR Pending Works - $atrCount",
+                            "Total ATR Pending Works - ${controllerOverall.atrCount}",
                             style: TextStyle(
                                 color: c.grey_9,
                                 fontSize: 15,
@@ -1730,7 +1642,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                         child: Stack(
                           children: [
                             Visibility(
-                              visible: isPiechartAvailable,
+                              visible: controllerOverall.pieChartUI,
                               child: SfCircularChart(
                                 legend: Legend(
                                   isVisible: true,
@@ -1746,11 +1658,18 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                                     yValueMapper: (ChartData data, _) =>
                                         int.parse(data.count),
                                     dataSource: [
-                                      ChartData('Satisfied', sCount,
+                                      ChartData(
+                                          'Satisfied',
+                                          controllerOverall.sCount.toString(),
                                           c.satisfied_color),
-                                      ChartData('UnSatisfied', usCount,
+                                      ChartData(
+                                          'UnSatisfied',
+                                          controllerOverall.usCount.toString(),
                                           c.unsatisfied_color),
-                                      ChartData('Need Impr..', nimpCount,
+                                      ChartData(
+                                          'Need Impr..',
+                                          controllerOverall.nimpCount
+                                              .toString(),
                                           c.need_improvement_color),
                                     ],
                                     legendIconType: LegendIconType.circle,
@@ -1771,7 +1690,7 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
                               ),
                             ),
                             Visibility(
-                                visible: !isPiechartAvailable,
+                                visible: !controllerOverall.pieChartUI,
                                 child: Center(
                                   child: Text(
                                     s.no_data,
@@ -1849,378 +1768,6 @@ class _ViewOverallReportState extends State<ViewOverallReport> {
       ),
     );
   }
-
-  // *************************************** Modifiy UI Starts here *************************************** //
-
-  __ModifiyUI() {
-    utils.showProgress(context, 1);
-
-    List<dynamic> work_details = controllerOverall.retriveWorklist();
-
-    if (work_details.isNotEmpty) {
-      Map<String, dynamic> villageDashboard = {};
-      Map<String, dynamic> districtDashboard = {};
-      Map<String, dynamic> blockDashboard = {};
-      Map<String, dynamic> tmcDashboard = {};
-      int satisfied_count = 0;
-      int unSatisfied_count = 0;
-      int needImprovement_count = 0;
-
-      int tempsatisfied_count = 0;
-      int tempunSatisfied_count = 0;
-      int tempneedImprovement_count = 0;
-
-      int ATR_count = 0;
-
-      //Empty the Worklist
-      defaultWorklist = [];
-
-      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
-      work_details.sort((a, b) {
-        //sorting in ascending order
-        return inputFormat
-            .parse(b[s.key_inspection_date])
-            .compareTo(inputFormat.parse(a[s.key_inspection_date]));
-      });
-
-      if (urbanUI) {
-        String? tempDcode = prefs.getString(s.key_dcode);
-        urban_tp_s = 0;
-        urban_mun_s = 0;
-        urban_corp_s = 0;
-        urban_tp_us = 0;
-        urban_mun_us = 0;
-        urban_corp_us = 0;
-        urban_tp_nm = 0;
-        urban_mun_nm = 0;
-        urban_corp_nm = 0;
-
-        for (int j = 0; j < work_details.length; j++) {
-          if (work_details[j][s.key_dcode].toString() == tempDcode) {
-            if (work_details[j][s.key_town_type] == "T") {
-              if (work_details[j][s.key_status_id] == 1) {
-                urban_tp_s = urban_tp_s + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_tp_us = urban_tp_us + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_tp_nm = urban_tp_nm + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-            if (work_details[j][s.key_town_type] == "M") {
-              if (work_details[j][s.key_status_id] == 1) {
-                urban_mun_s = urban_mun_s + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_mun_us = urban_mun_us + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_mun_nm = urban_mun_nm + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-            if (work_details[j][s.key_town_type] == "C") {
-              if (work_details[j][s.key_status_id] == 1) {
-                urban_corp_s = urban_corp_s + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_corp_us = urban_corp_us + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                urban_corp_nm = urban_corp_nm + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-          }
-        }
-
-        urban_tp_TC = urban_tp_s + urban_tp_us + urban_tp_nm;
-        urban_mun_TC = urban_mun_s + urban_mun_us + urban_mun_nm;
-        urban_corp_TC = urban_corp_s + urban_corp_us + urban_corp_nm;
-
-        /*print(
-            "######### TOWN ############ -  $urban_tp_TC = $urban_tp_s + $urban_tp_us + $urban_tp_nm");
-        print(
-            "######### MUN ############ -  $urban_mun_TC = $urban_mun_s + $urban_mun_us + $urban_mun_nm");
-        print(
-            "######### CORP ############ -  $urban_corp_TC = $urban_corp_s + $urban_corp_us + $urban_corp_nm");
-
-        print("SATISFIED -  $satisfied_count");
-
-        print("UNSATISFIED -  $unSatisfied_count");
-
-        print("NEED IMP -  $needImprovement_count");*/
-
-        isPiechartAvailable = true;
-        isWorklistAvailable = false;
-      }
-
-      if (stateUI) {
-        List districtworkList = controllerOverall.districtworkList;
-
-        for (int i = 0; i < districtworkList.length; i++) {
-          for (int j = 0; j < work_details.length; j++) {
-            if (work_details[j][s.key_dcode].toString() ==
-                districtworkList[i][s.key_dcode]) {
-              if (work_details[j][s.key_status_id] == 1) {
-                tempsatisfied_count = tempsatisfied_count + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempunSatisfied_count = tempunSatisfied_count + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempneedImprovement_count = tempneedImprovement_count + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-          }
-
-          int tempTotCount = tempsatisfied_count +
-              tempunSatisfied_count +
-              tempneedImprovement_count;
-
-          if (tempTotCount > 0) {
-            districtDashboard = {
-              s.key_dcode: districtworkList[i][s.key_dcode],
-              s.key_dname: districtworkList[i][s.key_dname],
-              s.total_inspected_works: tempTotCount,
-              s.key_satisfied: tempsatisfied_count,
-              s.key_unsatisfied: tempunSatisfied_count,
-              s.key_need_improvement: tempneedImprovement_count
-            };
-
-            defaultWorklist.add(districtDashboard);
-            isPiechartAvailable = true;
-            stateTableUI = true;
-            isWorklistAvailable = false;
-            tempsatisfied_count = 0;
-            tempunSatisfied_count = 0;
-            tempneedImprovement_count = 0;
-          }
-        }
-      }
-
-      if (districtUI) {
-        List blockworkList = controllerOverall.blockworkList;
-
-        for (int i = 0; i < blockworkList.length; i++) {
-          for (int j = 0; j < work_details.length; j++) {
-            if (work_details[j][s.key_dcode].toString() ==
-                    blockworkList[i][s.key_dcode] &&
-                work_details[j][s.key_bcode].toString() ==
-                    blockworkList[i][s.key_bcode]) {
-              if (work_details[j][s.key_status_id] == 1) {
-                tempsatisfied_count = tempsatisfied_count + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempunSatisfied_count = tempunSatisfied_count + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempneedImprovement_count = tempneedImprovement_count + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-          }
-
-          int tempTotCount = tempsatisfied_count +
-              tempunSatisfied_count +
-              tempneedImprovement_count;
-
-          if (tempTotCount > 0) {
-            blockDashboard = {
-              s.key_dcode: blockworkList[i][s.key_dcode],
-              s.key_bcode: blockworkList[i][s.key_bcode],
-              s.key_bname: blockworkList[i][s.key_bname],
-              s.total_inspected_works: tempTotCount,
-              s.key_satisfied: tempsatisfied_count,
-              s.key_unsatisfied: tempunSatisfied_count,
-              s.key_need_improvement: tempneedImprovement_count
-            };
-
-            defaultWorklist.add(blockDashboard);
-            isPiechartAvailable = true;
-            isWorklistAvailable = false;
-
-            tempsatisfied_count = 0;
-            tempunSatisfied_count = 0;
-            tempneedImprovement_count = 0;
-          }
-        }
-      }
-
-      if (blockUI) {
-        List villageworkList = controllerOverall.villageworkList;
-
-        for (int i = 0; i < villageworkList.length; i++) {
-          for (int j = 0; j < work_details.length; j++) {
-            if (work_details[j][s.key_dcode].toString() ==
-                    villageworkList[i][s.key_dcode] &&
-                work_details[j][s.key_bcode].toString() ==
-                    villageworkList[i][s.key_bcode] &&
-                work_details[j][s.key_pvcode].toString() ==
-                    villageworkList[i][s.key_pvcode]) {
-              if (work_details[j][s.key_status_id] == 1) {
-                tempsatisfied_count = tempsatisfied_count + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempunSatisfied_count = tempunSatisfied_count + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempneedImprovement_count = tempneedImprovement_count + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-          }
-          int tempTotCount = tempsatisfied_count +
-              tempunSatisfied_count +
-              tempneedImprovement_count;
-
-          if (tempTotCount > 0) {
-            villageDashboard = {
-              s.key_dcode: villageworkList[i][s.key_dcode],
-              s.key_bcode: villageworkList[i][s.key_bcode],
-              s.key_pvcode: villageworkList[i][s.key_pvcode],
-              s.key_pvname: villageworkList[i][s.key_pvname],
-              s.total_inspected_works: tempTotCount,
-              s.key_satisfied: tempsatisfied_count,
-              s.key_unsatisfied: tempunSatisfied_count,
-              s.key_need_improvement: tempneedImprovement_count
-            };
-
-            defaultWorklist.add(villageDashboard);
-            isPiechartAvailable = true;
-            isWorklistAvailable = true;
-            tempsatisfied_count = 0;
-            tempunSatisfied_count = 0;
-            tempneedImprovement_count = 0;
-          }
-        }
-      }
-
-      if (urbanworkListUI) {
-        List TMCworkList = controllerOverall.TMCworkList;
-
-        String dynamicTMC_workList_ID = "";
-        if (tmcType == "T") {
-          dynamicTMC_workList_ID = s.key_tpcode;
-          dynamicTMC_ID = s.key_townpanchayat_id;
-          dynamicTMC_Name = s.key_townpanchayat_name;
-        }
-        if (tmcType == "M") {
-          dynamicTMC_workList_ID = s.key_muncode;
-          dynamicTMC_ID = s.key_municipality_id;
-          dynamicTMC_Name = s.key_municipality_name;
-        }
-        if (tmcType == "C") {
-          dynamicTMC_workList_ID = s.key_corcode;
-          dynamicTMC_ID = s.key_corporation_id;
-          dynamicTMC_Name = s.key_corporation_name;
-        }
-
-        for (int i = 0; i < TMCworkList.length; i++) {
-          for (int j = 0; j < work_details.length; j++) {
-            if (work_details[j][s.key_dcode].toString() ==
-                    TMCworkList[i][s.key_dcode] &&
-                work_details[j][dynamicTMC_workList_ID].toString() ==
-                    TMCworkList[i][dynamicTMC_ID]) {
-              if (work_details[j][s.key_status_id] == 1) {
-                tempsatisfied_count = tempsatisfied_count + 1;
-                satisfied_count = satisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 2) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempunSatisfied_count = tempunSatisfied_count + 1;
-                unSatisfied_count = unSatisfied_count + 1;
-              } else if (work_details[j][s.key_status_id] == 3) {
-                if (work_details[j][s.key_action_status] == "N") {
-                  ATR_count = ATR_count + 1;
-                }
-                tempneedImprovement_count = tempneedImprovement_count + 1;
-                needImprovement_count = needImprovement_count + 1;
-              }
-            }
-          }
-
-          int tempTotCount = tempsatisfied_count +
-              tempunSatisfied_count +
-              tempneedImprovement_count;
-
-          if (tempTotCount > 0) {
-            tmcDashboard = {
-              s.key_dcode: TMCworkList[i][s.key_dcode],
-              dynamicTMC_ID: TMCworkList[i][dynamicTMC_ID],
-              dynamicTMC_Name: TMCworkList[i][dynamicTMC_Name],
-              s.key_town_type: tmcType,
-              s.total_inspected_works: tempTotCount,
-              s.key_satisfied: tempsatisfied_count,
-              s.key_unsatisfied: tempunSatisfied_count,
-              s.key_need_improvement: tempneedImprovement_count
-            };
-
-            defaultWorklist.add(tmcDashboard);
-            isWorklistAvailable = true;
-            isPiechartAvailable = false;
-            tempsatisfied_count = 0;
-            tempunSatisfied_count = 0;
-            tempneedImprovement_count = 0;
-          }
-        }
-      }
-
-      int tot_count =
-          satisfied_count + unSatisfied_count + needImprovement_count;
-
-      setState(() {
-        sCount = satisfied_count.toString();
-        usCount = unSatisfied_count.toString();
-        nimpCount = needImprovement_count.toString();
-        atrCount = ATR_count.toString();
-        totalWorksCount = tot_count.toString();
-      });
-    }
-    utils.hideProgress(context);
-  }
-
-  // *************************************** Modifiy UI ends here *************************************** //
 }
 
 class ChartData {

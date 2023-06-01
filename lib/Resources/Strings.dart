@@ -44,7 +44,7 @@ String inspection_status = "Inspection Status";
 String total_inspection_done_by_you = "Total inspection done by you";
 String edit_profile = "Edit Profile";
 String edit_profile_success = "Profile Updated Successfully!";
-String over_all_inspection_report = "View all inspected works in";
+String over_all_inspection_report = "View all inspected works in ";
 String user_name_empty = "User Name is Empty";
 String password_empty = "User Password is Empty";
 String software_designed_and = "Software Designed & Developed By NIC";
@@ -209,6 +209,7 @@ String selectedDistrict = "Selected District";
 String selected_village = "Selected Village";
 String selected_scheme = "Selected Scheme";
 String total_inspected_works = "Total Inspected Works()";
+String totalcount = "totalcount";
 String save_success = "Your Data Save Successfully!";
 String pending_list = "Pending List";
 String inspection_id = "Inspection ID";
@@ -355,6 +356,8 @@ String key_from_date = "from_date";
 String key_to_date = "to_date";
 String key_rural_urban = "rural_urban";
 String key_inspection_details = "inspection_details";
+String key_level_wise_report = "level_wise_report";
+String key_status_wise_count = "status_wise_count";
 String key_other_inspection_details = "other_inspection_details";
 String key_other_work_inspection_id = "other_work_inspection_id";
 String key_other_work_name = "other_work_detail";
@@ -464,6 +467,7 @@ String service_key_overall_inspection_details_for_atr =
 String service_key_date_wise_inspection_action_taken_details_view =
     "date_wise_inspection_action_taken_details_view";
 String service_key_get_action_taken_work_pdf = "get_action_taken_work_pdf";
+String service_key_overall_report = "overall_report";
 String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
 

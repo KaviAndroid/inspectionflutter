@@ -13,7 +13,6 @@ import 'package:inspection_flutter_app/Activity/Login.dart';
 import 'package:inspection_flutter_app/Activity/ViewSavedATRReport.dart';
 import 'package:inspection_flutter_app/Activity/ViewSavedOther.dart';
 import 'package:inspection_flutter_app/Activity/ViewSavedRDPRReport.dart';
-import 'package:inspection_flutter_app/Activity/View_OverallReport.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -22,6 +21,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/ForgotPassword.dart';
 import '../Activity/Registration.dart';
+import '../Activity/View_Overall_Report_New.dart';
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
 
@@ -316,7 +316,7 @@ class _DrawerAppState extends State<DrawerApp> {
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ViewOverallReport(flag: level),
+                          builder: (context) => Overall_Report_new(flag: level),
                         ));
                         print("### FLAG #### $level");
                       },
@@ -333,7 +333,7 @@ class _DrawerAppState extends State<DrawerApp> {
                               width: 10,
                             ),
                             Text(
-                              level=="S"?s.over_all_inspection_report+level_value:level=="B"?s.over_all_inspection_report + level_value:s.over_all_inspection_report+level_value,
+                              "${s.over_all_inspection_report}\n$level_value",
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: c.darkblue,

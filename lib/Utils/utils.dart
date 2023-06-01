@@ -1188,10 +1188,8 @@ class Utils {
       List<int> bytes = base64.decode(head_sign);
 
       signature = utf8.decode(bytes);
-    } on JWTExpiredException {
-      print('jwt expired');
-    } on JWTException catch (e) {
-      print(e.message);
+    } on Exception catch (e) {
+      print(e);
     }
 
     return signature;

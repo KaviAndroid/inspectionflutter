@@ -1348,7 +1348,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> callApis() async {
-    getProfileData();
+    // getProfileData();
     getPhotoCount();
     getFinYearList();
     getInspection_statusList();
@@ -1610,7 +1610,7 @@ class _HomeState extends State<Home> {
       } else {
         utils
             .customAlert(context, "E", s.jsonError)
-            .then((value) async => await getProfileData());
+           /* .then((value) async => await getProfileData())*/;
         print("ProfileData responceSignature - Token Not Verified");
       }
     }

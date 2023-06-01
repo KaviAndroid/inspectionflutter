@@ -895,10 +895,14 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                     )),
                                            ),*/
                                             child: Text(
-                                              utils.splitStringByLength(
+                                              defaultWorklist[index]
+                                              [s.key_name].length > 25 ? defaultWorklist[index]
+                                              [s.key_name].substring(0, 25)+'...' : defaultWorklist[index]
+                                              [s.key_name],
+                                             /* utils.splitStringByLength(
                                                   defaultWorklist[index]
                                                       [s.key_name],
-                                                  35),
+                                                  35),*/
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,

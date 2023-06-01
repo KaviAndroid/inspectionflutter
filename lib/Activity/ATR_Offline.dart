@@ -929,7 +929,11 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             ),
                                             Text(
                                               defaultWorklist[index]
-                                                  [s.inspection_by_officer],
+                                              [s.inspection_by_officer].length > 25 ? defaultWorklist[index]
+                                              [s.inspection_by_officer].substring(0, 25)+'...' : defaultWorklist[index]
+                                              [s.inspection_by_officer],
+                                            /*  defaultWorklist[index]
+                                                  [s.inspection_by_officer],*/
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,

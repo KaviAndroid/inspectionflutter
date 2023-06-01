@@ -344,10 +344,14 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                     )),
                                           ),*/
                                           Text(
-                                            utils.splitStringByLength(
+                                            defaultWorklist[index]
+                                            [s.key_name].length > 25 ? defaultWorklist[index]
+                                            [s.key_name].substring(0, 25)+'...' : defaultWorklist[index]
+                                            [s.key_name],
+                                            /*utils.splitStringByLength(
                                                 defaultWorklist[index]
                                                     [s.key_name],
-                                                25),
+                                                30),*/
                                             style: TextStyle(
                                                 fontSize: 13.5,
                                                 fontWeight: FontWeight.w700,

@@ -1151,28 +1151,22 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Container(
-              height: 400,
-              margin: EdgeInsets.all(30),
-              child: Material(
+          return AlertDialog(
+              title: Text(
+                msg,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: c.grey_10,
+                    fontSize: 15),
+                textAlign: TextAlign.start,
+              ),
+              content:Container(
+                height: 400,
+                width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      alignment: AlignmentDirectional.topStart,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Text(
-                          msg,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: c.grey_10,
-                              fontSize: 15),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
@@ -1232,7 +1226,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                         child: Container(
                           alignment: AlignmentDirectional.bottomEnd,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                             child: Text(
                               s.key_ok,
                               style: TextStyle(
@@ -1256,28 +1250,22 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Container(
-              height: 400,
-              margin: EdgeInsets.all(15),
-              child: Material(
-                  child: Column(
+          return AlertDialog(
+              title: Text(
+                msg,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: c.grey_10,
+                    fontSize: 15),
+                textAlign: TextAlign.start,
+              ),
+                  content:Container(
+          height: 400,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    alignment: AlignmentDirectional.topStart,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Text(
-                        msg,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: c.grey_10,
-                            fontSize: 15),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -1460,8 +1448,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
 
   Future<void> loadVillageList(String dcode, String bcode) async {
     utils.showProgress(context, 1);
-    dFlag = true;
-    bFlag = true;
     vFlag = true;
     vList.clear();
     List<Map> list = await dbClient.rawQuery('SELECT * FROM ' +
@@ -1527,8 +1513,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       var userData = jsonDecode(decrpt_data);
       var status = userData[s.key_status];
       var response_value = userData[s.key_response];
-      dFlag = true;
-      bFlag = true;
       vFlag = true;
       vList.clear();
       if (status == s.key_ok && response_value == s.key_ok) {
@@ -1635,8 +1619,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
           if (res_jsonArray.length > 0) {
             for (int i = 0; i < res_jsonArray.length; i++) {
               String schName = res_jsonArray[i][s.key_scheme_name];
-              if (schName.length >= 38) {
-                schName = utils.splitStringByLength(schName, 38);
+              if (schName.length >= 30) {
+                schName = utils.splitStringByLength(schName, 30);
               }
               schemeList.add(FlutterLimitedCheckBoxModel(
                   isSelected: false,

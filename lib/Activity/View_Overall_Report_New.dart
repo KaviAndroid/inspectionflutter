@@ -37,6 +37,8 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
 
   //Date Time
   List<DateTime>? selectedDateRange;
+  DateTime? startDate;
+  DateTime? endDate;
 
   //List
   late List<ChartData> data;
@@ -241,13 +243,12 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
           await controllerOverall.fetchOnlineOverallWroklist(
               from_Date, to_Date, "tmc", context, selectedDcode, "0");
         }
-        setState(() {});
       }
       setState(() {});
     }
   }
 
-  Future<void> selectDateFunc() async {
+  Future<void> _selectDateRange() async {
     selectedDateRange = await showOmniDateTimeRangePicker(
       context: context,
       type: OmniDateTimePickerType.date,
@@ -313,7 +314,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                     ? __blockTable()
                     : const SizedBox(),
                 controllerOverall.villageTableUI
-                    ? __workListLoder()
+                    ? _Village_TMCList()
                     : const SizedBox(),
               ],
             ),
@@ -1169,7 +1170,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
 
   // ************************************* Village Worklist Loder Design ********************************* //
 
-  __workListLoder() {
+  _Village_TMCList() {
     return Center(
       child: Container(
         margin: EdgeInsets.only(top: 10),
@@ -1389,6 +1390,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                             ViewWorklist(
                                                               worklist: item,
                                                               flag: "S",
+                                                              tmcType: tmcType,
                                                               fromDate:
                                                                   from_Date,
                                                               toDate: to_Date,
@@ -1451,6 +1453,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                             ViewWorklist(
                                                               worklist: item,
                                                               flag: "US",
+                                                              tmcType: tmcType,
                                                               fromDate:
                                                                   from_Date,
                                                               toDate: to_Date,
@@ -1513,6 +1516,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                             ViewWorklist(
                                                               worklist: item,
                                                               flag: "NI",
+                                                              tmcType: tmcType,
                                                               fromDate:
                                                                   from_Date,
                                                               toDate: to_Date,
@@ -1722,7 +1726,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                           color: c.calender_color,
                           iconSize: 18,
                           onPressed: () async {
-                            selectDateFunc();
+                            _selectDateRange();
                           },
                           icon: const Icon(Icons.calendar_month_rounded))),
                   Expanded(
@@ -1756,7 +1760,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                       readOnly:
                           true, //set it true, so that user will not able to edit text
                       onTap: () async {
-                        selectDateFunc();
+                        _selectDateRange();
                       },
                     ),
                   ),

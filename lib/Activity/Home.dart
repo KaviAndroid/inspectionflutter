@@ -1608,9 +1608,8 @@ class _HomeState extends State<Home> {
         }
         utils.hideProgress(context);
       } else {
-        utils
-            .customAlert(context, "E", s.jsonError)
-           /* .then((value) async => await getProfileData())*/;
+        utils.customAlert(context, "E",
+            s.jsonError) /* .then((value) async => await getProfileData())*/;
         print("ProfileData responceSignature - Token Not Verified");
       }
     }
@@ -2338,9 +2337,6 @@ class _HomeState extends State<Home> {
         }
         utils.hideProgress(context);
       } else {
-        utils
-            .customAlert(context, "E", s.jsonError)
-            .then((value) async => await getAll_Stage());
         print("WorkStages responceSignature - Token Not Verified");
       }
     }
@@ -2497,7 +2493,8 @@ class _HomeState extends State<Home> {
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                         ))),
                                     onPressed: () {
                                       dbHelper.deleteAll();
@@ -2536,7 +2533,8 @@ class _HomeState extends State<Home> {
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                         ))),
                                     onPressed: () {
                                       Navigator.pop(context, false);

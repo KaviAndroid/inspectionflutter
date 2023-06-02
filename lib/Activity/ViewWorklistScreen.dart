@@ -18,8 +18,9 @@ import 'ATR_Save.dart';
 import 'Pdf_Viewer.dart';
 
 class ViewWorklist extends StatefulWidget {
-  final worklist, flag, fromDate, toDate;
-  ViewWorklist({this.worklist, this.flag, this.fromDate, this.toDate});
+  final worklist, flag, fromDate, toDate, tmcType;
+  ViewWorklist(
+      {this.worklist, this.flag, this.fromDate, this.toDate, this.tmcType});
 
   @override
   State<ViewWorklist> createState() => _ViewWorklistState();
@@ -65,7 +66,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
 
     print("object >>>> $myWorklist");
 
-    // await fetchOnlineOverallWroklist(widget.fromDate, widget.toDate);
+    await fetchOnlineOverallWroklist(widget.fromDate, widget.toDate);
 
     await __ModifiyUI();
 
@@ -73,6 +74,120 @@ class _ViewWorklistState extends State<ViewWorklist> {
   }
 
   // ************************************* UI Changes Starts here ************************************ //
+
+  Future<void> fetchOnlineOverallWroklist(
+      String fromDate, String toDate) async {
+    try {
+      utils.showProgress(context, 1);
+
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
+
+      var rural_urban = prefs.getString(s.key_rural_urban);
+
+      String statusID = "";
+      String tmcID = "";
+
+      if (widget.flag == "S") statusID = "1";
+      if (widget.flag == "US") statusID = "2";
+      if (widget.flag == "NI") statusID = "3";
+
+      if (widget.tmcType == "T") tmcID = myWorklist[s.key_tpcode].toString();
+      if (widget.tmcType == "M") tmcID = myWorklist[s.key_muncode].toString();
+      if (widget.tmcType == "C") tmcID = myWorklist[s.key_corcode].toString();
+
+      Map jsonRequest = {
+        s.key_service_id: s.service_key_overall_report_for_atr,
+        s.key_from_date: fromDate,
+        s.key_to_date: toDate,
+        s.key_rural_urban: rural_urban,
+        s.key_dcode: myWorklist[s.key_dcode],
+        s.key_status_id: statusID,
+        if (rural_urban == "R") s.key_bcode: myWorklist[s.key_bcode],
+        if (rural_urban == "R") s.key_pvcode: myWorklist[s.key_pvcode],
+        if (rural_urban == "U") s.key_tmc_type: widget.tmcType,
+        if (rural_urban == "U") s.key_tmc_id: tmcID,
+      };
+
+      Map encrypted_request = {
+        s.key_user_name: prefs.getString(s.key_user_name),
+        s.key_data_content: jsonRequest,
+      };
+
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+
+      print("OverallWroklist_request_encrpt>>" + jsonEncode(encrypted_request));
+
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
+      };
+      HttpClient _client = HttpClient(context: await Utils().globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
+
+      print("OverallWroklist_url>>" + url.main_service_jwt.toString());
+      print("OverallWroklist_request_json>>" + jsonRequest.toString());
+      print("OverallWroklist_request_encrpt>>" + encrypted_request.toString());
+
+      utils.hideProgress(context);
+      if (response.statusCode == 200) {
+        String data = response.body;
+
+        print("OverallWroklist_response>>" + data);
+
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("OverallWroklist Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("OverallWroklist responceSignature -  $responceSignature");
+
+        print("OverallWroklist responceData -  $responceData");
+
+        if (responceSignature == responceData) {
+          print("OverallWroklist responceSignature - Token Verified");
+          var userData = jsonDecode(data);
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+
+          if (status == s.key_ok && response_value == s.key_ok) {
+            List<dynamic> work_details = [];
+
+            Map res_jsonArray = userData[s.key_json_data];
+            work_details = res_jsonArray[s.key_inspection_details];
+
+            defaultWorklist.addAll(work_details);
+            if (defaultWorklist.isNotEmpty) {
+              isWorklistAvailable = true;
+            }
+          } else if (status == s.key_ok && response_value == s.key_noRecord) {
+            utils.customAlert(context, "E", s.no_data);
+          }
+        } else {
+          print("OverallWroklist responceSignature - Token Not Verified");
+          utils.customAlert(context, "E", s.jsonError);
+        }
+      }
+    } catch (e) {
+      if (e is FormatException) {
+        utils.customAlert(context, "E", s.jsonError);
+      }
+      print(e);
+    }
+  }
 
   __ModifiyUI() {
     utils.showProgress(context, 1);
@@ -344,10 +459,15 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                     )),
                                           ),*/
                                           Text(
-                                            defaultWorklist[index]
-                                            [s.key_name].length > 25 ? defaultWorklist[index]
-                                            [s.key_name].substring(0, 25)+'...' : defaultWorklist[index]
-                                            [s.key_name],
+                                            defaultWorklist[index][s.key_name]
+                                                        .length >
+                                                    25
+                                                ? defaultWorklist[index]
+                                                            [s.key_name]
+                                                        .substring(0, 25) +
+                                                    '...'
+                                                : defaultWorklist[index]
+                                                    [s.key_name],
                                             /*utils.splitStringByLength(
                                                 defaultWorklist[index]
                                                     [s.key_name],

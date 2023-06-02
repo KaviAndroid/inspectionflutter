@@ -366,6 +366,8 @@ String key_inspection_date = "inspection_date";
 String key_ins_date = "ins_date";
 String key_description = "description";
 String key_town_type = "town_type";
+String key_tmc_type = "tmc_type";
+String key_tmc_id = "tmc_id";
 String key_hab_code = "hab_code";
 String key_type = "type";
 String key_date = "date";
@@ -468,6 +470,7 @@ String service_key_date_wise_inspection_action_taken_details_view =
     "date_wise_inspection_action_taken_details_view";
 String service_key_get_action_taken_work_pdf = "get_action_taken_work_pdf";
 String service_key_overall_report = "overall_report";
+String service_key_overall_report_for_atr = "overall_report_for_atr";
 String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
 

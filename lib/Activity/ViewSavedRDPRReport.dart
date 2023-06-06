@@ -887,9 +887,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                       FontWeight
                                                                           .normal,
                                                                   fontSize: 13,
-                                                                  color: townActive
-                                                                      ? c.white
-                                                                      : c.grey_6)),
+                                                                  color: c.white)),
                                                         ),
                                                         /*  Expanded(
                                                           flex: 1,

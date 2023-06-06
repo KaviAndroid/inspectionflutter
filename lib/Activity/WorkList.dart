@@ -1768,7 +1768,7 @@ class _WorkListState extends State<WorkList> {
                                                                                       flex: 1,
                                                                                       child: Text(
                                                                                         progressList[index][s.key_date].toString(),
-                                                                                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
+                                                                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: c.grey_8),
                                                                                         overflow: TextOverflow.clip,
                                                                                         maxLines: 1,
                                                                                         softWrap: true,

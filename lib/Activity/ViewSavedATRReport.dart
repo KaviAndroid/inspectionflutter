@@ -518,14 +518,13 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        if (workid.text.isNotEmpty) {
-                          dateController.text = "";
-                          workid.text = "";
-                          getWorkDetails(from_Date, to_Date);
-                        } else {
-                          utils.showAlert(context, "Please enter a Work Id");
-                        }
-                      },
+                if (workid.text.isNotEmpty) {
+                getWorkDetails(from_Date, to_Date);
+                } else {
+                utils.showAlert(
+                context, "Please enter a Work Id");
+                }
+                },
                       child: Icon(
                         Icons.arrow_forward_ios,
                         color: c.white,
@@ -1112,8 +1111,6 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {
     if (await utils.isOnline()) {
-      String? key = prefs.getString(s.userPassKey);
-      String? userName = prefs.getString(s.key_user_name);
       utils.showProgress(context, 1);
       prefs = await SharedPreferences.getInstance();
       setState(() {
@@ -1123,9 +1120,12 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         isSatisfiedActive = false;
         isNeedImprovementActive = false;
         isUnSatisfiedActive = false;
+        isPiechartLoading = false;
       });
 
       late Map json_request;
+      String? key = prefs.getString(s.userPassKey);
+      String? userName = prefs.getString(s.key_user_name);
       work_id = workid.text.toString();
       if (!work_id.isEmpty) {
         json_request = {
@@ -1261,7 +1261,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
               }
             }
             isSpinnerLoading = false;
-            isPiechartLoading = true;
+            isPiechartLoading = false;
             isWorklistAvailable = true;
           });
         } else if (status == s.key_ok && response_value == s.key_noRecord) {

@@ -171,21 +171,23 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               onPressed: () async {
                                 if (!mobile_number.text.isEmpty) {
                                   if (mobile_number.text.length != 10) {
-                                    utils.showToast(context,
+                                    utils.showAlert(context,
                                         s.mobile_number_must_be_of_10_digits);
                                   } else {
                                     if (await utils.isOnline()) {
                                       // print("Isforgotpassword"+widget.isForgotPassword);
-                                      if (widget.isForgotPassword ==
-                                          "forgot_password") {
-                                        print("Isforgotpassword   " +
-                                            widget.isForgotPassword);
-                                        FORGOT_PASSWORD_send_otp();
-                                      } else if (widget.isForgotPassword ==
-                                          "change_password") {
-                                        change_password_send_otpParams();
-                                      } else {
-                                        sendOtp(mobile_number.text.toString());
+                                      if(utils.isNumberValid(mobile_number.text)){
+                                        if (widget.isForgotPassword ==
+                                            "forgot_password") {
+                                          print("Isforgotpassword   " +
+                                              widget.isForgotPassword);
+                                          FORGOT_PASSWORD_send_otp();
+                                        } else if (widget.isForgotPassword ==
+                                            "change_password") {
+                                          change_password_send_otpParams();
+                                        } else {
+                                          sendOtp(mobile_number.text.toString());
+                                        }
                                       }
                                     }
                                   }

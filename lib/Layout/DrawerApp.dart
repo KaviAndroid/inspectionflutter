@@ -333,12 +333,12 @@ class _DrawerAppState extends State<DrawerApp> {
                               width: 10,
                             ),
                             Text(
-                              "${s.over_all_inspection_report}\n$level_value",
+                             s.over_all_inspection_report,
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: c.darkblue,
                                   fontSize: 13),
-                              textAlign: TextAlign.center,
+
                             ),
                           ]),
                     )),

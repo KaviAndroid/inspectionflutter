@@ -523,7 +523,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                                     ),
                                                                     Expanded(
                                                                       flex: 1,
-                                                                      child: Text(widget.selectedATRWorkList[index][s.key_work_name],
+                                                                      child: Text(widget.selectedATRWorkList[index][s.key_work_name].toString(),
                                                                           style: TextStyle(
                                                                               color: c.black),
                                                                           maxLines: 4),

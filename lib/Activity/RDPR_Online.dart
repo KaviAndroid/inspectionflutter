@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/Delayed_Work_Filter_Screen.dart';
 import 'package:inspection_flutter_app/Activity/RdprOnlineWorkListFromFilter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -256,7 +257,49 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                             ),
                           ),
                         ]),
-                  )
+                  ),
+                  // SizedBox(
+                  //   height: 50,
+                  // ),
+                  // InkWell(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => DelayedWorkFilterScreen()));
+                  //   },
+                  //   child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       crossAxisAlignment: CrossAxisAlignment.center,
+                  //       children: <Widget>[
+                  //         Align(
+                  //           alignment: Alignment.center,
+                  //           child: Container(
+                  //             padding: EdgeInsets.all(1.0),
+                  //             decoration: BoxDecoration(
+                  //                 shape: BoxShape.circle,
+                  //                 border:
+                  //                     Border.all(color: c.grey, width: 1.4)),
+                  //             child: Image.asset(
+                  //               imagePath.delay_works,
+                  //               fit: BoxFit.contain,
+                  //               height: 70,
+                  //               width: 70,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         Container(
+                  //           margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                  //           child: Text(
+                  //             s.delay_work_in_block,
+                  //             style: TextStyle(
+                  //                 color: c.grey_7,
+                  //                 fontWeight: FontWeight.bold,
+                  //                 fontSize: 15),
+                  //           ),
+                  //         ),
+                  //       ]),
+                  // )
                 ])),
       ),
     );

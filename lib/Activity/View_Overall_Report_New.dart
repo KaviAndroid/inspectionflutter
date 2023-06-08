@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, camel_case_types, prefer_const_constructors, use_build_context_synchronously
 
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -8,7 +9,6 @@ import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:intl/intl.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -36,9 +36,8 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
   ScrollController scrollController = ScrollController();
 
   //Date Time
-  List<DateTime>? selectedDateRange;
-  DateTime? startDate;
-  DateTime? endDate;
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
 
   //List
   late List<ChartData> data;
@@ -184,99 +183,59 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
   // *************************** Date  Functions Starts here *************************** //
 
   Future<void> dateValidation() async {
-    if (selectedDateRange != null) {
-      DateTime sD = selectedDateRange![0];
-      DateTime eD = selectedDateRange![1];
+    from_Date = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
+    to_Date = DateFormat('dd-MM-yyyy').format(selectedToDate!);
 
-      from_Date = DateFormat('dd-MM-yyyy').format(sD);
-      to_Date = DateFormat('dd-MM-yyyy').format(eD);
+    dateController.text = "$from_Date  To  $to_Date";
 
-      if (sD.compareTo(eD) == 1) {
-        utils.customAlert(
-            context, "E", "End Date should be greater than Start Date");
+    if (controllerOverall.districtTableUI) {
+      controllerOverall.PieUpdation("Tamil Nadu", "S");
+
+      await controllerOverall.fetchOnlineOverallWroklist(
+          from_Date, to_Date, "D", context, "0", "0");
+    }
+
+    if (controllerOverall.BlockTableUI) {
+      controllerOverall.PieUpdation(selectedDname, "D");
+
+      await controllerOverall.fetchOnlineOverallWroklist(
+          from_Date, to_Date, "B", context, selectedDcode, "0");
+    }
+
+    if (controllerOverall.villageTableUI) {
+      if (prefs.getString(s.key_rural_urban) == "R") {
+        controllerOverall.PieUpdation(selectedBname, "B");
+
+        await controllerOverall.fetchOnlineOverallWroklist(
+            from_Date, to_Date, "V", context, selectedDcode, selectedBcode);
       } else {
-        dateController.text = "$from_Date  To  $to_Date";
-
-        if (controllerOverall.districtTableUI) {
-          controllerOverall.PieUpdation("Tamil Nadu", "S");
-
-          await controllerOverall.fetchOnlineOverallWroklist(
-              from_Date, to_Date, "D", context, "0", "0");
-        }
-
-        if (controllerOverall.BlockTableUI) {
+        if (tmcType == "T") {
           controllerOverall.PieUpdation(selectedDname, "D");
 
           await controllerOverall.fetchOnlineOverallWroklist(
-              from_Date, to_Date, "B", context, selectedDcode, "0");
-        }
-
-        if (controllerOverall.villageTableUI) {
-          if (prefs.getString(s.key_rural_urban) == "R") {
-            controllerOverall.PieUpdation(selectedBname, "B");
-
-            await controllerOverall.fetchOnlineOverallWroklist(
-                from_Date, to_Date, "V", context, selectedDcode, selectedBcode);
-          } else {
-            if (tmcType == "T") {
-              controllerOverall.PieUpdation(selectedDname, "D");
-
-              await controllerOverall.fetchOnlineOverallWroklist(
-                  from_Date, to_Date, "T", context, selectedDcode, "0");
-            } else if (tmcType == "M") {
-              controllerOverall.PieUpdation(selectedDname, "D");
-
-              await controllerOverall.fetchOnlineOverallWroklist(
-                  from_Date, to_Date, "M", context, selectedDcode, "0");
-            } else if (tmcType == "C") {
-              controllerOverall.PieUpdation(selectedDname, "D");
-
-              await controllerOverall.fetchOnlineOverallWroklist(
-                  from_Date, to_Date, "C", context, selectedDcode, "0");
-            }
-          }
-        }
-
-        if (controllerOverall.TMCTableUI) {
+              from_Date, to_Date, "T", context, selectedDcode, "0");
+        } else if (tmcType == "M") {
           controllerOverall.PieUpdation(selectedDname, "D");
 
           await controllerOverall.fetchOnlineOverallWroklist(
-              from_Date, to_Date, "tmc", context, selectedDcode, "0");
+              from_Date, to_Date, "M", context, selectedDcode, "0");
+        } else if (tmcType == "C") {
+          controllerOverall.PieUpdation(selectedDname, "D");
+
+          await controllerOverall.fetchOnlineOverallWroklist(
+              from_Date, to_Date, "C", context, selectedDcode, "0");
         }
       }
-      setState(() {});
     }
-  }
 
-  Future<void> _selectDateRange() async {
-    selectedDateRange = await showOmniDateTimeRangePicker(
-      context: context,
-      type: OmniDateTimePickerType.date,
-      startInitialDate: DateTime.now().subtract(const Duration(days: 60)),
-      startFirstDate: DateTime(2000).subtract(const Duration(days: 3652)),
-      startLastDate: DateTime.now(),
-      endInitialDate: DateTime.now(),
-      endLastDate: DateTime.now(),
-      borderRadius: const BorderRadius.all(Radius.circular(16)),
-      constraints: const BoxConstraints(
-        maxWidth: 350,
-        maxHeight: 650,
-      ),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return FadeTransition(
-          opacity: anim1.drive(
-            Tween(
-              begin: 0,
-              end: 1,
-            ),
-          ),
-          child: child,
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 200),
-      barrierDismissible: true,
-    );
-    dateValidation();
+    if (controllerOverall.TMCTableUI) {
+      controllerOverall.PieUpdation(selectedDname, "D");
+
+      await controllerOverall.fetchOnlineOverallWroklist(
+          from_Date, to_Date, "tmc", context, selectedDcode, "0");
+    }
+
+    setState(() {});
   }
 
   // *************************** Date  Functions Ends here *************************** //
@@ -389,7 +348,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                   child: Icon(Icons.arrow_back_ios_new_rounded,
                                       size: 15, color: c.white),
                                 ),
-                                Text(s.block,
+                                Text(s.town_type,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: c.white,
@@ -1726,7 +1685,14 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                           color: c.calender_color,
                           iconSize: 18,
                           onPressed: () async {
-                            _selectDateRange();
+                            utils.ShowCalenderDialog(context).then((value) => {
+                                  if (value['flag'])
+                                    {
+                                      selectedFromDate = value['fromDate'],
+                                      selectedToDate = value['toDate'],
+                                      dateValidation()
+                                    }
+                                });
                           },
                           icon: const Icon(Icons.calendar_month_rounded))),
                   Expanded(
@@ -1760,7 +1726,14 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                       readOnly:
                           true, //set it true, so that user will not able to edit text
                       onTap: () async {
-                        _selectDateRange();
+                        utils.ShowCalenderDialog(context).then((value) => {
+                              if (value['flag'])
+                                {
+                                  selectedFromDate = value['fromDate'],
+                                  selectedToDate = value['toDate'],
+                                  dateValidation()
+                                }
+                            });
                       },
                     ),
                   ),

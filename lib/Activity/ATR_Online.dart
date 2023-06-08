@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -30,9 +29,6 @@ class ATR_Worklist extends StatefulWidget {
 class _ATR_WorklistState extends State<ATR_Worklist> {
   Utils utils = Utils();
   late SharedPreferences prefs;
-
-  //Date Time
-  List<DateTime>? selectedDateRange;
 
   //Worklist
   List needImprovementWorkList = [];
@@ -57,6 +53,10 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   bool townActive = true;
   bool munActive = false;
   bool corpActive = false;
+
+  //Date Time
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
 
   //pdf
   Uint8List? pdf;
@@ -402,60 +402,15 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   // *************************** Date  Functions Starts here *************************** //
 
   Future<void> dateValidation() async {
-    if (selectedDateRange != null) {
-      DateTime sD = selectedDateRange![0];
-      DateTime eD = selectedDateRange![1];
+    String startDate = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
+    String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
 
-      String startDate = DateFormat('dd-MM-yyyy').format(sD);
-      String endDate = DateFormat('dd-MM-yyyy').format(eD);
-
-      if (sD.compareTo(eD) == 1) {
-        utils.showAlert(context, "End Date should be greater than Start Date");
-      } else {
-        if (await utils.isOnline()) {
-          dateController.text = "$startDate  To  $endDate";
-          fetchOnlineATRWroklist(startDate, endDate);
-        } else {
-          utils.customAlert(context, "E", s.no_internet);
-        }
-      }
+    if (await utils.isOnline()) {
+      dateController.text = "$startDate  To  $endDate";
+      fetchOnlineATRWroklist(startDate, endDate);
+    } else {
+      utils.customAlert(context, "E", s.no_internet);
     }
-  }
-
-  Future<void> selectDateFunc() async {
-    selectedDateRange = await showOmniDateTimeRangePicker(
-      context: context,
-      type: OmniDateTimePickerType.date,
-      startInitialDate: DateTime.now(),
-      startFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      startLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      endInitialDate: DateTime.now(),
-      endFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      endLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      borderRadius: const BorderRadius.all(Radius.circular(16)),
-      constraints: const BoxConstraints(
-        maxWidth: 350,
-        maxHeight: 650,
-      ),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return FadeTransition(
-          opacity: anim1.drive(
-            Tween(
-              begin: 0,
-              end: 1,
-            ),
-          ),
-          child: child,
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 200),
-      barrierDismissible: true,
-    );
-    dateValidation();
   }
 
   // *************************** Date  Functions Ends here *************************** //
@@ -620,7 +575,14 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                       color: c.calender_color,
                       iconSize: 18,
                       onPressed: () async {
-                        selectDateFunc();
+                        utils.ShowCalenderDialog(context).then((value) => {
+                              if (value['flag'])
+                                {
+                                  selectedFromDate = value['fromDate'],
+                                  selectedToDate = value['toDate'],
+                                  dateValidation()
+                                }
+                            });
                       },
                       icon: const Icon(Icons.calendar_month_rounded))),
               Expanded(
@@ -654,7 +616,14 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                   readOnly:
                       true, //set it true, so that user will not able to edit text
                   onTap: () async {
-                    selectDateFunc();
+                    utils.ShowCalenderDialog(context).then((value) => {
+                          if (value['flag'])
+                            {
+                              selectedFromDate = value['fromDate'],
+                              selectedToDate = value['toDate'],
+                              dateValidation()
+                            }
+                        });
                   },
                 ),
               ),
@@ -895,11 +864,16 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                     )),
                                            ),*/
                                             child: Text(
-                                              defaultWorklist[index]
-                                              [s.key_name].length > 25 ? defaultWorklist[index]
-                                              [s.key_name].substring(0, 25)+'...' : defaultWorklist[index]
-                                              [s.key_name],
-                                             /* utils.splitStringByLength(
+                                              defaultWorklist[index][s.key_name]
+                                                          .length >
+                                                      25
+                                                  ? defaultWorklist[index]
+                                                              [s.key_name]
+                                                          .substring(0, 25) +
+                                                      '...'
+                                                  : defaultWorklist[index]
+                                                      [s.key_name],
+                                              /* utils.splitStringByLength(
                                                   defaultWorklist[index]
                                                       [s.key_name],
                                                   35),*/

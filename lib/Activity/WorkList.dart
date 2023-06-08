@@ -609,24 +609,29 @@ class _WorkListState extends State<WorkList> {
                                     selectedMonth =
                                         defaultSelectedMonth['monthId']!;
                                     utils.hideSoftKeyBoard(context);
-                                    fetchWorkList('as', asController.text);
+                                    if (int.parse(asController.text) > 0) {
+                                      fetchWorkList('as', asController.text);
+                                    } else {
+                                      utils.customAlert(context, "E",
+                                          "Please Enter AS value");
+                                    }
                                   },
                                   child: Container(
                                     width: 25,
                                     height: 30,
                                     alignment: Alignment.centerRight,
-                                    decoration: new BoxDecoration(
+                                    decoration: BoxDecoration(
                                         color: c.colorPrimary,
                                         border: Border.all(
                                             width: 0, color: c.grey_10),
-                                        borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(0),
-                                          topRight: const Radius.circular(10),
-                                          bottomLeft: const Radius.circular(0),
-                                          bottomRight:
-                                              const Radius.circular(10),
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(0),
+                                          topRight: Radius.circular(10),
+                                          bottomLeft: Radius.circular(0),
+                                          bottomRight: Radius.circular(10),
                                         )),
-                                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 5, 5, 5),
                                     child: Image.asset(
                                       imagePath.right_arrow_icon,
                                       fit: BoxFit.contain,

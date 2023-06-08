@@ -16,6 +16,8 @@ class OverallWorklistController extends ChangeNotifier {
   List<dynamic>? workDetails;
   List<dynamic>? pieChartDetails;
 
+  DateTime? selectedDate;
+
   //DB CALL List
   List districtworkList = [];
   List villageworkList = [];
@@ -46,7 +48,6 @@ class OverallWorklistController extends ChangeNotifier {
   String? districtToDate;
   String? blockFromDate;
   String? blockToDate;
-
   String? urbanDistrictFromDate;
   String? urbanDistrictToDate;
   String? tmcFromDate;
@@ -95,6 +96,11 @@ class OverallWorklistController extends ChangeNotifier {
 
   List<dynamic> retrivepieChartDetails() {
     return pieChartDetails ?? [];
+  }
+
+  Future<void> setFirstDate(DateTime date) async {
+    selectedDate = date;
+    notifyListeners();
   }
 
   __ModifiyUI(String flag, String fromDate, String toDate) {

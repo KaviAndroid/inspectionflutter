@@ -16,7 +16,6 @@ import 'package:inspection_flutter_app/Activity/Work_detailed_ViewScreen.dart';
 import 'package:inspection_flutter_app/Layout/ReadMoreLess.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart' as loc;
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
@@ -49,7 +48,6 @@ class ViewSavedOther extends StatefulWidget {
 }
 
 class _ViewSavedOtherState extends State<ViewSavedOther> {
-  List<DateTime>? selectedDateRange;
   List workList = [];
   List selectedOtherworkList = [];
   List TownWorkList = [];
@@ -113,6 +111,10 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   TextEditingController dateController = TextEditingController();
   TextEditingController workid = TextEditingController();
   TextEditingController search = TextEditingController();
+
+  //Date Time
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
   @override
   void initState() {
     super.initState();
@@ -446,7 +448,14 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
               ),
               readOnly: true,
               onTap: () async {
-                selectDateFunc();
+                utils.ShowCalenderDialog(context).then((value) => {
+                      if (value['flag'])
+                        {
+                          selectedFromDate = value['fromDate'],
+                          selectedToDate = value['toDate'],
+                          dateValidation()
+                        }
+                    });
               }),
         ),
       ),
@@ -456,29 +465,17 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   Future<void> dateValidation() async {
     workList.clear();
     workid.clear();
-    if (selectedDateRange != null) {
-      DateTime sD = selectedDateRange![0];
-      DateTime eD = selectedDateRange![1];
-      String startDate = DateFormat('dd-MM-yyyy').format(sD);
-      print("Start_date" + startDate);
-      String endDate = DateFormat('dd-MM-yyyy').format(eD);
-      print("End_date" + endDate);
-      from_Date = startDate;
-      to_Date = endDate;
-      print("Startdate>>>>>" + from_Date);
-      print("Todate>>>>>" + to_Date);
-      if (sD.compareTo(eD) == 1) {
-        utils.showAlert(context, "End Date should be greater than Start Date");
-      } else {
-        dateController.text = "$startDate  To  $endDate";
-        getOtherWorkDetails(from_Date, to_Date);
-      }
-      if (startDate.compareTo(endDate) > 0) {
-        dateController.text = s.select_from_to_date;
-      } else {
-        dateController.text = "$startDate  To  $endDate";
-      }
-    }
+    String startDate = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
+    print("Start_date" + startDate);
+    String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
+    print("End_date" + endDate);
+    from_Date = startDate;
+    to_Date = endDate;
+    print("Startdate>>>>>" + from_Date);
+    print("Todate>>>>>" + to_Date);
+
+    dateController.text = "$startDate  To  $endDate";
+    await getOtherWorkDetails(from_Date, to_Date);
   }
 
   _Workid() {
@@ -1150,41 +1147,6 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             ),
           ]),
         ));
-  }
-
-  Future<void> selectDateFunc() async {
-    selectedDateRange = await showOmniDateTimeRangePicker(
-      context: context,
-      type: OmniDateTimePickerType.date,
-      startInitialDate: DateTime.now(),
-      startFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      startLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      endInitialDate: DateTime.now(),
-      endFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      endLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      borderRadius: const BorderRadius.all(Radius.circular(16)),
-      constraints: const BoxConstraints(
-        maxWidth: 350,
-      ),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return FadeTransition(
-          opacity: anim1.drive(
-            Tween(
-              begin: 0,
-              end: 1,
-            ),
-          ),
-          child: child,
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 200),
-      barrierDismissible: true,
-    );
-    dateValidation();
   }
 
   Future<void> getOtherWorkDetails(String fromDate, String toDate) async {

@@ -248,6 +248,7 @@ String other_inspection_taken = "Other Inspection Taken";
 String previous_login_alert =
     "Previous login was not logged out properly.So login again with";
 String password_alert = "and ***password";
+String delay_work_in_block = "Plan to inspect only delayed works in the block";
 String logout_alert =
     " then click logout icon in home page to successfully logout the previous session";
 
@@ -380,6 +381,7 @@ String key_action_taken_date = "action_taken_date";
 String key_inspection_action_taken_details = "inspection_action_taken_details";
 String key_reported_by = "reported_by";
 String key_workid = "workid";
+String key_month = "month";
 
 // Service Key
 String service_key_login = "login";
@@ -473,6 +475,8 @@ String service_key_overall_report = "overall_report";
 String service_key_overall_report_for_atr = "overall_report_for_atr";
 String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
+String service_key_get_inspection_delayed_work_details =
+    "get_inspection_delayed_work_details";
 
 //Table Name
 String table_District = "District";

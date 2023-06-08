@@ -176,7 +176,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   } else {
                                     if (await utils.isOnline()) {
                                       // print("Isforgotpassword"+widget.isForgotPassword);
-                                      if(utils.isNumberValid(mobile_number.text)){
+                                      if (utils
+                                          .isNumberValid(mobile_number.text)) {
                                         if (widget.isForgotPassword ==
                                             "forgot_password") {
                                           print("Isforgotpassword   " +
@@ -186,8 +187,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                             "change_password") {
                                           change_password_send_otpParams();
                                         } else {
-                                          sendOtp(mobile_number.text.toString());
+                                          sendOtp(
+                                              mobile_number.text.toString());
                                         }
+                                      } else {
+                                        utils.customAlert(context, "E",
+                                            s.please_enter_valid_num);
                                       }
                                     }
                                   }

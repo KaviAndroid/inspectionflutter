@@ -1,6 +1,8 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:inspection_flutter_app/Utils/utils.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info/device_info.dart';
@@ -10,6 +12,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:open_file/open_file.dart';
+import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
 class PDF_Viewer extends StatefulWidget {
   final pdfBytes;
@@ -66,14 +69,6 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     Directory? downloadDirectory;
 
     if (Platform.isAndroid) {
-      /* List<Directory>? storageDirectories =
-          await getExternalStorageDirectories();
-      if (storageDirectories != null && storageDirectories.isNotEmpty) {
-        // Choose the first directory which usually represents the primary external storage
-        downloadDirectory = Directory('${storageDirectories[0].path}/Download');
-        print("ANDROID 1 - $downloadDirectory");
-      } */
-
       downloadDirectory = Directory('/storage/emulated/0/Download');
       if (!await downloadDirectory.exists()) {
         downloadDirectory = await getExternalStorageDirectory();
@@ -93,13 +88,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
       downloadsDir.createSync();
     }
 
-    String fileName = "Inspection${widget.inspectionID}_${widget.workID}";
-
-    // Save the PDF bytes to a file in the downloads folder
-    File pdfFile = File('${downloadsDir.path}/$fileName.pdf');
     try {
-      await pdfFile.writeAsBytes(pdfBytes);
-
       await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
         //It would be more appropriate if you can show your own dialog
         //to the user before requesting the notifications permissons.
@@ -115,17 +104,13 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
             ],
           );
         } else {
-          showNotification(
-              "Inspection App", "PDF file saved successfully", pdfFile.path);
+          setPDFDirectory(downloadsDir, pdfBytes);
         }
       });
     } catch (e) {
       print('Error writing PDF to file: $e');
       return;
     }
-
-    print('PDF file saved successfully');
-    print('PDF file path: ${pdfFile.path}');
   }
 
   // ********************************************* Notification PDF Func ***************************************//
@@ -134,6 +119,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
       String title, String message, String payload) async {
     await AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
+      // resource://drawable/logo
       null,
       [
         NotificationChannel(
@@ -141,7 +127,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
             channelName: 'PDF',
             channelDescription: 'channel_description',
             importance: NotificationImportance.Max,
-            icon: null)
+            icon: 'logo')
       ],
       debug: true,
     );
@@ -157,23 +143,53 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
         criticalAlert: true,
         //Other parameters
       ),
-      actionButtons: <NotificationActionButton>[
-        NotificationActionButton(key: 'view', label: 'View'),
-      ],
+      // actionButtons: <NotificationActionButton>[
+      //   NotificationActionButton(key: 'view', label: 'View'),
+      // ],
     );
 
     await AwesomeNotifications().setListeners(
       onActionReceivedMethod: (receivedAction) {
-        print("${receivedAction.buttonKeyPressed} - action here");
-        if (receivedAction.buttonKeyPressed == "view") {
-          _openFilePath(payload);
-        }
+        print("<<<<<<<<<<<<<< Notification Tapped >>>>>>>>>>>>>>>");
+        _openFilePath(payload);
+
+        // if (receivedAction.buttonKeyPressed == "view") {
+        //   _openFilePath(payload);
+        // }
         throw ("DOne");
       },
     );
   }
 
   void _openFilePath(String path) async {
-    final result = await OpenFile.open(path);
+    var status = await Permission.manageExternalStorage.status;
+    print("asdsdasd $status");
+
+    if (status != PermissionStatus.granted) {
+      status = await Permission.manageExternalStorage.request();
+    }
+    if (status.isGranted) {
+      final result = await OpenFile.open(path);
+    } else {
+      Utils().showAppSettings(context, "Please Allow Storage Permission");
+    }
+  }
+
+  void setPDFDirectory(Directory downloadsDir, Uint8List pdfBytes) async {
+    String fileName;
+
+    if (widget.workID != null) {
+      fileName =
+          "Inspection${widget.inspectionID}_${widget.workID}_${DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now())}";
+    } else {
+      fileName =
+          "OtherWorks_${DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now())}";
+    }
+
+    // Save the PDF bytes to a file in the downloads folder
+    File pdfFile = File('${downloadsDir.path}/$fileName.pdf');
+    await pdfFile.writeAsBytes(pdfBytes);
+
+    showNotification(s.appName, "File Path : ${pdfFile.path}", pdfFile.path);
   }
 }

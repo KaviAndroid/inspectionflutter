@@ -11,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/DataBase/DbHelper.dart';
 import 'package:intl/intl.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../Resources/ColorsValue.dart' as c;
@@ -35,9 +34,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
-
-  //Date Time
-  List<DateTime>? selectedDateRange;
 
   //Worklist
   List needImprovementWorkList = [];
@@ -64,6 +60,10 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   bool townActive = false;
   bool munActive = false;
   bool corpActive = false;
+
+  //Date Time
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
 
   //pdf
   Uint8List? pdf;
@@ -107,81 +107,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     setState(() {});
   }
 
-/*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: c.colorPrimary,
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => {controller.reset(), Navigator.pop(context)}),
-        title: Text(s.work_list),
-        centerTitle: true, // like this!
-      ),
-      body: Container(
-          color: c.colorAccentverylight,
-          constraints: BoxConstraints(
-            minWidth: screenWidth,
-            minHeight: sceenHeight - 100.0,
-          ),
-          child: Stack(
-            children: [
-              IgnorePointer(
-                ignoring: isSpinnerLoading,
-                child: Column(
-                  children: [
-                    // Download Text Icon
-                    FadeTransition(
-                      opacity: controller,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: GestureDetector(
-                          onTap: () => selectDateFunc(),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                imagePath.download,
-                                width: 20,
-                                height: 20,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(s.download_text,
-                                  style: GoogleFonts.getFont('Roboto',
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w900,
-                                      color: c.primary_text_color2))
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    widget.Flag == "U"
-                        ? __Urban_design()
-                        : const SizedBox(
-                            height: 10,
-                          ),
-
-                    // Dashboard
-                    __ATR_Dashboard_Design(),
-
-                    // Worklist Design
-                    __ATR_WorkList_Loader(),
-                  ],
-                ),
-              ),
-              Visibility(
-                  visible: isSpinnerLoading,
-                  child: Utils().showSpinner(context, "Processing"))
-            ],
-          )),
-    );
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,7 +134,16 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   child: Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: GestureDetector(
-                      onTap: () => selectDateFunc(),
+                      onTap: () {
+                        utils.ShowCalenderDialog(context).then((value) => {
+                              if (value['flag'])
+                                {
+                                  selectedFromDate = value['fromDate'],
+                                  selectedToDate = value['toDate'],
+                                  dateValidation()
+                                }
+                            });
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -296,13 +230,11 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-
     print("Online_Work_List_url>>" + url.main_service_jwt.toString());
     print("Online_Work_List_request_encrpt>>" + encrypted_request.toString());
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
-
       String data = response.body;
 
       print("Online_Work_List_response>>" + data);
@@ -322,7 +254,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       print("Online_Work_List responceData -  $responceData");
 
       if (responceSignature == responceData) {
-
         print("Online_Work_List responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
@@ -351,8 +282,10 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             List<String> valueSets = [];
 
             for (var row in inspection_details) {
+              String description =
+                  row[s.key_description]?.replaceAll("'", "''") ?? '';
               String values =
-                  " ( '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_pvcode])}', '${utils.checkNull(row[s.key_inspection_id])}', '${row[s.key_inspection_date]}', '${row[s.key_status_id]}', '${row[s.key_status_name]}', '${row[s.key_description]}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_name])}', '${utils.checkNull(row[s.key_desig_name])}', '${utils.checkNull(row[s.key_work_type_name])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvname])}', '${utils.checkNull(row[s.key_rural_urban])}', '${utils.checkNull(row[s.key_town_type])}', '${utils.checkNull(row[s.key_tpcode])}', '${utils.checkNull(row[s.key_townpanchayat_name])}', '${utils.checkNull(row[s.key_muncode])}', '${utils.checkNull(row[s.key_municipality_name])}', '${utils.checkNull(row[s.key_corcode])}', '${utils.checkNull(row[s.key_corporation_name])}') ";
+                  " ( '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_pvcode])}', '${utils.checkNull(row[s.key_inspection_id])}', '${row[s.key_inspection_date]}', '${row[s.key_status_id]}', '${row[s.key_status_name]}', '$description', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_name])}', '${utils.checkNull(row[s.key_desig_name])}', '${utils.checkNull(row[s.key_work_type_name])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvname])}', '${utils.checkNull(row[s.key_rural_urban])}', '${utils.checkNull(row[s.key_town_type])}', '${utils.checkNull(row[s.key_tpcode])}', '${utils.checkNull(row[s.key_townpanchayat_name])}', '${utils.checkNull(row[s.key_muncode])}', '${utils.checkNull(row[s.key_municipality_name])}', '${utils.checkNull(row[s.key_corcode])}', '${utils.checkNull(row[s.key_corporation_name])}') ";
               valueSets.add(values);
             }
 
@@ -366,62 +299,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             if (list.isNotEmpty) {
               utils.customAlert(context, "S", s.worklist_download_success);
             }
-
-            /* for (int i = 0; i < inspection_details.length; i++) {
-              await dbClient.rawInsert('INSERT INTO ' +
-                  s.table_AtrWorkList +
-                  ' (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES(' +
-                  "'" +
-                  inspection_details[i][s.key_dcode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_bcode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_pvcode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_inspection_id].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_inspection_date] +
-                  "' , '" +
-                  inspection_details[i][s.key_status_id].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_status_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_description] +
-                  "' , '" +
-                  inspection_details[i][s.key_work_id].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_work_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_desig_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_work_type_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_dname] +
-                  "' , '" +
-                  inspection_details[i][s.key_bname] +
-                  "' , '" +
-                  inspection_details[i][s.key_pvname] +
-                  "' , '" +
-                  inspection_details[i][s.key_rural_urban] +
-                  "' , '" +
-                  inspection_details[i][s.key_town_type] +
-                  "' , '" +
-                  inspection_details[i][s.key_tpcode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_townpanchayat_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_muncode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_municipality_name] +
-                  "' , '" +
-                  inspection_details[i][s.key_corcode].toString() +
-                  "' , '" +
-                  inspection_details[i][s.key_corporation_name] +
-                  "')");
-            } */
-
             await fetchOfflineWorklist();
           }
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
@@ -438,7 +315,6 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         print("Online_Work_List responceSignature - Token Not Verified");
       }
     }
-
   }
 
   Future<void> get_PDF(String work_id, String inspection_id) async {
@@ -603,58 +479,13 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Date  Functions Starts here *************************** //
 
   Future<void> dateValidation() async {
-    if (selectedDateRange != null) {
-      DateTime sD = selectedDateRange![0];
-      DateTime eD = selectedDateRange![1];
+    String startDate = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
+    String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
 
-      String startDate = DateFormat('dd-MM-yyyy').format(sD);
-      String endDate = DateFormat('dd-MM-yyyy').format(eD);
-
-      if (sD.compareTo(eD) == 1) {
-        utils.showAlert(context, "End Date should be greater than Start Date");
-      } else {
-        dateController.text = "$startDate  To  $endDate";
-        await utils.isOnline()
-            ? fetchOnlineATRWroklist(startDate, endDate)
-            : utils.customAlert(context, "E", s.no_internet);
-      }
-    }
-  }
-
-  Future<void> selectDateFunc() async {
-    selectedDateRange = await showOmniDateTimeRangePicker(
-      context: context,
-      type: OmniDateTimePickerType.date,
-      startInitialDate: DateTime.now(),
-      startFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      startLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      endInitialDate: DateTime.now(),
-      endFirstDate: DateTime(2000).subtract(const Duration(days: 0)),
-      endLastDate: DateTime.now().add(
-        const Duration(days: 0),
-      ),
-      borderRadius: const BorderRadius.all(Radius.circular(16)),
-      constraints: const BoxConstraints(
-        maxWidth: 350,
-        maxHeight: 650,
-      ),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return FadeTransition(
-          opacity: anim1.drive(
-            Tween(
-              begin: 0,
-              end: 1,
-            ),
-          ),
-          child: child,
-        );
-      },
-      transitionDuration: const Duration(milliseconds: 200),
-      barrierDismissible: true,
-    );
-    dateValidation();
+    dateController.text = "$startDate  To  $endDate";
+    await utils.isOnline()
+        ? fetchOnlineATRWroklist(startDate, endDate)
+        : utils.customAlert(context, "E", s.no_internet);
   }
 
   // *************************** Date  Functions Ends here *************************** //
@@ -818,7 +649,14 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                       color: c.calender_color,
                       iconSize: 18,
                       onPressed: () async {
-                        selectDateFunc();
+                        utils.ShowCalenderDialog(context).then((value) => {
+                              if (value['flag'])
+                                {
+                                  selectedFromDate = value['fromDate'],
+                                  selectedToDate = value['toDate'],
+                                  dateValidation()
+                                }
+                            });
                       },
                       icon: const Icon(Icons.calendar_month_rounded))),
               Expanded(
@@ -852,7 +690,14 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   readOnly:
                       true, //set it true, so that user will not able to edit text
                   onTap: () async {
-                    selectDateFunc();
+                    utils.ShowCalenderDialog(context).then((value) => {
+                          if (value['flag'])
+                            {
+                              selectedFromDate = value['fromDate'],
+                              selectedToDate = value['toDate'],
+                              dateValidation()
+                            }
+                        });
                   },
                 ),
               ),
@@ -928,11 +773,17 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               width: 5,
                                             ),
                                             Text(
-                                              defaultWorklist[index]
-                                              [s.inspection_by_officer].length > 25 ? defaultWorklist[index]
-                                              [s.inspection_by_officer].substring(0, 25)+'...' : defaultWorklist[index]
-                                              [s.inspection_by_officer],
-                                            /*  defaultWorklist[index]
+                                              defaultWorklist[index][s
+                                                              .inspection_by_officer]
+                                                          .length >
+                                                      25
+                                                  ? defaultWorklist[index][s
+                                                              .inspection_by_officer]
+                                                          .substring(0, 25) +
+                                                      '...'
+                                                  : defaultWorklist[index]
+                                                      [s.inspection_by_officer],
+                                              /*  defaultWorklist[index]
                                                   [s.inspection_by_officer],*/
                                               style: TextStyle(
                                                   fontSize: 13,

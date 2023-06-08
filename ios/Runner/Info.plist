@@ -14,6 +14,8 @@
     <string>This app needs access to location when in the background.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This application requires access to your phone camera.</string>
+	<key>NSLocalNotificationUsageDescription</key>
+	<string>This application requires access to send you notifications.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

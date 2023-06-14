@@ -516,7 +516,13 @@ class LoginState extends State<Login> {
 
   Future<dynamic> callLogin(BuildContext context) async {
     if (await utils.isAutoDatetimeisEnable()) {
-      login(context);
+      try {
+        await login(context);
+      } on Exception catch (_) {
+        print('never reached');
+        utils.hideProgress(context);
+
+      }
     } else {
       utils
           .customAlert(context, "E", "Please Enable Network Provided Time")
@@ -610,9 +616,11 @@ class LoginState extends State<Login> {
           prefs.setString(s.key_bname, userData[s.key_bname]);
           await getVillageList();
         }
-        utils.hideProgress(context);
+        // utils.hideProgress(context);
         await getProfileData();
         await getDashboardData();
+
+        utils.hideProgress(context);
 
         utils.gotoHomePage(context, "Login");
       } else {
@@ -621,6 +629,7 @@ class LoginState extends State<Login> {
       }
       return decodedData;
     } else {
+      utils.hideProgress(context);
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       throw Exception('Failed');
@@ -629,7 +638,7 @@ class LoginState extends State<Login> {
 
   Future<void> getDistrictList() async {
     Map json_request = {
-      s.key_scode: prefs.getString(s.key_dcode) as String,
+      s.key_scode: prefs.getString(s.key_scode) as String,
       s.key_service_id: s.service_key_district_list_all,
     };
 
@@ -876,7 +885,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getProfileData() async {
-    utils.showProgress(context, 1);
+    // utils.showProgress(context, 1);
     late Map json_request;
 
     String? key = prefs.getString(s.userPassKey);
@@ -912,7 +921,7 @@ class LoginState extends State<Login> {
     print("ProfileData_url>>" + url.main_service_jwt.toString());
     print("ProfileData_request_json>>" + json_request.toString());
     print("ProfileData_request_encrpt>>" + encrypted_request.toString());
-    utils.hideProgress(context);
+    // utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -986,7 +995,7 @@ class LoginState extends State<Login> {
   }
 
   Future<void> getDashboardData() async {
-    utils.showProgress(context, 1);
+    // utils.showProgress(context, 1);
     late Map json_request;
 
     String? key = prefs.getString(s.userPassKey);
@@ -1024,7 +1033,7 @@ class LoginState extends State<Login> {
     print("DashboardData_request_json>>" + json_request.toString());
     print("DashboardData_request_encrpt>>" + encrpted_request.toString());
 
-    utils.hideProgress(context);
+    // utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       String data = response.body;

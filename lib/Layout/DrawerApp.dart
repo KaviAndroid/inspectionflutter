@@ -566,7 +566,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                       child: Text(
-                        "${s.version} $version",
+                        version,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: c.grey_8,

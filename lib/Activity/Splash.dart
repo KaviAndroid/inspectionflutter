@@ -69,6 +69,25 @@ class _SplashState extends State<Splash> {
             ));
             utils.gotoLoginPageFromSplash(context);
           }
+        }else {
+          msg = "You are not alowed to access biometrics.";
+          try {
+            bool pass = await auth.authenticate(
+                localizedReason: 'Authenticate with pattern/pin/passcode',
+                biometricOnly: false);
+            if (pass) {
+              msg = "You are Authenticated.";
+              setState(() {});
+              utils.gotoHomePage(context, "Splash");
+            }
+          } on PlatformException catch (e) {
+            msg = "Error while opening fingerprint/face scanner";
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  "Authentication failed. Please use user name and password to login. "),
+            ));
+            utils.gotoLoginPageFromSplash(context);
+          }
         }
       } else {
         msg = "You are not alowed to access biometrics.";

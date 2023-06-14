@@ -152,7 +152,7 @@ class SaveDatacontroller with ChangeNotifier {
     await _speechToText.listen(
         onResult: onSpeechResult,
         localeId: lang,
-        listenFor: Duration(minutes: 10));
+        listenFor: const Duration(minutes: 10));
     print("start");
     notifyListeners();
   }

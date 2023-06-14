@@ -38,7 +38,6 @@ dependencies:
   path_provider: ^2.0.13
   permission_handler: ^10.2.0
   crypto: ^3.0.0
-  flutter_aes_ecb_pkcs5_fork: ^0.1.4
   http: ^0.13.5
   encrypt: ^5.0.0
   shared_preferences: ^2.0.13
@@ -63,8 +62,6 @@ dependencies:
   awesome_notifications: ^0.7.4+1
   open_file: ^3.3.1
   dart_jsonwebtoken: ^2.7.1
-  android_intent: ^2.0.0
-  device_info: ^2.0.3
   local_auth: ^1.1.0
   calendar_date_picker2: ^0.5.2
 

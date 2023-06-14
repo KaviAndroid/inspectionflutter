@@ -1,11 +1,12 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Utils/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:device_info/device_info.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'dart:io';
@@ -51,10 +52,10 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
   Future<void> downloadPDF(Uint8List pdfBytes) async {
     if (Platform.isAndroid) {
-      var androidInfo = await DeviceInfoPlugin().androidInfo;
-      var sdkInt = androidInfo.version.sdkInt;
-      // Check if we have storage permission
-      if (sdkInt < 33) {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+      String sdkVersion = packageInfo.buildNumber;
+      if (int.parse(sdkVersion) < 33) {
         var status = await Permission.storage.status;
         if (status != PermissionStatus.granted) {
           status = await Permission.storage.request();
@@ -127,7 +128,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
             channelName: 'PDF',
             channelDescription: 'channel_description',
             importance: NotificationImportance.Max,
-            icon: 'logo')
+            icon: null)
       ],
       debug: true,
     );
@@ -162,17 +163,58 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   void _openFilePath(String path) async {
-    var status = await Permission.manageExternalStorage.status;
-    print("asdsdasd $status");
 
-    if (status != PermissionStatus.granted) {
-      status = await Permission.manageExternalStorage.request();
-    }
-    if (status.isGranted) {
+    if(Platform.isAndroid){
+
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+      String sdkVersion = packageInfo.buildNumber;
+      if (int.parse(sdkVersion) > 33) {
+        var status = await Permission.manageExternalStorage.status;
+        print("asdsdasd $status");
+
+        if (status != PermissionStatus.granted) {
+          status = await Permission.manageExternalStorage.request();
+        }
+        if (status.isGranted) {
+          final result = await OpenFile.open(path);
+        } else {
+          showAppSettings(context, "Please Allow Storage Permission");
+        }
+      }else{
+        final result = await OpenFile.open(path);
+      }
+
+    }else{
       final result = await OpenFile.open(path);
-    } else {
-      Utils().showAppSettings(context, "Please Allow Storage Permission");
     }
+
+  }
+  Future<void> showAppSettings(BuildContext context, String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(msg,
+              style: GoogleFonts.getFont('Roboto',
+                  fontSize: 15, fontWeight: FontWeight.w800, color: c.black)),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Allow Permission',
+                  style: GoogleFonts.getFont('Roboto',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: c.primary_text_color2)),
+              onPressed: () {
+                Navigator.pop(context, true);
+               Permission.manageExternalStorage.request();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void setPDFDirectory(Directory downloadsDir, Uint8List pdfBytes) async {

@@ -30,7 +30,7 @@ class AtrSaveDataController with ChangeNotifier {
   TextEditingController remark = TextEditingController();
   SpeechToText _speechToText = SpeechToText();
 
-  late PermissionStatus cameraPermission, speechPermission;
+  late PermissionStatus speechPermission;
 
   //image
   final _picker = ImagePicker();
@@ -244,7 +244,7 @@ class AtrSaveDataController with ChangeNotifier {
 
   Future<void> TakePhoto(
       int i, String latitude, String longitude, BuildContext context) async {
-    if (await goToCameraPermission(context)) {
+    if (await utils.goToCameraPermission(context)) {
       final pickedFile = await _picker.pickImage(
           source: ImageSource.camera,
           imageQuality: 80,
@@ -715,23 +715,6 @@ class AtrSaveDataController with ChangeNotifier {
 
   // *************************** Check DATA Ends here *************************** //
 
-  /// ************************** Check Camera Permission *****************************/
-
-  Future<bool> goToCameraPermission(BuildContext context) async {
-    cameraPermission = await Permission.camera.status;
-    print("object$cameraPermission");
-
-    bool flag = false;
-    if (await Permission.camera.request().isGranted) {
-      cameraPermission = await Permission.camera.status;
-      flag = true;
-      print("object$cameraPermission");
-    }
-    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
-      Utils().showAppSettings(context, s.cam_permission);
-    }
-    return flag;
-  }
 
   gotoDelete(List workList, bool save) async {
     String conditionParam = "";

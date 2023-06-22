@@ -37,7 +37,7 @@ class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
   Utils utils = Utils();
   var dbHelper = DbHelper();
-  late PermissionStatus cameraPermission, storagePermission;
+  late PermissionStatus storagePermission;
   ScrollController scrollController = ScrollController();
 
   //ImagePickers
@@ -1124,24 +1124,6 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
-  /// ************************** Check Camera Permission *****************************/
-
-  Future<bool> gotoCamera() async {
-    cameraPermission = await Permission.camera.status;
-    print("object$cameraPermission");
-
-    bool flag = false;
-    if (await Permission.camera.request().isGranted) {
-      cameraPermission = await Permission.camera.status;
-      flag = true;
-      print("object$cameraPermission");
-    }
-    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
-      Utils().showAppSettings(context, s.cam_permission);
-    }
-    return flag;
-  }
-
   /// ************************** Check Storage Permission *****************************/
 
   Future<bool> gotoStorage() async {
@@ -1163,7 +1145,7 @@ class _RegistrationState extends State<Registration> {
 
   Future<void> TakePhoto(ImageSource source) async {
     if (source == ImageSource.camera) {
-      if (await gotoCamera()) {
+      if (await utils.goToCameraPermission(context)) {
         // final pickedFile = await _picker.pickImage(source: source);
         final pickedFile = await _picker.pickImage(
             source: source, imageQuality: 80, maxHeight: 400, maxWidth: 400);

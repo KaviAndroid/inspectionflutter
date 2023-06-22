@@ -34,8 +34,8 @@ class Utils {
     if (Platform.isAndroid || Platform.isIOS) {
       isAutoDateTimeEnabled = Platform.environment['AUTO_TIME'] == 'true';
     }
-    // return isAutoDateTimeEnabled;
-    return true;
+    return isAutoDateTimeEnabled;
+    // return true;
   }
 
   void openDateTimeSettings() async {
@@ -921,6 +921,22 @@ class Utils {
         " >>" +
         buildNumber);
     return packageInfo.version;
+  }
+  Future<bool> goToCameraPermission(BuildContext context) async {
+    late PermissionStatus cameraPermission, speechPermission;
+    cameraPermission = await Permission.camera.status;
+    print("object$cameraPermission");
+
+    bool flag = false;
+    if (await Permission.camera.request().isGranted) {
+      cameraPermission = await Permission.camera.status;
+      flag = true;
+      print("object$cameraPermission");
+    }
+    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
+      Utils().showAppSettings(context, s.cam_permission);
+    }
+    return flag;
   }
 
   Future<bool> handleLocationPermission(BuildContext context) async {

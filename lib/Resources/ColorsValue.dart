@@ -92,6 +92,7 @@ Color dot_light_screen1 = Color(0xFFf98da5);
 Color dot_light_screen2 = Color(0xFF8cf9eb);
 Color dot_light_screen3 = Color(0xFF93c6fd);
 Color dot_light_screen_lite = Color(0xFFC4DDFA);
+Color dot_light_screen_lite1 = Color(0xFFEDF2F8);
 Color dot_light_screen4 = Color(0xFFe4b5fc);
 Color dot_light_screen5 = Color(0xFFDEEDFE);
 Color text_color = Color(0xFF1E4175);

@@ -249,8 +249,8 @@ String previous_login_alert =
     "Previous login was not logged out properly.So login again with";
 String password_alert = "and ***password";
 String delay_work_in_block = "Plan to inspect only delayed works in the block";
-String logout_alert =
-    " then click logout icon in home page to successfully logout the previous session";
+String plan_to_inspect = "Plan to inspect delayed works";
+String logout_alert = " then click logout icon in home page to successfully logout the previous session";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -382,6 +382,7 @@ String key_inspection_action_taken_details = "inspection_action_taken_details";
 String key_reported_by = "reported_by";
 String key_workid = "workid";
 String key_month = "month";
+String key_total_count = "total_count";
 
 // Service Key
 String service_key_login = "login";

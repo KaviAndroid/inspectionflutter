@@ -69,6 +69,7 @@ class _WorkListState extends State<WorkList> {
   String selectedScheme = "";
   String selectedMonth = "";
   String areaType = "";
+  String as_value = "";
   bool isLoadingScheme = false;
   bool schemeError = false;
   bool schemeFlag = false;
@@ -82,6 +83,7 @@ class _WorkListState extends State<WorkList> {
   bool flagTab = false;
   bool flagList = false;
   bool sidebarOpen = false;
+  bool delaytab = false;
 
   double yOffset = 0;
   double xOffset = 0;
@@ -102,7 +104,7 @@ class _WorkListState extends State<WorkList> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
-    schemeItems.addAll(widget.schemeList);
+    // schemeItems.addAll(widget.schemeList);
     all = true;
     areaType = prefs.getString(s.key_rural_urban)!;
     if (areaType == 'R') {
@@ -161,6 +163,18 @@ class _WorkListState extends State<WorkList> {
       selectedScheme = widget.scheme;
       schemeFlag = true;
       await fetchOfflineWorkList(areaType, widget.scheme);
+    }else if (widget.flag == 'delayed_works') {
+      if (await utils.isOnline()) {
+        selectedScheme = widget.scheme;
+        selectedMonth=widget.tmccode;
+        as_value=widget.selectedschemeList;
+        delay=false;
+        schemeFlag = false;
+        flagTab=true;
+         getdelayedWorkListByVillage();
+      } else {
+        utils.customAlert(context, "E", s.no_internet);
+      }
     }
     monthItems = [];
     monthItems.add(defaultSelectedMonth);
@@ -360,116 +374,119 @@ class _WorkListState extends State<WorkList> {
                 ),
                 Container(
                   margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          onTap: () async {
-                            flagTab = true;
-                            flagList = true;
-                            all = true;
-                            delay = false;
-                            selectedMonth = defaultSelectedMonth['monthId']!;
-                            asController.text = '0';
-                            await fetchWorkListAll();
-                            setState(() {});
-                          },
-                          child: Container(
-                              height: 35,
-                              margin: const EdgeInsets.all(5),
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                  color: all ? c.colorAccentlight : c.white,
-                                  border: Border.all(
-                                      width: all ? 0 : 2,
-                                      color: c.colorPrimary),
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 5.0,
-                                    ),
-                                  ]),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Image.asset(
-                                      imagePath.radio,
-                                      color: all ? c.white : c.grey_5,
-                                      width: 17,
-                                      height: 17,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text("All Works",
-                                        style: GoogleFonts.getFont('Roboto',
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 12,
-                                            color: all ? c.white : c.grey_6)),
-                                  ])),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          onTap: () {
-                            flagTab = false;
-                            flagList = false;
-                            all = false;
-                            delay = true;
-                            selectedMonth = defaultSelectedMonth['monthId']!;
-                            asController.text = '0';
-                            setState(() {});
-                          },
-                          child: Container(
-                              height: 35,
-                              margin: const EdgeInsets.all(5),
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                  color: delay ? c.colorAccentlight : c.white,
-                                  border: Border.all(
-                                      width: delay ? 0 : 2,
-                                      color: c.colorPrimary),
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 5.0,
-                                    ),
-                                  ]),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Image.asset(
-                                      imagePath.radio,
-                                      color: delay ? c.white : c.grey_5,
-                                      width: 17,
-                                      height: 17,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text('Only Delayed Works',
-                                        style: GoogleFonts.getFont('Roboto',
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 12,
-                                            color: delay ? c.white : c.grey_6)),
-                                  ])),
-                        ),
-                      ),
-                    ],
-                  ),
+                 child: Visibility(
+                   visible:delaytab,
+                   child: Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                     children: [
+                       Expanded(
+                         flex: 1,
+                         child: GestureDetector(
+                           onTap: () async {
+                             flagTab = true;
+                             flagList = true;
+                             all = true;
+                             delay = false;
+                             selectedMonth = defaultSelectedMonth['monthId']!;
+                             asController.text = '0';
+                             await fetchWorkListAll();
+                             setState(() {});
+                           },
+                           child: Container(
+                               height: 35,
+                               margin: const EdgeInsets.all(5),
+                               padding: const EdgeInsets.all(3),
+                               decoration: BoxDecoration(
+                                   color: all ? c.colorAccentlight : c.white,
+                                   border: Border.all(
+                                       width: all ? 0 : 2,
+                                       color: c.colorPrimary),
+                                   borderRadius: BorderRadius.circular(10),
+                                   boxShadow: const [
+                                     BoxShadow(
+                                       color: Colors.grey,
+                                       offset: Offset(0.0, 1.0), //(x,y)
+                                       blurRadius: 5.0,
+                                     ),
+                                   ]),
+                               child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.start,
+                                   children: [
+                                     SizedBox(
+                                       width: 5,
+                                     ),
+                                     Image.asset(
+                                       imagePath.radio,
+                                       color: all ? c.white : c.grey_5,
+                                       width: 17,
+                                       height: 17,
+                                     ),
+                                     SizedBox(
+                                       width: 5,
+                                     ),
+                                     Text("All Works",
+                                         style: GoogleFonts.getFont('Roboto',
+                                             fontWeight: FontWeight.w800,
+                                             fontSize: 12,
+                                             color: all ? c.white : c.grey_6)),
+                                   ])),
+                         ),
+                       ),
+                       Expanded(
+                         flex: 1,
+                         child: GestureDetector(
+                           onTap: () {
+                             flagTab = false;
+                             flagList = false;
+                             all = false;
+                             delay = true;
+                             selectedMonth = defaultSelectedMonth['monthId']!;
+                             asController.text = '0';
+                             setState(() {});
+                           },
+                           child: Container(
+                               height: 35,
+                               margin: const EdgeInsets.all(5),
+                               padding: const EdgeInsets.all(3),
+                               decoration: BoxDecoration(
+                                   color: delay ? c.colorAccentlight : c.white,
+                                   border: Border.all(
+                                       width: delay ? 0 : 2,
+                                       color: c.colorPrimary),
+                                   borderRadius: BorderRadius.circular(10),
+                                   boxShadow: const [
+                                     BoxShadow(
+                                       color: Colors.grey,
+                                       offset: Offset(0.0, 1.0), //(x,y)
+                                       blurRadius: 5.0,
+                                     ),
+                                   ]),
+                               child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.start,
+                                   children: [
+                                     SizedBox(
+                                       width: 5,
+                                     ),
+                                     Image.asset(
+                                       imagePath.radio,
+                                       color: delay ? c.white : c.grey_5,
+                                       width: 17,
+                                       height: 17,
+                                     ),
+                                     SizedBox(
+                                       width: 5,
+                                     ),
+                                     Text('Only Delayed Works',
+                                         style: GoogleFonts.getFont('Roboto',
+                                             fontWeight: FontWeight.w800,
+                                             fontSize: 12,
+                                             color: delay ? c.white : c.grey_6)),
+                                   ])),
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
                 ),
                 Visibility(
                   visible: delay,
@@ -2539,8 +2556,7 @@ class _WorkListState extends State<WorkList> {
     }
   }
 
-  Future<void> getWorkListByVillage(
-      String dcode, String bcode, String pvcode) async {
+  Future<void> getWorkListByVillage(String dcode, String bcode, String pvcode) async {
     utils.showProgress(context, 1);
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
@@ -2810,5 +2826,132 @@ class _WorkListState extends State<WorkList> {
       isLoadingScheme = false;
     });
     utils.hideProgress(context);
+  }
+  Future<void> getdelayedWorkListByVillage() async {
+    utils.showProgress(context, 1);
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
+    late Map json_request;
+
+    Map work_detail = {
+      s.key_dcode: widget.dcode,
+      s.key_bcode:widget.bcode,
+      s.key_pvcode:widget.pvcode,
+      s.key_fin_year:widget.finYear,
+      s.key_as_value:widget.selectedschemeList,
+      s.key_month:widget.tmccode,
+      s.key_flag:"2"
+    };
+    json_request = {
+      s.key_service_id: s.service_key_get_inspection_delayed_work_details,
+      s.key_inspection_work_details: work_detail,
+    };
+
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("DelayedWorkListByVillage_url>>" + url.main_service_jwt.toString());
+    print("DelayedWorkListByVillage_request_encrpt>>" + encrypted_request.toString());
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    utils.hideProgress(context);
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+
+      print("DelayedWorkListByVillage_response>>" + data);
+
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("DelayedWorkListByVillage Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("DelayedWorkListByVillage responceSignature -  $responceSignature");
+
+      print("DelayedWorkListByVillage responceData -  $responceData");
+      if (responceSignature == responceData) {
+        print("DelayedWorkListByVillage responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_work_id].compareTo(b[s.key_work_id]);
+          });
+          if (res_jsonArray.length > 0) {
+            flagTab = true;
+            flagList = true;
+            ongoingWorkList = [];
+            completedWorkList = [];
+            workListAll = [];
+            workList = [];
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              if (res_jsonArray[i][s.key_current_stage_of_work] == 11) {
+                completedWorkList.add(res_jsonArray[i]);
+              } else {
+                ongoingWorkList.add(res_jsonArray[i]);
+              }
+              workListAll.add(res_jsonArray[i]);
+            }
+            if (ongoingWorkList.length > 0) {
+              workList.addAll(ongoingWorkList);
+              flag = 1;
+              noDataFlag = false;
+              workListFlag = true;
+            } else if (completedWorkList.length > 0) {
+              workList.addAll(completedWorkList);
+              flag = 2;
+              noDataFlag = false;
+              workListFlag = true;
+            } else {
+              flag = 1;
+              noDataFlag = true;
+              workListFlag = false;
+            }
+            showFlag = [];
+            for (int i = 0; i < workList.length; i++) {
+              showFlag.add(false);
+            }
+            progressFlag = [];
+            for (int i = 0; i < workList.length; i++) {
+              progressFlag.add(false);
+            }
+          } else {
+            utils.showAlert(context, s.no_data);
+          }
+        } else {
+          utils.showAlert(context, s.no_data);
+        }
+      } else {
+        print("DelayedWorkListByVillage responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
+      }
+    }
   }
 }

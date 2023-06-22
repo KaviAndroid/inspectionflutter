@@ -394,7 +394,8 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
     ])));
   }
   _ATRWorkList() {
-    return Container(
+    return
+      Container(
         color: ca1,
         child: Padding(
             padding: EdgeInsets.only(top: 20,left: 15,right: 15),

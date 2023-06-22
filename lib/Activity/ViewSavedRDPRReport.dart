@@ -315,19 +315,20 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               width: 17,
                               height: 17,
                             ),
-                            /*  Expanded(
-                              child: Text('Town Panchayat', maxLines: 1,
+                              Expanded(
+                              child: Text(s.town_panchayat,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                       color: townActive ? c.white : c.grey_6)),
-                            ),*/
-                            Text('Town Pan...',
+                            ),
+                            /*Text(s.town_panchayat,
+                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.getFont('Roboto',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
-                                    color: townActive ? c.white : c.grey_6)),
+                                    color: townActive ? c.white : c.grey_6)),*/
                           ])),
                 ),
               ),

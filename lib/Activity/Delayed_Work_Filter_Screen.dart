@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Activity/Home.dart';
+import 'package:inspection_flutter_app/Activity/WorkList.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -16,6 +18,7 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../DataBase/DbHelper.dart';
+import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 
 class DelayedWorkFilterScreen extends StatefulWidget {
@@ -40,6 +43,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   bool bFlag = false;
   bool dFlag = false;
   bool sFlag = false;
+  bool vFlag = false;
   bool delay = false;
   bool pvTable = false;
 
@@ -59,6 +63,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List blockItems = [];
   List monthItems = [];
   List finList = [];
+  List villagelist = [];
 
   //Default Values
   Map<String, String> defaultSelectedFinYear = {
@@ -99,6 +104,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     print(finYearItems.toString());
     if (selectedLevel == 'S') {
       sFlag = true;
+      dFlag=true;
+      bFlag=true;
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ${s.table_District}');
       print(list.toString());
@@ -108,6 +115,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       selectedBlock = defaultSelectedBlock[s.key_bcode]!;
     } else if (selectedLevel == 'D') {
       dFlag = true;
+      bFlag=true;
       List<Map> list =
           await dbClient.rawQuery('SELECT * FROM ${s.table_Block}');
       print(list.toString());
@@ -116,7 +124,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       selectedDistrict = prefs.getString(s.key_dcode)!;
       selectedBlock = defaultSelectedBlock[s.key_bcode]!;
     } else if (selectedLevel == 'B') {
-      bFlag = true;
+      delay=true;
       selectedDistrict = prefs.getString(s.key_dcode)!;
       selectedBlock = prefs.getString(s.key_bcode)!;
     }
@@ -168,14 +176,32 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                   Align(
                     alignment: AlignmentDirectional.center,
                     child: Container(
+                      padding: EdgeInsets.only(left: 35,),
                       transform: Matrix4.translationValues(-30.0, 0.0, 0.0),
                       alignment: Alignment.center,
                       child: Text(
-                        s.filter_work_list,
+                        s.plan_to_inspect,
                         style: TextStyle(fontSize: 15),
                       ),
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.only(left: 40,top: 5),
+                    alignment: AlignmentDirectional.topEnd,
+                    child:  GestureDetector(
+                        child: Image.asset(
+                          imagePath.home,
+                          color: c.white,
+                          height: 25,
+                          width: 25,
+                        ),
+                        onTap: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(isLogin: "",)));
+                        }),
+                  )
                 ],
               ),
             ),
@@ -237,7 +263,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           }
                         },
                         buttonStyleData: const ButtonStyleData(
-                          height: 45,
+                          height: 30,
                           padding: EdgeInsets.only(right: 10),
                         ),
                         iconStyleData: IconStyleData(
@@ -269,7 +295,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15),
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: Text(
                           s.selectDistrict,
                           style: GoogleFonts.getFont('Roboto',
@@ -316,7 +342,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                 }
                               },
                               buttonStyleData: const ButtonStyleData(
-                                height: 45,
+                                height: 30,
                                 padding: EdgeInsets.only(right: 10),
                               ),
                               iconStyleData: IconStyleData(
@@ -349,7 +375,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
                             s.please_enter_district,
-                            // state.hasError ? state.errorText : '',
                             style: TextStyle(
                                 color: Colors.redAccent.shade700,
                                 fontSize: 12.0),
@@ -365,7 +390,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15),
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: Text(
                           s.selectBlock,
                           style: GoogleFonts.getFont('Roboto',
@@ -409,7 +434,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               //Do something when changing the item if you want.
                             },
                             buttonStyleData: const ButtonStyleData(
-                              height: 45,
+                              height: 30,
                               padding: EdgeInsets.only(right: 10),
                             ),
                             iconStyleData: const IconStyleData(
@@ -504,7 +529,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                           }
                                         },
                                         buttonStyleData: const ButtonStyleData(
-                                          height: 45,
+                                          height: 30,
                                           padding: EdgeInsets.only(right: 10),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
@@ -522,7 +547,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           ),
                         ),
                         SizedBox(
-                          width: 5,
+                          width: 10,
                         ),
                         Expanded(
                           flex: 1,
@@ -581,30 +606,26 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                           "Please Enter AS value");
                                     }
                                   },
-                                  child: Container(
-                                    width: 25,
-                                    height: 30,
-                                    alignment: Alignment.centerRight,
-                                    decoration: BoxDecoration(
-                                        color: c.colorPrimary,
-                                        border: Border.all(
-                                            width: 0, color: c.grey_10),
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(0),
-                                          topRight: Radius.circular(10),
-                                          bottomLeft: Radius.circular(0),
-                                          bottomRight: Radius.circular(10),
-                                        )),
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                    child: Image.asset(
-                                      imagePath.right_arrow_icon,
-                                      fit: BoxFit.contain,
-                                      color: c.white,
-                                      height: 18,
-                                      width: 18,
+                                  child:Visibility(
+                                    visible: false,
+                                    child: Container(
+                                      width: 25,
+                                      height: 30,
+                                      alignment: Alignment.centerRight,
+                                      decoration: BoxDecoration(
+                                          color: c.colorPrimary,
+                                          border: Border.all(
+                                              width: 0, color: c.grey_10),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(0),
+                                            topRight: Radius.circular(10),
+                                            bottomLeft: Radius.circular(0),
+                                            bottomRight: Radius.circular(10),
+                                          )),
+                                      padding:
+                                      const EdgeInsets.fromLTRB(5, 5, 5, 5),
                                     ),
-                                  ),
+                                  )
                                 )
                               ],
                             ),
@@ -631,15 +652,15 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           asController.text.isEmpty
                               ? asController.text = "-1"
                               : null;
-
-                          if (int.parse(asController.text) > 0 ||
-                              selectedMonth != "00") {
+                          if (int.parse(asController.text) > 0 || selectedMonth != "00") {
                             await fetchDelayedWorkList();
+                             vFlag=true;
                           } else {
                             utils.customAlert(context, "E",
                                 "Please Select AS value or Months");
                           }
-                          pvTable = true;
+
+                          // pvTable = true;
                           setState(() {});
                         },
                         child: Text(
@@ -653,6 +674,125 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     ),
                   ),
                 ),
+                Visibility(
+                  child:Container(
+                      child:Stack(
+                          children: [
+                            Visibility(
+                                visible: villagelist.isNotEmpty?true:false,
+                                child:Container(
+                                    child: ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: villagelist.length,
+                                        itemBuilder: (BuildContext context,int index)
+                                        {
+                                          return InkWell(
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => WorkList(
+                                                          flag: "delayed_works",
+                                                          dcode: selectedDistrict,
+                                                          bcode: selectedBlock,
+                                                          pvcode: villagelist[index][key_pvcode],
+                                                          finYear: [selectedFinYear],
+                                                          tmccode: selectedMonth,
+                                                          townType: "",
+                                                          scheme: "",
+                                                          schemeList: "",
+                                                          selectedschemeList: asController.text,
+                                                        )));
+                                              },
+                                              child:Card(
+                                                  elevation: 5,
+                                                  margin: EdgeInsets.only(top: 15,left: 15,bottom: 15),
+                                                  color: c.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      bottomLeft: Radius.circular(20),
+                                                      topLeft: Radius.circular(20),
+                                                      topRight: Radius.circular(20),
+                                                      bottomRight: Radius.circular(20),
+                                                    ),
+                                                  ),
+                                                  child: ClipPath(
+                                                      clipper: ShapeBorderClipper(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(20))),
+                                                      child: Column(
+                                                        children: [
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              width:10,
+                                                              padding: EdgeInsets.only(top: 5,bottom: 5),
+                                                                  child: Text(
+                                                                    ""
+                                                                  ),
+                                                                  decoration: BoxDecoration(
+                                                                      gradient: LinearGradient(
+                                                                          begin: Alignment.topLeft,
+                                                                          end: Alignment.topRight,
+                                                                          colors: [c.colorPrimary,c.colorAccentverylight]
+                                                                      ),
+                                                                      borderRadius: const BorderRadius.only(
+                                                                        topLeft: Radius.circular(20),
+                                                                        topRight: Radius.circular(0),
+                                                                        bottomLeft: Radius.circular(20),
+                                                                        bottomRight: Radius.circular(0),
+                                                                      )),
+                                                                ),
+                                                            Expanded(
+                                                                 child: Container(
+                                                                   padding: EdgeInsets.only(top: 5,bottom: 5),
+                                                                   child: Text(
+                                                                     villagelist[index][key_pvname],
+                                                                     style: TextStyle(
+                                                                         fontSize: 15,
+                                                                         fontWeight:
+                                                                         FontWeight.normal,
+                                                                         color: c.black),textAlign: TextAlign.center,
+                                                                     overflow:
+                                                                     TextOverflow.ellipsis,
+                                                                   ),
+                                                                 ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Container(
+                                                               padding: EdgeInsets.only(top: 5,bottom: 5),
+                                                                decoration: BoxDecoration(
+                                                                    color: c.dot_light_screen_lite1,
+                                                                    borderRadius: const BorderRadius.only(
+                                                                      topLeft: Radius.circular(0),
+                                                                      topRight: Radius.circular(20),
+                                                                      bottomLeft: Radius.circular(0),
+                                                                      bottomRight: Radius.circular(20),
+                                                                    )),
+                                                                child: Text(
+                                                                    villagelist[index][key_total_count].toString(),
+                                                                    style: TextStyle(
+                                                                        color: c.primary_text_color2,fontWeight: FontWeight.bold),textAlign: TextAlign.center,
+                                                                    maxLines: 1),
+
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                      )
+                                                  )
+                                              )
+                                          );
+                                        }
+                                    )
+                                )
+                            )
+                          ])
+                  )
+                )
               ],
             )),
           )),
@@ -677,7 +817,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
       s.key_fin_year: finList,
-      if (pvTable) s.flag: 2 else s.flag: 1,
+      s.flag: 1,
       if (selectedMonth.isNotEmpty) s.key_month: selectedMonth,
       if (asController.text.isNotEmpty) s.key_as_value: asController.text,
     };
@@ -738,8 +878,24 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
 
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
-
           print(res_jsonArray);
+          villagelist=[];
+          if(res_jsonArray.length>0)
+            {
+              for(int i=0;i<res_jsonArray.length;i++)
+              {
+                Map<String, String> map = {
+                  key_total_count: res_jsonArray[i][key_total_count].toString(),
+                  key_pvname:res_jsonArray[i][key_pvname],
+                  key_pvcode:res_jsonArray[i][key_pvcode].toString()
+                };
+                villagelist.add(map);
+                print("villageList#####"+villagelist[i][key_pvcode].toString());
+              }
+            }
+        }
+        else{
+          utils.showAlert(context, "No Data");
         }
       }
     }

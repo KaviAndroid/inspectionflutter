@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
@@ -1130,14 +1131,33 @@ class _RegistrationState extends State<Registration> {
     storagePermission = await Permission.photos.status;
 
     bool flag = false;
-    if (await Permission.photos.request().isGranted) {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String sdkVersion = packageInfo.buildNumber;
+    if (int.parse(sdkVersion) < 33) {
+      if (storagePermission != PermissionStatus.granted)
+      {
+        if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
+           Utils().showAppSettings(context, s.storage_permission);
+           storagePermission = await Permission.photos.status;
+          flag=true;
+        }
+      }
+      else
+        {
+          if (await Permission.photos.request().isGranted) {
+            storagePermission = await Permission.photos.status;
+            flag = true;
+          }
+        }
+    }
+    /*if (await Permission.photos.request().isGranted) {
       storagePermission = await Permission.photos.status;
       flag = true;
     }
     if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
       await Utils().showAppSettings(context, s.storage_permission);
       storagePermission = await Permission.photos.status;
-    }
+    }*/
     return flag;
   }
 

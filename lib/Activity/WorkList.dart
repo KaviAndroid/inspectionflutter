@@ -32,6 +32,7 @@ class WorkList extends StatefulWidget {
   final tmccode;
   final townType;
   final selectedschemeList;
+  final asvalue;
 
   WorkList(
       {this.schemeList,
@@ -43,7 +44,9 @@ class WorkList extends StatefulWidget {
       this.tmccode,
       this.townType,
       this.selectedschemeList,
-      this.flag});
+      this.flag,
+      this.asvalue
+      });
   @override
   State<WorkList> createState() => _WorkListState();
 }
@@ -171,7 +174,7 @@ class _WorkListState extends State<WorkList> {
         delay=false;
         schemeFlag = false;
         flagTab=true;
-         getdelayedWorkListByVillage();
+         getdelayedWorkListByVillage(widget.pvcode);
       } else {
         utils.customAlert(context, "E", s.no_internet);
       }
@@ -2827,7 +2830,7 @@ class _WorkListState extends State<WorkList> {
     });
     utils.hideProgress(context);
   }
-  Future<void> getdelayedWorkListByVillage() async {
+  Future<void> getdelayedWorkListByVillage(String pvcode) async {
     utils.showProgress(context, 1);
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
@@ -2837,7 +2840,7 @@ class _WorkListState extends State<WorkList> {
     Map work_detail = {
       s.key_dcode: widget.dcode,
       s.key_bcode:widget.bcode,
-      s.key_pvcode:widget.pvcode,
+      s.key_pvcode:pvcode,
       s.key_fin_year:widget.finYear,
       s.key_as_value:widget.selectedschemeList,
       s.key_month:widget.tmccode,

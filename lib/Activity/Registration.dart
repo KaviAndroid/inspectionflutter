@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
 import 'package:inspection_flutter_app/Activity/OTP_Verification.dart';
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -14,9 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import '../Utils/utils.dart';
@@ -1128,36 +1125,30 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Check Storage Permission *****************************/
 
   Future<bool> gotoStorage() async {
-    storagePermission = await Permission.photos.status;
-
     bool flag = false;
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String sdkVersion = packageInfo.buildNumber;
-    if (int.parse(sdkVersion) < 33) {
-      if (storagePermission != PermissionStatus.granted)
-      {
-        if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
-           Utils().showAppSettings(context, s.storage_permission);
-           storagePermission = await Permission.photos.status;
-          flag=true;
-        }
-      }
-      else
-        {
-          if (await Permission.photos.request().isGranted) {
-            storagePermission = await Permission.photos.status;
-            flag = true;
-          }
-        }
+
+    if (Platform.isAndroid) {
+      storagePermission = await Permission.storage.request();
+    } else if (Platform.isIOS) {
+      storagePermission = await Permission.photos.request();
     }
-    /*if (await Permission.photos.request().isGranted) {
-      storagePermission = await Permission.photos.status;
+
+    if (storagePermission.isLimited || storagePermission.isGranted) {
       flag = true;
-    }
-    if (storagePermission.isDenied || storagePermission.isPermanentlyDenied) {
+    } else {
       await Utils().showAppSettings(context, s.storage_permission);
-      storagePermission = await Permission.photos.status;
-    }*/
+
+      if (Platform.isAndroid) {
+        storagePermission = await Permission.storage.status;
+      } else if (Platform.isIOS) {
+        storagePermission = await Permission.photos.status;
+      }
+
+      if (storagePermission.isLimited || storagePermission.isGranted) {
+        flag = true;
+      }
+    }
+
     return flag;
   }
 

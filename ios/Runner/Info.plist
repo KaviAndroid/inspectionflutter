@@ -16,6 +16,8 @@
 	<string>This application requires access to your phone camera.</string>
 	<key>NSLocalNotificationUsageDescription</key>
 	<string>This application requires access to send you notifications.</string>
+	<key>NSDownloadsDirectoryUsageDescription</key>
+	<string>This app requires access to the Downloads directory to save downloaded files.</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

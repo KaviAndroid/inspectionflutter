@@ -1,5 +1,7 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Utils/utils.dart';
@@ -51,66 +53,84 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   // ********************************************* Download PDF Func ***************************************//
 
   Future<void> downloadPDF(Uint8List pdfBytes) async {
+    bool flag = false;
+    PermissionStatus status;
+
     if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
       String sdkVersion = packageInfo.buildNumber;
-      if (int.parse(sdkVersion) < 33) {
-        var status = await Permission.storage.status;
-        if (status != PermissionStatus.granted) {
-          status = await Permission.storage.request();
 
-          if (status != PermissionStatus.granted) {
-            throw Exception('Permission denied');
-          }
-        }
+      if (int.parse(sdkVersion) > 33) {
+        status = await Permission.manageExternalStorage.request();
+      } else {
+        status = await Permission.storage.request();
       }
-    }
 
-    Directory? downloadDirectory;
-
-    if (Platform.isAndroid) {
-      downloadDirectory = Directory('/storage/emulated/0/Download');
-      if (!await downloadDirectory.exists()) {
-        downloadDirectory = await getExternalStorageDirectory();
+      if (status != PermissionStatus.granted) {
+        await Utils().showAppSettings(context, s.storage_permission);
+      } else {
+        flag = true;
       }
     } else if (Platform.isIOS) {
-      downloadDirectory = await getDownloadsDirectory();
-      print("IOS - $downloadDirectory");
+      status = await Permission.photos.request();
+
+      if (status != PermissionStatus.granted) {
+        await Utils().showAppSettings(context, s.storage_permission);
+      } else {
+        flag = true;
+      }
+    } else {
+      throw Exception('Unsupported platform');
     }
 
-    downloadDirectory ??= await getApplicationDocumentsDirectory();
-    print("ANDROID 2 - $downloadDirectory");
+    print("Permission Status $flag");
 
-    String downloadsPath = downloadDirectory.path;
+    if (flag) {
+      Directory? downloadDirectory;
 
-    Directory downloadsDir = Directory(downloadsPath);
-    if (!downloadsDir.existsSync()) {
-      downloadsDir.createSync();
-    }
-
-    try {
-      await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-        //It would be more appropriate if you can show your own dialog
-        //to the user before requesting the notifications permissons.
-        if (!isAllowed) {
-          AwesomeNotifications().requestPermissionToSendNotifications(
-            permissions: [
-              NotificationPermission.Alert,
-              NotificationPermission.Sound,
-              NotificationPermission.Badge,
-              NotificationPermission.Vibration,
-              NotificationPermission.Light,
-              NotificationPermission.FullScreenIntent,
-            ],
-          );
-        } else {
-          setPDFDirectory(downloadsDir, pdfBytes);
+      if (Platform.isAndroid) {
+        downloadDirectory = Directory('/storage/emulated/0/Download');
+        if (!await downloadDirectory.exists()) {
+          downloadDirectory = await getExternalStorageDirectory();
         }
-      });
-    } catch (e) {
-      print('Error writing PDF to file: $e');
-      return;
+      } else if (Platform.isIOS) {
+        downloadDirectory = await getDownloadsDirectory();
+        print("IOS - $downloadDirectory");
+      }
+
+      downloadDirectory ??= await getApplicationDocumentsDirectory();
+      print("ANDROID 2 - $downloadDirectory");
+
+      String downloadsPath = downloadDirectory.path;
+
+      Directory downloadsDir = Directory(downloadsPath);
+      if (!downloadsDir.existsSync()) {
+        downloadsDir.createSync();
+      }
+
+      try {
+        await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+          //It would be more appropriate if you can show your own dialog
+          //to the user before requesting the notifications permissons.
+          if (!isAllowed) {
+            AwesomeNotifications().requestPermissionToSendNotifications(
+              permissions: [
+                NotificationPermission.Alert,
+                NotificationPermission.Sound,
+                NotificationPermission.Badge,
+                NotificationPermission.Vibration,
+                NotificationPermission.Light,
+                NotificationPermission.FullScreenIntent,
+              ],
+            );
+          } else {
+            setPDFDirectory(downloadsDir, pdfBytes);
+          }
+        });
+      } catch (e) {
+        print('Error writing PDF to file: $e');
+        return;
+      }
     }
   }
 
@@ -163,9 +183,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   void _openFilePath(String path) async {
-
-    if(Platform.isAndroid){
-
+    if (Platform.isAndroid) {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
       String sdkVersion = packageInfo.buildNumber;
@@ -181,15 +199,14 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
         } else {
           showAppSettings(context, "Please Allow Storage Permission");
         }
-      }else{
+      } else {
         final result = await OpenFile.open(path);
       }
-
-    }else{
+    } else {
       final result = await OpenFile.open(path);
     }
-
   }
+
   Future<void> showAppSettings(BuildContext context, String msg) async {
     return showDialog<void>(
       context: context,
@@ -208,7 +225,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
                       color: c.primary_text_color2)),
               onPressed: () {
                 Navigator.pop(context, true);
-               Permission.manageExternalStorage.request();
+                Permission.manageExternalStorage.request();
               },
             ),
           ],

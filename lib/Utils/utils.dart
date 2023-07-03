@@ -205,7 +205,7 @@ class Utils {
   Future<void> showAppSettings(BuildContext context, String msg) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(msg,
@@ -218,8 +218,9 @@ class Utils {
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
                       color: c.primary_text_color2)),
-              onPressed: () {
-                openAppSettings();
+              onPressed: () async {
+                await openAppSettings();
+                Navigator.pop(context);
               },
             ),
           ],

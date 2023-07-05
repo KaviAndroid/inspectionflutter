@@ -250,8 +250,9 @@ String previous_login_alert =
 String password_alert = "and ***password";
 String delay_work_in_block = "Plan to inspect only delayed works in the block";
 String plan_to_inspect = "Plan to inspect delayed works";
-String logout_alert = " then click logout icon in home page to successfully logout the previous session";
-String view_progress="View Work Progress";
+String logout_alert =
+    " then click logout icon in home page to successfully logout the previous session";
+String view_progress = "View Work Progress";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -496,3 +497,5 @@ String table_RdprWorkList = "rdpr_work_list";
 String table_SchemeList = "scheme_list";
 String table_save_work_details = "save_work_details";
 String table_save_images = "save_images";
+String fromDate_required = "Please Select From Date";
+String endDate_Required = "Please Select To Date";

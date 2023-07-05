@@ -29,6 +29,11 @@ import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import '../DataBase/DbHelper.dart';
 
 class Utils {
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
+  List<DateTime> selectedfromDateRange = [];
+  List<DateTime> selectedtoDateRange = [];
+
   Future<bool> isAutoDatetimeisEnable() async {
     bool isAutoDateTimeEnabled = false;
     isAutoDateTimeEnabled = Platform.environment['AUTO_TIME'] == 'true';
@@ -1513,14 +1518,62 @@ class Utils {
     return jsonValue;
   }
 */
+
+  @override
+  Widget calendarWidget(
+    BuildContext context,
+    int index,
+    DateTime initialDate,
+  ) {
+    //Date Time
+    return CalendarDatePicker2(
+      config: CalendarDatePicker2Config(
+        firstDate: index == 0 ? DateTime(2000) : initialDate,
+        lastDate: DateTime.now(),
+        currentDate: initialDate,
+        selectedDayHighlightColor: c.colorAccentlight,
+        weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        weekdayLabelTextStyle: const TextStyle(
+            color: Color(0xFF07b3a5),
+            fontWeight: FontWeight.bold,
+            fontSize: 10),
+        firstDayOfWeek: 1,
+        controlsHeight: 50,
+        controlsTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+        ),
+        dayTextStyle: const TextStyle(
+          fontSize: 10,
+          color: Color(0xFF252b34),
+          fontWeight: FontWeight.bold,
+        ),
+        disabledDayTextStyle: const TextStyle(color: Colors.grey, fontSize: 10),
+      ),
+      value: index == 0 ? selectedfromDateRange : selectedtoDateRange,
+      onValueChanged: (value) async {
+        if (index == 0) {
+          selectedfromDateRange.clear();
+          selectedfromDateRange.add(value[0]!);
+          selectedFromDate = value[0];
+          if (selectedFromDate != null) {
+            selectedToDate = null;
+            selectedtoDateRange.clear();
+          }
+        } else {
+          selectedToDate = value[0];
+          selectedtoDateRange.clear();
+          selectedtoDateRange.add(value[0]!);
+        }
+      },
+      displayedMonthDate:
+          index == 0 ? initialDate : selectedToDate ?? DateTime.now(),
+    );
+  }
+
   Future<Map<String, dynamic>> ShowCalenderDialog(BuildContext context) async {
     int currentIndex = 0;
-
-    //Date Time
-    List<DateTime> selectedfromDateRange = [];
-    List<DateTime> selectedtoDateRange = [];
-    DateTime? selectedFromDate;
-    DateTime? selectedToDate;
 
     Map<String, dynamic> jsonValue = {
       "fromDate": "",
@@ -1549,7 +1602,7 @@ class Utils {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                   setState(() {
+                                  setState(() {
                                     currentIndex = 0;
                                   });
                                 },
@@ -1579,7 +1632,7 @@ class Utils {
                                     border: Border(
                                         bottom: BorderSide(
                                             width:
-                                            currentIndex == 0 ? 2.0 : 1.0,
+                                                currentIndex == 0 ? 2.0 : 1.0,
                                             color: currentIndex == 0
                                                 ? c.primary_text_color2
                                                 : Colors.white))),
@@ -1627,7 +1680,7 @@ class Utils {
                                     border: Border(
                                         bottom: BorderSide(
                                             width:
-                                            currentIndex == 0 ? 2.0 : 1.0,
+                                                currentIndex == 0 ? 2.0 : 1.0,
                                             color: currentIndex == 1
                                                 ? c.primary_text_color2
                                                 : Colors.white))),
@@ -1637,94 +1690,18 @@ class Utils {
                         ),
                       ],
                     ),
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      child: Center(
-                        child: currentIndex == 0
-                            ? CalendarDatePicker2(
-                          config: CalendarDatePicker2Config(
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now(),
-                            currentDate:
-                            selectedFromDate ?? DateTime.now(),
-                            selectedDayHighlightColor: c.colorAccentlight,
-                            weekdayLabels: [
-                              'Sun',
-                              'Mon',
-                              'Tue',
-                              'Wed',
-                              'Thu',
-                              'Fri',
-                              'Sat'
-                            ],
-                            weekdayLabelTextStyle: const TextStyle(
-                                color: Color(0xFF07b3a5),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10),
-                            firstDayOfWeek: 1,
-                            controlsHeight: 50,
-                            controlsTextStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            dayTextStyle: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFF252b34),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            disabledDayTextStyle: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
+                    currentIndex == 0
+                        ? calendarWidget(
+                            context, 0, selectedFromDate ?? DateTime.now())
+                        : AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            child: Center(
+                                child: calendarWidget(
+                              context,
+                              1,
+                              selectedFromDate ?? DateTime.now(),
+                            )),
                           ),
-                          value: selectedfromDateRange,
-                          onValueChanged: (value) async {
-                            selectedFromDate = value[0];
-                            if (selectedFromDate != null) {
-                              selectedToDate = null;
-                            }
-                          },
-                        )
-                            : CalendarDatePicker2(
-                          config: CalendarDatePicker2Config(
-                          /*  firstDate: selectedFromDate,
-                            lastDate: DateTime.now(),
-                            currentDate: DateTime.now(),*/
-                            selectedDayHighlightColor: c.colorAccentlight,
-                            weekdayLabels: [
-                              'Sun',
-                              'Mon',
-                              'Tue',
-                              'Wed',
-                              'Thu',
-                              'Fri',
-                              'Sat'
-                            ],
-                            weekdayLabelTextStyle: const TextStyle(
-                                color: Color(0xFF07b3a5),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10),
-                            firstDayOfWeek: 1,
-                            controlsHeight: 50,
-                            controlsTextStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            dayTextStyle: const TextStyle(
-                                color: Color(0xFF252b34),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10),
-                            disabledDayTextStyle: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
-                          ),
-                          value: selectedtoDateRange,
-                          onValueChanged: (value) async {
-                            print("value change");
-                            selectedToDate = value[0];
-                          },
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: Container(
                         margin: EdgeInsets.only(bottom: 10),
@@ -1737,6 +1714,9 @@ class Utils {
                                 currentIndex = 0;
                                 selectedFromDate = null;
                                 selectedToDate = null;
+                                selectedfromDateRange.clear();
+                                selectedtoDateRange.clear();
+                                Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                               },
                               style: ElevatedButton.styleFrom(
@@ -1761,10 +1741,21 @@ class Utils {
                                     "toDate": selectedToDate,
                                     "flag": true
                                   };
+                                  selectedfromDateRange.clear();
+                                  selectedtoDateRange.clear();
+                                  selectedFromDate = null;
+                                  selectedToDate = null;
                                   Navigator.of(context).pop();
                                 } else {
-                                  customAlert(
-                                      context, "E", "Please Select To Date");
+                                  if (selectedFromDate == null) {
+                                    customAlert(
+                                        context, "E", s.fromDate_required);
+                                  } else if (selectedToDate == null) {
+                                    customAlert(
+                                        context, "E", s.endDate_Required);
+                                  } else {
+                                    print("Something Went Wrong....");
+                                  }
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -1795,5 +1786,4 @@ class Utils {
     );
     return jsonValue;
   }
-
 }

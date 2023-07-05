@@ -35,6 +35,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   bool finYearError = false;
   bool districtError = false;
   bool blockError = false;
+  bool schemeError = false;
 
   //bool Loading
   bool isLoadingFinYear = false;
@@ -58,6 +59,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   String selectedDistrict = "";
   String selectedBlock = "";
   String selectedMonth = "";
+  String selectedScheme = "";
 
   //List
   List finYearItems = [];
@@ -65,8 +67,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List blockItems = [];
   List monthItems = [];
   List finList = [];
+  List schemeList=[];
   List villagelist = [];
   List<FlutterLimitedCheckBoxModel> finyearList = [];
+  List<FlutterLimitedCheckBoxModel> SchemeListvalue = [];
 
   //Default Values
   Map<String, String> defaultSelectedFinYear = {
@@ -81,7 +85,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     s.key_dname: s.selectDistrict
   };
   Map<String, String> defaultSelectedMonth = {'monthId': "00", 'month': '0'};
-
+  Map<String, String> defaultSelectedScheme = {
+    s.key_scheme_id: "0",
+    s.key_scheme_name: s.select_scheme
+  };
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
@@ -234,7 +241,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                   ),
                 ),
                 Container(
-                  height: 30, padding: EdgeInsets.only(top: 5,left: 10,right: 10),
+                  height: 30, padding: EdgeInsets.only(left: 10,right: 10),
                   decoration: BoxDecoration(
                       color: c.grey_out,
                       border: Border.all(
@@ -255,7 +262,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         flex: 3,
                         child: Text(
                           finList.isNotEmpty
-                              ? finList.toString()
+                              ? finList.join(', ')
                               :s.select_financial_year,
                           style: TextStyle(
                               fontSize: 13,
@@ -266,15 +273,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           softWrap: true,
                         ),
                       ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 40,right: 0),
-                              // alignment: Alignment.center,
-                              child: Icon( Icons.arrow_drop_down,
-                                color: Colors.black45,size: 30,
-                              ),
-                            ),
-                          )
                       ]
                   )
                   )
@@ -517,6 +515,110 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 8.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5, bottom: 10),
+                  child: Text(
+                    s.select_scheme,
+                    style: GoogleFonts.getFont('Roboto',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        color: c.grey_8),
+                  ),
+                ),
+                Container(
+                    height: 30, padding: EdgeInsets.only(top: 5,left: 10,right: 10),
+                    decoration: BoxDecoration(
+                        color: c.grey_out,
+                        border: Border.all(
+                            width: schemeError ? 1 : 0.1,
+                            color: schemeError ? c.red : c.grey_10),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child:InkWell(
+                        onTap: () {
+                          SchemeListvalue.clear();
+                          getSchemeList();
+                        },
+                        child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  schemeList.isNotEmpty
+                                      ? schemeList.toString()
+                                      :s.select_scheme,
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal,
+                                      color: c.grey_10),
+                                  overflow: TextOverflow.clip,
+                                  maxLines: 1,
+                                  softWrap: true,
+                                ),
+                              ),
+                            ]
+                        )
+                    )
+                  /*child: IgnorePointer(
+                    ignoring: isLoadingFinYear ? true : false,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2(
+                        style: const TextStyle(color: Colors.black),
+                        value: selectedFinYear,
+                        isExpanded: true,
+                        items: finYearItems
+                            .map((item) => DropdownMenuItem<String>(
+                                  value: item[s.key_fin_year].toString(),
+                                  child: Text(
+                                    item[s.key_fin_year].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != s.select_financial_year) {
+                            isLoadingFinYear = false;
+                            finYearError = false;
+                            selectedFinYear = value.toString();
+                            print(">>>>>#################"+selectedFinYear.toString());
+                            setState(() {});
+                          } else {
+                            setState(() {
+                              selectedFinYear = value.toString();
+                              finYearError = true;
+                            });
+                          }
+                        },
+                        buttonStyleData: const ButtonStyleData(
+                          height: 30,
+                          padding: EdgeInsets.only(right: 10),
+                        ),
+                        iconStyleData: IconStyleData(
+                          icon: isLoadingFinYear
+                              ? SpinKitCircle(
+                                  color: c.colorPrimary,
+                                  size: 30,
+                                  duration: const Duration(milliseconds: 1200),
+                                )
+                              : const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                          iconSize: 30,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),*/
+                ),
                 Visibility(
                   visible: delay,
                   child: Container(
@@ -538,7 +640,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 5, right: 0),
+                                      top: 5, bottom: 5, left: 10, right: 0),
                                   child: Text(
                                     'Months Delayed',
                                     style: GoogleFonts.getFont('Roboto',
@@ -612,7 +714,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 0, bottom: 0, left: 5, right: 0),
+                                      top: 5, bottom: 5, left:10, right: 0),
                                   child: Text(
                                     'AS Value >=',
                                     style: GoogleFonts.getFont('Roboto',
@@ -623,9 +725,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                                     alignment: AlignmentDirectional.center,
-                                    height: 30,
+                                    height: 40,
                                     child: TextFormField(
                                       style: TextStyle(fontSize: 13),
                                       maxLines: 1,
@@ -723,124 +825,117 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                   ),
                 ),
                 Visibility(
-                  child:Container(
-                      child:Stack(
-                          children: [
-                            Visibility(
-                                visible: villagelist.isNotEmpty?true:false,
-                                child:Container(
-                                    child: ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: villagelist.length,
-                                        itemBuilder: (BuildContext context,int index)
-                                        {
-                                          return InkWell(
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => WorkList(
-                                                          finYear: finList,
-                                                          dcode: selectedDistrict,
-                                                          bcode: selectedBlock,
-                                                          pvcode:villagelist[index][s.key_pvcode],
-                                                          tmccode: selectedMonth,
-                                                          flag: "delayed_works",
-                                                          asvalue: asController.text,
-                                                          selectedschemeList: "",
-                                                          townType: '',
-                                                          scheme: '',
-                                                          schemeList: '',
-                                                        )));
-                                              },
-                                              child:Card(
-                                                  elevation: 5,
-                                                  margin: EdgeInsets.only(top: 15,left: 15,bottom: 15),
-                                                  color: c.white,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.only(
-                                                      bottomLeft: Radius.circular(20),
-                                                      topLeft: Radius.circular(20),
-                                                      topRight: Radius.circular(20),
-                                                      bottomRight: Radius.circular(20),
+                    visible: villagelist.isNotEmpty?true:false,
+                    child:Container(
+                        child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: villagelist.length,
+                            itemBuilder: (BuildContext context,int index)
+                            {
+                              return InkWell(
+                                  onTap: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => WorkList(
+                                              finYear: finList,
+                                              dcode: selectedDistrict,
+                                              bcode: selectedBlock,
+                                              pvcode:villagelist[index][s.key_pvcode],
+                                              tmccode: selectedMonth,
+                                              flag: "delayed_works",
+                                              asvalue: asController.text,
+                                              selectedschemeList: "",
+                                              townType: '',
+                                              scheme: '',
+                                              schemeList: '',
+                                            )));
+                                  },
+                                  child:Card(
+                                      elevation: 5,
+                                      margin: EdgeInsets.only(top: 10,left: 15,bottom: 10),
+                                      color: c.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(20),
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomRight: Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: ClipPath(
+                                          clipper: ShapeBorderClipper(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(20))),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width:10,
+                                                    padding: EdgeInsets.only(top: 10,bottom: 10),
+                                                    child: Text(
+                                                        ""
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                            begin: Alignment.topLeft,
+                                                            end: Alignment.topRight,
+                                                            colors: [c.colorPrimary,c.colorAccentverylight]
+                                                        ),
+                                                        borderRadius: const BorderRadius.only(
+                                                          topLeft: Radius.circular(20),
+                                                          topRight: Radius.circular(0),
+                                                          bottomLeft: Radius.circular(20),
+                                                          bottomRight: Radius.circular(0),
+                                                        )),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(top: 10,bottom: 10),
+                                                      child: Text(
+                                                        villagelist[index][key_pvname],
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                            FontWeight.normal,
+                                                            color: c.black),textAlign: TextAlign.center,
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                      ),
                                                     ),
                                                   ),
-                                                  child: ClipPath(
-                                                      clipper: ShapeBorderClipper(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(20))),
-                                                      child: Column(
-                                                        children: [
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              width:10,
-                                                              padding: EdgeInsets.only(top: 5,bottom: 5),
-                                                                  child: Text(
-                                                                    ""
-                                                                  ),
-                                                                  decoration: BoxDecoration(
-                                                                      gradient: LinearGradient(
-                                                                          begin: Alignment.topLeft,
-                                                                          end: Alignment.topRight,
-                                                                          colors: [c.colorPrimary,c.colorAccentverylight]
-                                                                      ),
-                                                                      borderRadius: const BorderRadius.only(
-                                                                        topLeft: Radius.circular(20),
-                                                                        topRight: Radius.circular(0),
-                                                                        bottomLeft: Radius.circular(20),
-                                                                        bottomRight: Radius.circular(0),
-                                                                      )),
-                                                                ),
-                                                            Expanded(
-                                                                 child: Container(
-                                                                   padding: EdgeInsets.only(top: 5,bottom: 5),
-                                                                   child: Text(
-                                                                     villagelist[index][key_pvname],
-                                                                     style: TextStyle(
-                                                                         fontSize: 15,
-                                                                         fontWeight:
-                                                                         FontWeight.normal,
-                                                                         color: c.black),textAlign: TextAlign.center,
-                                                                     overflow:
-                                                                     TextOverflow.ellipsis,
-                                                                   ),
-                                                                 ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Container(
-                                                               padding: EdgeInsets.only(top: 5,bottom: 5),
-                                                                decoration: BoxDecoration(
-                                                                    color: c.dot_light_screen_lite1,
-                                                                    borderRadius: const BorderRadius.only(
-                                                                      topLeft: Radius.circular(0),
-                                                                      topRight: Radius.circular(20),
-                                                                      bottomLeft: Radius.circular(0),
-                                                                      bottomRight: Radius.circular(20),
-                                                                    )),
-                                                                child: Text(
-                                                                    villagelist[index][key_total_count].toString(),
-                                                                    style: TextStyle(
-                                                                        color: c.primary_text_color2,fontWeight: FontWeight.bold),textAlign: TextAlign.center,
-                                                                    maxLines: 1),
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(top: 10,bottom: 10),
+                                                      decoration: BoxDecoration(
+                                                          color: c.dot_light_screen_lite1,
+                                                          borderRadius: const BorderRadius.only(
+                                                            topLeft: Radius.circular(0),
+                                                            topRight: Radius.circular(20),
+                                                            bottomLeft: Radius.circular(0),
+                                                            bottomRight: Radius.circular(20),
+                                                          )),
+                                                      child: Text(
+                                                          villagelist[index][key_total_count].toString(),
+                                                          style: TextStyle(
+                                                              color: c.primary_text_color2,fontWeight: FontWeight.bold),textAlign: TextAlign.center,
+                                                          maxLines: 1),
 
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                      )
-                                                  )
-                                              )
-                                          );
-                                        }
-                                    )
-                                )
-                            )
-                          ])
-                  )
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                      )
+                                  )
+                              );
+                            }
+                        )
+                    )
                 )
               ],
             )),
@@ -1077,6 +1172,172 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                 )),
           );
         });
+  }
+  void multiChoiceSchemeSelection(List<FlutterLimitedCheckBoxModel> list) {
+    int limitCount = schemeList.length;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: GoogleFonts.getFont('Roboto',
+                    fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+                children:[
+                  new TextSpan(
+                      text: s.select_scheme,
+                      style: new TextStyle(fontWeight: FontWeight.bold, color: c.grey_8)),
+                ],
+              ),
+
+            ),
+            content: Container(
+                height: 300,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterLimitedCheckbox(
+                          limit: limitCount,
+                          limitedValueList: list,
+                          onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                            schemeList.clear();
+                            for (int i = 0; i < list.length; i++) {
+                              schemeList.add(list[i].selectTitle);
+                            }
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Navigator.pop(context, 'OK');
+                          setState(() {});
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                )),
+          );
+        });
+  }
+  Future<void> getSchemeList() async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+    Map json_request = {};
+    /*json_request = {
+      s.key_dcode:selectedDistrict,
+      s.key_bcode: selectedBlock,
+      s.key_pvcode: '',
+      s.key_fin_year:finList,
+      s.key_service_id: s.service_key_scheme_list,
+    };*/
+    json_request = {
+      s.key_dcode:"31",
+      s.key_bcode: "8",
+      s.key_pvcode: '12',
+      s.key_fin_year:finList,
+      s.key_service_id: s.service_key_scheme_list,
+    };
+
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("SchemeList_url>>" + url.main_service_jwt.toString());
+    print("SchemeList_request_json>>" + json_request.toString());
+    print("SchemeList_request_encrpt>>" + encrypted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("SchemeList_response>>" + data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("SchemeList Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("SchemeList responceSignature -  $responceSignature");
+
+      print("SchemeList responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("SchemeList responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+        var status = userData[s.key_status];
+        var responseValue = userData[s.key_response];
+        if (status == s.key_ok && responseValue == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_scheme_name]
+                .toLowerCase()
+                .compareTo(b[s.key_scheme_name].toLowerCase());
+          });
+          if (res_jsonArray.length > 0) {
+            schemeList = [];
+            schemeList.addAll(res_jsonArray);
+            schemeFlag = true;
+            print("schemeItems>>" + schemeList.toString());
+            for (int i = 0; i < schemeList.length; i++) {
+             SchemeListvalue.add(FlutterLimitedCheckBoxModel(
+                  isSelected: true,
+                  selectTitle: utils.splitStringByLength(schemeList[i][s.key_scheme_name], 19),
+                  selectId: i));
+              print(schemeList.toString());
+            }
+          }
+          multiChoiceSchemeSelection(SchemeListvalue);
+        } else if (status == s.key_ok && responseValue == s.key_noRecord) {
+          Utils().showAlert(context, "No Scheme Found");
+        }
+      } else {
+        print("SchemeList responceSignature - Token Not Verified");
+        utils.customAlert(context, "E", s.jsonError);
+      }
+    }
   }
   /*
   ***********************************************************************************************

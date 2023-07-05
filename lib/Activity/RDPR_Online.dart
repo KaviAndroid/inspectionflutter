@@ -93,214 +93,224 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
             ),
           ),
         ),
-        body: Container(
-            color: c.white,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      if (distance.text != null && distance.text != "") {
-                        getLocation();
-                      } else {
-                        utils.showAlert(context, s.enter_distance_in_km);
-                      }
-                    },
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 3,
-                                  child: Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Container(
-                                      padding: EdgeInsets.all(9.0),
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: c.yello,
-                                          border: Border.all(
-                                              color: c.grey, width: 1.4)),
-                                      child: Image.asset(
-                                        imagePath.location,
-                                        fit: BoxFit.contain,
-                                        height: 50,
-                                        width: 50,
+        body: SingleChildScrollView(
+            child: Container(
+                color: c.white,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {
+                          if (distance.text != null && distance.text != "") {
+                            getLocation();
+                          } else {
+                            utils.showAlert(context, s.enter_distance_in_km);
+                          }
+                        },
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 3,
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Container(
+                                          padding: EdgeInsets.all(9.0),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: c.yello,
+                                              border: Border.all(
+                                                  color: c.grey, width: 1.4)),
+                                          child: Image.asset(
+                                            imagePath.location,
+                                            fit: BoxFit.contain,
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
                                       ),
                                     ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: <Widget>[
+                                              Container(
+                                                alignment: AlignmentDirectional
+                                                    .bottomEnd,
+                                                height: 30,
+                                                width: 50,
+                                                decoration: new BoxDecoration(
+                                                    color: c.bg,
+                                                    border: Border.all(
+                                                        color: c.grey,
+                                                        width: 2),
+                                                    borderRadius:
+                                                        new BorderRadius.only(
+                                                      topLeft:
+                                                          const Radius.circular(
+                                                              10),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              10),
+                                                      bottomLeft:
+                                                          const Radius.circular(
+                                                              10),
+                                                      bottomRight:
+                                                          const Radius.circular(
+                                                              10),
+                                                    )),
+                                                margin: EdgeInsets.fromLTRB(
+                                                    20, 0, 5, 0),
+                                                child: TextField(
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                  controller: distance,
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    isDense: true,
+                                                    hintText:
+                                                        s.enter_distance_in_km,
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 11.0,
+                                                        color: c.grey_6),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                alignment: AlignmentDirectional
+                                                    .bottomEnd,
+                                                height: 30,
+                                                child: Text(
+                                                  "Km",
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: c.grey_7),
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                    )
+                                  ]),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                                child: Text(
+                                  s.click_here_to_get_villages,
+                                  style: TextStyle(
+                                      color: c.grey_7,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ]),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RdprOnlineWorkList()));
+                        },
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  padding: EdgeInsets.all(1.0),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: c.yello,
+                                      border: Border.all(
+                                          color: c.grey, width: 1.4)),
+                                  child: Image.asset(
+                                    imagePath.choice,
+                                    fit: BoxFit.contain,
+                                    height: 70,
+                                    width: 70,
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: <Widget>[
-                                          Container(
-                                            alignment:
-                                                AlignmentDirectional.bottomEnd,
-                                            height: 30,
-                                            width: 50,
-                                            decoration: new BoxDecoration(
-                                                color: c.bg,
-                                                border: Border.all(
-                                                    color: c.grey, width: 2),
-                                                borderRadius:
-                                                    new BorderRadius.only(
-                                                  topLeft:
-                                                      const Radius.circular(10),
-                                                  topRight:
-                                                      const Radius.circular(10),
-                                                  bottomLeft:
-                                                      const Radius.circular(10),
-                                                  bottomRight:
-                                                      const Radius.circular(10),
-                                                )),
-                                            margin: EdgeInsets.fromLTRB(
-                                                20, 0, 5, 0),
-                                            child: TextField(
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                              controller: distance,
-                                              decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.zero,
-                                                isDense: true,
-                                                hintText:
-                                                    s.enter_distance_in_km,
-                                                hintStyle: TextStyle(
-                                                    fontSize: 11.0,
-                                                    color: c.grey_6),
-                                                border: InputBorder.none,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            alignment:
-                                                AlignmentDirectional.bottomEnd,
-                                            height: 30,
-                                            child: Text(
-                                              "Km",
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_7),
-                                            ),
-                                          ),
-                                        ]),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                                child: Text(
+                                  s.click_here_to_get_villages_through_selection,
+                                  style: TextStyle(
+                                      color: c.grey_7,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ]),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DelayedWorkFilterScreen()));
+                        },
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  padding: EdgeInsets.all(1.0),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: c.grey, width: 1.4)),
+                                  child: Image.asset(
+                                    imagePath.delay_works,
+                                    fit: BoxFit.contain,
+                                    height: 70,
+                                    width: 70,
                                   ),
-                                )
-                              ]),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                            child: Text(
-                              s.click_here_to_get_villages,
-                              style: TextStyle(
-                                  color: c.grey_7,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ]),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RdprOnlineWorkList()));
-                    },
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              padding: EdgeInsets.all(1.0),
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: c.yello,
-                                  border:
-                                      Border.all(color: c.grey, width: 1.4)),
-                              child: Image.asset(
-                                imagePath.choice,
-                                fit: BoxFit.contain,
-                                height: 70,
-                                width: 70,
+                                ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                            child: Text(
-                              s.click_here_to_get_villages_through_selection,
-                              style: TextStyle(
-                                  color: c.grey_7,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ]),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DelayedWorkFilterScreen()));
-                    },
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              padding: EdgeInsets.all(1.0),
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: c.grey, width: 1.4)),
-                              child: Image.asset(
-                                imagePath.delay_works,
-                                fit: BoxFit.contain,
-                                height: 70,
-                                width: 70,
+                              Container(
+                                margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                                child: Text(
+                                  s.delay_work_in_block,
+                                  style: TextStyle(
+                                      color: c.grey_7,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                            child: Text(
-                              s.delay_work_in_block,
-                              style: TextStyle(
-                                  color: c.grey_7,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ]),
-                  )
-                ])),
+                            ]),
+                      )
+                    ]))),
       ),
     );
   }
@@ -330,8 +340,8 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
 
     json_request = {
       s.key_service_id: s.service_key_get_calculate_distance,
-      s.key_latitude: latitude/*10.6704070583*/,
-      s.key_longitude: longitude/*79.6427229964*/,
+      s.key_latitude: latitude /*10.6704070583*/,
+      s.key_longitude: longitude /*79.6427229964*/,
       s.key_distance: distance.text,
     };
 

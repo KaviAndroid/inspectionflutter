@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
@@ -35,6 +36,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   List blockItems = [];
   List villageItems = [];
   List schemeItems = [];
+  List finList = [];
 
   String selectedFinYear = "";
   String selectedDistrict = "";
@@ -59,7 +61,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   bool districtFlag = false;
   bool villageFlag = false;
   bool schemeFlag = false;
-
+  List<FlutterLimitedCheckBoxModel> finyearList = [];
   Map<String, String> defaultSelectedFinYear = {
     s.key_fin_year: s.select_financial_year,
   };
@@ -90,11 +92,14 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
-    print(list.toString());
-    finYearItems.add(defaultSelectedFinYear);
-    finYearItems.addAll(list);
-    selectedFinYear = defaultSelectedFinYear[s.key_fin_year]!;
+    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+    for (int i = 0; i < list.length; i++) {
+      finyearList.add(FlutterLimitedCheckBoxModel(
+          isSelected: false,
+          selectTitle: list[i][s.key_fin_year],
+          selectId: i));
+      print(list.toString());
+    }
     selectedLevel = prefs.getString(s.key_level)!;
     print(finYearItems.toString());
     if (selectedLevel == 'S') {
@@ -107,6 +112,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
       selectedBlock = defaultSelectedBlock[s.key_bcode]!;
       selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
+      selectedFinYear=defaultSelectedFinYear[s.key_fin_year]!;
     } else if (selectedLevel == 'D') {
       blockFlag = true;
       List<Map> list =
@@ -201,7 +207,44 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                       width: finYearError ? 1 : 0.1,
                                       color: finYearError ? c.red : c.grey_10),
                                   borderRadius: BorderRadius.circular(10.0)),
-                              child: IgnorePointer(
+                                child:InkWell(
+                                    onTap: () {
+                                      multiChoiceFinYearSelection(
+                                          finyearList,
+                                          s.select_financial_year);
+                                    },
+                                    child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              finList.isNotEmpty
+                                                  ? finList.toString()
+                                                  :s.select_financial_year,
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: c.grey_10),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 40,right: 0),
+                                              // alignment: Alignment.center,
+                                              child: Icon( Icons.arrow_drop_down,
+                                                color: Colors.black45,size: 30,
+                                              ),
+                                            ),
+                                          )
+                                        ]
+                                    )
+                                )
+                             /* child: IgnorePointer(
                                 ignoring: isLoadingFinYear ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2(
@@ -272,7 +315,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ),*/
                             ),
                             const SizedBox(height: 8.0),
                             Visibility(
@@ -709,7 +752,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     MaterialPageRoute(
                                         builder: (context) => WorkList(
                                               schemeList: schemeItems,
-                                              finYear: selectedFinYear,
+                                              finYear: finList,
                                               dcode: selectedDistrict,
                                               bcode: selectedBlock,
                                               pvcode: selectedVillage,
@@ -915,7 +958,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         s.key_dcode: selectedDistrict,
         s.key_bcode: selectedBlock,
         s.key_pvcode: pvcode,
-        s.key_fin_year: [selectedFinYear],
+        s.key_fin_year:finList,
         s.key_service_id: s.service_key_scheme_list,
       };
     } else if (selectedLevel == 'D') {
@@ -923,7 +966,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         s.key_dcode: prefs.getString(s.key_dcode),
         s.key_bcode: selectedBlock,
         s.key_pvcode: pvcode,
-        s.key_fin_year: [selectedFinYear],
+        s.key_fin_year: finList,
         s.key_service_id: s.service_key_scheme_list,
       };
     } else if (selectedLevel == 'B') {
@@ -931,7 +974,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         s.key_dcode: prefs.getString(s.key_dcode),
         s.key_bcode: prefs.getString(s.key_bcode),
         s.key_pvcode: pvcode,
-        s.key_fin_year: [selectedFinYear],
+        s.key_fin_year: finList,
         s.key_service_id: s.service_key_scheme_list,
       };
     }
@@ -1009,4 +1052,84 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       }
     }
   }
+  void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list, String msg) {
+    int limitCount = 2;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: GoogleFonts.getFont('Roboto',
+                    fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+                children: <TextSpan>[
+                  new TextSpan(
+                      text: s.select_financial_year,
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, color: c.grey_8)),
+                  new TextSpan(
+                      text: " (Any Two)",
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.subscription_type_red_color)),
+                ],
+              ),
+            ),
+            content: Container(
+                height: 300,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterLimitedCheckbox(
+                          limit: limitCount,
+                          limitedValueList: list,
+                          onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                            finList.clear();
+                            for (int i = 0; i < list.length; i++) {
+                              finList.add(list[i].selectTitle);
+                            }
+                            print(finList.toString());
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          if (finList.isNotEmpty) {
+                            schemeFlag = false;
+                            submitFlag = false;
+                          }
+                          Navigator.pop(context, 'OK');
+
+                          setState(() {});
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                )),
+          );
+        });
+  }
+
 }

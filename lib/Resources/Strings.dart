@@ -251,6 +251,7 @@ String password_alert = "and ***password";
 String delay_work_in_block = "Plan to inspect only delayed works in the block";
 String plan_to_inspect = "Plan to inspect delayed works";
 String logout_alert = " then click logout icon in home page to successfully logout the previous session";
+String view_progress="View Work Progress";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";

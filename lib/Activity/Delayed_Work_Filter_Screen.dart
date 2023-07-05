@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
@@ -49,6 +50,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
 
   //Bool
   bool submitFlag = false;
+  bool schemeFlag = false;
 
   //String
   String selectedFinYear = "";
@@ -64,6 +66,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List monthItems = [];
   List finList = [];
   List villagelist = [];
+  List<FlutterLimitedCheckBoxModel> finyearList = [];
 
   //Default Values
   Map<String, String> defaultSelectedFinYear = {
@@ -95,13 +98,18 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
+    finyearList.clear();
     List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ${s.table_FinancialYear}');
-    finYearItems.add(defaultSelectedFinYear);
-    finYearItems.addAll(list);
-    selectedFinYear = defaultSelectedFinYear[s.key_fin_year]!;
+    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+    for (int i = 0; i < list.length; i++) {
+      finyearList.add(FlutterLimitedCheckBoxModel(
+          isSelected: false,
+          selectTitle: list[i][s.key_fin_year],
+          selectId: i));
+      print(list.toString());
+    }
     selectedLevel = prefs.getString(s.key_level)!;
-    print(finYearItems.toString());
+    print("#############"+finYearItems.toString());
     if (selectedLevel == 'S') {
       sFlag = true;
       dFlag=true;
@@ -113,6 +121,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       districtItems.addAll(list);
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
       selectedBlock = defaultSelectedBlock[s.key_bcode]!;
+      selectedFinYear=defaultSelectedFinYear[s.key_fin_year]!;
     } else if (selectedLevel == 'D') {
       dFlag = true;
       bFlag=true;
@@ -225,13 +234,51 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                   ),
                 ),
                 Container(
+                  height: 30, padding: EdgeInsets.only(top: 5,left: 10,right: 10),
                   decoration: BoxDecoration(
                       color: c.grey_out,
                       border: Border.all(
                           width: finYearError ? 1 : 0.1,
                           color: finYearError ? c.red : c.grey_10),
                       borderRadius: BorderRadius.circular(10.0)),
-                  child: IgnorePointer(
+                  child:InkWell(
+                    onTap: () {
+                      multiChoiceFinYearSelection(
+                          finyearList,
+                          s.select_financial_year);
+                    },
+                     child: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.start,
+                        children: [
+                     Expanded(
+                        flex: 3,
+                        child: Text(
+                          finList.isNotEmpty
+                              ? finList.toString()
+                              :s.select_financial_year,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: c.grey_10),
+                          overflow: TextOverflow.clip,
+                          maxLines: 1,
+                          softWrap: true,
+                        ),
+                      ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 40,right: 0),
+                              // alignment: Alignment.center,
+                              child: Icon( Icons.arrow_drop_down,
+                                color: Colors.black45,size: 30,
+                              ),
+                            ),
+                          )
+                      ]
+                  )
+                  )
+                  /*child: IgnorePointer(
                     ignoring: isLoadingFinYear ? true : false,
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2(
@@ -254,6 +301,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                             isLoadingFinYear = false;
                             finYearError = false;
                             selectedFinYear = value.toString();
+                            print(">>>>>#################"+selectedFinYear.toString());
                             setState(() {});
                           } else {
                             setState(() {
@@ -286,7 +334,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ),
                 const SizedBox(height: 8.0),
                 Visibility(
@@ -650,7 +698,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                             ))),
                         onPressed: () async {
                           asController.text.isEmpty
-                              ? asController.text = "-1"
+                              ? asController.text = "0"
                               : null;
                           if (int.parse(asController.text) > 0 || selectedMonth != "00") {
                             await fetchDelayedWorkList();
@@ -693,16 +741,17 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) => WorkList(
-                                                          flag: "delayed_works",
+                                                          finYear: finList,
                                                           dcode: selectedDistrict,
                                                           bcode: selectedBlock,
-                                                          pvcode: villagelist[index][key_pvcode].toString(),
-                                                          finYear: [selectedFinYear],
+                                                          pvcode:villagelist[index][s.key_pvcode],
                                                           tmccode: selectedMonth,
+                                                          flag: "delayed_works",
+                                                          asvalue: asController.text,
+                                                          selectedschemeList: "",
                                                           townType: '',
                                                           scheme: '',
                                                           schemeList: '',
-                                                          selectedschemeList: asController.text,
                                                         )));
                                               },
                                               child:Card(
@@ -809,15 +858,14 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     String? userName = prefs.getString(s.key_user_name);
     utils.showProgress(context, 1);
 
-    finList = [];
-    finList.add(selectedFinYear);
+
 
     Map json_request = {
       s.key_service_id: s.service_key_get_inspection_delayed_work_details,
       s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
-      s.key_fin_year: finList,
-      s.flag: 1,
+      s.key_fin_year:finList,
+      s.key_flag: "1",
       if (selectedMonth.isNotEmpty) s.key_month: selectedMonth,
       if (asController.text.isNotEmpty) s.key_as_value: asController.text,
     };
@@ -844,33 +892,33 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("WorkList_response_url>>${url.master_service}");
-    print("WorkList_response_request_json>> ${jsonEncode(json_request)}");
-    print("WorkList_response_request_encrpt>>$encrypted_request");
+    print("VillageList_response_url>>${url.master_service}");
+    print("VillageList_response_request_json>> ${jsonEncode(json_request)}");
+    print("VillageList_response_request_encrpt>>$encrypted_request");
 
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       String data = response.body;
 
-      print("WorkList_response>>" + data);
+      print("VillageList_response>>" + data);
 
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];
 
-      print("WorkList Authorization -  $token");
+      print("VillageList Authorization -  $token");
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
       String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("WorkList responceSignature -  $responceSignature");
+      print("VillageList responceSignature -  $responceSignature");
 
-      print("WorkList responceData -  $responceData");
+      print("VillageList responceData -  $responceData");
 
       if (responceSignature == responceData) {
-        print("WorkList responceSignature - Token Verified");
+        print("VillageList responceSignature - Token Verified");
         var userData = jsonDecode(data);
 
         var status = userData[s.key_status];
@@ -956,7 +1004,80 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       setState(() {});
     }
   }
-
+  void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list, String msg) {
+    int limitCount = 2;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: GoogleFonts.getFont('Roboto',
+                    fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+                children: <TextSpan>[
+                  new TextSpan(
+                      text: s.select_financial_year,
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, color: c.grey_8)),
+                  new TextSpan(
+                      text: " (Any Two)",
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: c.subscription_type_red_color)),
+                ],
+              ),
+            ),
+            content: Container(
+                height: 300,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterLimitedCheckbox(
+                          limit: limitCount,
+                          limitedValueList: list,
+                          onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                            finList.clear();
+                            for (int i = 0; i < list.length; i++) {
+                              finList.add(list[i].selectTitle);
+                            }
+                            print(finList.toString());
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Navigator.pop(context, 'OK');
+                          setState(() {});
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                )),
+          );
+        });
+  }
   /*
   ***********************************************************************************************
   */

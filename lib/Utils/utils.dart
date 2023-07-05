@@ -1063,8 +1063,8 @@ class Utils {
           onWillPop: () async => false,
           child: Center(
             child: Container(
-              height: 100,
-              width: 100,
+              height: 120,
+              width: 120,
               child: Stack(
                 children: [
                   Column(

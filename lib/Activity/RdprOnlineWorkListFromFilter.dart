@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
@@ -16,7 +15,10 @@ import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
+import '../Layout/Multiple_CheckBox.dart';
 import '../Layout/ReadMoreLess.dart';
+import '../Layout/checkBoxModelClass.dart';
+import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 
 class RdprOnlineWorkList extends StatefulWidget {
@@ -37,6 +39,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   List villageItems = [];
   List schemeItems = [];
   List finList = [];
+  List schemelistWithCount = [];
 
   String selectedFinYear = "";
   String selectedDistrict = "";
@@ -201,6 +204,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                               ),
                             ),
                             Container(
+                              height: 40,
+                              padding: EdgeInsets.only(left: 15),
                               decoration: BoxDecoration(
                                   color: c.grey_out,
                                   border: Border.all(
@@ -221,7 +226,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                             flex: 3,
                                             child: Text(
                                               finList.isNotEmpty
-                                                  ? finList.toString()
+                                                  ? finList.join(', ')
                                                   :s.select_financial_year,
                                               style: TextStyle(
                                                   fontSize: 13,
@@ -232,15 +237,6 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               softWrap: true,
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsets.only(left: 40,right: 0),
-                                              // alignment: Alignment.center,
-                                              child: Icon( Icons.arrow_drop_down,
-                                                color: Colors.black45,size: 30,
-                                              ),
-                                            ),
-                                          )
                                         ]
                                     )
                                 )
@@ -258,7 +254,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               child: Text(
                                                 item[s.key_fin_year].toString(),
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                             ))
@@ -369,7 +365,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               child: Text(
                                                 item[s.key_dname].toString(),
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                             ))
@@ -399,7 +395,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                       }
                                     },
                                     buttonStyleData: const ButtonStyleData(
-                                      height: 45,
+                                      height: 40,
                                       padding: EdgeInsets.only(right: 10),
                                     ),
                                     iconStyleData: IconStyleData(
@@ -468,7 +464,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton2(
                                   value: selectedBlock,
-                                  style: const TextStyle(color: Colors.black),
+                                  style: const TextStyle(color: Colors.black,fontSize: 15),
                                   isExpanded: true,
                                   items: blockItems
                                       .map((item) => DropdownMenuItem<String>(
@@ -476,7 +472,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                             child: Text(
                                               item[s.key_bname].toString(),
                                               style: const TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 13,
                                               ),
                                             ),
                                           ))
@@ -503,7 +499,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     //Do something when changing the item if you want.
                                   },
                                   buttonStyleData: const ButtonStyleData(
-                                    height: 45,
+                                    height: 40,
                                     padding: EdgeInsets.only(right: 10),
                                   ),
                                   iconStyleData: const IconStyleData(
@@ -573,14 +569,14 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                             child: Text(
                                               item[s.key_pvname].toString(),
                                               style: const TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 13,
                                               ),
                                             ),
                                           ))
                                       .toList(),
                                   onChanged: (value) {
                                     if (value != "0") {
-                                      submitFlag = false;
+                                      submitFlag = true;
                                       isLoadingV = true;
                                       loadUIScheme(value.toString());
                                       setState(() {});
@@ -596,7 +592,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     //Do something when changing the item if you want.
                                   },
                                   buttonStyleData: const ButtonStyleData(
-                                    height: 45,
+                                    height: 40,
                                     padding: EdgeInsets.only(right: 10),
                                   ),
                                   iconStyleData: const IconStyleData(
@@ -669,7 +665,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                 item[s.key_scheme_name]
                                                     .toString(),
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                             ))
@@ -688,7 +684,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                       }
                                     },
                                     buttonStyleData: const ButtonStyleData(
-                                      height: 45,
+                                      height: 40,
                                       padding: EdgeInsets.only(right: 10),
                                     ),
                                     iconStyleData: IconStyleData(
@@ -732,6 +728,158 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                         ),
                       ),
                       Visibility(
+                          visible: schemelistWithCount.isNotEmpty ? true : false,
+                          child: Container(
+                              child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: schemelistWithCount.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return InkWell(
+                                        onTap: () async {
+
+                                          Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => WorkList(
+                                              schemeList: '',
+                                              finYear: finList,
+                                              dcode: selectedDistrict,
+                                              bcode: selectedBlock,
+                                              pvcode: selectedVillage,
+                                              scheme: schemelistWithCount[index]
+                                              [s.key_scheme_id],
+                                              tmccode: '',
+                                              townType: '',
+                                              flag: 'rdpr_online',
+                                              selectedschemeList: [],
+                                            )));
+                                        },
+                                        child: Card(
+                                            elevation: 5,
+                                            margin: EdgeInsets.only(
+                                                top: 10, left: 15, bottom: 10),
+                                            color: c.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft: Radius.circular(20),
+                                                topLeft: Radius.circular(20),
+                                                topRight: Radius.circular(20),
+                                                bottomRight: Radius.circular(20),
+                                              ),
+                                            ),
+                                            child: ClipPath(
+                                                clipper: ShapeBorderClipper(
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            20))),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          width: 10,
+                                                          padding: EdgeInsets.only(
+                                                              top: 10, bottom: 10),
+                                                          child: Text(""),
+                                                          decoration: BoxDecoration(
+                                                              gradient: LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topLeft,
+                                                                  end: Alignment
+                                                                      .topRight,
+                                                                  colors: [
+                                                                    c.colorPrimary,
+                                                                    c.colorAccentverylight
+                                                                  ]),
+                                                              borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                                topLeft:
+                                                                Radius.circular(
+                                                                    20),
+                                                                topRight:
+                                                                Radius.circular(
+                                                                    0),
+                                                                bottomLeft:
+                                                                Radius.circular(
+                                                                    20),
+                                                                bottomRight:
+                                                                Radius.circular(
+                                                                    0),
+                                                              )),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            padding:
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10),
+                                                            child: Text(
+                                                              schemelistWithCount[index]
+                                                              [key_scheme_name],
+                                                              style: TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                                  color: c.black),
+                                                              textAlign:
+                                                              TextAlign.center,
+                                                              overflow: TextOverflow
+                                                                  .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            padding:
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10),
+                                                            decoration:
+                                                            BoxDecoration(
+                                                                color: c
+                                                                    .dot_light_screen_lite1,
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      20),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                      0),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                      20),
+                                                                )),
+                                                            child: Text(
+                                                                schemelistWithCount[index][
+                                                                key_total_count]
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    color: c
+                                                                        .primary_text_color2,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                                textAlign: TextAlign
+                                                                    .center,
+                                                                maxLines: 1),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ))));
+                                  }))),
+
+                      Visibility(
                         visible: submitFlag,
                         child: Container(
                           margin: const EdgeInsets.only(top: 20, bottom: 20),
@@ -746,8 +894,10 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                       RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                   ))),
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                await fetchWorksCountSchemeWise();
+                                setState(() {});
+                                /*Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => WorkList(
@@ -761,7 +911,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               townType: '',
                                               flag: 'rdpr_online',
                                               selectedschemeList: [],
-                                            )));
+                                            )));*/
                               },
                               child: Text(
                                 s.submit,
@@ -1052,6 +1202,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       }
     }
   }
+
   void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list, String msg) {
     int limitCount = 2;
     showDialog(
@@ -1063,7 +1214,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 // Note: Styles for TextSpans must be explicitly defined.
                 // Child text spans will inherit styles from parent
                 style: GoogleFonts.getFont('Roboto',
-                    fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+                    fontWeight: FontWeight.w800, fontSize: 13, color: c.grey_8),
                 children: <TextSpan>[
                   new TextSpan(
                       text: s.select_financial_year,
@@ -1130,6 +1281,99 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 )),
           );
         });
+  }
+
+  Future<void> fetchWorksCountSchemeWise() async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+    utils.showProgress(context, 1);
+
+    late Map json_request;
+
+    Map work_detail = {
+      s.key_fin_year: finList,
+      s.key_dcode: selectedDistrict,
+      s.key_bcode: selectedBlock,
+      s.key_pvcode: [selectedVillage],
+      s.key_flag: "1",
+    };
+    json_request = {
+      s.key_service_id: s.service_key_get_inspection_work_details,
+      s.key_inspection_work_details: work_detail,
+    };
+
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("WorksCountSchemeWise_url>>${url.master_service}");
+    print("WorksCountSchemeWise_request_json>> ${jsonEncode(json_request)}");
+    print("WorksCountSchemeWise_request_encrpt>>$encrypted_request");
+
+    utils.hideProgress(context);
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+
+      print("WorksCountSchemeWise_response>>" + data);
+
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("WorksCountSchemeWise Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("WorksCountSchemeWise responceSignature -  $responceSignature");
+
+      print("WorksCountSchemeWise responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("WorksCountSchemeWise responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          print(res_jsonArray);
+          schemelistWithCount = [];
+          if (res_jsonArray.length > 0) {
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              Map<String, String> map = {
+                key_total_count: res_jsonArray[i][key_total_count].toString(),
+                key_scheme_name: res_jsonArray[i][key_scheme_name],
+                key_scheme_id: res_jsonArray[i][key_scheme_id].toString()
+              };
+              schemelistWithCount.add(map);
+            }
+          }
+        } else {
+          utils.showAlert(context, s.no_data);
+        }
+      }
+    }
   }
 
 }

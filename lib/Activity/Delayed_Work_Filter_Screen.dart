@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
@@ -19,6 +18,8 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../DataBase/DbHelper.dart';
+import '../Layout/Multiple_CheckBox.dart';
+import '../Layout/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 

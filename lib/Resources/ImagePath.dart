@@ -58,6 +58,7 @@ String satisfied = "assets/images/satisfied.png";
 String arrow_right = "assets/images/rightarrow.png";
 String delay_works = "assets/images/ins_man.png";
 String home = "assets/images/home.png";
+String warning_ic = "assets/images/warning_ic.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

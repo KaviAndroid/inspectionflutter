@@ -94,7 +94,10 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           ),
         ),
         body: SingleChildScrollView(
+          reverse: true,
             child: Container(
+              alignment: Alignment.topCenter,
+              height: MediaQuery.of(context).size.height,
                 color: c.white,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

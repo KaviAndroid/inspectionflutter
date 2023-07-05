@@ -15,6 +15,7 @@ import 'package:inspection_flutter_app/Activity/Pending_Screen.dart';
 import 'package:inspection_flutter_app/Activity/RDPRUrbanWorks.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
 import 'package:inspection_flutter_app/Activity/RDPR_Online.dart';
+import 'package:inspection_flutter_app/Activity/Splash.dart';
 import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
@@ -213,10 +214,27 @@ class _HomeState extends State<Home> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (Platform.isAndroid) {
-                      SystemNavigator.pop();
-                    } else if (Platform.isIOS) {
-                      exit(0);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Splash()),
+                            (route) => false);
+                    if (Platform.isIOS) {
+
+                      try {
+                        exit(0);
+                      } catch (e) {
+                        SystemNavigator.pop(); // for IOS, not true this, you can make comment this :)
+                      }
+
+                    } else {
+
+                      try {
+                        SystemNavigator.pop(); // sometimes it cant exit app
+                      } catch (e) {
+                        exit(0); // so i am giving crash to app ... sad :(
+                      }
+
                     }
                   },
                   //return true when click on "Yes"
@@ -2509,10 +2527,11 @@ class _HomeState extends State<Home> {
                                       dbHelper.deleteAll();
                                       prefs.clear();
                                       Navigator.pop(context, true);
-                                      Navigator.pushReplacement(
+                                      Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => Login()));
+                                              builder: (context) => Login()),
+                                              (route) => false);
                                     },
                                     child: Text(
                                       "Ok",

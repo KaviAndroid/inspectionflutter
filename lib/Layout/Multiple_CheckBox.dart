@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
+
+import 'checkBoxModelClass.dart';
 
 //ignore: must_be_immutable
-class FlutterCustomMultipleCheckbox extends StatefulWidget {
+class FlutterLimitedCheckbox extends StatefulWidget {
   List<FlutterLimitedCheckBoxModel> limitedValueList;
   int limit;
   Function(List<FlutterLimitedCheckBoxModel> selectedList) onChanged;
@@ -18,7 +19,7 @@ class FlutterCustomMultipleCheckbox extends StatefulWidget {
   MainAxisAlignment mainAxisAlignmentOfRow;
   CrossAxisAlignment crossAxisAlignmentOfRow;
 
-  FlutterCustomMultipleCheckbox({
+  FlutterLimitedCheckbox({
     Key? key,
     required this.limitedValueList,
     required this.limit,
@@ -37,12 +38,12 @@ class FlutterCustomMultipleCheckbox extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FlutterCustomMultipleCheckboxState createState() =>
-      _FlutterCustomMultipleCheckboxState();
+  _FlutterLimitedCheckboxState createState() =>
+      _FlutterLimitedCheckboxState();
 }
 
-class _FlutterCustomMultipleCheckboxState
-    extends State<FlutterCustomMultipleCheckbox> {
+class _FlutterLimitedCheckboxState
+    extends State<FlutterLimitedCheckbox> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(

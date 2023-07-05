@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
@@ -15,6 +14,8 @@ import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
+import '../Layout/Single_CheckBox.dart';
+import '../Layout/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 import 'WorkList.dart';
@@ -413,7 +414,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                             flex: 3,
                                             child: Text(
                                               finList.isNotEmpty
-                                                  ? finList.toString()
+                                                  ? finList.join(', ')
                                                   : "",
                                               style: TextStyle(
                                                   fontSize: 13,
@@ -1070,7 +1071,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                                               flex: 3,
                                               child: Text(
                                                 schList.isNotEmpty
-                                                    ? schList.toString()
+                                                    ? schList.join(', ')
                                                     : "",
                                                 style: TextStyle(
                                                     fontSize: 13,
@@ -1270,7 +1271,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                       Expanded(
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: FlutterCustomMultipleCheckbox(
+                          child: FlutterLimitedCheckbox(
                             limit: limitCount,
                             limitedValueList: list,
                             onChanged:

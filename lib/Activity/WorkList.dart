@@ -136,7 +136,7 @@ class _WorkListState extends State<WorkList> {
       if (await utils.isOnline()) {
         selectedScheme = widget.scheme;
         schemeFlag = false;
-        await getWorkList(widget.finYear.toString(), widget.dcode, widget.bcode,
+        await getWorkList(widget.finYear, widget.dcode, widget.bcode,
             widget.pvcode, widget.scheme);
       } else {
         utils.customAlert(context, "E", s.no_internet);
@@ -372,7 +372,7 @@ class _WorkListState extends State<WorkList> {
                                   if (widget.flag == 'rdpr_online') {
                                     if (await utils.isOnline()) {
                                       await getWorkList(
-                                          widget.finYear.toString(),
+                                          widget.finYear,
                                           widget.dcode,
                                           widget.bcode,
                                           widget.pvcode,
@@ -1261,7 +1261,7 @@ class _WorkListState extends State<WorkList> {
         ));
   }
 
-  Future<void> getWorkList(String finYear, String dcode, String bcode,
+  Future<void> getWorkList(List finYear, String dcode, String bcode,
       String pvcode, String scheme) async {
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_limited_checkbox/flutter_limited_checkbox.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
+import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
@@ -1160,7 +1161,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                     fontSize: 15),
                 textAlign: TextAlign.start,
               ),
-              content:Container(
+              content: Container(
                 height: 400,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
@@ -1259,74 +1260,76 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                     fontSize: 15),
                 textAlign: TextAlign.start,
               ),
-                  content:Container(
-          height: 400,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FlutterLimitedCheckbox(
-                        limit: limitCount,
-                        limitedValueList: list,
-                        onChanged: (List<FlutterLimitedCheckBoxModel> list) {
-                          schList.clear();
-                          schIdList.clear();
-                          schArray.clear();
-                          for (int i = 0; i < list.length; i++) {
-                            schList.add(list[i].selectTitle);
-                            schIdList.add(list[i].selectId);
-                            Map<String, String> map = {
-                              s.key_scheme_id: list[i].selectId.toString(),
-                              s.key_scheme_name: list[i].selectTitle
-                            };
-                            schArray.add(map);
-                          }
+              content: Container(
+                  height: 400,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: FlutterCustomMultipleCheckbox(
+                            limit: limitCount,
+                            limitedValueList: list,
+                            onChanged:
+                                (List<FlutterLimitedCheckBoxModel> list) {
+                              schList.clear();
+                              schIdList.clear();
+                              schArray.clear();
+                              for (int i = 0; i < list.length; i++) {
+                                schList.add(list[i].selectTitle);
+                                schIdList.add(list[i].selectId);
+                                Map<String, String> map = {
+                                  s.key_scheme_id: list[i].selectId.toString(),
+                                  s.key_scheme_name: list[i].selectTitle
+                                };
+                                schArray.add(map);
+                              }
 
-                          print(schIdList.toString());
-                          print(schArray.toString());
-                        },
-                        titleTextStyle: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500
-                            // you can also set other text properties here, like fontSize or fontWeight
-                            ),
-                        mainAxisAlignmentOfRow: MainAxisAlignment.start,
-                        crossAxisAlignmentOfRow: CrossAxisAlignment.center,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                      onTap: () {
-                        if (schIdList.isNotEmpty) {
-                          submitFlag = true;
-                          selectedSchemeArray.clear();
-                          selectedSchemeArray.addAll(schArray);
-                        }
-                        Navigator.pop(context, 'OK');
-
-                        setState(() {});
-                      },
-                      child: Container(
-                        alignment: AlignmentDirectional.bottomEnd,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          child: Text(
-                            s.key_ok,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: c.primary_text_color2,
-                                fontSize: 15),
-                            textAlign: TextAlign.center,
+                              print(schIdList.toString());
+                              print(schArray.toString());
+                            },
+                            titleTextStyle: TextStyle(
+                                // overflow: TextOverflow.ellipsis,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500
+                                // you can also set other text properties here, like fontSize or fontWeight
+                                ),
+                            mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                            crossAxisAlignmentOfRow: CrossAxisAlignment.center,
                           ),
                         ),
-                      ))
-                ],
-              )));
+                      ),
+                      InkWell(
+                          onTap: () {
+                            if (schIdList.isNotEmpty) {
+                              submitFlag = true;
+                              selectedSchemeArray.clear();
+                              selectedSchemeArray.addAll(schArray);
+                            }
+                            Navigator.pop(context, 'OK');
+
+                            setState(() {});
+                          },
+                          child: Container(
+                            alignment: AlignmentDirectional.bottomEnd,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                              child: Text(
+                                s.key_ok,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: c.primary_text_color2,
+                                    fontSize: 15),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ))
+                    ],
+                  )));
         });
   }
 

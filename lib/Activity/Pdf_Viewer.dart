@@ -72,13 +72,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
         flag = true;
       }
     } else if (Platform.isIOS) {
-      status = await Permission.photos.request();
-
-      if (status != PermissionStatus.granted) {
-        await Utils().showAppSettings(context, s.storage_permission);
-      } else {
-        flag = true;
-      }
+      flag = true;
     } else {
       throw Exception('Unsupported platform');
     }

@@ -1227,6 +1227,7 @@ class Utils {
     return sname;
   }
 
+/*
   Future<Map<String, dynamic>> ShowCalenderDialog(BuildContext context) async {
     int currentIndex = 0;
 
@@ -1480,7 +1481,7 @@ class Utils {
                                   Navigator.of(context).pop();
                                 } else {
                                   customAlert(
-                                      context, "E", "Please Select From Date");
+                                      context, "E", "Please Select To Date");
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -1511,4 +1512,288 @@ class Utils {
     );
     return jsonValue;
   }
+*/
+  Future<Map<String, dynamic>> ShowCalenderDialog(BuildContext context) async {
+    int currentIndex = 0;
+
+    //Date Time
+    List<DateTime> selectedfromDateRange = [];
+    List<DateTime> selectedtoDateRange = [];
+    DateTime? selectedFromDate;
+    DateTime? selectedToDate;
+
+    Map<String, dynamic> jsonValue = {
+      "fromDate": "",
+      "toDate": "",
+      "flag": false
+    };
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          widthFactor: 0.9, // Adjust this value as needed
+          heightFactor: 0.85,
+          child: Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                   setState(() {
+                                    currentIndex = 0;
+                                  });
+                                },
+                                child: Container(
+                                  width: 150,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'From Date',
+                                      style: TextStyle(
+                                        color: currentIndex == 0
+                                            ? Colors.black
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: Duration(milliseconds: 400),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width:
+                                            currentIndex == 0 ? 2.0 : 1.0,
+                                            color: currentIndex == 0
+                                                ? c.primary_text_color2
+                                                : Colors.white))),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (selectedFromDate != null) {
+                                    setState(() {
+                                      currentIndex = 1;
+                                    });
+                                  } else {
+                                    customAlert(context, "E",
+                                        "Please Select From Date");
+                                  }
+                                },
+                                child: Container(
+                                  width: 150,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'To Date',
+                                      style: TextStyle(
+                                        color: currentIndex == 1
+                                            ? Colors.black
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: Duration(milliseconds: 400),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width:
+                                            currentIndex == 0 ? 2.0 : 1.0,
+                                            color: currentIndex == 1
+                                                ? c.primary_text_color2
+                                                : Colors.white))),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      child: Center(
+                        child: currentIndex == 0
+                            ? CalendarDatePicker2(
+                          config: CalendarDatePicker2Config(
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                            currentDate:
+                            selectedFromDate ?? DateTime.now(),
+                            selectedDayHighlightColor: c.colorAccentlight,
+                            weekdayLabels: [
+                              'Sun',
+                              'Mon',
+                              'Tue',
+                              'Wed',
+                              'Thu',
+                              'Fri',
+                              'Sat'
+                            ],
+                            weekdayLabelTextStyle: const TextStyle(
+                                color: Color(0xFF07b3a5),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10),
+                            firstDayOfWeek: 1,
+                            controlsHeight: 50,
+                            controlsTextStyle: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            dayTextStyle: const TextStyle(
+                              fontSize: 10,
+                              color: Color(0xFF252b34),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            disabledDayTextStyle: const TextStyle(
+                                color: Colors.grey, fontSize: 10),
+                          ),
+                          value: selectedfromDateRange,
+                          onValueChanged: (value) async {
+                            selectedFromDate = value[0];
+                            if (selectedFromDate != null) {
+                              selectedToDate = null;
+                            }
+                          },
+                        )
+                            : CalendarDatePicker2(
+                          config: CalendarDatePicker2Config(
+                          /*  firstDate: selectedFromDate,
+                            lastDate: DateTime.now(),
+                            currentDate: DateTime.now(),*/
+                            selectedDayHighlightColor: c.colorAccentlight,
+                            weekdayLabels: [
+                              'Sun',
+                              'Mon',
+                              'Tue',
+                              'Wed',
+                              'Thu',
+                              'Fri',
+                              'Sat'
+                            ],
+                            weekdayLabelTextStyle: const TextStyle(
+                                color: Color(0xFF07b3a5),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10),
+                            firstDayOfWeek: 1,
+                            controlsHeight: 50,
+                            controlsTextStyle: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            dayTextStyle: const TextStyle(
+                                color: Color(0xFF252b34),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10),
+                            disabledDayTextStyle: const TextStyle(
+                                color: Colors.grey, fontSize: 10),
+                          ),
+                          value: selectedtoDateRange,
+                          onValueChanged: (value) async {
+                            print("value change");
+                            selectedToDate = value[0];
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                currentIndex = 0;
+                                selectedFromDate = null;
+                                selectedToDate = null;
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                "CANCEL",
+                                style: TextStyle(
+                                  color: c.colorPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (selectedToDate != null &&
+                                    selectedFromDate != null) {
+                                  currentIndex = 0;
+                                  jsonValue = {
+                                    "fromDate": selectedFromDate,
+                                    "toDate": selectedToDate,
+                                    "flag": true
+                                  };
+                                  Navigator.of(context).pop();
+                                } else {
+                                  customAlert(
+                                      context, "E", "Please Select To Date");
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: c.colorPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+    return jsonValue;
+  }
+
 }

@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import 'package:inspection_flutter_app/Resources/global.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
 import 'package:inspection_flutter_app/Resources/url.dart' as url;
@@ -1128,25 +1129,40 @@ class _RegistrationState extends State<Registration> {
     bool flag = false;
 
     if (Platform.isAndroid) {
-      storagePermission = await Permission.storage.request();
-    } else if (Platform.isIOS) {
-      storagePermission = await Permission.photos.request();
-    }
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String sdkVersion = packageInfo.buildNumber;
 
-    if (storagePermission.isLimited || storagePermission.isGranted) {
-      flag = true;
-    } else {
-      await Utils().showAppSettings(context, s.storage_permission);
-
-      if (Platform.isAndroid) {
-        storagePermission = await Permission.storage.status;
-      } else if (Platform.isIOS) {
-        storagePermission = await Permission.photos.status;
+      if (int.parse(sdkVersion) > 33) {
+        storagePermission = await Permission.manageExternalStorage.request();
+      } else {
+        storagePermission = await Permission.storage.request();
       }
-
       if (storagePermission.isLimited || storagePermission.isGranted) {
         flag = true;
       }
+    } else if (Platform.isIOS) {
+      flag = true;
+    }
+
+    if (!flag) {
+      await Utils().showAppSettings(context, s.storage_permission);
+
+      if (Platform.isAndroid) {
+        PackageInfo packageInfo = await PackageInfo.fromPlatform();
+        String sdkVersion = packageInfo.buildNumber;
+
+        if (int.parse(sdkVersion) > 33) {
+          storagePermission = await Permission.manageExternalStorage.request();
+        } else {
+          storagePermission = await Permission.storage.request();
+        }
+        if (storagePermission.isLimited || storagePermission.isGranted) {
+          flag = true;
+        }
+      } else if (Platform.isIOS) {
+        flag = true;
+      }
+
     }
 
     return flag;

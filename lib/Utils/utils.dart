@@ -261,7 +261,7 @@ class Utils {
                     ),
                   ]),
               width: 300,
-              height: 300,
+              height: 320,
               child: Column(
                 children: [
                   Container(
@@ -321,136 +321,156 @@ class Utils {
                           const SizedBox(
                             height: 35,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: type == "Success" || type == "Error"
-                                    ? true
-                                    : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    if (isNavigateSplash) {
-                                      Navigator.pop(context, true);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()));
-                                    } else if (isNavigareWorkList) {
-                                      Navigator.pop(context, true);
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => WorkList(
-                                                    schemeList:
-                                                        sendData['schemeList'],
-                                                    scheme: sendData['scheme']
-                                                        .toString(),
-                                                    flag: sendData['flag'],
-                                                    finYear: '',
-                                                    dcode: '',
-                                                    bcode: '',
-                                                    pvcode: '',
-                                                    tmccode: '',
-                                                    townType:
-                                                        sendData['townType'],
-                                                    selectedschemeList: [],
-                                                  )));
-                                    } else {
-                                      Navigator.pop(context, true);
-                                    }
-                                  },
-                                  child: Text(
-                                    "Okay",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Visibility(
+                                  visible: type == "Success" || type == "Error"
+                                      ? true
+                                      : false,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.primary_text_color2),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      if (isNavigateSplash) {
+                                        Navigator.pop(context, true);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Login()));
+                                      } else if (isNavigareWorkList) {
+                                        Navigator.pop(context, true);
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => WorkList(
+                                                      schemeList: sendData[
+                                                          'schemeList'],
+                                                      scheme: sendData['scheme']
+                                                          .toString(),
+                                                      flag: sendData['flag'],
+                                                      finYear: '',
+                                                      dcode: '',
+                                                      bcode: '',
+                                                      pvcode: '',
+                                                      tmccode: '',
+                                                      townType:
+                                                          sendData['townType'],
+                                                      selectedschemeList: [],
+                                                    )));
+                                      } else {
+                                        Navigator.pop(context, true);
+                                      }
+                                    },
+                                    child: Text(
+                                      "Okay",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
+                                          color: c.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Visibility(
-                                visible: type == "Warning" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.green_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    if (msg == s.logout_msg ||
-                                        msg == s.logout) {
-                                      dbHelper.deleteAll();
-                                      prefs.clear();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()));
-                                    } else if (msg == s.download_apk) {
-                                      launchURL(prefs
-                                          .getString(s.download_apk)
-                                          .toString());
-                                      Navigator.pop(context, false);
-                                    } else {
-                                      Navigator.pop(context, true);
-                                    }
-                                  },
-                                  child: Text(
-                                    msg == s.download_apk ? "Update" : "Ok",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
+                                Visibility(
                                   visible: type == "Warning" ? true : false,
-                                  child: const SizedBox(
-                                    width: 50,
-                                  )),
-                              Visibility(
-                                visible: type == "Warning" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.red_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: Text(
-                                    "Cancel",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.green_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      if (msg == s.logout_msg ||
+                                          msg == s.logout) {
+                                        dbHelper.deleteAll();
+                                        prefs.clear();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Login()));
+                                      } else if (msg == s.download_apk) {
+                                        launchURL(prefs
+                                            .getString(s.download_apk)
+                                            .toString());
+                                        Navigator.pop(context, false);
+                                      } else if (msg == s.internet_error) {
+                                        OpenSettings.openWIFISetting();
+                                        Navigator.pop(context, false);
+                                      } else {
+                                        Navigator.pop(context, true);
+                                      }
+                                    },
+                                    child: Text(
+                                      msg == s.download_apk
+                                          ? "Update"
+                                          : msg == s.internet_error
+                                              ? "Settings"
+                                              : "Ok",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: c.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                                Visibility(
+                                    visible: type == "Warning" ? true : false,
+                                    child: const SizedBox(
+                                      width: 30,
+                                    )),
+                                Visibility(
+                                  visible: type == "Warning" ? true : false,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                c.red_new),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ))),
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                      if (msg == s.internet_error) {
+                                        offlineMode(sendData["username"],
+                                            sendData["password"], context);
+                                      }
+                                    },
+                                    child: Text(
+                                      msg == s.internet_error
+                                          ? "Continue With Off-Line"
+                                          : "Cancel",
+                                      style: GoogleFonts.getFont('Roboto',
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: c.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -478,147 +498,6 @@ class Utils {
       dynamic sendData) async {
     return customAlertUIWidet(
         context, type, msg, isNavigateSplash, isNavigareWorkList, sendData);
-  }
-
-  Future<void> showalertforOffline(BuildContext context, String msg,
-      String username, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Center(
-            child: Container(
-              height: 320,
-              margin: EdgeInsets.all(30),
-              decoration: BoxDecoration(
-                  color: c.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 5.0,
-                    ),
-                  ]),
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: c.yellow_new,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    child: Center(
-                      child: Image.asset(
-                        imagePath.warning,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: c.white,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text("Warning",
-                              style: GoogleFonts.getFont('Prompt',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: c.text_color)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: true,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.green_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    OpenSettings.openWIFISetting();
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: Text(
-                                    "Settings",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 13,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: true,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                    offlineMode(username, password, context);
-                                  },
-                                  child: Text(
-                                    "Continue With Off-Line",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 13,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> showAlert(BuildContext context, String msg) async {

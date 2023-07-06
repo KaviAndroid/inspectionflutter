@@ -361,11 +361,15 @@ class LoginState extends State<Login> {
                                                 callLogin(context);
                                               }
                                             } else {
-                                              utils.showalertforOffline(
+                                              utils.customAlertWithDataPassing(
                                                   context,
+                                                  "Warning",
                                                   s.internet_error,
-                                                  user_name.text,
-                                                  user_password.text);
+                                                  false,
+                                                  false, {
+                                                "username": user_name.text,
+                                                "password": user_password.text
+                                              });
                                             }
                                           } else {
                                             utils.showToast(

@@ -426,124 +426,8 @@ class Utils {
     );
   }
 
-  Future<void> customAlertwithOk(
-      BuildContext context, String type, String msg, List schArray) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: c.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 5.0,
-                    ),
-                  ]),
-              width: 300,
-              height: 300,
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: c.green_new,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    child: Center(
-                      child: Image.asset(
-                        imagePath.success,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: c.white,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text("Success",
-                              style: GoogleFonts.getFont('Prompt',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: c.text_color)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: true,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                    if (type == "1") {}
-                                  },
-                                  child: Text(
-                                    "Okay",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> customAlertWithOkCancel(
       BuildContext context, String type, String msg) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -569,9 +453,9 @@ class Utils {
                   Container(
                     height: 100,
                     decoration: BoxDecoration(
-                        color: type == "W"
+                        color: type == "Warning"
                             ? c.yellow_new
-                            : type == "S"
+                            : type == "Success"
                                 ? c.green_new
                                 : c.red_new,
                         borderRadius: const BorderRadius.only(
@@ -579,13 +463,13 @@ class Utils {
                             topRight: Radius.circular(15))),
                     child: Center(
                       child: Image.asset(
-                        type == "W"
+                        type == "Warning"
                             ? imagePath.warning
-                            : type == "S"
+                            : type == "Success"
                                 ? imagePath.success
                                 : imagePath.error,
-                        height: type == "W" ? 60 : 100,
-                        width: type == "W" ? 60 : 100,
+                        height: type == "Warning" ? 60 : 100,
+                        width: type == "Warning" ? 60 : 100,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -601,9 +485,9 @@ class Utils {
                       child: Column(
                         children: [
                           Text(
-                              type == "W"
+                              type == "Warning"
                                   ? "Warning"
-                                  : type == "S"
+                                  : type == "Success"
                                       ? "Success"
                                       : "Oops...",
                               style: GoogleFonts.getFont('Prompt',
@@ -627,8 +511,9 @@ class Utils {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Visibility(
-                                visible:
-                                    type == "S" || type == "E" ? true : false,
+                                visible: type == "Success" || type == "Error"
+                                    ? true
+                                    : false,
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -653,7 +538,7 @@ class Utils {
                                 ),
                               ),
                               Visibility(
-                                visible: type == "W" ? true : false,
+                                visible: type == "Warning" ? true : false,
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -665,19 +550,10 @@ class Utils {
                                         borderRadius: BorderRadius.circular(15),
                                       ))),
                                   onPressed: () {
-                                    if (msg == s.logout_msg) {
-                                      dbHelper.deleteAll();
-                                      prefs.clear();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()));
-                                    } else {
-                                      Navigator.pop(context, true);
-                                    }
+                                    _onPressHandleFunction(context, msg);
                                   },
                                   child: Text(
-                                    "Ok",
+                                    msg == s.download_apk ? "Update" : "Ok",
                                     style: GoogleFonts.getFont('Roboto',
                                         decoration: TextDecoration.none,
                                         fontWeight: FontWeight.w800,
@@ -687,12 +563,12 @@ class Utils {
                                 ),
                               ),
                               Visibility(
-                                  visible: type == "W" ? true : false,
+                                  visible: type == "Warning" ? true : false,
                                   child: const SizedBox(
                                     width: 50,
                                   )),
                               Visibility(
-                                visible: type == "W" ? true : false,
+                                visible: type == "Warning" ? true : false,
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -729,6 +605,23 @@ class Utils {
         );
       },
     );
+  }
+
+  void _onPressHandleFunction(BuildContext context, String messages) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var dbHelper = DbHelper();
+    print("message" + messages);
+
+    if (messages == s.logout_msg || messages == s.logout) {
+      dbHelper.deleteAll();
+      prefs.clear();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+    } else if (messages == s.download_apk) {
+      launchURL(prefs.getString(s.download_apk).toString());
+      Navigator.pop(context, false);
+    } else {
+      Navigator.pop(context, true);
+    }
   }
 
   Future<void> showalertforOffline(BuildContext context, String msg,

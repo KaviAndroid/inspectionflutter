@@ -336,8 +336,8 @@ class LoginState extends State<Login> {
 
                                         String ss = String.fromCharCodes(
                                             Runes('\u0024'));
-                                        user_name.text = "9750895078";
-                                        user_password.text = "Test1234#" + ss;
+                                        user_name.text = "9595959595";
+                                        user_password.text = "crd44#" + ss;
                                         if (user_name.text.isNotEmpty) {
                                           if (user_password.text.isNotEmpty) {
                                             // utils.showToast(context, string.success);
@@ -521,7 +521,6 @@ class LoginState extends State<Login> {
       } on Exception catch (_) {
         print('never reached');
         utils.hideProgress(context);
-
       }
     } else {
       utils

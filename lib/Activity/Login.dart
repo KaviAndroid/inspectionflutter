@@ -524,7 +524,8 @@ class LoginState extends State<Login> {
       }
     } else {
       utils
-          .customAlert(context, "E", "Please Enable Network Provided Time")
+          .customAlertWidet(
+              context, "Error", "Please Enable Network Provided Time")
           .then((value) => {
                 if (Platform.isAndroid) {utils.openDateTimeSettings()}
               });
@@ -624,7 +625,7 @@ class LoginState extends State<Login> {
         utils.gotoHomePage(context, "Login");
       } else {
         utils.hideProgress(context);
-        utils.customAlert(context, "E", s.invalid_usn_pswd);
+        utils.customAlertWidet(context, "Error", s.invalid_usn_pswd);
       }
       return decodedData;
     } else {
@@ -984,11 +985,11 @@ class LoginState extends State<Login> {
             }
           }
         } else {
-          utils.customAlert(context, "E", userData[s.key_message]);
+          utils.customAlertWidet(context, "Error", userData[s.key_message]);
         }
       } else {
         print("ProfileData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1106,7 +1107,7 @@ class LoginState extends State<Login> {
         }
       } else {
         print("saveWorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

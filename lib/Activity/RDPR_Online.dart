@@ -94,10 +94,10 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           ),
         ),
         body: SingleChildScrollView(
-          reverse: true,
+            reverse: true,
             child: Container(
-              alignment: Alignment.topCenter,
-              height: MediaQuery.of(context).size.height,
+                alignment: Alignment.topCenter,
+                height: MediaQuery.of(context).size.height,
                 color: c.white,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -330,7 +330,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
       getVillageListOfLocation(
           position.latitude.toString(), position.longitude.toString());
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -419,7 +419,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
         }
       } else {
         print("VillageListOfLocation responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

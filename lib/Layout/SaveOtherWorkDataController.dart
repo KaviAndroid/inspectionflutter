@@ -290,7 +290,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
             if (await utils.isOnline()) {
               editsaveData(context);
             } else {
-              utils.customAlert(context, "E", s.no_internet);
+              utils.customAlertWidet(context, "Error", s.no_internet);
             }
           } else {
             utils.showAlert(context, "Please Enter Description");
@@ -311,7 +311,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
               if (await utils.isOnline()) {
                 saveData(context);
               } else {
-                utils.customAlert(context, "E", s.no_internet);
+                utils.customAlertWidet(context, "Error", s.no_internet);
               }
             } else {
               utils.showAlert(context, "Please Enter Description");
@@ -447,14 +447,14 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           utils
-              .customAlert(context, "S", s.online_data_save_success)
+              .customAlertWidet(context, "Sucess", s.online_data_save_success)
               .then((value) => _onWillPop(context));
         } else {
-          utils.customAlert(context, "E", s.failed);
+          utils.customAlertWidet(context, "Error", s.failed);
         }
       } else {
         print("saveData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -570,14 +570,14 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           utils
-              .customAlert(context, "S", s.online_data_save_success)
+              .customAlertWidet(context, "Success", s.online_data_save_success)
               .then((value) => _onWillPop(context));
         } else {
-          utils.customAlert(context, "E", s.failed);
+          utils.customAlertWidet(context, "Error", s.failed);
         }
       } else {
         print("saveData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

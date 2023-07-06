@@ -1052,7 +1052,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       await loadTMC();
       setState(() {});
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 

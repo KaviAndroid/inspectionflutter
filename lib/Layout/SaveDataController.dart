@@ -258,7 +258,7 @@ class SaveDatacontroller with ChangeNotifier {
                 ? saveData(context)
                 : saveDataOffline(context);
           } else {
-            utils.customAlert(context, "E", s.no_internet);
+            utils.customAlertWidet(context, "Error", s.no_internet);
           }
         } else {
           utils.showAlert(context, "Please Enter Description");
@@ -277,7 +277,7 @@ class SaveDatacontroller with ChangeNotifier {
                     ? saveData(context)
                     : saveDataOffline(context);
               } else {
-                utils.customAlert(context, "E", s.no_internet);
+                utils.customAlertWidet(context, "Error", s.no_internet);
               }
             } else {
               utils.showAlert(context, "Please Select Status");
@@ -445,15 +445,15 @@ class SaveDatacontroller with ChangeNotifier {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           utils
-              .customAlert(context, "S", s.online_data_save_success)
+              .customAlertWidet(context, "Success", s.online_data_save_success)
               .then((value) => onWillPop(context));
           gotoDelete(selectedwork, true);
         } else {
-          utils.customAlert(context, "E", s.failed);
+          utils.customAlertWidet(context, "Error", s.failed);
         }
       } else {
         print("saveData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -824,7 +824,7 @@ class SaveDatacontroller with ChangeNotifier {
     }
     if (count > 0 && imageCount > 0) {
       utils
-          .customAlert(context, "S", s.save_success)
+          .customAlertWidet(context, "Success", s.save_success)
           .then((value) => {Navigator.pop(context)});
     }
   }

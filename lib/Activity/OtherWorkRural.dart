@@ -755,7 +755,7 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
       await getBlockList(value);
       setState(() {});
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -768,7 +768,7 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
         selectedBlock = value.toString();
       });
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -790,7 +790,7 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
         });
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -855,7 +855,7 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
           blockFlag = true;
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        utils.customAlert(context, "E", "No Block Found");
+        utils.customAlertWidet(context, "Error", "No Block Found");
       }
       isLoadingD = false;
       districtError = false;
@@ -912,7 +912,7 @@ class OtherWorksRuralState extends State<OtherWorksRural> {
           villageFlag = true;
         }
       } else if (status == s.key_ok && responseValue == s.key_noRecord) {
-        utils.customAlert(context, "E", "No Village Found");
+        utils.customAlertWidet(context, "Error", "No Village Found");
       }
     }
   }

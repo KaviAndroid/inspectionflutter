@@ -191,7 +191,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                               mobile_number.text.toString());
                                         }
                                       } else {
-                                        utils.customAlert(context, "E",
+                                        utils.customAlertWidet(context, "Error",
                                             s.please_enter_valid_num);
                                       }
                                     }
@@ -299,7 +299,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   resend_otp(context);
                                 }
                               } else {
-                                utils.customAlert(context, "E", s.no_internet);
+                                utils.customAlertWidet(
+                                    context, "Error", s.no_internet);
                               }
                             },
                           )),
@@ -347,8 +348,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                       otp_params();
                                     }
                                   } else {
-                                    utils.customAlert(
-                                        context, "E", s.no_internet);
+                                    utils.customAlertWidet(
+                                        context, "Error", s.no_internet);
                                   }
                                 } else {
                                   utils.showToast(
@@ -510,7 +511,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               changepassword_params();
             }
           } else {
-            utils.customAlert(context, "E", s.no_internet);
+            utils.customAlertWidet(context, "Error", s.no_internet);
           }
         } else {
           utils.showToast(
@@ -549,9 +550,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       String mask = mobile_number.replaceAll("\\w(?=\\w{4})", "*");
       mobile_number = mask;
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -578,9 +579,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var RESPONSE = decodedData[s.key_response];
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       mobile_number.text = "";
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -607,14 +608,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var STATUS = decodedData[s.key_status];
     var RESPONSE = decodedData[s.key_response];
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
       setState(() {
         tcVisibility = !tcVisibility;
         visibility = visibility;
         tvisibility = !tvisibility;
       });
     } else {
-      utils.customAlert(context, "E", s.failed);
+      utils.customAlertWidet(context, "Error", s.failed);
     }
   }
 
@@ -650,9 +651,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         tcVisibility = !tcVisibility;
         visibility = !visibility;
       });
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -683,9 +684,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var KEY;
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       otp.text = "";
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -721,9 +722,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         visibility = visibility;
         tvisibility = !tvisibility;
       });
-      utils.customAlert(context, "S", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Success", decodedData[s.key_message]);
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -755,12 +756,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var RESPONSE = decodedData[s.key_response];
     var KEY;
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
-      customAlertwithOk(context, "1", decodedData[s.key_message]);
+      utils.customAlertWithDataPassing(
+          context, "Sucess", decodedData[s.key_message], true, false, {});
 
       /* mobilenumber = mobile_number.text.toString();
       Otp = otp.text.toString();*/
     } else {
-      utils.customAlert(context, "E", decodedData[s.key_message]);
+      utils.customAlertWidet(context, "Error", decodedData[s.key_message]);
     }
   }
 
@@ -840,12 +842,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             tcVisibility = !tcVisibility;
             visibility = !visibility;
           });
-          utils.customAlert(context, "S", userData[s.key_message]);
+          utils.customAlertWidet(context, "Success", userData[s.key_message]);
         } else {
-          utils.customAlert(context, "E", userData[s.key_message]);
+          utils.customAlertWidet(context, "Error", userData[s.key_message]);
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print(
             "change_password_send_otp responceSignature - Token Not Verified");
       }
@@ -924,12 +926,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
-          utils.customAlert(context, "S", userData[s.key_message]);
+          utils.customAlertWidet(context, "Success", userData[s.key_message]);
         } else {
-          utils.customAlert(context, "E", userData[s.key_message]);
+          utils.customAlertWidet(context, "Error", userData[s.key_message]);
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print(
             "Change_password_Resend_otp responceSignature - Token Not Verified");
       }
@@ -1007,17 +1009,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
-          utils.customAlert(context, "S", userData[s.key_message]);
+          utils.customAlertWidet(context, "Success", userData[s.key_message]);
           setState(() {
             tcVisibility = !tcVisibility;
             visibility = visibility;
             tvisibility = !tvisibility;
           });
         } else {
-          utils.customAlert(context, "E", userData[s.key_message]);
+          utils.customAlertWidet(context, "Error", userData[s.key_message]);
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("Change_password_otp responceSignature - Token Not Verified");
       }
     }
@@ -1097,12 +1099,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
-          customAlertwithOk(context, "1", userData[s.key_message]);
+          utils.customAlertWithDataPassing(
+              context, "Success", userData[s.key_message], true, false, {});
         } else {
-          utils.customAlert(context, "E", userData[s.key_message]);
+          utils.customAlertWidet(context, "Error", userData[s.key_message]);
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("ChangePassword responceSignature - Token Not Verified");
       }
     }
@@ -1137,121 +1140,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               )),
         ),
       ),
-    );
-  }
-
-  Future<void> customAlertwithOk(
-      BuildContext context, String type, String msg) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: c.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 5.0,
-                    ),
-                  ]),
-              width: 300,
-              height: 300,
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: c.green_new,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    child: Center(
-                      child: Image.asset(
-                        imagePath.success,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: c.white,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text("Success",
-                              style: GoogleFonts.getFont('Prompt',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: c.text_color)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: true,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Login()));
-                                  },
-                                  child: Text(
-                                    "Okay",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

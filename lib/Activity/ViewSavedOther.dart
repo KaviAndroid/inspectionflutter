@@ -310,7 +310,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                             Expanded(
                               child: Text(s.town_panchayat,
                                   overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                  textAlign: TextAlign.justify,
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                       color: townActive ? c.white : c.grey_6)),
@@ -666,8 +667,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                       selectedOtherworkList.toString());
                                   getSavedOtherWorkDetails();
                                 } else {
-                                  utils.customAlert(
-                                      context, "E", s.no_internet);
+                                  utils.customAlertWidet(
+                                      context, "Error", s.no_internet);
                                 }
                               },
                               child: Card(
@@ -723,8 +724,10 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                         .toString(),
                                                   );
                                                 } else {
-                                                  utils.customAlert(context,
-                                                      "E", s.no_internet);
+                                                  utils.customAlertWidet(
+                                                      context,
+                                                      "Error",
+                                                      s.no_internet);
                                                 }
                                               },
                                               child: Align(
@@ -1079,10 +1082,10 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                                             tmccode: "",
                                                                                           )));
                                                                             } else {
-                                                                              utils.customAlert(context, "E", s.no_internet);
+                                                                              utils.customAlertWidet(context, "Error", s.no_internet);
                                                                             }
                                                                           } else {
-                                                                            utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) =>
+                                                                            utils.customAlertWidet(context, "Error", "Please Enable Network Provided Time").then((value) =>
                                                                                 {
                                                                                   if (Platform.isAndroid)
                                                                                     {
@@ -1304,14 +1307,14 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             nimpCount = "0";
             usCount = "0";
           });
-          utils.customAlert(context, "E", response_value);
+          utils.customAlertWidet(context, "Error", response_value);
         }
       } else {
         print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -1389,7 +1392,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         }
       } else {
         print("get_pdf responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1490,11 +1493,11 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
           }
         }
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        utils.customAlert(context, "E", response_value);
+        utils.customAlertWidet(context, "Error", response_value);
       }
     } else {
       print("SavedWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+      utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
 
@@ -1587,7 +1590,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
       }
     } else {
       print("Saved_OtherWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+      utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
 

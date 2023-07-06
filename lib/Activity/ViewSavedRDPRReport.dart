@@ -315,10 +315,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                               width: 17,
                               height: 17,
                             ),
-                              Expanded(
+                            Expanded(
                               child: Text(s.town_panchayat,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.justify,
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                       color: townActive ? c.white : c.grey_6)),
@@ -680,8 +681,8 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                           selectedRDPRworkList.toString());
                                       getRDPRWorkDetails();
                                     } else {
-                                      utils.customAlert(
-                                          context, "E", s.no_internet);
+                                      utils.customAlertWidet(
+                                          context, "Error", s.no_internet);
                                     }
                                   },
                                   child: Card(
@@ -743,8 +744,10 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                   .key_inspection_id]
                                                               .toString());
                                                     } else {
-                                                      utils.customAlert(context,
-                                                          "E", s.no_internet);
+                                                      utils.customAlertWidet(
+                                                          context,
+                                                          "Error",
+                                                          s.no_internet);
                                                     }
                                                   },
                                                   child: Align(
@@ -1074,10 +1077,10 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                                                                                                 rural_urban: area_type,
                                                                                               )));
                                                                                 } else {
-                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                  utils.customAlertWidet(context, "Error", s.no_internet);
                                                                                 }
                                                                               } else {
-                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) => {
+                                                                                utils.customAlertWidet(context, "Error", "Please Enable Network Provided Time").then((value) => {
                                                                                       if (Platform.isAndroid)
                                                                                         {
                                                                                           utils.openDateTimeSettings()
@@ -1323,11 +1326,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
           }
         } else {
           print("WorkList responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -1416,7 +1419,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
       }
     } else {
       print("getPDF responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+      utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
 
@@ -1530,11 +1533,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
             }
           }
         } else {
-          utils.customAlert(context, "E", response_value);
+          utils.customAlertWidet(context, "Error", response_value);
         }
       } else {
         print("SavedWorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1633,11 +1636,11 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                         )));
           }
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
-          utils.customAlert(context, "E", response_value);
+          utils.customAlertWidet(context, "Error", response_value);
         }
       } else {
         print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

@@ -91,7 +91,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       // API Call
       await fetchOnlineATRWroklist(startDate, toDate);
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
     setState(() {
       SDBText = "Block - ${prefs.getString(s.key_bname)}";
@@ -303,7 +303,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
           });
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("Online_Worklist responceSignature - Token Not Verified");
       }
     }
@@ -392,7 +392,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
           );
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("Get_PDF responceSignature - Token Not Verified");
       }
     }
@@ -409,7 +409,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       dateController.text = "$startDate  To  $endDate";
       fetchOnlineATRWroklist(startDate, endDate);
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 

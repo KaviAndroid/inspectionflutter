@@ -981,8 +981,8 @@ class _RegistrationState extends State<Registration> {
                                                   : goToEdit()
                                           : print("object Error");
                                     } else {
-                                      utils.customAlert(
-                                          context, "E", s.no_internet);
+                                      utils.customAlertWidet(
+                                          context, "Error", s.no_internet);
                                     }
                                   }
                                 },
@@ -1162,7 +1162,6 @@ class _RegistrationState extends State<Registration> {
       } else if (Platform.isIOS) {
         flag = true;
       }
-
     }
 
     return flag;
@@ -1179,7 +1178,7 @@ class _RegistrationState extends State<Registration> {
         if (pickedFile == null) {
           Navigator.pop(context);
 
-          Utils().customAlert(context, "E", "User Canceled operation");
+          Utils().customAlertWidet(context, "Error", "User Canceled operation");
         } else {
           List<int> imageBytes = await pickedFile.readAsBytes();
           profileImage = base64Encode(imageBytes);
@@ -1197,7 +1196,7 @@ class _RegistrationState extends State<Registration> {
         if (pickedFile == null) {
           Navigator.pop(context);
 
-          Utils().customAlert(context, "E", "User Canceled operation");
+          Utils().customAlertWidet(context, "Error", "User Canceled operation");
         } else {
           List<int> imageBytes = await pickedFile.readAsBytes();
           profileImage = base64Encode(imageBytes);
@@ -1302,13 +1301,13 @@ class _RegistrationState extends State<Registration> {
       var responseValue = userData[s.key_response];
       var message = userData[s.key_message];
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().customAlert(context, "S", message);
+        Utils().customAlertWidet(context, "Success", message);
         cugValid = true;
         __initializeBodyUI();
         // Visible Gone
       } else {
         isLoadingCUG = false;
-        Utils().customAlert(context, "E", message);
+        Utils().customAlertWidet(context, "Error", message);
         setState(() {});
       }
     }
@@ -1706,16 +1705,17 @@ class _RegistrationState extends State<Registration> {
         if (status == s.key_ok && response_value == s.key_ok) {
           print(status);
           print(response_value);
-          utils.customAlert(context, "S", s.edit_profile_success).then(
-              (value) => Navigator.of(context).pushAndRemoveUntil(
+          utils
+              .customAlertWidet(context, "Success", s.edit_profile_success)
+              .then((value) => Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => Login()),
                   (route) => false));
         } else {
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
       } else {
         print("EditProfileData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1778,7 +1778,7 @@ class _RegistrationState extends State<Registration> {
       });
 
       if (status == s.key_ok && responseValue == s.key_ok) {
-        Utils().customAlert(context, "S", message);
+        Utils().customAlertWidet(context, "Success", message);
 
         setState(() {
           Navigator.of(context).pushAndRemoveUntil(
@@ -1789,7 +1789,7 @@ class _RegistrationState extends State<Registration> {
               (route) => false);
         });
       } else if (status == s.key_ok && responseValue == s.key_fail) {
-        Utils().customAlert(context, "E", message);
+        Utils().customAlertWidet(context, "Error", message);
       }
     }
   }

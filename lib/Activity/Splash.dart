@@ -228,7 +228,7 @@ class _SplashState extends State<Splash> {
                       type: "W",
                       url: s.download_apk,
                     )));*/
-        utils.customAlertWithOkCancel(context, "Warning", s.download_apk);
+        utils.customAlertWidet(context, "Warning", s.download_apk);
       } else {
         if (prefs.getString(s.key_user_name) != null &&
             prefs.getString(s.key_user_pwd) != null) {

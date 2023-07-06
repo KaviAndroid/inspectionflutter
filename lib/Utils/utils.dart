@@ -14,6 +14,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Activity/Login.dart';
+import 'package:inspection_flutter_app/Activity/WorkList.dart';
+import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
 import 'package:intl/intl.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -27,6 +29,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
+import '../Layout/checkBoxModelClass.dart';
 
 class Utils {
   DateTime? selectedFromDate;
@@ -234,200 +237,11 @@ class Utils {
     );
   }
 
-  Future<void> customAlert(
-      BuildContext context, String type, String msg) async {
+  Future<void> customAlertUIWidet(BuildContext context, String type, String msg,
+      bool isNavigateSplash, bool isNavigareWorkList, dynamic sendData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dbHelper = DbHelper();
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: c.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 5.0,
-                    ),
-                  ]),
-              width: 300,
-              height: 300,
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: type == "W"
-                            ? c.yellow_new
-                            : type == "S"
-                                ? c.green_new
-                                : c.red_new,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    child: Center(
-                      child: Image.asset(
-                        type == "W"
-                            ? imagePath.warning
-                            : type == "S"
-                                ? imagePath.success
-                                : imagePath.error,
-                        height: type == "W" ? 60 : 100,
-                        width: type == "W" ? 60 : 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: c.white,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(
-                              type == "W"
-                                  ? "Warning"
-                                  : type == "S"
-                                      ? "Success"
-                                      : "Oops...",
-                              style: GoogleFonts.getFont('Prompt',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: c.text_color)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible:
-                                    type == "S" || type == "E" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                  },
-                                  child: Text(
-                                    "Okay",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: type == "W" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.green_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    if (msg == s.logout) {
-                                      dbHelper.deleteAll();
-                                      prefs.clear();
-                                      Navigator.pop(context, true);
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()));
-                                    } else {
-                                      Navigator.pop(context, true);
-                                    }
-                                  },
-                                  child: Text(
-                                    "Yes",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                  visible: type == "W" ? true : false,
-                                  child: const SizedBox(
-                                    width: 50,
-                                  )),
-                              Visibility(
-                                visible: type == "W" ? true : false,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.red_new),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: Text(
-                                    "No",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
-  Future<void> customAlertWithOkCancel(
-      BuildContext context, String type, String msg) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -525,7 +339,35 @@ class Utils {
                                         borderRadius: BorderRadius.circular(15),
                                       ))),
                                   onPressed: () {
-                                    Navigator.pop(context, true);
+                                    if (isNavigateSplash) {
+                                      Navigator.pop(context, true);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Login()));
+                                    } else if (isNavigareWorkList) {
+                                      Navigator.pop(context, true);
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => WorkList(
+                                                    schemeList:
+                                                        sendData['schemeList'],
+                                                    scheme: sendData['scheme']
+                                                        .toString(),
+                                                    flag: sendData['flag'],
+                                                    finYear: '',
+                                                    dcode: '',
+                                                    bcode: '',
+                                                    pvcode: '',
+                                                    tmccode: '',
+                                                    townType:
+                                                        sendData['townType'],
+                                                    selectedschemeList: [],
+                                                  )));
+                                    } else {
+                                      Navigator.pop(context, true);
+                                    }
                                   },
                                   child: Text(
                                     "Okay",
@@ -550,7 +392,22 @@ class Utils {
                                         borderRadius: BorderRadius.circular(15),
                                       ))),
                                   onPressed: () {
-                                    _onPressHandleFunction(context, msg);
+                                    if (msg == s.logout_msg ||
+                                        msg == s.logout) {
+                                      dbHelper.deleteAll();
+                                      prefs.clear();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Login()));
+                                    } else if (msg == s.download_apk) {
+                                      launchURL(prefs
+                                          .getString(s.download_apk)
+                                          .toString());
+                                      Navigator.pop(context, false);
+                                    } else {
+                                      Navigator.pop(context, true);
+                                    }
                                   },
                                   child: Text(
                                     msg == s.download_apk ? "Update" : "Ok",
@@ -607,21 +464,20 @@ class Utils {
     );
   }
 
-  void _onPressHandleFunction(BuildContext context, String messages) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
-    print("message" + messages);
+  Future<void> customAlertWidet(
+      BuildContext context, String type, String msg) async {
+    return customAlertUIWidet(context, type, msg, false, false, {});
+  }
 
-    if (messages == s.logout_msg || messages == s.logout) {
-      dbHelper.deleteAll();
-      prefs.clear();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
-    } else if (messages == s.download_apk) {
-      launchURL(prefs.getString(s.download_apk).toString());
-      Navigator.pop(context, false);
-    } else {
-      Navigator.pop(context, true);
-    }
+  Future<void> customAlertWithDataPassing(
+      BuildContext context,
+      String type,
+      String msg,
+      bool isNavigateSplash,
+      bool isNavigareWorkList,
+      dynamic sendData) async {
+    return customAlertUIWidet(
+        context, type, msg, isNavigateSplash, isNavigareWorkList, sendData);
   }
 
   Future<void> showalertforOffline(BuildContext context, String msg,
@@ -1040,7 +896,7 @@ class Utils {
     if (username == userName && password == passWord) {
       gotoHomePage(context, "Login");
     } else {
-      customAlert(context, "E", s.no_offline_data);
+      customAlertWidet(context, "Error", s.no_offline_data);
     }
   }
 
@@ -1124,293 +980,6 @@ class Utils {
 
     return sname;
   }
-
-/*
-  Future<Map<String, dynamic>> ShowCalenderDialog(BuildContext context) async {
-    int currentIndex = 0;
-
-    //Date Time
-    List<DateTime> selectedfromDateRange = [];
-    List<DateTime> selectedtoDateRange = [];
-    DateTime? selectedFromDate;
-    DateTime? selectedToDate;
-
-    Map<String, dynamic> jsonValue = {
-      "fromDate": "",
-      "toDate": "",
-      "flag": false
-    };
-
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          widthFactor: 0.9, // Adjust this value as needed
-          heightFactor: 0.85,
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  currentIndex == 1
-                                      ? setState(() {
-                                          currentIndex = 0;
-                                        })
-                                      : null;
-                                },
-                                child: Container(
-                                  width: 150,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'From Date',
-                                      style: TextStyle(
-                                        color: currentIndex == 0
-                                            ? Colors.black
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 400),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width:
-                                                currentIndex == 0 ? 2.0 : 1.0,
-                                            color: currentIndex == 0
-                                                ? c.primary_text_color2
-                                                : Colors.white))),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (selectedFromDate != null) {
-                                    setState(() {
-                                      currentIndex = 1;
-                                    });
-                                  } else {
-                                    customAlert(context, "E",
-                                        "Please Select From Date");
-                                  }
-                                },
-                                child: Container(
-                                  width: 150,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'To Date',
-                                      style: TextStyle(
-                                        color: currentIndex == 1
-                                            ? Colors.black
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 400),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width:
-                                                currentIndex == 0 ? 2.0 : 1.0,
-                                            color: currentIndex == 1
-                                                ? c.primary_text_color2
-                                                : Colors.white))),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      child: Center(
-                        child: currentIndex == 0
-                            ? CalendarDatePicker2(
-                                config: CalendarDatePicker2Config(
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime.now(),
-                                  currentDate:
-                                      selectedFromDate ?? DateTime.now(),
-                                  selectedDayHighlightColor: c.colorAccentlight,
-                                  weekdayLabels: [
-                                    'Sun',
-                                    'Mon',
-                                    'Tue',
-                                    'Wed',
-                                    'Thu',
-                                    'Fri',
-                                    'Sat'
-                                  ],
-                                  weekdayLabelTextStyle: const TextStyle(
-                                      color: Color(0xFF07b3a5),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                  firstDayOfWeek: 1,
-                                  controlsHeight: 50,
-                                  controlsTextStyle: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  dayTextStyle: const TextStyle(
-                                    fontSize: 10,
-                                    color: Color(0xFF252b34),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  disabledDayTextStyle: const TextStyle(
-                                      color: Colors.grey, fontSize: 10),
-                                ),
-                                value: selectedfromDateRange,
-                                onValueChanged: (value) async {
-                                  selectedFromDate = value[0];
-                                  if (selectedFromDate != null) {
-                                    selectedToDate = null;
-                                  }
-                                },
-                              )
-                            : CalendarDatePicker2(
-                                config: CalendarDatePicker2Config(
-                                  firstDate: selectedFromDate,
-                                  lastDate: DateTime.now(),
-                                  currentDate: DateTime.now(),
-                                  selectedDayHighlightColor: c.colorAccentlight,
-                                  weekdayLabels: [
-                                    'Sun',
-                                    'Mon',
-                                    'Tue',
-                                    'Wed',
-                                    'Thu',
-                                    'Fri',
-                                    'Sat'
-                                  ],
-                                  weekdayLabelTextStyle: const TextStyle(
-                                      color: Color(0xFF07b3a5),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                  firstDayOfWeek: 1,
-                                  controlsHeight: 50,
-                                  controlsTextStyle: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  dayTextStyle: const TextStyle(
-                                      color: Color(0xFF252b34),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                  disabledDayTextStyle: const TextStyle(
-                                      color: Colors.grey, fontSize: 10),
-                                ),
-                                value: selectedtoDateRange,
-                                onValueChanged: (value) async {
-                                  print("value change");
-                                  selectedToDate = value[0];
-                                },
-                              ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                currentIndex = 0;
-                                selectedFromDate = null;
-                                selectedToDate = null;
-                                Navigator.of(context).pop();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Text(
-                                "CANCEL",
-                                style: TextStyle(
-                                  color: c.colorPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (selectedToDate != null &&
-                                    selectedFromDate != null) {
-                                  currentIndex = 0;
-                                  jsonValue = {
-                                    "fromDate": selectedFromDate,
-                                    "toDate": selectedToDate,
-                                    "flag": true
-                                  };
-                                  Navigator.of(context).pop();
-                                } else {
-                                  customAlert(
-                                      context, "E", "Please Select To Date");
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Text(
-                                "OK",
-                                style: TextStyle(
-                                  color: c.colorPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-    return jsonValue;
-  }
-*/
 
   @override
   Widget calendarWidget(
@@ -1543,7 +1112,7 @@ class Utils {
                                       currentIndex = 1;
                                     });
                                   } else {
-                                    customAlert(context, "E",
+                                    customAlertWidet(context, "Error",
                                         "Please Select From Date");
                                   }
                                 },
@@ -1641,11 +1210,11 @@ class Utils {
                                   Navigator.of(context).pop();
                                 } else {
                                   if (selectedFromDate == null) {
-                                    customAlert(
-                                        context, "E", s.fromDate_required);
+                                    customAlertWidet(
+                                        context, "Error", s.fromDate_required);
                                   } else if (selectedToDate == null) {
-                                    customAlert(
-                                        context, "E", s.endDate_Required);
+                                    customAlertWidet(
+                                        context, "Error", s.endDate_Required);
                                   } else {
                                     print("Something Went Wrong....");
                                   }

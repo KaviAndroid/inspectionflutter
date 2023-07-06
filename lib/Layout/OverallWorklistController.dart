@@ -335,16 +335,16 @@ class OverallWorklistController extends ChangeNotifier {
 
             notifyListeners();
           } else if (status == s.key_ok && response_value == s.key_noRecord) {
-            utils.customAlert(context, "E", s.no_data);
+            utils.customAlertWidet(context, "Error", s.no_data);
           }
         } else {
           print("OverallWroklist responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
     } catch (e) {
       if (e is FormatException) {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
       print(e);
     }

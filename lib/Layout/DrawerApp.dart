@@ -581,12 +581,12 @@ class _DrawerAppState extends State<DrawerApp> {
 
   logout() async {
     if (await checkLocalData()) {
-      utils.customAlertWithOkCancel(context, "Error", s.logout_message);
+      utils.customAlertWidet(context, "Error", s.logout_message);
     } else {
       if (await utils.isOnline()) {
-        utils.customAlertWithOkCancel(context, "Warning", s.logout);
+        utils.customAlertWidet(context, "Warning", s.logout);
       } else {
-        utils.customAlertWithOkCancel(context, "Warning", s.logout_msg);
+        utils.customAlertWidet(context, "Warning", s.logout_msg);
       }
     }
   }
@@ -723,23 +723,24 @@ class _DrawerAppState extends State<DrawerApp> {
                   .rawQuery('SELECT * FROM ' + s.table_WorkStages);
 
               if (list.isNotEmpty) {
-                utils.customAlert(context, "S", s.refresh_work_stages_success);
+                utils.customAlertWidet(
+                    context, "Success", s.refresh_work_stages_success);
               }
             }
             utils.hideProgress(context);
           }
         } else {
           print("RefreshWorkStages responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
     } on Exception catch (exception) {
       utils.hideProgress(context);
-      utils.customAlert(context, "E",
+      utils.customAlertWidet(context, "Error",
           s.failed); // only executed if error is of type Exception
     } catch (error) {
       utils.hideProgress(context);
-      utils.customAlert(context, "E",
+      utils.customAlertWidet(context, "Error",
           s.failed); // executed for errors of all types other than Exception
     }
 
@@ -832,7 +833,7 @@ class _DrawerAppState extends State<DrawerApp> {
         }
       } else {
         print("ProfileData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

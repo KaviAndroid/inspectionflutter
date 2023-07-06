@@ -1354,8 +1354,10 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                                   from_Date,
                                                               toDate: to_Date,
                                                             )))
-                                                : utils.customAlert(context,
-                                                    "E", s.no_data_available);
+                                                : utils.customAlertWidet(
+                                                    context,
+                                                    "Error",
+                                                    s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,
@@ -1417,8 +1419,10 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                                   from_Date,
                                                               toDate: to_Date,
                                                             )))
-                                                : utils.customAlert(context,
-                                                    "E", s.no_data_available);
+                                                : utils.customAlertWidet(
+                                                    context,
+                                                    "Error",
+                                                    s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,
@@ -1480,8 +1484,10 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                                                   from_Date,
                                                               toDate: to_Date,
                                                             )))
-                                                : utils.customAlert(context,
-                                                    "E", s.no_data_available);
+                                                : utils.customAlertWidet(
+                                                    context,
+                                                    "Error",
+                                                    s.no_data_available);
                                           },
                                           child: Container(
                                             height: 50,

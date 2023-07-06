@@ -320,7 +320,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                             Expanded(
                               child: Text(s.town_panchayat,
                                   overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
+                                  textAlign: TextAlign.justify,
+                                  style: GoogleFonts.getFont('Roboto',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                       color: townActive ? c.white : c.grey_6)),
@@ -681,8 +682,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                               .toString());
                                       getAtrWorkDetails();
                                     } else {
-                                      utils.customAlert(
-                                          context, "E", s.no_internet);
+                                      utils.customAlertWidet(
+                                          context, "Error", s.no_internet);
                                     }
                                   },
                                   child: Card(
@@ -747,8 +748,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                   .key_action_taken_id]
                                                               .toString());
                                                     } else {
-                                                      utils.customAlert(context,
-                                                          "E", s.no_internet);
+                                                      utils.customAlertWidet(
+                                                          context,
+                                                          "Error",
+                                                          s.no_internet);
                                                     }
                                                   },
                                                   child: Align(
@@ -1010,10 +1013,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                                                 imagelist: ImageList,
                                                                                               )));
                                                                                 } else {
-                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                  utils.customAlertWidet(context, "Error", s.no_internet);
                                                                                 }
                                                                               } else {
-                                                                                utils.customAlert(context, "E", "Please Enable Network Provided Time").then((value) => {
+                                                                                utils.customAlertWidet(context, "Error", "Please Enable Network Provided Time").then((value) => {
                                                                                       if (Platform.isAndroid)
                                                                                         {
                                                                                           utils.openDateTimeSettings()
@@ -1248,10 +1251,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         }
       } else {
         print("ATRWorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -1335,7 +1338,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         }
       } else {
         print("get_PDF responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1435,11 +1438,11 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           }
         }
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        utils.customAlert(context, "E", response_value);
+        utils.customAlertWidet(context, "Error", response_value);
       }
     } else {
       print("ATRSavedWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+      utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
 
@@ -1530,11 +1533,11 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                       )));
         }
       } else if (status == s.key_ok && response_value == s.key_noRecord) {
-        utils.customAlert(context, "E", response_value);
+        utils.customAlertWidet(context, "Error", response_value);
       }
     } else {
       print("ATRWorkList responceSignature - Token Not Verified");
-      utils.customAlert(context, "E", s.jsonError);
+      utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
 }

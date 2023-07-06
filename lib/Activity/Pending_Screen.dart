@@ -58,7 +58,7 @@ class _PendingScreenState extends State<PendingScreen> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     level = prefs.getString(s.key_level).toString();
-    // utils.customAlert(context, "S", s.online_data_save_success);
+    // utils.customAlertWidet(context, "Success", s.online_data_save_success);
     await fetchOfflineWorklist();
 
     setState(() {});
@@ -701,7 +701,7 @@ class _PendingScreenState extends State<PendingScreen> {
 
   __deleteWorklist(List workList) async {
     await utils
-        .customAlert(context, "W", s.delete_local_data_msg)
+        .customAlertWidet(context, "Warning", s.delete_local_data_msg)
         .then((value) async {
       bool flag = (value as bool);
       if (flag) {
@@ -745,7 +745,7 @@ class _PendingScreenState extends State<PendingScreen> {
   __uploadWorklist(List workList) async {
     if (await utils.isOnline()) {
       await utils
-          .customAlert(context, "W", s.upload_local_data_msg)
+          .customAlertWidet(context, "Warning", s.upload_local_data_msg)
           .then((value) {
         bool flag = (value as bool);
         if (flag) {
@@ -753,7 +753,7 @@ class _PendingScreenState extends State<PendingScreen> {
         }
       });
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -849,13 +849,15 @@ class _PendingScreenState extends State<PendingScreen> {
       if (imageDelete.length == 0 &&
           workListDelete.length == 0 &&
           offlineWorkListDelete.length == 0) {
-        await utils.customAlert(context, "S", s.online_data_save_success);
+        await utils.customAlertWidet(
+            context, "Success", s.online_data_save_success);
       }
     } else {
       // Normal Delete
 
       if (imageDelete.length == 0 && workListDelete.length == 0) {
-        utils.customAlert(context, "S", s.delete_local_data_msg_success);
+        utils.customAlertWidet(
+            context, "Success", s.delete_local_data_msg_success);
       }
     }
   }
@@ -1012,15 +1014,15 @@ class _PendingScreenState extends State<PendingScreen> {
 
             fetchOfflineWorklist();
           } else {
-            await utils.customAlert(context, "E", msg);
+            await utils.customAlertWidet(context, "Error", msg);
           }
         } else {
           print("saveWorkList responceSignature - Token Not Verified");
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
       //no internet
     }
   }

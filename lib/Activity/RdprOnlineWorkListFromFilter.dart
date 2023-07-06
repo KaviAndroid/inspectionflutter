@@ -95,7 +95,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     List<Map> list =
-    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
       finyearList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -115,7 +115,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
       selectedBlock = defaultSelectedBlock[s.key_bcode]!;
       selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
-      selectedFinYear=defaultSelectedFinYear[s.key_fin_year]!;
+      selectedFinYear = defaultSelectedFinYear[s.key_fin_year]!;
     } else if (selectedLevel == 'D') {
       blockFlag = true;
       List<Map> list =
@@ -204,30 +204,30 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                               ),
                             ),
                             Container(
-                              height: 40,
-                              padding: EdgeInsets.only(left: 15),
-                              decoration: BoxDecoration(
-                                  color: c.grey_out,
-                                  border: Border.all(
-                                      width: finYearError ? 1 : 0.1,
-                                      color: finYearError ? c.red : c.grey_10),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                                child:InkWell(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 15),
+                                decoration: BoxDecoration(
+                                    color: c.grey_out,
+                                    border: Border.all(
+                                        width: finYearError ? 1 : 0.1,
+                                        color:
+                                            finYearError ? c.red : c.grey_10),
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                child: InkWell(
                                     onTap: () {
                                       multiChoiceFinYearSelection(
-                                          finyearList,
-                                          s.select_financial_year);
+                                          finyearList, s.select_financial_year);
                                     },
                                     child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         children: [
                                           Expanded(
                                             flex: 3,
                                             child: Text(
                                               finList.isNotEmpty
                                                   ? finList.join(', ')
-                                                  :s.select_financial_year,
+                                                  : s.select_financial_year,
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.normal,
@@ -237,10 +237,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                               softWrap: true,
                                             ),
                                           ),
-                                        ]
-                                    )
-                                )
-                             /* child: IgnorePointer(
+                                        ]))
+                                /* child: IgnorePointer(
                                 ignoring: isLoadingFinYear ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2(
@@ -312,7 +310,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   ),
                                 ),
                               ),*/
-                            ),
+                                ),
                             const SizedBox(height: 8.0),
                             Visibility(
                               visible: finYearError ? true : false,
@@ -464,7 +462,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton2(
                                   value: selectedBlock,
-                                  style: const TextStyle(color: Colors.black,fontSize: 15),
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 15),
                                   isExpanded: true,
                                   items: blockItems
                                       .map((item) => DropdownMenuItem<String>(
@@ -728,32 +727,36 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                         ),
                       ),
                       Visibility(
-                          visible: schemelistWithCount.isNotEmpty ? true : false,
+                          visible:
+                              schemelistWithCount.isNotEmpty ? true : false,
                           child: Container(
                               child: ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   itemCount: schemelistWithCount.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     return InkWell(
                                         onTap: () async {
-
                                           Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => WorkList(
-                                              schemeList: '',
-                                              finYear: finList,
-                                              dcode: selectedDistrict,
-                                              bcode: selectedBlock,
-                                              pvcode: selectedVillage,
-                                              scheme: schemelistWithCount[index]
-                                              [s.key_scheme_id],
-                                              tmccode: '',
-                                              townType: '',
-                                              flag: 'rdpr_online',
-                                              selectedschemeList: [],
-                                            )));
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      WorkList(
+                                                        schemeList: '',
+                                                        finYear: finList,
+                                                        dcode: selectedDistrict,
+                                                        bcode: selectedBlock,
+                                                        pvcode: selectedVillage,
+                                                        scheme:
+                                                            schemelistWithCount[
+                                                                    index][
+                                                                s.key_scheme_id],
+                                                        tmccode: '',
+                                                        townType: '',
+                                                        flag: 'rdpr_online',
+                                                        selectedschemeList: [],
+                                                      )));
                                         },
                                         child: Card(
                                             elevation: 5,
@@ -765,111 +768,123 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                 bottomLeft: Radius.circular(20),
                                                 topLeft: Radius.circular(20),
                                                 topRight: Radius.circular(20),
-                                                bottomRight: Radius.circular(20),
+                                                bottomRight:
+                                                    Radius.circular(20),
                                               ),
                                             ),
                                             child: ClipPath(
                                                 clipper: ShapeBorderClipper(
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20))),
                                                 child: Column(
                                                   children: [
                                                     Row(
                                                       children: [
                                                         Container(
                                                           width: 10,
-                                                          padding: EdgeInsets.only(
-                                                              top: 10, bottom: 10),
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10,
+                                                                  bottom: 10),
                                                           child: Text(""),
-                                                          decoration: BoxDecoration(
-                                                              gradient: LinearGradient(
-                                                                  begin: Alignment
-                                                                      .topLeft,
-                                                                  end: Alignment
-                                                                      .topRight,
-                                                                  colors: [
-                                                                    c.colorPrimary,
-                                                                    c.colorAccentverylight
-                                                                  ]),
-                                                              borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                                topLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                                topRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                                bottomLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                                bottomRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                              )),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  gradient: LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment.topRight,
+                                                                      colors: [
+                                                                        c.colorPrimary,
+                                                                        c.colorAccentverylight
+                                                                      ]),
+                                                                  borderRadius:
+                                                                      const BorderRadius
+                                                                          .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            20),
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            0),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            20),
+                                                                    bottomRight:
+                                                                        Radius.circular(
+                                                                            0),
+                                                                  )),
                                                         ),
                                                         Expanded(
                                                           child: Container(
                                                             padding:
-                                                            EdgeInsets.only(
-                                                                top: 10,
-                                                                bottom: 10),
+                                                                EdgeInsets.only(
+                                                                    top: 10,
+                                                                    bottom: 10),
                                                             child: Text(
-                                                              schemelistWithCount[index]
-                                                              [key_scheme_name],
+                                                              schemelistWithCount[
+                                                                      index][
+                                                                  key_scheme_name],
                                                               style: TextStyle(
                                                                   fontSize: 15,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                                  color: c.black),
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color:
+                                                                      c.black),
                                                               textAlign:
-                                                              TextAlign.center,
-                                                              overflow: TextOverflow
-                                                                  .ellipsis,
+                                                                  TextAlign
+                                                                      .center,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ),
                                                         Expanded(
                                                           child: Container(
                                                             padding:
-                                                            EdgeInsets.only(
-                                                                top: 10,
-                                                                bottom: 10),
+                                                                EdgeInsets.only(
+                                                                    top: 10,
+                                                                    bottom: 10),
                                                             decoration:
-                                                            BoxDecoration(
-                                                                color: c
-                                                                    .dot_light_screen_lite1,
-                                                                borderRadius:
-                                                                const BorderRadius
-                                                                    .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                      0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                      20),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                      0),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                      20),
-                                                                )),
+                                                                BoxDecoration(
+                                                                    color: c
+                                                                        .dot_light_screen_lite1,
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              20),
+                                                                      bottomLeft:
+                                                                          Radius.circular(
+                                                                              0),
+                                                                      bottomRight:
+                                                                          Radius.circular(
+                                                                              20),
+                                                                    )),
                                                             child: Text(
-                                                                schemelistWithCount[index][
-                                                                key_total_count]
+                                                                schemelistWithCount[
+                                                                            index]
+                                                                        [
+                                                                        key_total_count]
                                                                     .toString(),
                                                                 style: TextStyle(
                                                                     color: c
                                                                         .primary_text_color2,
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                                textAlign: TextAlign
-                                                                    .center,
+                                                                        FontWeight
+                                                                            .bold),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
                                                                 maxLines: 1),
                                                           ),
                                                         ),
@@ -878,7 +893,6 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                   ],
                                                 ))));
                                   }))),
-
                       Visibility(
                         visible: submitFlag,
                         child: Container(
@@ -941,7 +955,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       await getBlockList(value);
       setState(() {});
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -954,7 +968,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         selectedBlock = value.toString();
       });
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -976,7 +990,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         });
       }
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -1108,7 +1122,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         s.key_dcode: selectedDistrict,
         s.key_bcode: selectedBlock,
         s.key_pvcode: pvcode,
-        s.key_fin_year:finList,
+        s.key_fin_year: finList,
         s.key_service_id: s.service_key_scheme_list,
       };
     } else if (selectedLevel == 'D') {
@@ -1198,12 +1212,13 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         }
       } else {
         print("SchemeList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
 
-  void multiChoiceFinYearSelection(List<FlutterLimitedCheckBoxModel> list, String msg) {
+  void multiChoiceFinYearSelection(
+      List<FlutterLimitedCheckBoxModel> list, String msg) {
     int limitCount = 2;
     showDialog(
         context: context,
@@ -1375,5 +1390,4 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
       }
     }
   }
-
 }

@@ -139,7 +139,7 @@ class _WorkListState extends State<WorkList> {
         await getWorkList(widget.finYear, widget.dcode, widget.bcode,
             widget.pvcode, widget.scheme);
       } else {
-        utils.customAlert(context, "E", s.no_internet);
+        utils.customAlertWidet(context, "Error", s.no_internet);
       }
     } else if (widget.flag == 'rdpr_offline') {
       schemeItems.addAll(widget.schemeList);
@@ -151,7 +151,7 @@ class _WorkListState extends State<WorkList> {
         schemeFlag = false;
         await getWorkListByVillage(widget.dcode, widget.bcode, widget.pvcode);
       } else {
-        utils.customAlert(context, "E", s.no_internet);
+        utils.customAlertWidet(context, "Error", s.no_internet);
       }
     } else if (widget.flag == 'tmc_online') {
       if (await utils.isOnline()) {
@@ -161,7 +161,7 @@ class _WorkListState extends State<WorkList> {
         await getWorkListByTMC(widget.dcode, widget.tmccode, widget.townType,
             widget.selectedschemeList, widget.finYear);
       } else {
-        utils.customAlert(context, "E", s.no_internet);
+        utils.customAlertWidet(context, "Error", s.no_internet);
       }
     } else if (widget.flag == 'tmc_offline') {
       schemeItems.addAll(widget.schemeList);
@@ -175,7 +175,7 @@ class _WorkListState extends State<WorkList> {
         flagTab = true;
         await getdelayedWorkListByVillage(widget.pvcode);
       } else {
-        utils.customAlert(context, "E", s.no_internet);
+        utils.customAlertWidet(context, "Error", s.no_internet);
       }
     }
     monthItems = [];
@@ -378,8 +378,8 @@ class _WorkListState extends State<WorkList> {
                                           widget.pvcode,
                                           selectedScheme);
                                     } else {
-                                      utils.customAlert(
-                                          context, "E", s.no_internet);
+                                      utils.customAlertWidet(
+                                          context, "Error", s.no_internet);
                                     }
                                   } else if (widget.flag == 'tmc_online') {
                                     if (await utils.isOnline()) {
@@ -395,8 +395,8 @@ class _WorkListState extends State<WorkList> {
                                           schemeArray,
                                           widget.finYear);
                                     } else {
-                                      utils.customAlert(
-                                          context, "E", s.no_internet);
+                                      utils.customAlertWidet(
+                                          context, "Error", s.no_internet);
                                     }
                                   } else if (widget.flag == 'tmc_offline' ||
                                       widget.flag == 'rdpr_offline') {
@@ -714,7 +714,7 @@ class _WorkListState extends State<WorkList> {
                                     if (int.parse(asController.text) > 0) {
                                       fetchWorkList('as', asController.text);
                                     } else {
-                                      utils.customAlert(context, "E",
+                                      utils.customAlertWidet(context, "Error",
                                           "Please Enter AS value");
                                     }
                                   },
@@ -927,7 +927,7 @@ class _WorkListState extends State<WorkList> {
                                                                                 if (await utils.isOnline()) {
                                                                                   await getProgressDetails(workList[index][s.key_work_id].toString(), index);
                                                                                 } else {
-                                                                                  utils.customAlert(context, "E", s.no_internet);
+                                                                                  utils.customAlertWidet(context, "Error", s.no_internet);
                                                                                 }
                                                                               },
                                                                               child: Container(
@@ -1388,7 +1388,7 @@ class _WorkListState extends State<WorkList> {
         });
       } else {
         print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1813,7 +1813,7 @@ class _WorkListState extends State<WorkList> {
         }
       } else {
         print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
       setState(() {
         isLoadingScheme = false;
@@ -1911,7 +1911,7 @@ class _WorkListState extends State<WorkList> {
         }
       } else {
         print("ProfileData responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -2036,7 +2036,7 @@ class _WorkListState extends State<WorkList> {
         }
       } else {
         print("WorkListByVillage responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -2311,7 +2311,7 @@ class _WorkListState extends State<WorkList> {
       } else {
         print(
             "DelayedWorkListByVillage responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }

@@ -348,7 +348,7 @@ class AtrSaveDataController with ChangeNotifier {
               await onlineSave(context);
             }
           } else {
-            utils.customAlert(context, "E", s.no_internet);
+            utils.customAlertWidet(context, "Error", s.no_internet);
           }
         } else {
           utils.showAlert(context, "Please Enter Discription");
@@ -362,7 +362,7 @@ class AtrSaveDataController with ChangeNotifier {
                 ? await offlineSave(context)
                 : await onlineSave(context);
           } else {
-            utils.customAlert(context, "E", s.no_internet);
+            utils.customAlertWidet(context, "Error", s.no_internet);
           }
         } else {
           utils.showAlert(context, "Please Enter Discription");
@@ -498,7 +498,7 @@ class AtrSaveDataController with ChangeNotifier {
         var msg = userData[s.key_message];
         if (status == s.key_ok && response_value == s.key_ok) {
           utils
-              .customAlert(context, "S", s.online_data_save_success)
+              .customAlertWidet(context, "Success", s.online_data_save_success)
               .then((value) => onWillPop(context));
           gotoDelete(selectedwork, true);
 /*        Timer(Duration(seconds: 3), () {
@@ -509,11 +509,11 @@ class AtrSaveDataController with ChangeNotifier {
           ));
         });*/
         } else {
-          utils.customAlert(context, "E", s.failed);
+          utils.customAlertWidet(context, "Error", s.failed);
         }
       } else {
         print("onlineSave responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -679,7 +679,7 @@ class AtrSaveDataController with ChangeNotifier {
 
     if (count > 0 && imageCount > 0) {
       utils
-          .customAlert(context, "S", s.save_success)
+          .customAlertWidet(context, "Success", s.save_success)
           .then((value) => {Navigator.pop(context)});
     }
   }
@@ -714,7 +714,6 @@ class AtrSaveDataController with ChangeNotifier {
   }
 
   // *************************** Check DATA Ends here *************************** //
-
 
   gotoDelete(List workList, bool save) async {
     String conditionParam = "";

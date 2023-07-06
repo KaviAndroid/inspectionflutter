@@ -1222,7 +1222,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                             }
                             setState(() {});
                           } else {
-                            utils.customAlert(context, "E", s.no_internet);
+                            utils.customAlertWidet(
+                                context, "Error", s.no_internet);
                           }
                         },
                         child: Container(
@@ -1642,7 +1643,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         }
       } else {
         print("SchemeList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
@@ -1652,7 +1653,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       getWorkListToDownload(
           finList, selectedDistrict, selectedBlock, selectedVillage, schIdList);
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -1855,7 +1856,20 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 .rawQuery('SELECT * FROM ${s.table_RdprWorkList}');
 
             if (list.isNotEmpty) {
-              customAlertwithOk(context, "1", s.download_success, schIdList);
+              var jsonData = {
+                "schemeList": selectedSchemeArray,
+                "scheme": selectedSchemeArray[0][s.key_scheme_id].toString(),
+                "flag": 'rdpr_offline',
+                "finYear": '',
+                "dcode": '',
+                "bcode": '',
+                "pvcode": '',
+                "tmccode": '',
+                "townType": '',
+                "selectedschemeList": []
+              };
+              utils.customAlertWithDataPassing(context, "Success",
+                  s.download_success, false, true, jsonData);
             }
           } else {
             utils.showAlert(context, s.no_data);
@@ -1865,192 +1879,8 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         }
       } else {
         print("WorkList responceSignature - Token Not Verified");
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
   }
-
-  Future<void> customAlertwithOk(
-      BuildContext context, String type, String msg, List schArray) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: c.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 5.0,
-                    ),
-                  ]),
-              width: 300,
-              height: 300,
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: c.green_new,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    child: Center(
-                      child: Image.asset(
-                        imagePath.success,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: c.white,
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text("Success",
-                              style: GoogleFonts.getFont('Prompt',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: c.text_color)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: true,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.primary_text_color2),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                    if (type == "1") {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => WorkList(
-                                                    schemeList:
-                                                        selectedSchemeArray,
-                                                    scheme: selectedSchemeArray[
-                                                            0][s.key_scheme_id]
-                                                        .toString(),
-                                                    flag: 'rdpr_offline',
-                                                    finYear: '',
-                                                    dcode: '',
-                                                    bcode: '',
-                                                    pvcode: '',
-                                                    tmccode: '',
-                                                    townType: '',
-                                                    selectedschemeList: [],
-                                                  )));
-                                      /*.then((value) {
-                                        utils.gotoHomePage(
-                                            context, "RDPRUrban");
-                                        // you can do what you need here
-                                        // setState etc.
-                                      });*/
-                                    }
-                                  },
-                                  child: Text(
-                                    "Okay",
-                                    style: GoogleFonts.getFont('Roboto',
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-/*
-  Future<void> showAlert(BuildContext context, String msg,List schArray) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(msg),
-                Text(''),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                print("schArray"+schArray.toString());
-                print("Scheme"+schArray[0].toString());
-                Navigator.pop(context, 'OK');
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WorkList(
-                          schemeList: selectedSchemeArray,
-                          scheme: selectedSchemeArray[0][s.key_scheme_id].toString(),
-                          flag: 'rdpr_offline',
-                        ))) .then((value) {
-                  utils.gotoHomePage(context, "RDPRUrban");
-                  // you can do what you need here
-                  // setState etc.
-                });
-
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-*/
 }

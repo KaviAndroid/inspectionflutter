@@ -1333,12 +1333,12 @@ class _HomeState extends State<Home> {
 
   logout() async {
     if (await checkLocalData()) {
-      utils.customAlertWithOkCancel(context, "Error", s.logout_message);
+      utils.customAlertWidet(context, "Error", s.logout_message);
     } else {
       if (await utils.isOnline()) {
-        utils.customAlertWithOkCancel(context, "Warning", s.logout);
+        utils.customAlertWidet(context, "Warning", s.logout);
       } else {
-        utils.customAlertWithOkCancel(context, "Warning", s.logout_msg);
+        utils.customAlertWidet(context, "Warning", s.logout_msg);
       }
     }
   }
@@ -1516,7 +1516,7 @@ class _HomeState extends State<Home> {
           });
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("DashboardData responceSignature - Token Not Verified");
       }
     }
@@ -1629,7 +1629,7 @@ class _HomeState extends State<Home> {
         }
         utils.hideProgress(context);
       } else {
-        utils.customAlert(context, "E",
+        utils.customAlertWidet(context, "Error",
             s.jsonError) /* .then((value) async => await getProfileData())*/;
         print("ProfileData responceSignature - Token Not Verified");
       }
@@ -1708,7 +1708,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         utils
-            .customAlert(context, "E", s.jsonError)
+            .customAlertWidet(context, "Error", s.jsonError)
             .then((value) async => await getPhotoCount());
         print("photo_count responceSignature - Token Not Verified");
       }
@@ -1814,7 +1814,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         utils
-            .customAlert(context, "E", s.jsonError)
+            .customAlertWidet(context, "Error", s.jsonError)
             .then((value) async => await getFinYearList());
         print("FinancialYear responceSignature - Token Not Verified");
       }
@@ -1986,7 +1986,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         utils
-            .customAlert(context, "E", s.jsonError)
+            .customAlertWidet(context, "Error", s.jsonError)
             .then((value) async => await getCategoryList());
         print(
             "other_work_category_list responceSignature - Token Not Verified");

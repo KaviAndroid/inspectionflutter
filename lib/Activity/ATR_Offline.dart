@@ -297,7 +297,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 await dbClient.rawQuery('SELECT * FROM ${s.table_AtrWorkList}');
 
             if (list.isNotEmpty) {
-              utils.customAlert(context, "S", s.worklist_download_success);
+              utils.customAlertWidet(
+                  context, "Success", s.worklist_download_success);
             }
             await fetchOfflineWorklist();
           }
@@ -311,7 +312,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           });
         }
       } else {
-        utils.customAlert(context, "E", s.jsonError);
+        utils.customAlertWidet(context, "Error", s.jsonError);
         print("Online_Work_List responceSignature - Token Not Verified");
       }
     }
@@ -403,7 +404,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             );
           }
         } else {
-          utils.customAlert(context, "E", s.jsonError);
+          utils.customAlertWidet(context, "Error", s.jsonError);
           print("Get_PDF responceSignature - Token Not Verified");
         }
       }
@@ -485,7 +486,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     dateController.text = "$startDate  To  $endDate";
     await utils.isOnline()
         ? fetchOnlineATRWroklist(startDate, endDate)
-        : utils.customAlert(context, "E", s.no_internet);
+        : utils.customAlertWidet(context, "Error", s.no_internet);
   }
 
   // *************************** Date  Functions Ends here *************************** //
@@ -1153,8 +1154,8 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       [s.key_inspection_id]
                                                   .toString());
                                         } else {
-                                          utils.customAlert(
-                                              context, "E", s.no_internet);
+                                          utils.customAlertWidet(
+                                              context, "Error", s.no_internet);
                                         }
                                       },
                                       child: Padding(

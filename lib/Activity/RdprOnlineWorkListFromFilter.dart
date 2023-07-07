@@ -96,7 +96,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
       finyearList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -109,7 +109,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     if (selectedLevel == 'S') {
       districtFlag = true;
       List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
+      await dbClient.rawQuery('SELECT * FROM ' + s.table_District);
       print(list.toString());
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
@@ -120,7 +120,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     } else if (selectedLevel == 'D') {
       blockFlag = true;
       List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
+      await dbClient.rawQuery('SELECT * FROM ' + s.table_Block);
       print(list.toString());
       blockItems.add(defaultSelectedBlock);
       blockItems.addAll(list);
@@ -130,7 +130,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     } else if (selectedLevel == 'B') {
       villageFlag = true;
       List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ' + s.table_Village);
+      await dbClient.rawQuery('SELECT * FROM ' + s.table_Village);
       print(list.toString());
       villageItems.add(defaultSelectedVillage);
       villageItems.addAll(list);
@@ -193,53 +193,53 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                            Padding(
-                              padding:
+                                Padding(
+                                  padding:
                                   const EdgeInsets.only(top: 15, bottom: 15),
-                              child: Text(
-                                s.select_financial_year,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 12,
-                                    color: c.grey_8),
-                              ),
-                            ),
-                            Container(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 15),
-                                decoration: BoxDecoration(
-                                    color: c.grey_out,
-                                    border: Border.all(
-                                        width: finYearError ? 1 : 0.1,
-                                        color:
+                                  child: Text(
+                                    s.select_financial_year,
+                                    style: GoogleFonts.getFont('Roboto',
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 12,
+                                        color: c.grey_8),
+                                  ),
+                                ),
+                                Container(
+                                    height: 40,
+                                    padding: EdgeInsets.only(left: 15),
+                                    decoration: BoxDecoration(
+                                        color: c.grey_out,
+                                        border: Border.all(
+                                            width: finYearError ? 1 : 0.1,
+                                            color:
                                             finYearError ? c.red : c.grey_10),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: InkWell(
-                                    onTap: () {
-                                      multiChoiceFinYearSelection(
-                                          finyearList, s.select_financial_year);
-                                    },
-                                    child: Row(
-                                        mainAxisAlignment:
+                                        borderRadius: BorderRadius.circular(10.0)),
+                                    child: InkWell(
+                                        onTap: () {
+                                          multiChoiceFinYearSelection(
+                                              finyearList, s.select_financial_year);
+                                        },
+                                        child: Row(
+                                            mainAxisAlignment:
                                             MainAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Text(
-                                              finList.isNotEmpty
-                                                  ? finList.join(', ')
-                                                  : s.select_financial_year,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: c.grey_10),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                        ]))
-                                /* child: IgnorePointer(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  finList.isNotEmpty
+                                                      ? finList.join(', ')
+                                                      : s.select_financial_year,
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.normal,
+                                                      color: c.grey_10),
+                                                  overflow: TextOverflow.clip,
+                                                  maxLines: 1,
+                                                  softWrap: true,
+                                                ),
+                                              ),
+                                            ]))
+                                  /* child: IgnorePointer(
                                 ignoring: isLoadingFinYear ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2(
@@ -312,21 +312,21 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                 ),
                               ),*/
                                 ),
-                            const SizedBox(height: 8.0),
-                            Visibility(
-                              visible: finYearError ? true : false,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Text(
-                                  s.please_select_financial_year,
-                                  // state.hasError ? state.errorText : '',
-                                  style: TextStyle(
-                                      color: Colors.redAccent.shade700,
-                                      fontSize: 12.0),
+                                const SizedBox(height: 8.0),
+                                Visibility(
+                                  visible: finYearError ? true : false,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      s.please_select_financial_year,
+                                      // state.hasError ? state.errorText : '',
+                                      style: TextStyle(
+                                          color: Colors.redAccent.shade700,
+                                          fontSize: 12.0),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ])),
+                              ])),
                       Visibility(
                         visible: districtFlag ? true : false,
                         child: Column(
@@ -334,7 +334,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 15, bottom: 15),
+                              const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.selectDistrict,
                                 style: GoogleFonts.getFont('Roboto',
@@ -359,15 +359,15 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     isExpanded: true,
                                     items: districtItems
                                         .map((item) => DropdownMenuItem<String>(
-                                              value:
-                                                  item[s.key_dcode].toString(),
-                                              child: Text(
-                                                item[s.key_dname].toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ))
+                                      value:
+                                      item[s.key_dcode].toString(),
+                                      child: Text(
+                                        item[s.key_dname].toString(),
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ))
                                         .toList(),
                                     onChanged: (value) {
                                       if (value != "0") {
@@ -400,15 +400,15 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     iconStyleData: IconStyleData(
                                       icon: isLoadingD
                                           ? SpinKitCircle(
-                                              color: c.colorPrimary,
-                                              size: 30,
-                                              duration: const Duration(
-                                                  milliseconds: 1200),
-                                            )
+                                        color: c.colorPrimary,
+                                        size: 30,
+                                        duration: const Duration(
+                                            milliseconds: 1200),
+                                      )
                                           : const Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.black45,
-                                            ),
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
                                       iconSize: 30,
                                     ),
                                     dropdownStyleData: DropdownStyleData(
@@ -444,7 +444,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 15, bottom: 15),
+                              const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.selectBlock,
                                 style: GoogleFonts.getFont('Roboto',
@@ -468,14 +468,14 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   isExpanded: true,
                                   items: blockItems
                                       .map((item) => DropdownMenuItem<String>(
-                                            value: item[s.key_bcode].toString(),
-                                            child: Text(
-                                              item[s.key_bname].toString(),
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ))
+                                    value: item[s.key_bcode].toString(),
+                                    child: Text(
+                                      item[s.key_bname].toString(),
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ))
                                       .toList(),
                                   onChanged: (value) {
                                     if (value != "0") {
@@ -541,7 +541,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 15, bottom: 15),
+                              const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.select_village,
                                 style: GoogleFonts.getFont('Roboto',
@@ -564,15 +564,15 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   isExpanded: true,
                                   items: villageItems
                                       .map((item) => DropdownMenuItem<String>(
-                                            value:
-                                                item[s.key_pvcode].toString(),
-                                            child: Text(
-                                              item[s.key_pvname].toString(),
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ))
+                                    value:
+                                    item[s.key_pvcode].toString(),
+                                    child: Text(
+                                      item[s.key_pvname].toString(),
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ))
                                       .toList(),
                                   onChanged: (value) {
                                     if (value != "0") {
@@ -634,7 +634,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 15, bottom: 15),
+                              const EdgeInsets.only(top: 15, bottom: 15),
                               child: Text(
                                 s.select_scheme,
                                 style: GoogleFonts.getFont('Roboto',
@@ -659,16 +659,16 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     isExpanded: true,
                                     items: schemeItems
                                         .map((item) => DropdownMenuItem<String>(
-                                              value: item[s.key_scheme_id]
-                                                  .toString(),
-                                              child: Text(
-                                                item[s.key_scheme_name]
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ))
+                                      value: item[s.key_scheme_id]
+                                          .toString(),
+                                      child: Text(
+                                        item[s.key_scheme_name]
+                                            .toString(),
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ))
                                         .toList(),
                                     onChanged: (value) {
                                       if (value != "0") {
@@ -690,15 +690,15 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                     iconStyleData: IconStyleData(
                                       icon: isLoadingScheme
                                           ? SpinKitCircle(
-                                              color: c.colorPrimary,
-                                              size: 30,
-                                              duration: const Duration(
-                                                  milliseconds: 1200),
-                                            )
+                                        color: c.colorPrimary,
+                                        size: 30,
+                                        duration: const Duration(
+                                            milliseconds: 1200),
+                                      )
                                           : const Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.black45,
-                                            ),
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
                                       iconSize: 30,
                                     ),
                                     dropdownStyleData: DropdownStyleData(
@@ -729,7 +729,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                       ),
                       Visibility(
                           visible:
-                              schemelistWithCount.isNotEmpty ? true : false,
+                          schemelistWithCount.isNotEmpty ? true : false,
                           child: Container(
                               child: ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
@@ -750,9 +750,9 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                         bcode: selectedBlock,
                                                         pvcode: selectedVillage,
                                                         scheme:
-                                                            schemelistWithCount[
-                                                                    index][
-                                                                s.key_scheme_id],
+                                                        schemelistWithCount[
+                                                        index][
+                                                        s.key_scheme_id],
                                                         tmccode: '',
                                                         townType: '',
                                                         flag: 'rdpr_online',
@@ -770,17 +770,17 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                 topLeft: Radius.circular(20),
                                                 topRight: Radius.circular(20),
                                                 bottomRight:
-                                                    Radius.circular(20),
+                                                Radius.circular(20),
                                               ),
                                             ),
                                             child: ClipPath(
                                                 clipper: ShapeBorderClipper(
                                                     shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20))),
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            20))),
                                                 child: Column(
                                                   children: [
                                                     Row(
@@ -788,104 +788,104 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                         Container(
                                                           width: 10,
                                                           padding:
-                                                              EdgeInsets.only(
-                                                                  top: 10,
-                                                                  bottom: 10),
+                                                          EdgeInsets.only(
+                                                              top: 10,
+                                                              bottom: 10),
                                                           child: Text(""),
                                                           decoration:
-                                                              BoxDecoration(
-                                                                  gradient: LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topLeft,
-                                                                      end: Alignment.topRight,
-                                                                      colors: [
-                                                                        c.colorPrimary,
-                                                                        c.colorAccentverylight
-                                                                      ]),
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            20),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            0),
-                                                                    bottomLeft:
-                                                                        Radius.circular(
-                                                                            20),
-                                                                    bottomRight:
-                                                                        Radius.circular(
-                                                                            0),
-                                                                  )),
+                                                          BoxDecoration(
+                                                              gradient: LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topLeft,
+                                                                  end: Alignment.topRight,
+                                                                  colors: [
+                                                                    c.colorPrimary,
+                                                                    c.colorAccentverylight
+                                                                  ]),
+                                                              borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                    20),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                    0),
+                                                                bottomLeft:
+                                                                Radius.circular(
+                                                                    20),
+                                                                bottomRight:
+                                                                Radius.circular(
+                                                                    0),
+                                                              )),
                                                         ),
                                                         Expanded(
                                                           child: Container(
                                                             padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10,
-                                                                    bottom: 10),
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10),
                                                             child: Text(
                                                               schemelistWithCount[
-                                                                      index][
-                                                                  key_scheme_name],
+                                                              index][
+                                                              key_scheme_name],
                                                               style: TextStyle(
                                                                   fontSize: 15,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
+                                                                  FontWeight
+                                                                      .normal,
                                                                   color:
-                                                                      c.black),
+                                                                  c.black),
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                               overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                             ),
                                                           ),
                                                         ),
                                                         Expanded(
                                                           child: Container(
                                                             padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10,
-                                                                    bottom: 10),
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10),
                                                             decoration:
-                                                                BoxDecoration(
-                                                                    color: c
-                                                                        .dot_light_screen_lite1,
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              20),
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              0),
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              20),
-                                                                    )),
+                                                            BoxDecoration(
+                                                                color: c
+                                                                    .dot_light_screen_lite1,
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      0),
+                                                                  topRight:
+                                                                  Radius.circular(
+                                                                      20),
+                                                                  bottomLeft:
+                                                                  Radius.circular(
+                                                                      0),
+                                                                  bottomRight:
+                                                                  Radius.circular(
+                                                                      20),
+                                                                )),
                                                             child: Text(
                                                                 schemelistWithCount[
-                                                                            index]
-                                                                        [
-                                                                        key_total_count]
+                                                                index]
+                                                                [
+                                                                key_total_count]
                                                                     .toString(),
                                                                 style: TextStyle(
                                                                     color: c
                                                                         .primary_text_color2,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                                 textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                TextAlign
+                                                                    .center,
                                                                 maxLines: 1),
                                                           ),
                                                         ),
@@ -902,13 +902,13 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                             child: ElevatedButton(
                               style: ButtonStyle(
                                   backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          c.colorPrimary),
+                                  MaterialStateProperty.all<Color>(
+                                      c.colorPrimary),
                                   shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ))),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ))),
                               onPressed: () async {
                                 await fetchWorksCountSchemeWise();
                                 setState(() {});
@@ -1276,9 +1276,9 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           submitFlag = false;
                           selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
                           if(finListchecked.isNotEmpty)
-                            {
-                              finList.addAll(finListchecked);
-                            }
+                          {
+                            finList.addAll(finListchecked);
+                          }
                           Navigator.pop(context, 'OK');
 
                           setState(() {});

@@ -31,7 +31,7 @@ String action = "assets/images/action.png";
 String arrow_down_icon = "assets/images/arrow_down_icon.png";
 String camera = "assets/images/camera.png";
 String ic_camera = "assets/images/ic_camera.png";
-String back_arrow= "assets/images/back_arrow.png";
+String back_arrow = "assets/images/back_arrow.png";
 String mic = "assets/images/mic.png";
 String date_picker_icon = "assets/images/datepicker_icon.png";
 String arrow_icon = "assets/images/arrow.png";
@@ -59,6 +59,7 @@ String arrow_right = "assets/images/rightarrow.png";
 String delay_works = "assets/images/ins_man.png";
 String home = "assets/images/home.png";
 String warning_ic = "assets/images/warning_ic.png";
+String error_img = "assets/images/errorImage.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

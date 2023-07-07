@@ -281,9 +281,9 @@ class Utils {
                             ? imagePath.warning
                             : type == "Success"
                                 ? imagePath.success
-                                : imagePath.error,
-                        height: type == "Warning" ? 60 : 100,
-                        width: type == "Warning" ? 60 : 100,
+                                : imagePath.error_img,
+                        height: type == "Warning" ? 60 : 60,
+                        width: type == "Warning" ? 60 : 60,
                         fit: BoxFit.cover,
                       ),
                     ),

@@ -39,6 +39,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   List villageItems = [];
   List schemeItems = [];
   List finList = [];
+  List finListchecked = [];
   List schemelistWithCount = [];
 
   String selectedFinYear = "";
@@ -974,7 +975,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
 
   void loadUIScheme(String value) async {
     if (await utils.isOnline()) {
-      if (selectedFinYear != s.select_financial_year) {
+      if (finList.isNotEmpty) {
         await getSchemeList(value);
         setState(() {
           isLoadingV = false;
@@ -1217,7 +1218,6 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     }
   }
 
-  @override
   void multiChoiceFinYearSelection(
       List<FlutterLimitedCheckBoxModel> list, String msg) {
     int limitCount = 2;
@@ -1241,24 +1241,82 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 setState(() {});
               });
 
-          //               },
-          //               child: Container(
-          //                 alignment: AlignmentDirectional.bottomEnd,
-          //                 child: Padding(
-          //                   padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-          //                   child: Text(
-          //                     s.key_ok,
-          //                     style: TextStyle(
-          //                         fontWeight: FontWeight.bold,
-          //                         color: c.primary_text_color2,
-          //                         fontSize: 15),
-          //                     textAlign: TextAlign.center,
-          //                   ),
-          //                 ),
-          //               ))
+          //   AlertDialog(
+          //     title: RichText(
+          //       text: new TextSpan(
+          //         // Note: Styles for TextSpans must be explicitly defined.
+          //         // Child text spans will inherit styles from parent
+          //         style: GoogleFonts.getFont('Roboto',
+          //             fontWeight: FontWeight.w800, fontSize: 13, color: c.grey_8),
+          //         children: <TextSpan>[
+          //           new TextSpan(
+          //               text: s.select_financial_year,
+          //               style: new TextStyle(
+          //                   fontWeight: FontWeight.bold, color: c.grey_8)),
+          //           new TextSpan(
+          //               text: " (Any Two)",
+          //               style: new TextStyle(
+          //                   fontWeight: FontWeight.bold,
+          //                   color: c.subscription_type_red_color)),
           //         ],
-          //       )),
-          // );
+          //       ),
+          //     ),
+          //     content: Container(
+          //         height: 300,
+          //         width: MediaQuery.of(context).size.width,
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           crossAxisAlignment: CrossAxisAlignment.end,
+          //           children: [
+          //             Expanded(
+          //               child: Align(
+          //                 alignment: Alignment.centerLeft,
+          //                 child: FlutterLimitedCheckbox(
+          //                   limit: limitCount,
+          //                   limitedValueList: list,
+          //                   onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+          //                     finListchecked.clear();
+          //                     for (int i = 0; i < list.length; i++) {
+          //                       finListchecked.add(list[i].selectTitle);
+          //                     }
+          //                     print(finListchecked.toString());
+          //                   },
+          //                   mainAxisAlignmentOfRow: MainAxisAlignment.start,
+          //                   crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+          //                 ),
+          //               ),
+          //             ),
+          //             InkWell(
+          //                 onTap: () {
+          //                   finList.clear();
+          //                   schemeFlag = false;
+          //                   submitFlag = false;
+          //                   selectedVillage =
+          //                       defaultSelectedVillage[s.key_pvcode]!;
+          //                   if (finListchecked.isNotEmpty) {
+          //                     finList.addAll(finListchecked);
+          //                   }
+          //                   Navigator.pop(context, 'OK');
+
+          //                   setState(() {});
+          //                 },
+          //                 child: Container(
+          //                   alignment: AlignmentDirectional.bottomEnd,
+          //                   child: Padding(
+          //                     padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+          //                     child: Text(
+          //                       s.key_ok,
+          //                       style: TextStyle(
+          //                           fontWeight: FontWeight.bold,
+          //                           color: c.primary_text_color2,
+          //                           fontSize: 15),
+          //                       textAlign: TextAlign.center,
+          //                     ),
+          //                   ),
+          //                 ))
+          //           ],
+          //         )),
+          //   );
         });
   }
 

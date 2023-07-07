@@ -39,6 +39,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
   List villageItems = [];
   List schemeItems = [];
   List finList = [];
+  List finListchecked = [];
   List schemelistWithCount = [];
 
   String selectedFinYear = "";
@@ -974,7 +975,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
 
   void loadUIScheme(String value) async {
     if (await utils.isOnline()) {
-      if (selectedFinYear != s.select_financial_year) {
+      if (finList.isNotEmpty) {
         await getSchemeList(value);
         setState(() {
           isLoadingV = false;
@@ -1257,11 +1258,11 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                           limit: limitCount,
                           limitedValueList: list,
                           onChanged: (List<FlutterLimitedCheckBoxModel> list) {
-                            finList.clear();
+                            finListchecked.clear();
                             for (int i = 0; i < list.length; i++) {
-                              finList.add(list[i].selectTitle);
+                              finListchecked.add(list[i].selectTitle);
                             }
-                            print(finList.toString());
+                            print(finListchecked.toString());
                           },
                           mainAxisAlignmentOfRow: MainAxisAlignment.start,
                           crossAxisAlignmentOfRow: CrossAxisAlignment.center,
@@ -1270,10 +1271,14 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                     ),
                     InkWell(
                         onTap: () {
-                          if (finList.isNotEmpty) {
-                            schemeFlag = false;
-                            submitFlag = false;
-                          }
+                          finList.clear();
+                          schemeFlag = false;
+                          submitFlag = false;
+                          selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
+                          if(finListchecked.isNotEmpty)
+                            {
+                              finList.addAll(finListchecked);
+                            }
                           Navigator.pop(context, 'OK');
 
                           setState(() {});

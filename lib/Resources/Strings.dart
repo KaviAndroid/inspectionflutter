@@ -253,6 +253,7 @@ String plan_to_inspect = "Plan to inspect delayed works";
 String logout_alert =
     " then click logout icon in home page to successfully logout the previous session";
 String view_progress = "View Work Progress";
+String select_all = "Select all";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -389,6 +390,7 @@ String key_total_count = "total_count";
 // Service Key
 String service_key_login = "login";
 String service_key_scheme_list = "scheme_list";
+String service_key_scheme_list_blockwise = "scheme_list_block_wise";
 String service_key_version_check = "version_check";
 String service_key_scheme_list_townpanchayat_wise =
     "scheme_list_townpanchayat_wise";

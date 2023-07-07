@@ -176,6 +176,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        backgroundColor:c.white,
           appBar: AppBar(
             backgroundColor: c.colorPrimary,
             centerTitle: true,
@@ -216,7 +217,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             ),
           ),
           body: Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            // padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             color: c.white,
             height: MediaQuery.of(context).size.height,
             child: SingleChildScrollView(
@@ -807,158 +808,174 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                 ),
                 Visibility(
                     child: Container(
+                      margin: EdgeInsets.only(right: 20,left: 20),
                         child: Stack(children: [
                   Visibility(
                       visible: villagelist.isNotEmpty ? true : false,
                       child: Container(
-                          child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: villagelist.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return InkWell(
-                                    onTap: () async {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => WorkList(
-                                                    finYear: finList,
-                                                    dcode: selectedDistrict,
-                                                    bcode: selectedBlock,
-                                                    pvcode: villagelist[index]
-                                                        [s.key_pvcode],
-                                                    tmccode: selectedMonth,
-                                                    flag: "delayed_works",
-                                                    asvalue: asController.text,
-                                                    selectedschemeList: "",
-                                                    townType: '',
-                                                    scheme: '',
-                                                    schemeList: schIdList,
-                                                  )));
-                                    },
-                                    child: Card(
-                                        elevation: 5,
-                                        margin: EdgeInsets.only(
-                                            top: 10, left: 15, bottom: 10),
-                                        color: c.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(20),
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                            bottomRight: Radius.circular(20),
+                          child:Column(children: [
+                            Container(
+                              margin:
+                              const EdgeInsets.only(top: 5, bottom: 5),
+                              child: Text(
+                                s.village_list,
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: c.primary_text_color2),
+                              ),
+                            ),
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: villagelist.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                      onTap: () async {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => WorkList(
+                                                  finYear: finList,
+                                                  dcode: selectedDistrict,
+                                                  bcode: selectedBlock,
+                                                  pvcode: villagelist[index]
+                                                  [s.key_pvcode],
+                                                  tmccode: selectedMonth,
+                                                  flag: "delayed_works",
+                                                  asvalue: asController.text,
+                                                  selectedschemeList: "",
+                                                  townType: '',
+                                                  scheme: '',
+                                                  schemeList: schIdList,
+                                                )));
+                                      },
+                                      child: Card(
+                                          elevation: 5,
+                                          margin: EdgeInsets.only(
+                                              top: 10,  bottom: 10),
+                                          color: c.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(20),
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                              bottomRight: Radius.circular(20),
+                                            ),
                                           ),
-                                        ),
-                                        child: ClipPath(
-                                            clipper: ShapeBorderClipper(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 10,
-                                                      padding: EdgeInsets.only(
-                                                          top: 10, bottom: 10),
-                                                      child: Text(""),
-                                                      decoration: BoxDecoration(
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment
-                                                                  .topLeft,
-                                                              end: Alignment
-                                                                  .topRight,
-                                                              colors: [
-                                                                c.colorPrimary,
-                                                                c.colorAccentverylight
-                                                              ]),
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                          )),
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10,
-                                                                bottom: 10),
-                                                        child: Text(
-                                                          villagelist[index]
-                                                              [key_pvname],
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: c.black),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                          child: ClipPath(
+                                              clipper: ShapeBorderClipper(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          20))),
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 13,
+                                                        padding: EdgeInsets.only(
+                                                            top: 10, bottom: 10),
+                                                        child: Text(""),
+                                                        decoration: BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topLeft,
+                                                                end: Alignment
+                                                                    .topRight,
+                                                                colors: [
+                                                                  c.colorPrimary,
+                                                                  c.colorAccentverylight
+                                                                ]),
+                                                            borderRadius:
+                                                            const BorderRadius
+                                                                .only(
+                                                              topLeft:
+                                                              Radius.circular(
+                                                                  20),
+                                                              topRight:
+                                                              Radius.circular(
+                                                                  0),
+                                                              bottomLeft:
+                                                              Radius.circular(
+                                                                  20),
+                                                              bottomRight:
+                                                              Radius.circular(
+                                                                  0),
+                                                            )),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding:
+                                                          EdgeInsets.only(
+                                                              top: 10,
+                                                              bottom: 10,left: 20),
+                                                          child: Text(
+                                                            villagelist[index]
+                                                            [key_pvname],
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                                color: c.black),
+                                                            textAlign:
+                                                            TextAlign.start,
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10,
-                                                                bottom: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: c
-                                                                    .dot_light_screen_lite1,
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          0),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                )),
-                                                        child: Text(
-                                                            villagelist[index][
-                                                                    key_total_count]
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color: c
-                                                                    .primary_text_color2,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            maxLines: 1),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding:
+                                                          EdgeInsets.only(
+                                                              top: 10,
+                                                              bottom: 10,right: 20),
+                                                          decoration:
+                                                          BoxDecoration(
+                                                              color: c
+                                                                  .dot_light_screen_lite1,
+                                                              borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                    0),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                    20),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                    0),
+                                                                bottomRight: Radius
+                                                                    .circular(
+                                                                    20),
+                                                              )),
+                                                          child: Text(
+                                                              villagelist[index][
+                                                              key_total_count]
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: c
+                                                                      .primary_text_color2,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,fontSize: 18),
+                                                              textAlign: TextAlign
+                                                                  .right,
+                                                              maxLines: 1),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ))));
-                              })))
+                                                    ],
+                                                  ),
+                                                ],
+                                              ))));
+                                })
+                          ],)
+                      )
+                  )
                 ])))
               ],
             )),

@@ -38,11 +38,11 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
               fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
           children: <TextSpan>[
             new TextSpan(
-                text: s.select_financial_year,
+                text: widget.message,
                 style: new TextStyle(
                     fontWeight: FontWeight.bold, color: c.grey_8)),
             new TextSpan(
-                text: " (Any Two)",
+                text: widget.message==2?" (Any Two)":"",
                 style: new TextStyle(
                     fontWeight: FontWeight.bold,
                     color: c.subscription_type_red_color)),
@@ -89,11 +89,13 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                             widget.initialValueList[index]
                                                 .isSelected = false;
                                           }
+
+                                          checkedList = widget.initialValueList
+                                              .where((element) =>
+                                          element.isSelected == true)
+                                              .toList();
                                         });
-                                        checkedList = widget.initialValueList
-                                            .where((element) =>
-                                                element.isSelected == true)
-                                            .toList();
+
 
                                         // widget.onChanged(checkedList);
                                       },

@@ -1270,6 +1270,12 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                   };
                   schArray.add(map);
                 }
+                if (schIdList.isNotEmpty) {
+                  submitFlag = true;
+                  selectedSchemeArray.clear();
+                  selectedSchemeArray.addAll(schArray);
+                }
+
                 setState(() {});
               });
           // AlertDialog(
@@ -1369,6 +1375,16 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 for (int i = 0; i < list.length; i++) {
                   finList.add(list[i].selectTitle);
                 }
+                if (finList.isNotEmpty) {
+                  schemeFlag = false;
+                  submitFlag = false;
+                  selectedVillage = "";
+                  selectedVillageName = "";
+                  schemeList = [];
+                  schList = [];
+                  schIdList = [];
+                }
+
                 setState(() {});
               });
 

@@ -1235,6 +1235,8 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 }
                 print(finList.toString());
                 if (finList.isNotEmpty) {
+                  selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
+                  villageError=true;
                   schemeFlag = false;
                   submitFlag = false;
                 }

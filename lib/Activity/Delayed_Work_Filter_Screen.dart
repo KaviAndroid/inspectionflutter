@@ -72,15 +72,13 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List blockItems = [];
   List monthItems = [];
   List finList = [];
-  List finListchecked = [];
-  List SchemeListchecked = [];
 
   List villagelist = [];
-  List schemeList = [];
+  List schList = [];
+  List schIdList = [];
+  List schArray = [];
   List<FlutterLimitedCheckBoxModel> finyearList = [];
   List<FlutterLimitedCheckBoxModel> SchemeListvalue = [];
-  List<FlutterSingleCheckbox> SchemeLis = [];
-  List multipleSelected = [];
 
   //Default Values
   Map<String, String> defaultSelectedFinYear = {
@@ -257,8 +255,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         onTap: () {
                           multiChoiceFinYearSelection(
                               finyearList, s.select_financial_year);
-                          schemeList = [];
-                          SchemeListvalue.clear();
                         },
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -379,7 +375,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ))
                                   .toList(),
                               onChanged: (value) {
-                                schemeList = [];
+                                schIdList = [];
+                                schList = [];
                                 SchemeListvalue.clear();
                                 blockItems = [];
                                 selectedBlock =
@@ -478,19 +475,21 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ),
                                     ))
                                 .toList(),
-                            onChanged: (value) {
-                              schemeList = [];
+                            onChanged: (value) async {
+                              schIdList = [];
+                              schList = [];
                               SchemeListvalue.clear();
                               schemeError = true;
                               if (value != "0") {
                                 print(value);
-                                setState(() {
-                                  delay = true;
-                                  selectedBlock = value.toString();
-                                  getSchemeList();
-                                  setState(() {});
-                                });
+                                blockError = false;
+                                delay = true;
+                                selectedBlock = value.toString();
+                                await getSchemeList();
+                              }else{
+                                blockError = true;
                               }
+                              setState(() {});
                               //Do something when changing the item if you want.
                             },
                             buttonStyleData: const ButtonStyleData(
@@ -555,6 +554,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               : null;
                           print(
                               "Schemelist#######" + SchemeListvalue.toString());
+                          setState(() {});
                         },
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -562,8 +562,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  schemeList.isNotEmpty
-                                      ? schemeList.toString()
+                                  schList.isNotEmpty
+                                      ? schList.join(', ')
                                       : s.select_scheme,
                                   style: TextStyle(
                                       fontSize: 13,
@@ -957,7 +957,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
       s.key_fin_year: finList,
-      s.key_scheme_id: schemeList,
+      s.key_scheme_id: schIdList,
       s.key_flag: "1",
       if (selectedMonth.isNotEmpty) s.key_month: selectedMonth,
       if (asController.text.isNotEmpty) s.key_as_value: asController.text,
@@ -1101,7 +1101,26 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return FlutterCustomCheckbox(
+              initialValueList: list,
+              message: msg,
+              limitCount: limitCount,
+              onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                finList.clear();
+                schIdList = [];
+                schList = [];
+                SchemeListvalue.clear();
+                blockItems = [];
+                selectedBlock =
+                defaultSelectedBlock[s.key_bcode]!;
+                blockError = true;
+                schemeError = true;
+                for (int i = 0; i < list.length; i++) {
+                  finList.add(list[i].selectTitle);
+                }
+                setState(() {});
+              });
+            /*AlertDialog(
             title: RichText(
               text: new TextSpan(
                 // Note: Styles for TextSpans must be explicitly defined.
@@ -1171,7 +1190,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         ))
                   ],
                 )),
-          );
+          );*/
         });
   }
 
@@ -1180,7 +1199,26 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return FlutterCustomCheckbox(
+              initialValueList: list,
+              message: s.select_scheme,
+              limitCount: limitCount,
+              onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                schList.clear();
+                schIdList.clear();
+                schArray.clear();
+                for (int i = 0; i < list.length; i++) {
+                  schList.add(list[i].selectTitle);
+                  schIdList.add(list[i].selectId);
+                  Map<String, String> map = {
+                    s.key_scheme_id: list[i].selectId.toString(),
+                    s.key_scheme_name: list[i].selectTitle
+                  };
+                  schArray.add(map);
+                }
+                setState(() {});
+              });
+           /* AlertDialog(
             title: Row(children: [
               Text(s.select_scheme,
                   style: GoogleFonts.getFont('Roboto',
@@ -1262,7 +1300,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         ))
                   ],
                 )),
-          );
+          );*/
         });
   }
 
@@ -1337,7 +1375,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             schemeFlag = true;
             for (int i = 0; i < res_jsonArray.length; i++) {
               SchemeListvalue.add(FlutterLimitedCheckBoxModel(
-                  isSelected: schemelistflag,
+                  isSelected: false,
                   selectTitle: utils.splitStringByLength(
                       res_jsonArray[i][s.key_scheme_name], 19),
                   selectId: i));

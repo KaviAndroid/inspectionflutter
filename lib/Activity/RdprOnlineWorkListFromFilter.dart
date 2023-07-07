@@ -17,7 +17,7 @@ import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
 import '../Layout/ReadMoreLess.dart';
-import '../Layout/checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 
@@ -1236,7 +1236,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 print(finList.toString());
                 if (finList.isNotEmpty) {
                   selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
-                  villageError=true;
+                  villageError = true;
                   schemeFlag = false;
                   submitFlag = false;
                 }

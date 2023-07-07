@@ -29,7 +29,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
-import '../Layout/checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 
 class Utils {
   DateTime? selectedFromDate;
@@ -270,20 +270,20 @@ class Utils {
                         color: type == "Warning"
                             ? c.yellow_new.withOpacity(0.5)
                             : type == "Success"
-                                ? c.green_new.withOpacity(0.5)
-                                : c.red_new.withOpacity(0.5),
+                                ? c.alert_bg
+                                : c.red_new,
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15))),
                     child: Center(
                       child: Image.asset(
                         type == "Warning"
-                            ? imagePath.warning
+                            ? imagePath.warning_gif
                             : type == "Success"
-                                ? imagePath.success_img
-                                : imagePath.error_img,
-                        height: 60,
-                        width: 60,
+                                ? imagePath.success
+                                : imagePath.error,
+                        height: 100,
+                        width: 100,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -401,10 +401,11 @@ class Utils {
                                           msg == s.logout) {
                                         dbHelper.deleteAll();
                                         prefs.clear();
-                                        Navigator.push(
+                                        Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => Login()));
+                                                builder: (context) => Login()),
+                                            (route) => false);
                                       } else if (msg == s.download_apk) {
                                         launchURL(prefs
                                             .getString(s.download_apk)

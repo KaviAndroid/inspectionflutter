@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 
 //ignore: must_be_immutable
 class FlutterSingleCheckbox extends StatefulWidget {
@@ -92,10 +92,11 @@ class _FlutterSingleCheckboxState extends State<FlutterSingleCheckbox> {
                 focusNode: widget.focusNode,
                 splashRadius: widget.splashRadius,
               ),
-              Text(
+              Expanded(
+                  child: Text(
                 widget.singleValueList[index].selectTitle,
                 style: widget.titleTextStyle,
-              )
+              ))
             ],
           )),
     );

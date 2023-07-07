@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
-import 'checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 
@@ -117,10 +117,11 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
               ),
               InkWell(
                   onTap: () {
-                    print(checkedList.toString());
                     widget.onChanged(checkedList);
                     Navigator.pop(context, 'OK');
-                    // setState(() {});
+                    for (var item in widget.initialValueList) {
+                      item.isSelected = false;
+                    }
                   },
                   child: Container(
                     alignment: AlignmentDirectional.bottomEnd,

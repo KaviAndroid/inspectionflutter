@@ -253,6 +253,7 @@ String plan_to_inspect = "Plan to inspect delayed works";
 String logout_alert =
     " then click logout icon in home page to successfully logout the previous session";
 String view_progress = "View Work Progress";
+String select_all = "Select all";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";
@@ -480,6 +481,7 @@ String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
 String service_key_get_inspection_delayed_work_details =
     "get_inspection_delayed_work_details";
+String service_key_scheme_list_blockwise = "scheme_list_block_wise";
 
 //Table Name
 String table_District = "District";

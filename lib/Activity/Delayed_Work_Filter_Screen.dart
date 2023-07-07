@@ -1,9 +1,8 @@
-// ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, no_leading_underscores_for_local_identifiers, use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:inspection_flutter_app/Activity/Home.dart';
 import 'package:inspection_flutter_app/Activity/WorkList.dart';
+import 'package:inspection_flutter_app/Layout/Single_CheckBox.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
@@ -20,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
 import '../Layout/checkBoxModelClass.dart';
+import '../Resources/Strings.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 
@@ -36,6 +37,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   bool finYearError = false;
   bool districtError = false;
   bool blockError = false;
+  bool schemeError = false;
+  late final Function(bool) callback;
+  bool _checkbox = true;
 
   //bool Loading
   bool isLoadingFinYear = false;
@@ -48,7 +52,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   bool vFlag = false;
   bool delay = false;
   bool pvTable = false;
-
+  bool schemelistflag = false;
+  bool selectall = false;
+  bool schemeselect = false;
   //Bool
   bool submitFlag = false;
   bool schemeFlag = false;
@@ -66,8 +72,15 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List blockItems = [];
   List monthItems = [];
   List finList = [];
+  List finListchecked = [];
+  List SchemeListchecked = [];
+
   List villagelist = [];
+  List schemeList=[];
   List<FlutterLimitedCheckBoxModel> finyearList = [];
+  List<FlutterLimitedCheckBoxModel> SchemeListvalue = [];
+  List<FlutterSingleCheckbox> SchemeLis= [];
+  List multipleSelected = [];
 
   //Default Values
   Map<String, String> defaultSelectedFinYear = {
@@ -101,7 +114,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     dbClient = await dbHelper.db;
     finyearList.clear();
     List<Map> list =
-        await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
+    await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
       finyearList.add(FlutterLimitedCheckBoxModel(
           isSelected: false,
@@ -116,7 +129,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       dFlag = true;
       bFlag = true;
       List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ${s.table_District}');
+      await dbClient.rawQuery('SELECT * FROM ${s.table_District}');
       print(list.toString());
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
@@ -127,7 +140,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       dFlag = true;
       bFlag = true;
       List<Map> list =
-          await dbClient.rawQuery('SELECT * FROM ${s.table_Block}');
+      await dbClient.rawQuery('SELECT * FROM ${s.table_Block}');
       print(list.toString());
       blockItems.add(defaultSelectedBlock);
       blockItems.addAll(list);
@@ -142,7 +155,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     monthItems.add(defaultSelectedMonth);
     for (int i = 1; i < 5; i++) {
       Map<String, String> mymap =
-          {}; // This created one object in the current scope.
+      {}; // This created one object in the current scope.
       // First iteration , i = 0
       mymap['monthId'] = (i * 3).toString(); // Now mymap = { name: 'test0' };
       mymap['month'] = (i * 3).toString(); // Now mymap = { name: 'test0' };
@@ -160,7 +173,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       await getBlockList(value);
       setState(() {});
     } else {
-      utils.customAlert(context, "E", s.no_internet);
+      utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }
 
@@ -205,8 +218,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Home(
-                                        isLogin: "",
-                                      )));
+                                    isLogin: "",
+                                  )));
                         }),
                   )
                 ],
@@ -219,63 +232,54 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             height: MediaQuery.of(context).size.height,
             child: SingleChildScrollView(
                 child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15),
-                  child: Text(
-                    s.select_financial_year,
-                    style: GoogleFonts.getFont('Roboto',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
-                        color: c.grey_8),
-                  ),
-                ),
-                Container(
-                    height: 30,
-                    padding: EdgeInsets.only(top: 5, left: 10, right: 10),
-                    decoration: BoxDecoration(
-                        color: c.grey_out,
-                        border: Border.all(
-                            width: finYearError ? 1 : 0.1,
-                            color: finYearError ? c.red : c.grey_10),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: InkWell(
-                        onTap: () {
-                          multiChoiceFinYearSelection(
-                              finyearList, s.select_financial_year);
-                        },
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  finList.isNotEmpty
-                                      ? finList.toString()
-                                      : s.select_financial_year,
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.normal,
-                                      color: c.grey_10),
-                                  overflow: TextOverflow.clip,
-                                  maxLines: 1,
-                                  softWrap: true,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 40, right: 0),
-                                  // alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                    size: 30,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15, bottom: 15),
+                      child: Text(
+                        s.select_financial_year,
+                        style: GoogleFonts.getFont('Roboto',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                            color: c.grey_8),
+                      ),
+                    ),
+                    Container(
+                        height: 30,
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        decoration: BoxDecoration(
+                            color: c.grey_out,
+                            border: Border.all(
+                                width: finYearError ? 1 : 0.1,
+                                color: finYearError ? c.red : c.grey_10),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: InkWell(
+                            onTap: () {
+                              multiChoiceFinYearSelection(
+                                  finyearList, s.select_financial_year);
+                              schemeList=[];
+                              SchemeListvalue.clear();
+                            },
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      finList.isNotEmpty
+                                          ? finList.join(', ')
+                                          : s.select_financial_year,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.normal,
+                                          color: c.grey_10),
+                                      overflow: TextOverflow.clip,
+                                      maxLines: 1,
+                                      softWrap: true,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ]))
-                    /*child: IgnorePointer(
+                                ]))
+                      /*child: IgnorePointer(
                     ignoring: isLoadingFinYear ? true : false,
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2(
@@ -333,228 +337,276 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     ),
                   ),*/
                     ),
-                const SizedBox(height: 8.0),
-                Visibility(
-                  visible: sFlag ? true : false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Text(
-                          s.selectDistrict,
-                          style: GoogleFonts.getFont('Roboto',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12,
-                              color: c.grey_8),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: c.grey_out,
-                            border: Border.all(
-                                width: districtError ? 1 : 0.1,
-                                color: districtError ? c.red : c.grey_10),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: IgnorePointer(
-                          ignoring: isLoadingDistrict ? true : false,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                              style: const TextStyle(color: Colors.black),
-                              value: selectedDistrict,
-                              isExpanded: true,
-                              items: districtItems
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item[s.key_dcode].toString(),
-                                        child: Text(
-                                          item[s.key_dname].toString(),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                if (value != "0") {
-                                  isLoadingDistrict = true;
-                                  loadUIBlock(value.toString());
-                                  setState(() {});
-                                } else {
-                                  setState(() {
-                                    selectedDistrict = value.toString();
-                                    districtError = true;
-                                  });
-                                }
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 30,
-                                padding: EdgeInsets.only(right: 10),
-                              ),
-                              iconStyleData: IconStyleData(
-                                icon: isLoadingDistrict
-                                    ? SpinKitCircle(
-                                        color: c.colorPrimary,
-                                        size: 30,
-                                        duration:
-                                            const Duration(milliseconds: 1200),
-                                      )
-                                    : const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
+                    const SizedBox(height: 8.0),
+                    Visibility(
+                      visible: sFlag ? true : false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                              s.selectDistrict,
+                              style: GoogleFonts.getFont('Roboto',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: c.grey_8),
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Visibility(
-                        visible: districtError ? true : false,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            s.please_enter_district,
-                            style: TextStyle(
-                                color: Colors.redAccent.shade700,
-                                fontSize: 12.0),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: bFlag ? true : false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Text(
-                          s.selectBlock,
-                          style: GoogleFonts.getFont('Roboto',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12,
-                              color: c.grey_8),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: c.grey_out,
-                            border: Border.all(
-                                width: blockError ? 1 : 0.1,
-                                color: blockError ? c.red : c.grey_10),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2(
-                            value: selectedBlock,
-                            style: const TextStyle(color: Colors.black),
-                            isExpanded: true,
-                            items: blockItems
-                                .map((item) => DropdownMenuItem<String>(
-                                      value: item[s.key_bcode].toString(),
-                                      child: Text(
-                                        item[s.key_bname].toString(),
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              if (value != "0") {
-                                print(value);
-                                setState(() {
-                                  delay = true;
-                                  selectedBlock = value.toString();
-                                  setState(() {});
-                                });
-                              }
-                              //Do something when changing the item if you want.
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              height: 30,
-                              padding: EdgeInsets.only(right: 10),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 30,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Visibility(
-                        visible: blockError ? true : false,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            s.please_enter_block,
-                            // state.hasError ? state.errorText : '',
-                            style: TextStyle(
-                                color: Colors.redAccent.shade700,
-                                fontSize: 12.0),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: delay,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 15, bottom: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
+                          Container(
                             decoration: BoxDecoration(
                                 color: c.grey_out,
-                                border:
-                                    Border.all(width: 0.1, color: c.grey_10),
+                                border: Border.all(
+                                    width: districtError ? 1 : 0.1,
+                                    color: districtError ? c.red : c.grey_10),
                                 borderRadius: BorderRadius.circular(10.0)),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 5, right: 0),
-                                  child: Text(
-                                    'Months Delayed',
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12,
-                                        color: c.grey_8),
+                            child: IgnorePointer(
+                              ignoring: isLoadingDistrict ? true : false,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2(
+                                  style: const TextStyle(color: Colors.black),
+                                  value: selectedDistrict,
+                                  isExpanded: true,
+                                  items: districtItems
+                                      .map((item) => DropdownMenuItem<String>(
+                                    value: item[s.key_dcode].toString(),
+                                    child: Text(
+                                      item[s.key_dname].toString(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    if (value != "0") {
+                                      isLoadingDistrict = true;
+                                      loadUIBlock(value.toString());
+                                      schemeList=[];
+                                      SchemeListvalue.clear();
+                                      setState(() {});
+                                    } else {
+                                      setState(() {
+                                        selectedDistrict = value.toString();
+                                        districtError = true;
+                                      });
+                                    }
+                                  },
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 30,
+                                    padding: EdgeInsets.only(right: 10),
+                                  ),
+                                  iconStyleData: IconStyleData(
+                                    icon: isLoadingDistrict
+                                        ? SpinKitCircle(
+                                      color: c.colorPrimary,
+                                      size: 30,
+                                      duration:
+                                      const Duration(milliseconds: 1200),
+                                    )
+                                        : const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black45,
+                                    ),
+                                    iconSize: 30,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(
-                                    height: 30,
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton2(
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                        value: selectedMonth,
-                                        isExpanded: true,
-                                        items: monthItems
-                                            .map((item) =>
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: districtError ? true : false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                s.please_enter_district,
+                                style: TextStyle(
+                                    color: Colors.redAccent.shade700,
+                                    fontSize: 12.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: bFlag ? true : false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                              s.selectBlock,
+                              style: GoogleFonts.getFont('Roboto',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: c.grey_8),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: c.grey_out,
+                                border: Border.all(
+                                    width: blockError ? 1 : 0.1,
+                                    color: blockError ? c.red : c.grey_10),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton2(
+                                value: selectedBlock,
+                                style: const TextStyle(color: Colors.black),
+                                isExpanded: true,
+                                items: blockItems
+                                    .map((item) => DropdownMenuItem<String>(
+                                  value: item[s.key_bcode].toString(),
+                                  child: Text(
+                                    item[s.key_bname].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  if (value != "0") {
+                                    print(value);
+                                    setState(() {
+                                      delay = true;
+                                      selectedBlock = value.toString();
+                                      getSchemeList();
+                                      setState(() {});
+                                    });
+                                  }
+                                  //Do something when changing the item if you want.
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 30,
+                                  padding: EdgeInsets.only(right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: blockError ? true : false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                s.please_enter_block,
+                                // state.hasError ? state.errorText : '',
+                                style: TextStyle(
+                                    color: Colors.redAccent.shade700,
+                                    fontSize: 12.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 10),
+                      child: Text(
+                        s.select_scheme,
+                        style: GoogleFonts.getFont('Roboto',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                            color: c.grey_8),
+                      ),
+                    ),
+                    Container(
+                        height: 30, padding: EdgeInsets.only(top: 5,left: 10,right: 10),
+                        decoration: BoxDecoration(
+                            color: c.grey_out,
+                            border: Border.all(
+                                width: schemeError ? 1 : 0.1,
+                                color: schemeError ? c.red : c.grey_10),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child:InkWell(
+                            onTap: () {
+                              multiChoiceSchemeSelection(SchemeListvalue);
+                              print("Schemelist#######"+SchemeListvalue.toString());
+                            },
+                            child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      schemeList.isNotEmpty
+                                          ?schemeList.toString()
+                                          : s.select_scheme,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.normal,
+                                          color: c.grey_10),
+                                      overflow: TextOverflow.clip,
+                                      maxLines: 1,
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                ]
+                            )
+                        )),
+                    Visibility(
+                      visible: delay,
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 15, bottom: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: c.grey_out,
+                                    border:
+                                    Border.all(width: 0.1, color: c.grey_10),
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, left: 5, right: 0),
+                                      child: Text(
+                                        'Months Delayed',
+                                        style: GoogleFonts.getFont('Roboto',
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 12,
+                                            color: c.grey_8),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        height: 30,
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton2(
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                            value: selectedMonth,
+                                            isExpanded: true,
+                                            items: monthItems
+                                                .map((item) =>
                                                 DropdownMenuItem<String>(
                                                   value: item['monthId']
                                                       .toString(),
@@ -565,318 +617,318 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                     ),
                                                   ),
                                                 ))
-                                            .toList(),
-                                        onChanged: (value) async {
-                                          if (value != "00") {
-                                            selectedMonth = value.toString();
-                                            submitFlag = true;
-                                            setState(() {});
-                                          }
-                                        },
-                                        buttonStyleData: const ButtonStyleData(
-                                          height: 30,
-                                          padding: EdgeInsets.only(right: 10),
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
+                                                .toList(),
+                                            onChanged: (value) async {
+                                              if (value != "00") {
+                                                selectedMonth = value.toString();
+                                                submitFlag = true;
+                                                setState(() {});
+                                              }
+                                            },
+                                            buttonStyleData: const ButtonStyleData(
+                                              height: 30,
+                                              padding: EdgeInsets.only(right: 10),
+                                            ),
+                                            dropdownStyleData: DropdownStyleData(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
                                                 BorderRadius.circular(15),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: c.grey_out,
-                                border:
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    color: c.grey_out,
+                                    border:
                                     Border.all(width: 0.1, color: c.grey_10),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 0, bottom: 0, left: 5, right: 0),
-                                  child: Text(
-                                    'AS Value >=',
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12,
-                                        color: c.grey_8),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                    alignment: AlignmentDirectional.center,
-                                    height: 30,
-                                    child: TextFormField(
-                                      style: TextStyle(fontSize: 13),
-                                      maxLines: 1,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      controller: asController,
-                                      autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
-                                      decoration: InputDecoration(
-                                        hintText: '0',
-                                        border: InputBorder.none,
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top:10, bottom: 10, left: 5, right: 0),
+                                      child: Text(
+                                        'AS Value >=',
+                                        style: GoogleFonts.getFont('Roboto',
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 12,
+                                            color: c.grey_8),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                InkWell(
-                                    onTap: () {
-                                      utils.hideSoftKeyBoard(context);
-                                      if (asController.text.isNotEmpty &&
-                                          int.parse(asController.text) > 0) {
-                                        submitFlag = true;
-                                      } else {
-                                        utils.customAlert(context, "E",
-                                            "Please Enter AS value");
-                                      }
-                                    },
-                                    child: Visibility(
-                                      visible: false,
+                                    Expanded(
                                       child: Container(
-                                        width: 25,
+                                        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                        alignment: AlignmentDirectional.center,
                                         height: 30,
-                                        alignment: Alignment.centerRight,
-                                        decoration: BoxDecoration(
-                                            color: c.colorPrimary,
-                                            border: Border.all(
-                                                width: 0, color: c.grey_10),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(0),
-                                              topRight: Radius.circular(10),
-                                              bottomLeft: Radius.circular(0),
-                                              bottomRight: Radius.circular(10),
-                                            )),
-                                        padding: const EdgeInsets.fromLTRB(
-                                            5, 5, 5, 5),
+                                        child: TextFormField(
+                                          style: TextStyle(fontSize: 13),
+                                          maxLines: 1,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly
+                                          ],
+                                          controller: asController,
+                                          autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                          decoration: InputDecoration(
+                                            hintText: '0',
+                                            border: InputBorder.none,
+                                          ),
+                                        ),
                                       ),
-                                    ))
-                              ],
+                                    ),
+                                    InkWell(
+                                        onTap: () {
+                                          utils.hideSoftKeyBoard(context);
+                                          if (asController.text.isNotEmpty &&
+                                              int.parse(asController.text) > 0) {
+                                            submitFlag = true;
+                                          } else {
+                                            utils.customAlertWidet(context, "Error",
+                                                "Please Enter AS value");
+                                          }
+                                        },
+                                        child: Visibility(
+                                          visible: false,
+                                          child: Container(
+                                            width: 25,
+                                            height: 30,
+                                            alignment: Alignment.centerRight,
+                                            decoration: BoxDecoration(
+                                                color: c.colorPrimary,
+                                                border: Border.all(
+                                                    width: 0, color: c.grey_10),
+                                                borderRadius:
+                                                const BorderRadius.only(
+                                                  topLeft: Radius.circular(0),
+                                                  topRight: Radius.circular(10),
+                                                  bottomLeft: Radius.circular(0),
+                                                  bottomRight: Radius.circular(10),
+                                                )),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                5, 5, 5, 5),
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: submitFlag,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 20),
-                    child: Center(
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                c.colorPrimary),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ))),
-                        onPressed: () async {
-                          asController.text.isEmpty
-                              ? asController.text = "0"
-                              : null;
-                          if (int.parse(asController.text) > 0 ||
-                              selectedMonth != "00") {
-                            await fetchDelayedWorkList();
-                            vFlag = true;
-                          } else {
-                            utils.customAlert(context, "E",
-                                "Please Select AS value or Months");
-                          }
-
-                          // pvTable = true;
-                          setState(() {});
-                        },
-                        child: Text(
-                          s.submit,
-                          style: GoogleFonts.getFont('Roboto',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15,
-                              color: c.white),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Visibility(
-                    child: Container(
-                        child: Stack(children: [
-                  Visibility(
-                      visible: villagelist.isNotEmpty ? true : false,
+                    Visibility(
+                      visible: submitFlag,
                       child: Container(
-                          child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: villagelist.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return InkWell(
-                                    onTap: () async {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => WorkList(
-                                                    finYear: finList,
-                                                    dcode: selectedDistrict,
-                                                    bcode: selectedBlock,
-                                                    pvcode: villagelist[index]
-                                                        [s.key_pvcode],
-                                                    tmccode: selectedMonth,
-                                                    flag: "delayed_works",
-                                                    asvalue: asController.text,
-                                                    selectedschemeList: "",
-                                                    townType: '',
-                                                    scheme: '',
-                                                    schemeList: '',
-                                                  )));
-                                    },
-                                    child: Card(
-                                        elevation: 5,
-                                        margin: EdgeInsets.only(
-                                            top: 15, left: 15, bottom: 15),
-                                        color: c.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(20),
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                            bottomRight: Radius.circular(20),
-                                          ),
-                                        ),
-                                        child: ClipPath(
-                                            clipper: ShapeBorderClipper(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 10,
-                                                      padding: EdgeInsets.only(
-                                                          top: 5, bottom: 5),
-                                                      child: Text(""),
-                                                      decoration: BoxDecoration(
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment
-                                                                  .topLeft,
-                                                              end: Alignment
-                                                                  .topRight,
-                                                              colors: [
-                                                                c.colorPrimary,
-                                                                c.colorAccentverylight
-                                                              ]),
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    0),
-                                                          )),
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 5,
-                                                                bottom: 5),
-                                                        child: Text(
-                                                          villagelist[index]
-                                                              [key_pvname],
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: c.black),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
+                        child: Center(
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(
+                                    c.colorPrimary),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ))),
+                            onPressed: () async {
+                              asController.text.isEmpty
+                                  ? asController.text = "0"
+                                  : null;
+                              if (int.parse(asController.text) > 0 ||
+                                  selectedMonth != "00") {
+                                await fetchDelayedWorkList();
+                                vFlag = true;
+                              } else {
+                                utils.customAlertWidet(context, "Error",
+                                    "Please Select AS value or Months");
+                              }
+
+                              // pvTable = true;
+                              setState(() {});
+                            },
+                            child: Text(
+                              s.submit,
+                              style: GoogleFonts.getFont('Roboto',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  color: c.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                        child: Container(
+                            child: Stack(children: [
+                              Visibility(
+                                  visible: villagelist.isNotEmpty ? true : false,
+                                  child: Container(
+                                      child: ListView.builder(
+                                          physics: NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: villagelist.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return InkWell(
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => WorkList(
+                                                            finYear: finList,
+                                                            dcode: selectedDistrict,
+                                                            bcode: selectedBlock,
+                                                            pvcode: villagelist[index]
+                                                            [s.key_pvcode],
+                                                            tmccode: selectedMonth,
+                                                            flag: "delayed_works",
+                                                            asvalue: asController.text,
+                                                            selectedschemeList: "",
+                                                            townType: '',
+                                                            scheme: '',
+                                                            schemeList: '',
+                                                          )));
+                                                },
+                                                child: Card(
+                                                    elevation: 5,
+                                                    margin: EdgeInsets.only(
+                                                        top: 15, left: 15, bottom: 15),
+                                                    color: c.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.only(
+                                                        bottomLeft: Radius.circular(20),
+                                                        topLeft: Radius.circular(20),
+                                                        topRight: Radius.circular(20),
+                                                        bottomRight: Radius.circular(20),
                                                       ),
                                                     ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 5,
-                                                                bottom: 5),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: c
-                                                                    .dot_light_screen_lite1,
+                                                    child: ClipPath(
+                                                        clipper: ShapeBorderClipper(
+                                                            shape: RoundedRectangleBorder(
                                                                 borderRadius:
-                                                                    const BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          0),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                )),
-                                                        child: Text(
-                                                            villagelist[index][
-                                                                    key_total_count]
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color: c
-                                                                    .primary_text_color2,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            maxLines: 1),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ))));
-                              })))
-                ])))
-              ],
-            )),
+                                                                BorderRadius.circular(
+                                                                    20))),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: 10,
+                                                                  padding: EdgeInsets.only(
+                                                                      top: 5, bottom: 5),
+                                                                  child: Text(""),
+                                                                  decoration: BoxDecoration(
+                                                                      gradient: LinearGradient(
+                                                                          begin: Alignment
+                                                                              .topLeft,
+                                                                          end: Alignment
+                                                                              .topRight,
+                                                                          colors: [
+                                                                            c.colorPrimary,
+                                                                            c.colorAccentverylight
+                                                                          ]),
+                                                                      borderRadius:
+                                                                      const BorderRadius
+                                                                          .only(
+                                                                        topLeft:
+                                                                        Radius.circular(
+                                                                            20),
+                                                                        topRight:
+                                                                        Radius.circular(
+                                                                            0),
+                                                                        bottomLeft:
+                                                                        Radius.circular(
+                                                                            20),
+                                                                        bottomRight:
+                                                                        Radius.circular(
+                                                                            0),
+                                                                      )),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    padding:
+                                                                    EdgeInsets.only(
+                                                                        top: 5,
+                                                                        bottom: 5),
+                                                                    child: Text(
+                                                                      villagelist[index]
+                                                                      [key_pvname],
+                                                                      style: TextStyle(
+                                                                          fontSize: 15,
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                          color: c.black),
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                      overflow: TextOverflow
+                                                                          .ellipsis,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    padding:
+                                                                    EdgeInsets.only(
+                                                                        top: 5,
+                                                                        bottom: 5),
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                        color: c
+                                                                            .dot_light_screen_lite1,
+                                                                        borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                          topLeft: Radius
+                                                                              .circular(
+                                                                              0),
+                                                                          topRight: Radius
+                                                                              .circular(
+                                                                              20),
+                                                                          bottomLeft: Radius
+                                                                              .circular(
+                                                                              0),
+                                                                          bottomRight: Radius
+                                                                              .circular(
+                                                                              20),
+                                                                        )),
+                                                                    child: Text(
+                                                                        villagelist[index][
+                                                                        key_total_count]
+                                                                            .toString(),
+                                                                        style: TextStyle(
+                                                                            color: c
+                                                                                .primary_text_color2,
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold),
+                                                                        textAlign: TextAlign
+                                                                            .center,
+                                                                        maxLines: 1),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ))));
+                                          })))
+                            ])))
+                  ],
+                )),
           )),
     );
   }
@@ -896,6 +948,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
       s.key_fin_year: finList,
+      s.key_scheme_id:schemeList,
       s.key_flag: "1",
       if (selectedMonth.isNotEmpty) s.key_month: selectedMonth,
       if (asController.text.isNotEmpty) s.key_as_value: asController.text,
@@ -1073,11 +1126,11 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                           limit: limitCount,
                           limitedValueList: list,
                           onChanged: (List<FlutterLimitedCheckBoxModel> list) {
-                            finList.clear();
+                            finListchecked.clear();
                             for (int i = 0; i < list.length; i++) {
-                              finList.add(list[i].selectTitle);
+                              finListchecked.add(list[i].selectTitle);
                             }
-                            print(finList.toString());
+                            print(finListchecked.toString());
                           },
                           mainAxisAlignmentOfRow: MainAxisAlignment.start,
                           crossAxisAlignmentOfRow: CrossAxisAlignment.center,
@@ -1086,6 +1139,11 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     ),
                     InkWell(
                         onTap: () {
+                          finList.clear();
+                          if(finListchecked.isNotEmpty)
+                          {
+                            finList.addAll(finListchecked);
+                          }
                           Navigator.pop(context, 'OK');
                           setState(() {});
                         },
@@ -1108,7 +1166,174 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           );
         });
   }
-  /*
-  ***********************************************************************************************
-  */
+  void multiChoiceSchemeSelection(List<FlutterLimitedCheckBoxModel> list) {
+    int limitCount = list.length;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Row(
+                children: [
+                  Text(s.select_scheme,style: GoogleFonts.getFont('Roboto',
+                      fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8)),
+                  Container(
+                    alignment: AlignmentDirectional.topEnd,
+                    margin: EdgeInsets.only(left: 50),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children:[
+                        Text(s.select_all,style: GoogleFonts.getFont('Roboto',
+                            fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),),
+                        Checkbox(
+                          value:schemelistflag,
+                          onChanged: (value) {
+                            setState(() {
+                              schemelistflag=true;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                ]),
+            content: Container(
+                height: 300,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlutterLimitedCheckbox(
+                          limit: limitCount,
+                          limitedValueList: list,
+                          onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                            schemeList.clear();
+                            for (int i = 0; i < list.length; i++) {
+                              schemeList.add(list[i].selectTitle);
+                            }
+                          },
+                          mainAxisAlignmentOfRow: MainAxisAlignment.start,
+                          crossAxisAlignmentOfRow: CrossAxisAlignment.center,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Navigator.pop(context, 'OK');
+                          if(schemeList.isNotEmpty)
+                          {
+
+                          }
+
+                          setState(() {});
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                )),
+          );
+        });
+  }
+  Future<void> getSchemeList() async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+    Map json_request = {};
+    json_request = {
+      s.key_dcode:selectedDistrict,
+      s.key_bcode: selectedBlock,
+      s.key_fin_year:finList,
+      s.key_service_id: s.service_key_scheme_list_blockwise,
+    };
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request,
+    };
+
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+    // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("SchemeList_url>>" + url.main_service_jwt.toString());
+    print("SchemeList_request_json>>" + json_request.toString());
+    print("SchemeList_request_encrpt>>" + encrypted_request.toString());
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      String data = response.body;
+      print("SchemeList_response>>" + data);
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("SchemeList Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("SchemeList responceSignature -  $responceSignature");
+
+      print("SchemeList responceData -  $responceData");
+
+      if (responceSignature == responceData) {
+        print("SchemeList responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+        var status = userData[s.key_status];
+        var responseValue = userData[s.key_response];
+        if (status == s.key_ok && responseValue == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_scheme_name]
+                .toLowerCase()
+                .compareTo(b[s.key_scheme_name].toLowerCase());
+          });
+          if (res_jsonArray.length > 0) {
+            SchemeListvalue.clear();
+            schemeFlag = true;
+            for (int i = 0; i < res_jsonArray.length; i++) {
+              SchemeListvalue.add(FlutterLimitedCheckBoxModel(
+                  isSelected:schemelistflag,
+                  selectTitle: utils.splitStringByLength(res_jsonArray[i][s.key_scheme_name], 19),
+                  selectId:i));
+              print(res_jsonArray.toString());
+            }
+          }
+
+        } else if (status == s.key_ok && responseValue == s.key_noRecord) {
+          Utils().showAlert(context, "No Scheme Found");
+        }
+      } else {
+        print("SchemeList responceSignature - Token Not Verified");
+        utils.customAlertWidet(context, "Error", s.jsonError);
+      }
+    }
+  }
 }

@@ -60,6 +60,7 @@ String delay_works = "assets/images/ins_man.png";
 String home = "assets/images/home.png";
 String warning_ic = "assets/images/warning_ic.png";
 String error_img = "assets/images/errorImage.png";
+String success_img = "assets/images/success.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

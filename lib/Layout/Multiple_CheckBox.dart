@@ -27,6 +27,24 @@ class FlutterCustomCheckbox extends StatefulWidget {
 class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   List<FlutterLimitedCheckBoxModel> checkedList = [];
 
+  void _onClickFunction(int index) {
+    if (widget.initialValueList[index].isSelected == false) {
+      var checker = widget.initialValueList
+          .where((element) => element.isSelected == true)
+          .toList()
+          .length;
+      if (checker < widget.limitCount) {
+        widget.initialValueList[index].isSelected = true;
+      }
+    } else {
+      widget.initialValueList[index].isSelected = false;
+    }
+
+    checkedList = widget.initialValueList
+        .where((element) => element.isSelected == true)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -42,7 +60,7 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                 style: new TextStyle(
                     fontWeight: FontWeight.bold, color: c.grey_8)),
             new TextSpan(
-                text: widget.message==2?" (Any Two)":"",
+                text: widget.message == 2 ? " (Any Two)" : "",
                 style: new TextStyle(
                     fontWeight: FontWeight.bold,
                     color: c.subscription_type_red_color)),
@@ -63,49 +81,33 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                         itemCount: widget.initialValueList.length,
                         itemBuilder: (context, index) => Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Checkbox(
-                                      value: widget
-                                          .initialValueList[index].isSelected,
-                                      onChanged: (v) {
-                                        setState(() {
-                                          if (widget.initialValueList[index]
-                                                  .isSelected ==
-                                              false) {
-                                            var checker = widget
-                                                .initialValueList
-                                                .where((element) =>
-                                                    element.isSelected == true)
-                                                .toList()
-                                                .length;
-                                            if (checker < widget.limitCount) {
-                                              widget.initialValueList[index]
-                                                  .isSelected = true;
-                                            }
-                                          } else {
-                                            widget.initialValueList[index]
-                                                .isSelected = false;
-                                          }
-
-                                          checkedList = widget.initialValueList
-                                              .where((element) =>
-                                          element.isSelected == true)
-                                              .toList();
-                                        });
-
-
-                                        // widget.onChanged(checkedList);
-                                      },
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                      widget
-                                          .initialValueList[index].selectTitle,
-                                    ))
-                                  ],
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _onClickFunction(index);
+                                    });
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Checkbox(
+                                        value: widget
+                                            .initialValueList[index].isSelected,
+                                        onChanged: (v) {
+                                          setState(() {
+                                            _onClickFunction(index);
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                        widget.initialValueList[index]
+                                            .selectTitle,
+                                      ))
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 10,

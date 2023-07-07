@@ -1369,7 +1369,6 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
                 for (int i = 0; i < list.length; i++) {
                   finList.add(list[i].selectTitle);
                 }
-                print(finList.toString());
                 setState(() {});
               });
 

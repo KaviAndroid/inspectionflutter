@@ -268,10 +268,10 @@ class Utils {
                     height: 100,
                     decoration: BoxDecoration(
                         color: type == "Warning"
-                            ? c.yellow_new
+                            ? c.yellow_new.withOpacity(0.5)
                             : type == "Success"
-                                ? c.green_new
-                                : c.red_new,
+                                ? c.green_new.withOpacity(0.5)
+                                : c.red_new.withOpacity(0.5),
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15))),
@@ -280,10 +280,10 @@ class Utils {
                         type == "Warning"
                             ? imagePath.warning
                             : type == "Success"
-                                ? imagePath.success
-                                : imagePath.error,
-                        height: type == "Warning" ? 60 : 100,
-                        width: type == "Warning" ? 60 : 100,
+                                ? imagePath.success_img
+                                : imagePath.error_img,
+                        height: 60,
+                        width: 60,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -389,7 +389,7 @@ class Utils {
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all<Color>(
-                                                c.green_new),
+                                                c.green_new.withOpacity(0.7)),
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
@@ -442,7 +442,7 @@ class Utils {
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all<Color>(
-                                                c.red_new),
+                                                c.red_new.withOpacity(0.7)),
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(

@@ -1,103 +1,143 @@
 import 'package:flutter/material.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
 import 'checkBoxModelClass.dart';
+import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
+import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
 
-//ignore: must_be_immutable
-class FlutterLimitedCheckbox extends StatefulWidget {
-  List<FlutterLimitedCheckBoxModel> limitedValueList;
-  int limit;
+class FlutterCustomCheckbox extends StatefulWidget {
+  List<FlutterLimitedCheckBoxModel> initialValueList;
+  String message;
+  int limitCount;
+
   Function(List<FlutterLimitedCheckBoxModel> selectedList) onChanged;
-  TextStyle? titleTextStyle;
-  Color? checkColor;
-  Color? activeColor;
-  Color? focusColor;
-  OutlinedBorder? shape;
-  BorderSide? borderSide;
-  FocusNode? focusNode;
-  double? splashRadius;
-  bool autofocus;
-  MainAxisAlignment mainAxisAlignmentOfRow;
-  CrossAxisAlignment crossAxisAlignmentOfRow;
 
-  FlutterLimitedCheckbox({
+  FlutterCustomCheckbox({
     Key? key,
-    required this.limitedValueList,
-    required this.limit,
+    required this.initialValueList,
     required this.onChanged,
-    this.titleTextStyle,
-    this.checkColor,
-    this.activeColor,
-    this.shape,
-    this.borderSide,
-    this.focusNode,
-    this.splashRadius,
-    this.focusColor,
-    this.autofocus = false,
-    this.mainAxisAlignmentOfRow = MainAxisAlignment.center,
-    this.crossAxisAlignmentOfRow = CrossAxisAlignment.center,
+    required this.message,
+    required this.limitCount,
   }) : super(key: key);
 
   @override
-  _FlutterLimitedCheckboxState createState() =>
-      _FlutterLimitedCheckboxState();
+  _FlutterLimitedCheckboxState createState() => _FlutterLimitedCheckboxState();
 }
 
-class _FlutterLimitedCheckboxState
-    extends State<FlutterLimitedCheckbox> {
+class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
+  List<FlutterLimitedCheckBoxModel> checkedList = [];
+
+  void _onClickFunction(int index) {
+    if (widget.initialValueList[index].isSelected == false) {
+      var checker = widget.initialValueList
+          .where((element) => element.isSelected == true)
+          .toList()
+          .length;
+      if (checker < widget.limitCount) {
+        widget.initialValueList[index].isSelected = true;
+      }
+    } else {
+      widget.initialValueList[index].isSelected = false;
+    }
+
+    checkedList = widget.initialValueList
+        .where((element) => element.isSelected == true)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: widget.limitedValueList.length,
-        itemBuilder: (context, index) => Column(
-              children: [
-                Row(
-                  mainAxisAlignment: widget.mainAxisAlignmentOfRow,
-                  crossAxisAlignment: widget.crossAxisAlignmentOfRow,
-                  children: [
-                    Checkbox(
-                      value: widget.limitedValueList[index].isSelected,
-                      onChanged: (v) {
-                        setState(() {
-                          if (widget.limitedValueList[index].isSelected ==
-                              false) {
-                            var checker = widget.limitedValueList
-                                .where((element) => element.isSelected == true)
-                                .toList()
-                                .length;
-                            if (checker < widget.limit) {
-                              widget.limitedValueList[index].isSelected = true;
-                            }
-                          } else {
-                            widget.limitedValueList[index].isSelected = false;
-                          }
-                        });
-                        List<FlutterLimitedCheckBoxModel> checkedList = widget
-                            .limitedValueList
-                            .where((element) => element.isSelected == true)
-                            .toList();
-
-                        widget.onChanged(checkedList);
-                      },
-                      checkColor: widget.checkColor,
-                      activeColor: widget.activeColor,
-                      shape: widget.shape,
-                      side: widget.borderSide,
-                      focusColor: widget.focusColor,
-                      autofocus: widget.autofocus,
-                      focusNode: widget.focusNode,
-                      splashRadius: widget.splashRadius,
+    return AlertDialog(
+      title: RichText(
+        text: new TextSpan(
+          // Note: Styles for TextSpans must be explicitly defined.
+          // Child text spans will inherit styles from parent
+          style: GoogleFonts.getFont('Roboto',
+              fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
+          children: <TextSpan>[
+            new TextSpan(
+                text: widget.message,
+                style: new TextStyle(
+                    fontWeight: FontWeight.bold, color: c.grey_8)),
+            new TextSpan(
+                text: widget.message == 2 ? " (Any Two)" : "",
+                style: new TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: c.subscription_type_red_color)),
+          ],
+        ),
+      ),
+      content: Container(
+          height: 300,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: ListView.builder(
+                        itemCount: widget.initialValueList.length,
+                        itemBuilder: (context, index) => Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _onClickFunction(index);
+                                    });
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Checkbox(
+                                        value: widget
+                                            .initialValueList[index].isSelected,
+                                        onChanged: (v) {
+                                          setState(() {
+                                            _onClickFunction(index);
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                        widget.initialValueList[index]
+                                            .selectTitle,
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                )
+                              ],
+                            ))),
+              ),
+              InkWell(
+                  onTap: () {
+                    print(checkedList.toString());
+                    widget.onChanged(checkedList);
+                    Navigator.pop(context, 'OK');
+                    // setState(() {});
+                  },
+                  child: Container(
+                    alignment: AlignmentDirectional.bottomEnd,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                      child: Text(
+                        s.key_ok,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: c.primary_text_color2,
+                            fontSize: 15),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    Expanded(
-                        child: Text(
-                      widget.limitedValueList[index].selectTitle,
-                      style: widget.titleTextStyle,
-                    ))
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                )
-              ],
-            ));
+                  ))
+            ],
+          )),
+    );
   }
 }

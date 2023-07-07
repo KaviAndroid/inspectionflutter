@@ -1362,7 +1362,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("WorksCountSchemeWise_url>>${url.master_service}");
+    print("WorksCountSchemeWise_url>>${url.main_service_jwt}");
     print("WorksCountSchemeWise_request_json>> ${jsonEncode(json_request)}");
     print("WorksCountSchemeWise_request_encrpt>>$encrypted_request");
 

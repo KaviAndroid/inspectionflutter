@@ -2201,6 +2201,7 @@ class _WorkListState extends State<WorkList> {
       s.key_bcode: widget.bcode,
       s.key_pvcode: widget.pvcode,
       s.key_fin_year: widget.finYear,
+      s.key_scheme_id: widget.schemeList,
       s.key_as_value: widget.asvalue,
       s.key_month: widget.tmccode,
       s.key_flag: "2"

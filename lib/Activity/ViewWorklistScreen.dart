@@ -382,6 +382,51 @@ class _ViewWorklistState extends State<ViewWorklist> {
 
   // *************************** ATR Worklist Starts Here  *************************** //
 
+  @override
+  Widget cardElememtWidget(BuildContext context, String title, String value) {
+    return Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
+              overflow: TextOverflow.clip,
+              maxLines: 1,
+              softWrap: true,
+            ),
+          ),
+          Expanded(
+            flex: 0,
+            child: Text(
+              ' : ',
+              style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
+              overflow: TextOverflow.clip,
+              maxLines: 1,
+              softWrap: true,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Align(
+                alignment: AlignmentDirectional.topStart,
+                child: ExpandableText(value, trimLines: 2),
+              ),
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 10)
+    ]);
+  }
+
   __ATR_WorkList_Loader() {
     return Container(
       margin: const EdgeInsets.only(top: 15),
@@ -506,272 +551,35 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.work_id,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  10, 0, 5, 0),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: Text(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_id]
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: c.grey_8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.work_name,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  10, 0, 5, 0),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: ExpandableText(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_name]
-                                                        .toString(),
-                                                    trimLines: 2),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.work_type_name,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  10, 0, 5, 0),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: Text(
-                                                    defaultWorklist[index][s
-                                                            .key_work_type_name]
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: c.grey_8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.inspected_date,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  10, 0, 5, 0),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: Text(
-                                                    defaultWorklist[index][s
-                                                            .key_inspection_date]
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: c.grey_8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              s.status,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              ' : ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  10, 0, 5, 0),
-                                              child: Align(
-                                                alignment: AlignmentDirectional
-                                                    .topStart,
-                                                child: Text(
-                                                    defaultWorklist[index]
-                                                            [s.key_status_name]
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: c.grey_8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      cardElememtWidget(
+                                          context,
+                                          s.work_id,
+                                          defaultWorklist[index][s.key_work_id]
+                                              .toString()),
+                                      cardElememtWidget(
+                                          context,
+                                          s.work_name,
+                                          defaultWorklist[index]
+                                                  [s.key_work_name]
+                                              .toString()),
+                                      cardElememtWidget(
+                                          context,
+                                          s.work_type_name,
+                                          defaultWorklist[index]
+                                                  [s.key_work_type_name]
+                                              .toString()),
+                                      cardElememtWidget(
+                                          context,
+                                          s.inspected_date,
+                                          defaultWorklist[index]
+                                                  [s.key_inspection_date]
+                                              .toString()),
+                                      cardElememtWidget(
+                                          context,
+                                          s.status,
+                                          defaultWorklist[index]
+                                                  [s.key_status_name]
+                                              .toString()),
                                       Visibility(
                                         visible: defaultWorklist[index]
                                                         [s.key_status_id]
@@ -781,9 +589,6 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                             : true,
                                         child: Column(
                                           children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,

@@ -194,6 +194,128 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  _text_widget(
+      String title1, String title2, String title3, int index, Color boxColor) {
+    return Row(
+      children: [
+        index < 2
+            ? Expanded(
+                flex: 2,
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+                  child: Text(
+                    title1,
+                    style: TextStyle(
+                        color: c.grey_10,
+                        fontWeight:
+                            index == 0 ? FontWeight.bold : FontWeight.normal,
+                        fontSize: index == 0 ? 13 : 12),
+                  ),
+                ),
+              )
+            : Expanded(
+                child: Row(children: [
+                  Container(
+                    height: 12,
+                    width: 12,
+                    color: boxColor,
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.fromLTRB(0, 10, 4, 0),
+                    child: Text(""),
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+                    child: Text(
+                      title1,
+                      style: TextStyle(
+                          color: c.grey_10,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 12),
+                    ),
+                  ),
+                ]),
+                flex: 2,
+              ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+            child: Text(title2,
+                style: TextStyle(
+                    color: index == 1 ? c.primary_text_color : c.grey_10,
+                    fontWeight:
+                        index == 0 ? FontWeight.bold : FontWeight.normal,
+                    fontSize: index == 0 ? 13 : 12)),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+            child: Text(title3,
+                style: TextStyle(
+                    color: index == 1 ? c.primary_text_color : c.grey_10,
+                    fontWeight:
+                        index == 0 ? FontWeight.bold : FontWeight.normal,
+                    fontSize: index == 0 ? 13 : 12)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _rural_urban_selection_Widget(String title, String img_path, int index) {
+    return Expanded(
+      flex: 1,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            flag = index;
+            prefs.setString(s.key_rural_urban, title.substring(0, 1));
+          });
+        },
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Align(
+            alignment: Alignment
+                .centerLeft, // Align however you like (i.e .centerRight, centerLeft)
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+              alignment: AlignmentDirectional.center,
+              child: Image.asset(
+                img_path,
+                height: 35,
+              ),
+            ),
+          ),
+          Container(
+            alignment: AlignmentDirectional.centerStart,
+            decoration: new BoxDecoration(
+                color: flag == index ? c.primary_text_color2 : c.white,
+                border: Border.all(color: c.primary_text_color2, width: 2),
+                borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(10),
+                  topRight: const Radius.circular(10),
+                  bottomLeft: const Radius.circular(10),
+                  bottomRight: const Radius.circular(10),
+                )),
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            child: Text(
+              title,
+              style: TextStyle(
+                  color: flag == index ? c.white : c.primary_text_color2,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<bool> showExitPopup() async {
@@ -450,425 +572,41 @@ class _HomeState extends State<Home> {
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(
-                                          s.inspection_status,
-                                          style: TextStyle(
-                                              color: c.grey_10,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text("RDPR",
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13)),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text("OTHER",
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(
-                                          s.total_inspection_done_by_you,
-                                          style: TextStyle(
-                                              color: c.grey_10,
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 12),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(total_rdpr,
-                                            style: TextStyle(
-                                                color: c.primary_text_color,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(total_other,
-                                            style: TextStyle(
-                                                color: c.primary_text_color,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(children: [
-                                        Container(
-                                          height: 12,
-                                          width: 12,
-                                          color: c.account_status_green_color,
-                                          alignment: Alignment.centerLeft,
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 4, 0),
-                                          child: Text(""),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                          child: Text(
-                                            s.satisfied,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ]),
-                                      flex: 2,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(satisfied_count,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(satisfied_count_other,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(children: [
-                                        Container(
-                                          height: 12,
-                                          width: 12,
-                                          color: c.unsatisfied2,
-                                          alignment: Alignment.centerLeft,
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 4, 0),
-                                          child: Text(""),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                          child: Text(
-                                            s.un_satisfied,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ]),
-                                      flex: 2,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(un_satisfied_count,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(un_satisfied_count_other,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(children: [
-                                        Container(
-                                          height: 12,
-                                          width: 12,
-                                          color: c.need_improvement,
-                                          alignment: Alignment.centerLeft,
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 4, 0),
-                                          child: Text(""),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                          child: Text(
-                                            s.need_improvement,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ]),
-                                      flex: 2,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(need_improvement_count,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 10, 0),
-                                        child: Text(
-                                            need_improvement_count_other,
-                                            style: TextStyle(
-                                                color: c.grey_10,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12)),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                                Visibility(
-                                  visible: true,
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                flag = 1;
-                                                prefs.setString(
-                                                    s.key_rural_urban, "R");
-                                              });
-                                            },
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Align(
-                                                    alignment: Alignment
-                                                        .centerLeft, // Align however you like (i.e .centerRight, centerLeft)
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 0, 5, 0),
-                                                      alignment:
-                                                          AlignmentDirectional
-                                                              .center,
-                                                      child: Image.asset(
-                                                        imagePath.rural,
-                                                        height: 35,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    alignment:
-                                                        AlignmentDirectional
-                                                            .centerStart,
-                                                    decoration:
-                                                        new BoxDecoration(
-                                                            color: flag == 1
-                                                                ? c
-                                                                    .primary_text_color2
-                                                                : c.white,
-                                                            border: Border.all(
-                                                                color: c
-                                                                    .primary_text_color2,
-                                                                width: 2),
-                                                            borderRadius:
-                                                                new BorderRadius
-                                                                    .only(
-                                                              topLeft: const Radius
-                                                                  .circular(10),
-                                                              topRight: const Radius
-                                                                  .circular(10),
-                                                              bottomLeft:
-                                                                  const Radius
-                                                                      .circular(10),
-                                                              bottomRight:
-                                                                  const Radius
-                                                                      .circular(10),
-                                                            )),
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            10, 5, 10, 5),
-                                                    child: Text(
-                                                      s.rural_area,
-                                                      style: TextStyle(
-                                                          color: flag == 1
-                                                              ? c.white
-                                                              : c
-                                                                  .primary_text_color2,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13),
-                                                    ),
-                                                  ),
-                                                ]),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                flag = 2;
-                                                prefs.setString(
-                                                    s.key_rural_urban, "U");
-                                              });
-                                            },
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Align(
-                                                    alignment: Alignment
-                                                        .centerLeft, // Align however you like (i.e .centerRight, centerLeft)
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 0, 5, 0),
-                                                      alignment:
-                                                          AlignmentDirectional
-                                                              .center,
-                                                      child: Image.asset(
-                                                        imagePath.urban,
-                                                        height: 35,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    alignment:
-                                                        AlignmentDirectional
-                                                            .centerStart,
-                                                    decoration:
-                                                        new BoxDecoration(
-                                                            color: flag == 2
-                                                                ? c
-                                                                    .primary_text_color2
-                                                                : c.white,
-                                                            border: Border.all(
-                                                                color: c
-                                                                    .primary_text_color2,
-                                                                width: 2),
-                                                            borderRadius:
-                                                                new BorderRadius
-                                                                    .only(
-                                                              topLeft: const Radius
-                                                                  .circular(10),
-                                                              topRight: const Radius
-                                                                  .circular(10),
-                                                              bottomLeft:
-                                                                  const Radius
-                                                                      .circular(10),
-                                                              bottomRight:
-                                                                  const Radius
-                                                                      .circular(10),
-                                                            )),
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            10, 5, 10, 5),
-                                                    child: Text(
-                                                      s.urban_area,
-                                                      style: TextStyle(
-                                                          color: flag == 2
-                                                              ? c.white
-                                                              : c
-                                                                  .primary_text_color2,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13),
-                                                    ),
-                                                  ),
-                                                ]),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                _text_widget(s.inspection_status, "RDPR",
+                                    "OTHER", 0, Colors.transparent),
+                                _text_widget(
+                                    s.total_inspection_done_by_you,
+                                    total_rdpr,
+                                    total_other,
+                                    1,
+                                    Colors.transparent),
+                                _text_widget(
+                                    s.satisfied,
+                                    satisfied_count,
+                                    satisfied_count_other,
+                                    2,
+                                    c.account_status_green_color),
+                                _text_widget(
+                                    s.un_satisfied,
+                                    un_satisfied_count,
+                                    un_satisfied_count_other,
+                                    3,
+                                    c.unsatisfied2),
+                                _text_widget(
+                                    s.need_improvement,
+                                    need_improvement_count,
+                                    need_improvement_count_other,
+                                    4,
+                                    c.need_improvement),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                                  child: Row(
+                                    children: [
+                                      _rural_urban_selection_Widget(
+                                          s.rural_area, imagePath.rural, 1),
+                                      _rural_urban_selection_Widget(
+                                          s.urban_area, imagePath.urban, 2),
+                                    ],
                                   ),
                                 ),
                               ]),

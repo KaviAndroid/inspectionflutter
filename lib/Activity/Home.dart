@@ -601,6 +601,9 @@ class _HomeState extends State<Home> {
                                 Container(
                                   margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       _rural_urban_selection_Widget(
                                           s.rural_area, imagePath.rural, 1),

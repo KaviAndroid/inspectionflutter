@@ -970,9 +970,9 @@ class _WorkListState extends State<WorkList> {
                                                                                             )));
                                                                               },
                                                                               child: Container(
-                                                                                transform: Matrix4.translationValues(20.0, 0.0, 0.0),
-                                                                                width: 100,
-                                                                                padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                                                                //transform: Matrix4.translationValues(20.0, 0.0, 0.0),
+                                                                                width: 30,
+                                                                                // padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                                                                 child: Image.asset(
                                                                                   imagePath.ic_camera,
                                                                                   color: c.primary_text_color2,

@@ -304,6 +304,9 @@ class LoginState extends State<Login> {
                                         ),
                                       ),
                                     ),
+                                    SizedBox(
+                                      height: 20,
+                                    )
                                   ]),
                             ),
                           ),

@@ -161,28 +161,13 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
           centerTitle: true,
           elevation: 2,
           automaticallyImplyLeading: true,
-          title: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 4, left: 5),
-                ),
-                Align(
-                  child: Container(
-                    transform: Matrix4.translationValues(35, 2, 15),
-                    child: Visibility(
-                        visible: appBarvisibility,
-                        child: Text(
-                          s.other_inspection,
-                          style: TextStyle(
-                              fontSize: 19, fontWeight: FontWeight.bold),
-                        )),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          title: Visibility(
+              visible: appBarvisibility,
+              child: Text(
+                s.other_inspection,
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+              )),
+
           /* actions: <Widget>[
             Padding(padding: EdgeInsets.only(top: 8),)
           ],*/

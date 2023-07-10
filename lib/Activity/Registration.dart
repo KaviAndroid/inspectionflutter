@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
@@ -1129,10 +1130,10 @@ class _RegistrationState extends State<Registration> {
     bool flag = false;
 
     if (Platform.isAndroid) {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String sdkVersion = packageInfo.buildNumber;
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var sdkInt = androidInfo.version.sdkInt;
 
-      if (int.parse(sdkVersion) > 33) {
+      if (sdkInt >= 33) {
         storagePermission = await Permission.manageExternalStorage.request();
       } else {
         storagePermission = await Permission.storage.request();
@@ -1148,10 +1149,9 @@ class _RegistrationState extends State<Registration> {
       await Utils().showAppSettings(context, s.storage_permission);
 
       if (Platform.isAndroid) {
-        PackageInfo packageInfo = await PackageInfo.fromPlatform();
-        String sdkVersion = packageInfo.buildNumber;
-
-        if (int.parse(sdkVersion) > 33) {
+        var androidInfo = await DeviceInfoPlugin().androidInfo;
+        var sdkInt = androidInfo.version.sdkInt;
+        if (sdkInt >= 33) {
           storagePermission = await Permission.manageExternalStorage.request();
         } else {
           storagePermission = await Permission.storage.request();

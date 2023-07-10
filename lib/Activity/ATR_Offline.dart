@@ -52,7 +52,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   String npCount = "0";
   String usCount = "0";
   String town_type = "";
-
+  int selectedIndex = 0;
   // Bool Variables
   bool isWorklistAvailable = false;
   bool isNeedImprovementActive = false;
@@ -1200,6 +1200,57 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
   // *************************** ATR Urban starts here *************************** //
 
+  _urban_Card_Design(String title, String town_type, int index, bool townActive,
+      bool munActive, bool corpActive) {
+    return Expanded(
+      flex: 1,
+      child: GestureDetector(
+        onTap: () {
+          town_type = town_type;
+          townActive = townActive;
+          munActive = munActive;
+          corpActive = corpActive;
+          selectedIndex = index;
+          setState(() {});
+          refresh();
+        },
+        child: Container(
+            height: 35,
+            margin: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+                color: selectedIndex == index ? c.colorAccentlight : c.white,
+                border: Border.all(
+                    width: selectedIndex == index ? 0 : 2,
+                    color: c.colorPrimary),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0.0, 1.0), //(x,y)
+                    blurRadius: 5.0,
+                  ),
+                ]),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.asset(
+                    imagePath.radio,
+                    color: selectedIndex == index ? c.white : c.grey_5,
+                    width: 17,
+                    height: 17,
+                  ),
+                  Text(
+                    title,
+                    style: GoogleFonts.getFont('Roboto',
+                        fontWeight: FontWeight.w800,
+                        fontSize: screenWidth * 0.03,
+                        color: selectedIndex == index ? c.white : c.grey_6),
+                  ),
+                ])),
+      ),
+    );
+  }
+
   __Urban_design() {
     return Container(
       margin: const EdgeInsets.only(top: 5, bottom: 5),
@@ -1218,137 +1269,9 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    townActive = true;
-                    town_type = "T";
-                    munActive = false;
-                    corpActive = false;
-                    setState(() {});
-                    refresh();
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: townActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: townActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: townActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text(
-                              "Town Pancha...",
-                              style: GoogleFonts.getFont('Roboto',
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: screenWidth * 0.03,
-                                  color: townActive ? c.white : c.grey_6),
-                            ),
-                          ])),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    town_type = "M";
-                    townActive = false;
-                    munActive = true;
-                    corpActive = false;
-                    setState(() {});
-                    refresh();
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: munActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: munActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: munActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text(s.municipality,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: screenWidth * 0.03,
-                                    color: munActive ? c.white : c.grey_6)),
-                          ])),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () {
-                    town_type = "C";
-                    townActive = false;
-                    munActive = false;
-                    corpActive = true;
-                    setState(() {});
-                    refresh();
-                  },
-                  child: Container(
-                      height: 35,
-                      margin: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: corpActive ? c.colorAccentlight : c.white,
-                          border: Border.all(
-                              width: corpActive ? 0 : 2, color: c.colorPrimary),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 5.0,
-                            ),
-                          ]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              imagePath.radio,
-                              color: corpActive ? c.white : c.grey_5,
-                              width: 17,
-                              height: 17,
-                            ),
-                            Text(s.corporation,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: screenWidth * 0.03,
-                                    color: corpActive ? c.white : c.grey_6)),
-                          ])),
-                ),
-              ),
+              _urban_Card_Design("Town Pancha...", "T", 0, true, false, false),
+              _urban_Card_Design(s.municipality, "M", 1, false, true, false),
+              _urban_Card_Design(s.corporation, "C", 2, false, false, true),
             ],
           ),
         ],

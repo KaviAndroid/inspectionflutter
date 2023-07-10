@@ -19,7 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
-import '../Layout/checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
@@ -224,6 +224,11 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: Text(
@@ -367,6 +372,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ))
                                   .toList(),
                               onChanged: (value) {
+                                villagelist = [];
                                 schIdList = [];
                                 schList = [];
                                 SchemeListvalue.clear();
@@ -381,13 +387,13 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                 if (value != "0") {
                                   isLoadingDistrict = true;
                                   loadUIBlock(value.toString());
-                                  setState(() {});
                                 } else {
                                   setState(() {
                                     selectedDistrict = value.toString();
                                     districtError = true;
                                   });
                                 }
+                                setState(() {});
                               },
                               buttonStyleData: const ButtonStyleData(
                                 height: 30,
@@ -471,6 +477,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                     ))
                                 .toList(),
                             onChanged: (value) async {
+                              villagelist = [];
                               selectedMonth="00";
                               asController.text="0";
                               if(finList.isNotEmpty){
@@ -487,10 +494,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                 }else{
                                   blockError = true;
                                 }
-                                setState(() {});
                               }else{
                                 utils.showAlert(context, s.select_financial_year);
                               }
+                              setState(() {});
 
                               //Do something when changing the item if you want.
                             },
@@ -637,15 +644,16 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                 ))
                                             .toList(),
                                         onChanged: (value) async {
+                                          villagelist = [];
                                           if (value != "00") {
                                             selectedMonth = value.toString();
                                             submitFlag = true;
-                                            setState(() {});
                                           }
+                                          setState(() {});
                                         },
                                         buttonStyleData: const ButtonStyleData(
                                           height: 30,
-                                          padding: EdgeInsets.only(right: 10),
+                                          padding: EdgeInsets.only(right: 0),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           decoration: BoxDecoration(
@@ -764,9 +772,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ))),
                         onPressed: () async {
-                          if(selectedDistrict.isNotEmpty){
-                            if(selectedBlock.isNotEmpty){
-                              if(finList.isNotEmpty){
+                          if(finList.isNotEmpty){
+                          if(selectedDistrict.isNotEmpty && selectedDistrict != "0"){
+                            if(selectedBlock.isNotEmpty && selectedBlock != "0"){
                               if(schIdList.isNotEmpty){
                                 asController.text.isEmpty
                                     ? asController.text = "0"
@@ -781,14 +789,14 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               }else{
                                 utils.showAlert(context, s.select_scheme);
                               }
-                              }else{
-                                utils.showAlert(context, s.select_financial_year);
-                              }
                             }else{
                               utils.showAlert(context, s.selectBlock);
                             }
                           }else{
                             utils.showAlert(context, s.selectDistrict);
+                          }
+                          }else{
+                            utils.showAlert(context, s.select_financial_year);
                           }
 
 
@@ -806,6 +814,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     ),
                   ),
                 ),
+                ])),
                 Visibility(
                     child: Container(
                       margin: EdgeInsets.only(right: 20,left: 20),
@@ -1026,7 +1035,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
-    print("VillageList_response_url>>${url.master_service}");
+    print("VillageList_response_url>>${url.main_service_jwt}");
     print("VillageList_response_request_json>> ${jsonEncode(json_request)}");
     print("VillageList_response_request_encrpt>>$encrypted_request");
 
@@ -1143,11 +1152,13 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,
               onChanged: (List<FlutterLimitedCheckBoxModel> list) async {
                 finList.clear();
+                villagelist = [];
                 schIdList = [];
                 schList = [];
                 selectedMonth="00";
@@ -1247,10 +1258,12 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag:"select_all",
               initialValueList: list,
               message: s.select_scheme,
               limitCount: limitCount,
               onChanged: (List<FlutterLimitedCheckBoxModel> list) {
+                villagelist = [];
                 schList.clear();
                 schIdList.clear();
                 schArray.clear();
@@ -1353,6 +1366,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   }
 
   Future<void> getSchemeList() async {
+    utils.showProgress(context, 1);
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
     Map json_request = {};
@@ -1384,6 +1398,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     var response = await _ioClient.post(url.main_service_jwt,
         body: jsonEncode(encrypted_request), headers: header);
 
+    utils.hideProgress(context);
     print("SchemeList_url>>" + url.main_service_jwt.toString());
     print("SchemeList_request_json>>" + json_request.toString());
     print("SchemeList_request_encrpt>>" + encrypted_request.toString());

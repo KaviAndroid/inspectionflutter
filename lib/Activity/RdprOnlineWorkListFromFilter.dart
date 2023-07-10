@@ -17,7 +17,7 @@ import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
 import '../Layout/ReadMoreLess.dart';
-import '../Layout/checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 
@@ -577,16 +577,21 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   onChanged: (value) {
                                     if (value != "0") {
                                       submitFlag = true;
-                                      isLoadingV = true;
-                                      loadUIScheme(value.toString());
+                                      setState(() {
+                                        isLoadingV = false;
+                                        villageError = false;
+                                        selectedVillage = value.toString();
+                                      });
+                                      /*isLoadingV = true;
+                                      loadUIScheme(value.toString());*/
                                       setState(() {});
                                     } else {
                                       setState(() {
                                         submitFlag = false;
                                         selectedVillage = value.toString();
                                         villageError = true;
-                                        schemeError = true;
-                                        schemeItems = [];
+                                        /* schemeError = true;
+                                        schemeItems = [];*/
                                       });
                                     }
                                     //Do something when changing the item if you want.
@@ -1225,6 +1230,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+            flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,
@@ -1236,7 +1242,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 print(finList.toString());
                 if (finList.isNotEmpty) {
                   selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
-                  villageError=true;
+                  villageError = true;
                   schemeFlag = false;
                   submitFlag = false;
                 }

@@ -23,6 +23,7 @@ Color followers = Color(0xFF0D5D98);
 Color headings = Color(0xFF3797CF);
 Color solidCircle = Color(0xFFAAFFFFFF);
 Color circleBorder = Color(0xFF50FFFFFF);
+Color alert_bg = Color.fromRGBO(225, 244, 229, 10);
 
 Color grey = Color(0xFFE5E5E5);
 

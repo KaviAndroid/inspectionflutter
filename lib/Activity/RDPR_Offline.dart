@@ -15,7 +15,7 @@ import 'package:inspection_flutter_app/Resources/url.dart' as url;
 import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/Single_CheckBox.dart';
-import '../Layout/checkBoxModelClass.dart';
+import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 import 'WorkList.dart';
@@ -1254,6 +1254,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,
@@ -1367,6 +1368,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,

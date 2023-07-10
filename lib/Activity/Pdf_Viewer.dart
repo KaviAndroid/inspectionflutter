@@ -2,6 +2,7 @@
 
 import 'dart:ffi';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Utils/utils.dart';
@@ -57,20 +58,30 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     PermissionStatus status;
 
     if (Platform.isAndroid) {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String sdkVersion = packageInfo.buildNumber;
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var sdkInt = androidInfo.version.sdkInt;
 
-      if (int.parse(sdkVersion) > 33) {
-        status = await Permission.manageExternalStorage.request();
-      } else {
-        status = await Permission.storage.request();
-      }
-
-      if (status != PermissionStatus.granted) {
-        await Utils().showAppSettings(context, s.storage_permission);
-      } else {
+      if (sdkInt >= 33) {
+        print("sdk version $sdkInt");
         flag = true;
+        status = await Permission.manageExternalStorage.request();
+        if (!status.isGranted) {
+          await Utils().showAppSettings(context, s.storage_permission);
+        } else {
+          flag = true;
+        }
+      } else {
+        print("sdk version $sdkInt");
+        flag = true;
+        status = await Permission.storage.request();
+        if (!status.isGranted) {
+          await Utils().showAppSettings(context, s.storage_permission);
+        } else {
+          flag = true;
+        }
       }
+
+
     } else if (Platform.isIOS) {
       flag = true;
     } else {
@@ -177,28 +188,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   void _openFilePath(String path) async {
-    if (Platform.isAndroid) {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-      String sdkVersion = packageInfo.buildNumber;
-      if (int.parse(sdkVersion) > 33) {
-        var status = await Permission.manageExternalStorage.status;
-        print("asdsdasd $status");
-
-        if (status != PermissionStatus.granted) {
-          status = await Permission.manageExternalStorage.request();
-        }
-        if (status.isGranted) {
-          final result = await OpenFile.open(path);
-        } else {
-          showAppSettings(context, "Please Allow Storage Permission");
-        }
-      } else {
-        final result = await OpenFile.open(path);
-      }
-    } else {
-      final result = await OpenFile.open(path);
-    }
+    final result = await OpenFile.open(path);
   }
 
   Future<void> showAppSettings(BuildContext context, String msg) async {

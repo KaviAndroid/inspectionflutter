@@ -54,6 +54,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   String onOffType = "";
   int finCount = 0;
   int schemeCount = 0;
+  int selectedIndex = 0;
 
   Map<String, String> defaultSelectedDistrict = {
     s.key_dcode: "0",
@@ -157,6 +158,71 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
     return true;
+  }
+
+  _urban_Card_Design(String title, String town_type, int index, bool townActive,
+      bool munActive, bool corpActive) {
+    return GestureDetector(
+      onTap: () async {
+        town_type = town_type;
+        townActive = townActive;
+        munActive = munActive;
+        corpActive = corpActive;
+        await loadTMC();
+        setState(() {
+          schemeFlag = false;
+          selectedScheme = "";
+          for (int i = 0; i < schemeList.length; i++) {
+            schemeList[i][s.flag] == "1"
+                ? schemeList[i][s.flag] = "0"
+                : schemeList[i][s.flag] = "0";
+          }
+
+          selectedFinyear = "";
+          for (int i = 0; i < finYearList.length; i++) {
+            finYearList[i][s.flag] == "1"
+                ? finYearList[i][s.flag] = "0"
+                : finYearList[i][s.flag] = "0";
+          }
+          submitFlag = false;
+        });
+      },
+      child: Container(
+          height: 30,
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+              color: selectedIndex == index ? c.colorAccentlight : c.white,
+              border: Border.all(
+                  width: selectedIndex == index ? 0 : 2, color: c.colorPrimary),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(0.0, 1.0), //(x,y)
+                  blurRadius: 2.0,
+                ),
+              ]),
+          child: Row(children: [
+            SizedBox(
+              width: 10,
+            ),
+            Image.asset(
+              imagePath.radio,
+              color: selectedIndex == index ? c.white : c.grey_5,
+              width: 15,
+              height: 15,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(title,
+                style: GoogleFonts.getFont('Roboto',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11,
+                    color: selectedIndex == index ? c.white : c.grey_6)),
+          ])),
+    );
   }
 
   @override
@@ -345,233 +411,12 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      townActive = true;
-                                      town_type = "T";
-                                      munActive = false;
-                                      corpActive = false;
-                                      await loadTMC();
-                                      setState(() {
-                                        schemeFlag = false;
-                                        selectedScheme = "";
-                                        for (int i = 0;
-                                            i < schemeList.length;
-                                            i++) {
-                                          schemeList[i][s.flag] == "1"
-                                              ? schemeList[i][s.flag] = "0"
-                                              : schemeList[i][s.flag] = "0";
-                                        }
-
-                                        selectedFinyear = "";
-                                        for (int i = 0;
-                                            i < finYearList.length;
-                                            i++) {
-                                          finYearList[i][s.flag] == "1"
-                                              ? finYearList[i][s.flag] = "0"
-                                              : finYearList[i][s.flag] = "0";
-                                        }
-                                        submitFlag = false;
-                                      });
-                                    },
-                                    child: Container(
-                                        height: 30,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        padding: const EdgeInsets.all(3),
-                                        decoration: BoxDecoration(
-                                            color: townActive
-                                                ? c.colorAccentlight
-                                                : c.white,
-                                            border: Border.all(
-                                                width: townActive ? 0 : 2,
-                                                color: c.colorPrimary),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Colors.grey,
-                                                offset:
-                                                    Offset(0.0, 1.0), //(x,y)
-                                                blurRadius: 2.0,
-                                              ),
-                                            ]),
-                                        child: Row(children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Image.asset(
-                                            imagePath.radio,
-                                            color:
-                                                townActive ? c.white : c.grey_5,
-                                            width: 15,
-                                            height: 15,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(s.town_panchayat,
-                                              style: GoogleFonts.getFont(
-                                                  'Roboto',
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 11,
-                                                  color: townActive
-                                                      ? c.white
-                                                      : c.grey_6)),
-                                        ])),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      town_type = "M";
-                                      townActive = false;
-                                      munActive = true;
-                                      corpActive = false;
-                                      await loadTMC();
-                                      setState(() {
-                                        schemeFlag = false;
-                                        selectedScheme = "";
-                                        for (int i = 0;
-                                            i < schemeList.length;
-                                            i++) {
-                                          schemeList[i][s.flag] == "1"
-                                              ? schemeList[i][s.flag] = "0"
-                                              : schemeList[i][s.flag] = "0";
-                                        }
-
-                                        selectedFinyear = "";
-                                        for (int i = 0;
-                                            i < finYearList.length;
-                                            i++) {
-                                          finYearList[i][s.flag] == "1"
-                                              ? finYearList[i][s.flag] = "0"
-                                              : finYearList[i][s.flag] = "0";
-                                        }
-
-                                        submitFlag = false;
-                                      });
-                                    },
-                                    child: Container(
-                                        height: 30,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        padding: const EdgeInsets.all(3),
-                                        decoration: BoxDecoration(
-                                            color: munActive
-                                                ? c.colorAccentlight
-                                                : c.white,
-                                            border: Border.all(
-                                                width: munActive ? 0 : 2,
-                                                color: c.colorPrimary),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Colors.grey,
-                                                offset:
-                                                    Offset(0.0, 1.0), //(x,y)
-                                                blurRadius: 2.0,
-                                              ),
-                                            ]),
-                                        child: Row(children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Image.asset(
-                                            imagePath.radio,
-                                            color:
-                                                munActive ? c.white : c.grey_5,
-                                            width: 15,
-                                            height: 15,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(s.municipality,
-                                              style: GoogleFonts.getFont(
-                                                  'Roboto',
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 11,
-                                                  color: munActive
-                                                      ? c.white
-                                                      : c.grey_6)),
-                                        ])),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      town_type = "C";
-                                      townActive = false;
-                                      munActive = false;
-                                      corpActive = true;
-                                      await loadTMC();
-                                      setState(() {
-                                        schemeFlag = false;
-                                        selectedScheme = "";
-                                        for (int i = 0;
-                                            i < schemeList.length;
-                                            i++) {
-                                          schemeList[i][s.flag] == "1"
-                                              ? schemeList[i][s.flag] = "0"
-                                              : schemeList[i][s.flag] = "0";
-                                        }
-
-                                        selectedFinyear = "";
-                                        for (int i = 0;
-                                            i < finYearList.length;
-                                            i++) {
-                                          finYearList[i][s.flag] == "1"
-                                              ? finYearList[i][s.flag] = "0"
-                                              : finYearList[i][s.flag] = "0";
-                                        }
-
-                                        submitFlag = false;
-                                      });
-                                    },
-                                    child: Container(
-                                        height: 30,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        padding: const EdgeInsets.all(3),
-                                        decoration: BoxDecoration(
-                                            color: corpActive
-                                                ? c.colorAccentlight
-                                                : c.white,
-                                            border: Border.all(
-                                                width: corpActive ? 0 : 2,
-                                                color: c.colorPrimary),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Colors.grey,
-                                                offset:
-                                                    Offset(0.0, 1.0), //(x,y)
-                                                blurRadius: 2.0,
-                                              ),
-                                            ]),
-                                        child: Row(children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Image.asset(
-                                            imagePath.radio,
-                                            color:
-                                                corpActive ? c.white : c.grey_5,
-                                            width: 15,
-                                            height: 15,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(s.corporation,
-                                              style: GoogleFonts.getFont(
-                                                  'Roboto',
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 11,
-                                                  color: corpActive
-                                                      ? c.white
-                                                      : c.grey_6)),
-                                        ])),
-                                  ),
+                                  _urban_Card_Design(s.town_panchayat, "T", 0,
+                                      true, false, false),
+                                  _urban_Card_Design(s.municipality, "M", 1,
+                                      false, true, false),
+                                  _urban_Card_Design(s.corporation, "C", 2,
+                                      false, false, true),
                                 ],
                               ),
                             ),

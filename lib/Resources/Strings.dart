@@ -482,7 +482,7 @@ String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
 String service_key_get_inspection_delayed_work_details =
     "get_inspection_delayed_work_details";
-String service_key_scheme_list_blockwise = "scheme_list_block_wise";
+
 
 //Table Name
 String table_District = "District";

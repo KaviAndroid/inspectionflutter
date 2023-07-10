@@ -541,7 +541,7 @@ class _HomeState extends State<Home> {
                         // This comes with a small performance cost, and you should not set [clipBehavior]
                         // unless you need it.
                         clipBehavior: Clip.hardEdge,
-                        margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        margin: EdgeInsets.all(10),
                         child: Container(
                           margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
                           child: Column(

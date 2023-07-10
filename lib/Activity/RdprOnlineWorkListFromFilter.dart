@@ -577,16 +577,21 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   onChanged: (value) {
                                     if (value != "0") {
                                       submitFlag = true;
-                                      isLoadingV = true;
-                                      loadUIScheme(value.toString());
+                                      setState(() {
+                                        isLoadingV = false;
+                                        villageError = false;
+                                        selectedVillage = value.toString();
+                                      });
+                                      /*isLoadingV = true;
+                                      loadUIScheme(value.toString());*/
                                       setState(() {});
                                     } else {
                                       setState(() {
                                         submitFlag = false;
                                         selectedVillage = value.toString();
                                         villageError = true;
-                                        schemeError = true;
-                                        schemeItems = [];
+                                        /* schemeError = true;
+                                        schemeItems = [];*/
                                       });
                                     }
                                     //Do something when changing the item if you want.
@@ -1225,6 +1230,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+            flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,

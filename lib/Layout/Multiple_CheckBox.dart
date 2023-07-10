@@ -9,11 +9,12 @@ class FlutterCustomCheckbox extends StatefulWidget {
   List<FlutterLimitedCheckBoxModel> initialValueList;
   String message;
   int limitCount;
-
+  final flag;
   Function(List<FlutterLimitedCheckBoxModel> selectedList) onChanged;
 
   FlutterCustomCheckbox({
     Key? key,
+    this.flag,
     required this.initialValueList,
     required this.onChanged,
     required this.message,
@@ -26,8 +27,15 @@ class FlutterCustomCheckbox extends StatefulWidget {
 
 class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   List<FlutterLimitedCheckBoxModel> checkedList = [];
-
+  bool selectallflag=false;
   void _onClickFunction(int index) {
+    if(selectallflag==true)
+    {
+      checkedList = widget.initialValueList
+          .where((element) => element.isSelected == false)
+          .toList();
+    }
+
     if (widget.initialValueList[index].isSelected == false) {
       var checker = widget.initialValueList
           .where((element) => element.isSelected == true)
@@ -48,7 +56,8 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: RichText(
+      title: Row(children: [
+        RichText(
         text: new TextSpan(
           // Note: Styles for TextSpans must be explicitly defined.
           // Child text spans will inherit styles from parent
@@ -67,6 +76,34 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
           ],
         ),
       ),
+        Visibility(
+          visible:widget.flag=="select_all"?true:false,
+          child: Container(
+            margin: EdgeInsets.only(left: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Checkbox(
+                  value:selectallflag,
+                  onChanged: (value) {
+                    setState(() {
+                      selectallflag=!selectallflag;
+                    });
+                  },
+                ),
+                Text(
+                  s.select_all,
+                  style: GoogleFonts.getFont('Roboto',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: c.grey_8),
+                ),
+              ],
+            ),
+          ),
+        )
+
+      ],),
       content: Container(
           height: 300,
           width: MediaQuery.of(context).size.width,
@@ -93,10 +130,10 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Checkbox(
-                                        value: widget
-                                            .initialValueList[index].isSelected,
+                                        value: !selectallflag?widget.initialValueList[index].isSelected:true,
                                         onChanged: (v) {
                                           setState(() {
+                                            !selectallflag?widget.initialValueList[index].isSelected:true;
                                             _onClickFunction(index);
                                           });
                                         },
@@ -117,11 +154,18 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
               ),
               InkWell(
                   onTap: () {
-                    widget.onChanged(checkedList);
-                    Navigator.pop(context, 'OK');
-                    for (var item in widget.initialValueList) {
-                      item.isSelected = false;
+                    if(selectallflag==true)
+                    {
+                      checkedList = widget.initialValueList
+                          .where((element) => element.isSelected == false)
+                          .toList();
+                      widget.onChanged(checkedList);
                     }
+                    else
+                    {
+                      widget.onChanged(checkedList);
+                    }
+
                   },
                   child: Container(
                     alignment: AlignmentDirectional.bottomEnd,

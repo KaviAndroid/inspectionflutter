@@ -1274,6 +1274,7 @@ class _WorkListState extends State<WorkList> {
       s.key_bcode: bcode,
       s.key_pvcode: [pvcode],
       s.key_scheme_id: [scheme],
+      s.key_flag: "2"
     };
     json_request = {
       s.key_service_id: s.service_key_get_inspection_work_details,

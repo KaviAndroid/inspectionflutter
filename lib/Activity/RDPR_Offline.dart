@@ -1254,6 +1254,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,
@@ -1367,6 +1368,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         context: context,
         builder: (BuildContext context) {
           return FlutterCustomCheckbox(
+              flag: "",
               initialValueList: list,
               message: msg,
               limitCount: limitCount,

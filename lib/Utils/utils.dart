@@ -803,7 +803,7 @@ class Utils {
 
     DateTime currentTime = DateTime.now();
 
-    DateTime expirationTime = currentTime.add(const Duration(minutes: 20));
+    DateTime expirationTime = currentTime.add(const Duration(hours: 20));
 
     String exp = (expirationTime.millisecondsSinceEpoch / 1000).toString();
 

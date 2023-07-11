@@ -72,7 +72,9 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(20),
+        margin: widget.message == s.select_scheme
+            ? EdgeInsets.all(20)
+            : EdgeInsets.only(left: 30, right: 30, bottom: 100, top: 100),
         child: Material(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -99,7 +101,9 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                       fontWeight: FontWeight.bold,
                                       color: c.grey_8)),
                               new TextSpan(
-                                  text: widget.message == 2 ? " (Any Two)" : "",
+                                  text: widget.limitCount == 2
+                                      ? " (Any Two)"
+                                      : "",
                                   style: new TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: c.subscription_type_red_color)),

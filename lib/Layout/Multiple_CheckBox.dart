@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
+import 'package:inspection_flutter_app/Utils/utils.dart';
 import '../ModelClass/checkBoxModelClass.dart';
 import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
@@ -27,29 +28,45 @@ class FlutterCustomCheckbox extends StatefulWidget {
 
 class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   List<FlutterLimitedCheckBoxModel> checkedList = [];
+  Utils utils = Utils();
   bool selectallflag = false;
-  void _onClickFunction(int index) {
-    if (selectallflag == true) {
-      checkedList = widget.initialValueList
-          .where((element) => element.isSelected == false)
-          .toList();
-    }
 
-    if (widget.initialValueList[index].isSelected == false) {
-      var checker = widget.initialValueList
-          .where((element) => element.isSelected == true)
-          .toList()
-          .length;
-      if (checker < widget.limitCount) {
-        widget.initialValueList[index].isSelected = true;
+  void _onClickFunction(int index, String type) {
+    if (type == "Select All") {
+      if (selectallflag) {
+        for (var item in widget.initialValueList) {
+          item.isSelected = true;
+        }
+        checkedList = widget.initialValueList.toList();
+      } else {
+        for (var item in widget.initialValueList) {
+          item.isSelected = false;
+        }
+        checkedList = [];
       }
     } else {
-      widget.initialValueList[index].isSelected = false;
-    }
+      if (widget.initialValueList[index].isSelected == false) {
+        var checker = widget.initialValueList
+            .where((element) => element.isSelected == true)
+            .toList()
+            .length;
+        if (checker < widget.limitCount) {
+          widget.initialValueList[index].isSelected = true;
+        }
+      } else {
+        widget.initialValueList[index].isSelected = false;
+      }
 
-    checkedList = widget.initialValueList
-        .where((element) => element.isSelected == true)
-        .toList();
+      checkedList = widget.initialValueList
+          .where((element) => element.isSelected == true)
+          .toList();
+
+      if (widget.initialValueList.length == checkedList.length) {
+        selectallflag = true;
+      } else {
+        selectallflag = false;
+      }
+    }
   }
 
   @override
@@ -101,6 +118,7 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                   onChanged: (value) {
                                     setState(() {
                                       selectallflag = !selectallflag;
+                                      _onClickFunction(0, "Select All");
                                     });
                                   },
                                 ),
@@ -127,7 +145,7 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                       GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            _onClickFunction(index);
+                                            _onClickFunction(index, "Single");
                                           });
                                         },
                                         child: Row(
@@ -137,20 +155,13 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Checkbox(
-                                              value: !selectallflag
-                                                  ? widget
-                                                      .initialValueList[index]
-                                                      .isSelected
-                                                  : true,
+                                              value: widget
+                                                  .initialValueList[index]
+                                                  .isSelected,
                                               onChanged: (v) {
                                                 setState(() {
-                                                  !selectallflag
-                                                      ? widget
-                                                          .initialValueList[
-                                                              index]
-                                                          .isSelected
-                                                      : true;
-                                                  _onClickFunction(index);
+                                                  _onClickFunction(
+                                                      index, "Single");
                                                 });
                                               },
                                             ),
@@ -170,19 +181,17 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                     ),
                     InkWell(
                         onTap: () {
-                          if (selectallflag == true) {
-                            checkedList = widget.initialValueList
-                                .where((element) => element.isSelected == false)
-                                .toList();
+                          if (checkedList.length > 0) {
                             widget.onChanged(checkedList);
+                            //After Click ok button remove the initial values.
+                            for (var item in widget.initialValueList) {
+                              item.isSelected = false;
+                            }
+                            Navigator.pop(context, 'OK');
                           } else {
-                            widget.onChanged(checkedList);
+                            utils.customAlertWidet(context, "Error",
+                                "Please select at least one option.");
                           }
-                          //After Click ok button remove the initial values.
-                          for (var item in widget.initialValueList) {
-                            item.isSelected = false;
-                          }
-                          Navigator.pop(context, 'OK');
                         },
                         child: Container(
                           alignment: AlignmentDirectional.bottomEnd,

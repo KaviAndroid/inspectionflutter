@@ -1720,6 +1720,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
       s.key_pvcode: [pvcode],
       s.key_fin_year: finYear,
       s.key_scheme_id: scheme,
+      s.key_flag: "all",
     };
     json_request = {
       s.key_service_id: s.service_key_get_inspection_work_details,
@@ -1807,7 +1808,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
 
             for (var row in res_jsonArray) {
               String values =
-                  " ( 'R', '0', '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvcode])}', '${row[s.key_pvname]}', '${utils.checkNull(row[s.key_hab_code])}', '${row[s.key_scheme_group_id]}', '${utils.checkNull(row[s.key_scheme_id])}', '${utils.checkNull(row[s.key_scheme_name])}', '${utils.checkNull(row[s.key_work_group_id])}', '${utils.checkNull(row[s.key_work_type_id])}', '${utils.checkNull(row[s.key_fin_year])}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.work_name])}', '${utils.checkNull(row[s.key_as_value])}', '${utils.checkNull(row[s.key_ts_value])}', '${utils.checkNull(row[s.key_current_stage_of_work])}', '${utils.checkNull(row[s.key_is_high_value])}', '${utils.checkNull(row[s.key_stage_name])}', '${utils.checkNull(row[s.key_as_date])}', '${utils.checkNull(row[s.key_ts_date])}', '${utils.checkNull(row[s.key_upd_date])}', '${utils.checkNull(row[s.key_work_order_date])}', '${utils.checkNull(row[s.key_work_type_name])}', '0', '0', '0', '0', '0', '0') ";
+                  " ( 'R', '0', '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvcode])}', '${row[s.key_pvname]}', '${utils.checkNull(row[s.key_hab_code])}', '${row[s.key_scheme_group_id]}', '${utils.checkNull(row[s.key_scheme_id])}', '${utils.checkNull(row[s.key_scheme_name])}', '${utils.checkNull(row[s.key_work_group_id])}', '${utils.checkNull(row[s.key_work_type_id])}', '${utils.checkNull(row[s.key_fin_year])}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_as_value])}', '${utils.checkNull(row[s.key_ts_value])}', '${utils.checkNull(row[s.key_current_stage_of_work])}', '${utils.checkNull(row[s.key_is_high_value])}', '${utils.checkNull(row[s.key_stage_name])}', '${utils.checkNull(row[s.key_as_date])}', '${utils.checkNull(row[s.key_ts_date])}', '${utils.checkNull(row[s.key_upd_date])}', '${utils.checkNull(row[s.key_work_order_date])}', '${utils.checkNull(row[s.key_work_type_name])}', '0', '0', '0', '0', '0', '0') ";
               valueSets_worklist.add(values);
             }
 

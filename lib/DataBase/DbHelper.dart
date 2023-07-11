@@ -33,36 +33,20 @@ class DbHelper {
   void onCreate(Database db, int version) async {
     dropAllTable(db);
     await db.execute("CREATE TABLE $table_District ( dcode TEXT, dname TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_Block ( dcode TEXT, bcode TEXT, bname TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_Village ( dcode TEXT, bcode TEXT, pvcode TEXT, pvname TEXT )");
+    await db.execute("CREATE TABLE $table_Block ( dcode TEXT, bcode TEXT, bname TEXT )");
+    await db.execute("CREATE TABLE $table_Village ( dcode TEXT, bcode TEXT, pvcode TEXT, pvname TEXT )");
     await db.execute("CREATE TABLE $table_FinancialYear ( fin_year TEXT )");
-    await db
-        .execute("CREATE TABLE $table_Status ( status_id TEXT , status TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_OtherCategory ( other_work_category_id TEXT , other_work_category_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_TownList ( dcode TEXT , townpanchayat_id TEXT , townpanchayat_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_Municipality ( dcode TEXT , municipality_id TEXT , municipality_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_Corporation ( dcode TEXT , corporation_id TEXT , corporation_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_WorkStages ( work_group_id TEXT , work_type_id TEXT , work_stage_order TEXT , work_stage_code TEXT , work_stage_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_AtrWorkList ( flag TEXT DEFAULT 'ATR', rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, work_name TEXT, inspection_id TEXT, inspection_date TEXT, status_id TEXT, status TEXT, description TEXT, inspection_by_officer TEXT, inspection_by_officer_designation TEXT, work_type_name TEXT, dname TEXT, bname TEXT, pvname TEXT, action_status TEXT, action_taken_id TEXT, reported_by TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT, townpanchayat_name TEXT, municipality_name TEXT, corporation_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_RdprWorkList ( rural_urban TEXT ,town_type TEXT , dcode TEXT, dname TEXT , bcode TEXT, bname TEXT, pvcode TEXT, pvname TEXT, hab_code TEXT, scheme_group_id TEXT, scheme_id TEXT, scheme_name TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_id TEXT,"
-        " work_name TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, stage_name TEXT, as_date TEXT, "
-        "ts_date TEXT, work_order_date TEXT, work_type_name TEXT, tpcode TEXT, townpanchayat_name TEXT, muncode TEXT, municipality_name TEXT, corcode TEXT, corporation_name TEXT, upd_date TEXT )");
-
-    await db.execute(
-        "CREATE TABLE $table_SchemeList ( rural_urban TEXT , scheme_id TEXT, scheme_name TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_save_work_details ( flag TEXT ,rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, scheme_id TEXT,work_status_id TEXT, work_status TEXT, work_stage_id TEXT, work_stage TEXT,current_stage_of_work TEXT, scheme_group_id TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_name TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
-    await db.execute(
-        "CREATE TABLE $table_save_images ( flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
+    await db.execute("CREATE TABLE $table_Status ( status_id TEXT , status TEXT )");
+    await db.execute("CREATE TABLE $table_OtherCategory ( other_work_category_id TEXT , other_work_category_name TEXT )");
+    await db.execute("CREATE TABLE $table_TownList ( dcode TEXT , townpanchayat_id TEXT , townpanchayat_name TEXT )");
+    await db.execute("CREATE TABLE $table_Municipality ( dcode TEXT , municipality_id TEXT , municipality_name TEXT )");
+    await db.execute("CREATE TABLE $table_Corporation ( dcode TEXT , corporation_id TEXT , corporation_name TEXT )");
+    await db.execute("CREATE TABLE $table_WorkStages ( work_group_id TEXT , work_type_id TEXT , work_stage_order TEXT , work_stage_code TEXT , work_stage_name TEXT )");
+    await db.execute("CREATE TABLE $table_AtrWorkList ( flag TEXT DEFAULT 'ATR', rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, work_name TEXT, inspection_id TEXT, inspection_date TEXT, status_id TEXT, status TEXT, description TEXT, inspection_by_officer TEXT, inspection_by_officer_designation TEXT, work_type_name TEXT, dname TEXT, bname TEXT, pvname TEXT, action_status TEXT, action_taken_id TEXT, reported_by TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT, townpanchayat_name TEXT, municipality_name TEXT, corporation_name TEXT )");
+    await db.execute("CREATE TABLE $table_RdprWorkList ( rural_urban TEXT ,town_type TEXT , dcode TEXT, dname TEXT , bcode TEXT, bname TEXT, pvcode TEXT, pvname TEXT, hab_code TEXT, scheme_group_id TEXT, scheme_id TEXT, scheme_name TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_id TEXT, work_name TEXT, as_value TEXT, ts_value TEXT, current_stage_of_work TEXT, is_high_value TEXT, stage_name TEXT, as_date TEXT, ts_date TEXT, work_order_date TEXT, work_type_name TEXT, tpcode TEXT, townpanchayat_name TEXT, muncode TEXT, municipality_name TEXT, corcode TEXT, corporation_name TEXT, upd_date TEXT )");
+    await db.execute("CREATE TABLE $table_SchemeList ( rural_urban TEXT , scheme_id TEXT, scheme_name TEXT )");
+    await db.execute("CREATE TABLE $table_save_work_details ( flag TEXT ,rural_urban TEXT , dcode TEXT , bcode TEXT, pvcode TEXT, work_id TEXT, scheme_id TEXT,work_status_id TEXT, work_status TEXT, work_stage_id TEXT, work_stage TEXT,current_stage_of_work TEXT, scheme_group_id TEXT, work_group_id TEXT, work_type_id TEXT, fin_year TEXT, work_name TEXT, inspection_id TEXT, description TEXT, town_type TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
+    await db.execute("CREATE TABLE $table_save_images ( flag TEXT ,work_id TEXT, inspection_id TEXT, image_description TEXT, latitude TEXT, longitude TEXT, serial_no TEXT, rural_urban TEXT, image_path TEXT, image TEXT, dcode TEXT , bcode TEXT, pvcode TEXT, tpcode TEXT, muncode TEXT, corcode TEXT )");
   }
 
   Future close() async {

@@ -541,7 +541,7 @@ class _HomeState extends State<Home> {
                         // This comes with a small performance cost, and you should not set [clipBehavior]
                         // unless you need it.
                         clipBehavior: Clip.hardEdge,
-                        margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        margin: EdgeInsets.all(10),
                         child: Container(
                           margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
                           child: Column(
@@ -601,6 +601,9 @@ class _HomeState extends State<Home> {
                                 Container(
                                   margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       _rural_urban_selection_Widget(
                                           s.rural_area, imagePath.rural, 1),

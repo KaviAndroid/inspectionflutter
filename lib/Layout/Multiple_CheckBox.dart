@@ -27,10 +27,9 @@ class FlutterCustomCheckbox extends StatefulWidget {
 
 class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
   List<FlutterLimitedCheckBoxModel> checkedList = [];
-  bool selectallflag=false;
+  bool selectallflag = false;
   void _onClickFunction(int index) {
-    if(selectallflag==true)
-    {
+    if (selectallflag == true) {
       checkedList = widget.initialValueList
           .where((element) => element.isSelected == false)
           .toList();
@@ -55,134 +54,151 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Row(children: [
-        RichText(
-        text: new TextSpan(
-          // Note: Styles for TextSpans must be explicitly defined.
-          // Child text spans will inherit styles from parent
-          style: GoogleFonts.getFont('Roboto',
-              fontWeight: FontWeight.w800, fontSize: 14, color: c.grey_8),
-          children: <TextSpan>[
-            new TextSpan(
-                text: widget.message,
-                style: new TextStyle(
-                    fontWeight: FontWeight.bold, color: c.grey_8)),
-            new TextSpan(
-                text: widget.message == 2 ? " (Any Two)" : "",
-                style: new TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: c.subscription_type_red_color)),
-          ],
-        ),
-      ),
-        Visibility(
-          visible:widget.flag=="select_all"?true:false,
-          child: Container(
-            margin: EdgeInsets.only(left: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Checkbox(
-                  value:selectallflag,
-                  onChanged: (value) {
-                    setState(() {
-                      selectallflag=!selectallflag;
-                    });
-                  },
-                ),
-                Text(
-                  s.select_all,
-                  style: GoogleFonts.getFont('Roboto',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                      color: c.grey_8),
-                ),
-              ],
+    return Container(
+        margin: EdgeInsets.all(20),
+        child: Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-          ),
-        )
-
-      ],),
-      content: Container(
-          height: 300,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: ListView.builder(
-                        itemCount: widget.initialValueList.length,
-                        itemBuilder: (context, index) => Column(
+            child: Container(
+                margin: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: new TextSpan(
+                            // Note: Styles for TextSpans must be explicitly defined.
+                            // Child text spans will inherit styles from parent
+                            style: GoogleFonts.getFont('Roboto',
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                color: c.grey_8),
+                            children: <TextSpan>[
+                              new TextSpan(
+                                  text: widget.message,
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: c.grey_8)),
+                              new TextSpan(
+                                  text: widget.message == 2 ? " (Any Two)" : "",
+                                  style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: c.subscription_type_red_color)),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.flag == "select_all" ? true : false,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
+                                Checkbox(
+                                  value: selectallflag,
+                                  onChanged: (value) {
                                     setState(() {
-                                      _onClickFunction(index);
+                                      selectallflag = !selectallflag;
                                     });
                                   },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                ),
+                                Text(
+                                  s.select_all,
+                                  style: GoogleFonts.getFont('Roboto',
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      color: c.grey_8),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Expanded(
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: ListView.builder(
+                              itemCount: widget.initialValueList.length,
+                              itemBuilder: (context, index) => Column(
                                     children: [
-                                      Checkbox(
-                                        value: !selectallflag?widget.initialValueList[index].isSelected:true,
-                                        onChanged: (v) {
+                                      GestureDetector(
+                                        onTap: () {
                                           setState(() {
-                                            !selectallflag?widget.initialValueList[index].isSelected:true;
                                             _onClickFunction(index);
                                           });
                                         },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Checkbox(
+                                              value: !selectallflag
+                                                  ? widget
+                                                      .initialValueList[index]
+                                                      .isSelected
+                                                  : true,
+                                              onChanged: (v) {
+                                                setState(() {
+                                                  !selectallflag
+                                                      ? widget
+                                                          .initialValueList[
+                                                              index]
+                                                          .isSelected
+                                                      : true;
+                                                  _onClickFunction(index);
+                                                });
+                                              },
+                                            ),
+                                            Expanded(
+                                                child: Text(
+                                              widget.initialValueList[index]
+                                                  .selectTitle,
+                                            ))
+                                          ],
+                                        ),
                                       ),
-                                      Expanded(
-                                          child: Text(
-                                        widget.initialValueList[index]
-                                            .selectTitle,
-                                      ))
+                                      SizedBox(
+                                        height: 10,
+                                      )
                                     ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                )
-                              ],
-                            ))),
-              ),
-              InkWell(
-                  onTap: () {
-                    if(selectallflag==true)
-                    {
-                      checkedList = widget.initialValueList
-                          .where((element) => element.isSelected == false)
-                          .toList();
-                      widget.onChanged(checkedList);
-                    }
-                    else
-                    {
-                      widget.onChanged(checkedList);
-                    }
-
-                  },
-                  child: Container(
-                    alignment: AlignmentDirectional.bottomEnd,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                      child: Text(
-                        s.key_ok,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: c.primary_text_color2,
-                            fontSize: 15),
-                        textAlign: TextAlign.center,
-                      ),
+                                  ))),
                     ),
-                  ))
-            ],
-          )),
-    );
+                    InkWell(
+                        onTap: () {
+                          if (selectallflag == true) {
+                            checkedList = widget.initialValueList
+                                .where((element) => element.isSelected == false)
+                                .toList();
+                            widget.onChanged(checkedList);
+                          } else {
+                            widget.onChanged(checkedList);
+                          }
+                          //After Click ok button remove the initial values.
+                          for (var item in widget.initialValueList) {
+                            item.isSelected = false;
+                          }
+                          Navigator.pop(context, 'OK');
+                        },
+                        child: Container(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Text(
+                              s.key_ok,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: c.primary_text_color2,
+                                  fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                  ],
+                ))));
   }
 }

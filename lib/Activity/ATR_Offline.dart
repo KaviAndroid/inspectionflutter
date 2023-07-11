@@ -155,11 +155,12 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(s.download_text,
-                              style: GoogleFonts.getFont('Roboto',
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w900,
-                                  color: c.primary_text_color2))
+                          Expanded(
+                              child: Text(s.download_text,
+                                  style: GoogleFonts.getFont('Roboto',
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w900,
+                                      color: c.primary_text_color2)))
                         ],
                       ),
                     ),

@@ -573,24 +573,17 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               "Schemelist#######" + SchemeListvalue.toString());
                           setState(() {});
                         },
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  schList.isNotEmpty
-                                      ? schList.join(', ')
-                                      : s.select_scheme,
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.normal,
-                                      color: c.grey_10),
-                                  overflow: TextOverflow.clip,
-                                  softWrap: true,
-                                ),
-                              ),
-                            ]))),),])),
+                        child: Text(
+                          schList.isNotEmpty
+                              ? schList.join(',\n ')
+                              : s.select_scheme,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: c.grey_10),
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                        ))),),])),
                 Visibility(
                   visible: delay,
                   child: Container(

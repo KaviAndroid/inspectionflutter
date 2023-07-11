@@ -228,7 +228,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                             ]),
                       ),
                       SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
                       InkWell(
                         onTap: () {
@@ -271,7 +271,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                             ]),
                       ),
                       SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
                       InkWell(
                         onTap: () {

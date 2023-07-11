@@ -803,7 +803,7 @@ class Utils {
 
     DateTime currentTime = DateTime.now();
 
-    DateTime expirationTime = currentTime.add(const Duration(minutes: 20));
+    DateTime expirationTime = currentTime.add(const Duration(hours: 20));
 
     String exp = (expirationTime.millisecondsSinceEpoch / 1000).toString();
 
@@ -926,204 +926,202 @@ class Utils {
     await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return FractionallySizedBox(
-          widthFactor: 0.9, // Adjust this value as needed
-          heightFactor: 0.85,
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentIndex = 0;
-                                  });
-                                },
-                                child: Container(
-                                  width: 150,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'From Date',
-                                      style: TextStyle(
-                                        color: currentIndex == 0
-                                            ? Colors.black
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 400),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width:
-                                                currentIndex == 0 ? 2.0 : 1.0,
-                                            color: currentIndex == 0
-                                                ? c.primary_text_color2
-                                                : Colors.white))),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (selectedFromDate != null) {
+        return Container(
+            margin: EdgeInsets.all(10),
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
                                     setState(() {
-                                      currentIndex = 1;
+                                      currentIndex = 0;
                                     });
-                                  } else {
-                                    customAlertWidet(context, "Error",
-                                        "Please Select From Date");
-                                  }
-                                },
-                                child: Container(
-                                  width: 150,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(10),
+                                  },
+                                  child: Container(
+                                    width: 150,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                      ),
                                     ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'To Date',
-                                      style: TextStyle(
-                                        color: currentIndex == 1
-                                            ? Colors.black
-                                            : Colors.grey,
+                                    child: Center(
+                                      child: Text(
+                                        'From Date',
+                                        style: TextStyle(
+                                          color: currentIndex == 0
+                                              ? Colors.black
+                                              : Colors.grey,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 400),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width:
-                                                currentIndex == 0 ? 2.0 : 1.0,
-                                            color: currentIndex == 1
-                                                ? c.primary_text_color2
-                                                : Colors.white))),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    currentIndex == 0
-                        ? calendarWidget(
-                            context, 0, selectedFromDate ?? DateTime.now())
-                        : AnimatedContainer(
-                            duration: Duration(milliseconds: 300),
-                            child: Center(
-                                child: calendarWidget(
-                              context,
-                              1,
-                              selectedFromDate ?? DateTime.now(),
-                            )),
-                          ),
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                currentIndex = 0;
-                                selectedFromDate = null;
-                                selectedToDate = null;
-                                selectedfromDateRange.clear();
-                                selectedtoDateRange.clear();
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Text(
-                                "CANCEL",
-                                style: TextStyle(
-                                  color: c.colorPrimary,
-                                  fontWeight: FontWeight.bold,
+                                AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width:
+                                                  currentIndex == 0 ? 2.0 : 1.0,
+                                              color: currentIndex == 0
+                                                  ? c.primary_text_color2
+                                                  : Colors.white))),
                                 ),
-                              ),
+                              ],
                             ),
-                            const SizedBox(width: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (selectedToDate != null &&
-                                    selectedFromDate != null) {
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (selectedFromDate != null) {
+                                      setState(() {
+                                        currentIndex = 1;
+                                      });
+                                    } else {
+                                      customAlertWidet(context, "Error",
+                                          "Please Select From Date");
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 150,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'To Date',
+                                        style: TextStyle(
+                                          color: currentIndex == 1
+                                              ? Colors.black
+                                              : Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width:
+                                                  currentIndex == 0 ? 2.0 : 1.0,
+                                              color: currentIndex == 1
+                                                  ? c.primary_text_color2
+                                                  : Colors.white))),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      currentIndex == 0
+                          ? calendarWidget(
+                              context, 0, selectedFromDate ?? DateTime.now())
+                          : AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              child: Center(
+                                  child: calendarWidget(
+                                context,
+                                1,
+                                selectedFromDate ?? DateTime.now(),
+                              )),
+                            ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
                                   currentIndex = 0;
-                                  jsonValue = {
-                                    "fromDate": selectedFromDate,
-                                    "toDate": selectedToDate,
-                                    "flag": true
-                                  };
-                                  selectedfromDateRange.clear();
-                                  selectedtoDateRange.clear();
                                   selectedFromDate = null;
                                   selectedToDate = null;
+                                  selectedfromDateRange.clear();
+                                  selectedtoDateRange.clear();
                                   Navigator.of(context).pop();
-                                } else {
-                                  if (selectedFromDate == null) {
-                                    customAlertWidet(
-                                        context, "Error", s.fromDate_required);
-                                  } else if (selectedToDate == null) {
-                                    customAlertWidet(
-                                        context, "Error", s.endDate_Required);
-                                  } else {
-                                    print("Something Went Wrong....");
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Text(
-                                "OK",
-                                style: TextStyle(
-                                  color: c.colorPrimary,
-                                  fontWeight: FontWeight.bold,
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                ),
+                                child: Text(
+                                  "CANCEL",
+                                  style: TextStyle(
+                                    color: c.colorPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          ],
+                              const SizedBox(width: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (selectedToDate != null &&
+                                      selectedFromDate != null) {
+                                    currentIndex = 0;
+                                    jsonValue = {
+                                      "fromDate": selectedFromDate,
+                                      "toDate": selectedToDate,
+                                      "flag": true
+                                    };
+                                    selectedfromDateRange.clear();
+                                    selectedtoDateRange.clear();
+                                    selectedFromDate = null;
+                                    selectedToDate = null;
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    if (selectedFromDate == null) {
+                                      customAlertWidet(context, "Error",
+                                          s.fromDate_required);
+                                    } else if (selectedToDate == null) {
+                                      customAlertWidet(
+                                          context, "Error", s.endDate_Required);
+                                    } else {
+                                      print("Something Went Wrong....");
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                ),
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(
+                                    color: c.colorPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
-          ),
-        );
+                      )
+                    ],
+                  );
+                },
+              ),
+            ));
       },
     );
     return jsonValue;

@@ -766,8 +766,18 @@ class _WorkListState extends State<WorkList> {
                                 workList.addAll(ongoingWorkList);
                                 noDataFlag = false;
                                 workListFlag = true;
+                                showFlag = [];
+                                for (int i = 0; i < workList.length; i++) {
+                                  showFlag.add(false);
+                                }
+                                progressFlag = [];
+                                for (int i = 0; i < workList.length; i++) {
+                                  progressFlag.add(false);
+                                }
                               } else {
                                 workList = [];
+                                showFlag = [];
+                                progressFlag = [];
                                 noDataFlag = true;
                                 workListFlag = false;
                               }
@@ -813,8 +823,18 @@ class _WorkListState extends State<WorkList> {
                                 workList.addAll(completedWorkList);
                                 noDataFlag = false;
                                 workListFlag = true;
+                                showFlag = [];
+                                for (int i = 0; i < workList.length; i++) {
+                                  showFlag.add(false);
+                                }
+                                progressFlag = [];
+                                for (int i = 0; i < workList.length; i++) {
+                                  progressFlag.add(false);
+                                }
                               } else {
                                 workList = [];
+                                showFlag = [];
+                                progressFlag = [];
                                 noDataFlag = true;
                                 workListFlag = false;
                               }

@@ -177,15 +177,14 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
           ),
         ),
         body: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           color: c.white,
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Visibility(
-                  visible: true,
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -370,6 +369,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                             ))
                                         .toList(),
                                     onChanged: (value) {
+                                      schemelistWithCount = [];
                                       if (value != "0") {
                                         submitFlag = false;
                                         isLoadingD = true;
@@ -478,6 +478,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                           ))
                                       .toList(),
                                   onChanged: (value) {
+                                    schemelistWithCount = [];
                                     if (value != "0") {
                                       submitFlag = false;
                                       isLoadingB = true;
@@ -575,6 +576,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                           ))
                                       .toList(),
                                   onChanged: (value) {
+                                    schemelistWithCount = [];
                                     if (value != "0") {
                                       submitFlag = true;
                                       setState(() {
@@ -733,173 +735,6 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                         ),
                       ),
                       Visibility(
-                          visible:
-                              schemelistWithCount.isNotEmpty ? true : false,
-                          child: Container(
-                              child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: schemelistWithCount.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return InkWell(
-                                        onTap: () async {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      WorkList(
-                                                        schemeList: '',
-                                                        finYear: finList,
-                                                        dcode: selectedDistrict,
-                                                        bcode: selectedBlock,
-                                                        pvcode: selectedVillage,
-                                                        scheme:
-                                                            schemelistWithCount[
-                                                                    index][
-                                                                s.key_scheme_id],
-                                                        tmccode: '',
-                                                        townType: '',
-                                                        flag: 'rdpr_online',
-                                                        selectedschemeList: [],
-                                                      )));
-                                        },
-                                        child: Card(
-                                            elevation: 5,
-                                            margin: EdgeInsets.only(
-                                                top: 10, left: 15, bottom: 10),
-                                            color: c.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(20),
-                                                topLeft: Radius.circular(20),
-                                                topRight: Radius.circular(20),
-                                                bottomRight:
-                                                    Radius.circular(20),
-                                              ),
-                                            ),
-                                            child: ClipPath(
-                                                clipper: ShapeBorderClipper(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20))),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          width: 10,
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 10,
-                                                                  bottom: 10),
-                                                          child: Text(""),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  gradient: LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topLeft,
-                                                                      end: Alignment.topRight,
-                                                                      colors: [
-                                                                        c.colorPrimary,
-                                                                        c.colorAccentverylight
-                                                                      ]),
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            20),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            0),
-                                                                    bottomLeft:
-                                                                        Radius.circular(
-                                                                            20),
-                                                                    bottomRight:
-                                                                        Radius.circular(
-                                                                            0),
-                                                                  )),
-                                                        ),
-                                                        Expanded(
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10,
-                                                                    bottom: 10),
-                                                            child: Text(
-                                                              schemelistWithCount[
-                                                                      index][
-                                                                  key_scheme_name],
-                                                              style: TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  color:
-                                                                      c.black),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10,
-                                                                    bottom: 10),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: c
-                                                                        .dot_light_screen_lite1,
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              20),
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              0),
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              20),
-                                                                    )),
-                                                            child: Text(
-                                                                schemelistWithCount[
-                                                                            index]
-                                                                        [
-                                                                        key_total_count]
-                                                                    .toString(),
-                                                                style: TextStyle(
-                                                                    color: c
-                                                                        .primary_text_color2,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                maxLines: 1),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ))));
-                                  }))),
-                      Visibility(
                         visible: submitFlag,
                         child: Container(
                           margin: const EdgeInsets.only(top: 20, bottom: 20),
@@ -947,6 +782,174 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                     ],
                   ),
                 ),
+                Visibility(
+                    visible:
+                    schemelistWithCount.length>0? true : false,
+                    child: Container(
+                        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: ListView.builder(
+                          // physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: schemelistWithCount.length,
+                            itemBuilder:
+                                (BuildContext context, int index) {
+                              return InkWell(
+                                  onTap: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                WorkList(
+                                                  schemeList: '',
+                                                  finYear: finList,
+                                                  dcode: selectedDistrict,
+                                                  bcode: selectedBlock,
+                                                  pvcode: selectedVillage,
+                                                  scheme:
+                                                  schemelistWithCount[
+                                                  index][
+                                                  s.key_scheme_id],
+                                                  tmccode: '',
+                                                  townType: '',
+                                                  flag: 'rdpr_online',
+                                                  selectedschemeList: [],
+                                                )));
+                                  },
+                                  child: Card(
+                                      elevation: 5,
+                                      margin: EdgeInsets.only(
+                                          top: 10, left: 15, bottom: 10),
+                                      color: c.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(20),
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomRight:
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: ClipPath(
+                                          clipper: ShapeBorderClipper(
+                                              shape:
+                                              RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(
+                                                      20))),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 10,
+                                                    padding:
+                                                    EdgeInsets.only(
+                                                        top: 10,
+                                                        bottom: 10),
+                                                    child: Text(""),
+                                                    decoration:
+                                                    BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                            begin: Alignment
+                                                                .topLeft,
+                                                            end: Alignment.topRight,
+                                                            colors: [
+                                                              c.colorPrimary,
+                                                              c.colorAccentverylight
+                                                            ]),
+                                                        borderRadius:
+                                                        const BorderRadius
+                                                            .only(
+                                                          topLeft: Radius
+                                                              .circular(
+                                                              20),
+                                                          topRight: Radius
+                                                              .circular(
+                                                              0),
+                                                          bottomLeft:
+                                                          Radius.circular(
+                                                              20),
+                                                          bottomRight:
+                                                          Radius.circular(
+                                                              0),
+                                                        )),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding:
+                                                      EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10),
+                                                      child: Text(
+                                                        schemelistWithCount[
+                                                        index][
+                                                        key_scheme_name],
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .normal,
+                                                            color:
+                                                            c.black),
+                                                        textAlign:
+                                                        TextAlign
+                                                            .center,
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding:
+                                                      EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10),
+                                                      decoration:
+                                                      BoxDecoration(
+                                                          color: c
+                                                              .dot_light_screen_lite1,
+                                                          borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                            topLeft: Radius
+                                                                .circular(
+                                                                0),
+                                                            topRight:
+                                                            Radius.circular(
+                                                                20),
+                                                            bottomLeft:
+                                                            Radius.circular(
+                                                                0),
+                                                            bottomRight:
+                                                            Radius.circular(
+                                                                20),
+                                                          )),
+                                                      child: Text(
+                                                          schemelistWithCount[
+                                                          index]
+                                                          [
+                                                          key_total_count]
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color: c
+                                                                  .primary_text_color2,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                          textAlign:
+                                                          TextAlign
+                                                              .center,
+                                                          maxLines: 1),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ))));
+                            }))),
               ],
             ),
           ),
@@ -1243,6 +1246,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                 if (finList.isNotEmpty) {
                   selectedVillage = defaultSelectedVillage[s.key_pvcode]!;
                   villageError = true;
+                  schemelistWithCount = [];
                   schemeFlag = false;
                   submitFlag = false;
                 }

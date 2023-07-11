@@ -69,4 +69,4 @@ String user = "assets/svg_icons/user.svg";
 String mic_loading = "assets/svg_icons/mic_loading.gif";
 String success = "assets/svg_icons/success.gif";
 String error = "assets/svg_icons/error.gif";
-String warning_gif = "assets/svg_icons/warning.gif";
+String warning_gif = "assets/svg_icons/warning_gif.gif";

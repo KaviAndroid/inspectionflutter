@@ -255,7 +255,7 @@ class Utils {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: const [
                     BoxShadow(
-                      color: Colors.grey,
+                      // color: Colors.grey,
                       offset: Offset(0.0, 1.0), //(x,y)
                       blurRadius: 5.0,
                     ),
@@ -268,7 +268,7 @@ class Utils {
                     height: 100,
                     decoration: BoxDecoration(
                         color: type == "Warning"
-                            ? c.yellow_new.withOpacity(0.5)
+                            ? c.grey
                             : type == "Success"
                                 ? c.alert_bg
                                 : c.red_new,
@@ -282,9 +282,9 @@ class Utils {
                             : type == "Success"
                                 ? imagePath.success
                                 : imagePath.error,
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
+                        height: 70,
+                        width: 70,
+                        // fit: BoxFit.cover,
                       ),
                     ),
                   ),

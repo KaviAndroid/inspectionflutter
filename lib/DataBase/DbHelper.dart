@@ -142,6 +142,7 @@ class DbHelper {
   }
 
   Future<void> deleteAll() async {
+    print(">>>>delete all");
     delete_table_District();
     delete_table_Block();
     delete_table_Village();

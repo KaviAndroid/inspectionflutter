@@ -335,7 +335,7 @@ class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
                                                               widget.selectedRDPRworkList[
                                                                       index][
                                                                   s.key_work_name],
-                                                              trimLines: 4,
+                                                              trimLines: 4,txtcolor: "2",
                                                             ),
                                                           ),
                                                         ],

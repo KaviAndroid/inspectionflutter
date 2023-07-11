@@ -738,275 +738,23 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                   left: 10,
                                                   right: 0),
                                               child: Column(children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        s.other_work_id,
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        ':',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                          workList[index][s
-                                                                  .key_other_work_inspection_id]
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              color: c.white),
-                                                          maxLines: 1),
-                                                    ),
-                                                  ],
-                                                ),
+                                                workListItem(s.other_work_id,workList[index][s.key_other_work_inspection_id].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        s.other_work_name,
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        ':',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        workList[index][s
-                                                                .key_other_work_name]
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: c.white),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                workListItem(s.other_work_name,workList[index][s.key_other_work_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        s.other_work_category_name,
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        ':',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        workList[index][s
-                                                                .key_other_work_category_name]
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: c.white),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                workListItem(s.other_work_category_name,workList[index][s.key_other_work_category_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        s.inspected_date,
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        ':',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        workList[index][s
-                                                                .key_inspection_date]
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: c.white),
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                workListItem(s.inspected_date,workList[index][s.key_inspection_date].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        s.work_status,
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        ':',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: c.white),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 1,
-                                                        softWrap: true,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        workList[index][s
-                                                                .key_status_name]
-                                                            .toString(),
-                                                        maxLines: 2,
-                                                        style: TextStyle(
-                                                            color: c.white),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                workListItem(s.work_status,workList[index][s.key_status_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
@@ -1138,6 +886,67 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             ),
           ]),
         ));
+  }
+  workListItem(String name,String value)
+  {
+    return Row(
+      mainAxisAlignment:
+      MainAxisAlignment
+          .spaceBetween,
+      crossAxisAlignment:
+      CrossAxisAlignment
+          .start,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            name,
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight:
+                FontWeight
+                    .normal,
+                color: c.white),
+            overflow:
+            TextOverflow
+                .clip,
+            maxLines: 1,
+            softWrap: true,
+          ),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        Expanded(
+          flex: 0,
+          child: Text(
+            ':',
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight:
+                FontWeight
+                    .normal,
+                color: c.white),
+            overflow:
+            TextOverflow
+                .clip,
+            maxLines: 1,
+            softWrap: true,
+          ),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        Expanded(
+          flex: 2,
+          child: ExpandableText(value, trimLines: 2,txtcolor: "1"),
+        ),
+        SizedBox(
+          width: 10,
+        ),
+      ],
+    );
+
   }
 
   Future<void> getOtherWorkDetails(String fromDate, String toDate) async {

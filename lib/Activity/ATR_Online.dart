@@ -1009,7 +1009,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                     defaultWorklist[index]
                                                             [s.key_work_name]
                                                         .toString(),
-                                                    trimLines: 2),
+                                                    trimLines: 2,txtcolor: "2",),
                                               ),
                                             ),
                                           ),

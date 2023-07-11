@@ -787,8 +787,20 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                     schemelistWithCount.length>0? true : false,
                     child: Container(
                         margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                        child: ListView.builder(
-                          // physics: NeverScrollableScrollPhysics(),
+                      child: Column(
+                          children: [
+                      Container(
+                      margin: const EdgeInsets.only(
+                          top: 5, bottom: 5),
+                      child: Text(
+                        s.scheme_list,
+                        style: GoogleFonts.getFont('Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: c.primary_text_color2),
+                      ),
+                    ), ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: schemelistWithCount.length,
                             itemBuilder:
@@ -818,7 +830,7 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                   child: Card(
                                       elevation: 5,
                                       margin: EdgeInsets.only(
-                                          top: 10, left: 15, bottom: 10),
+                                          top: 10, bottom: 10),
                                       color: c.white,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.only(
@@ -837,119 +849,127 @@ class _RdprOnlineWorkListState extends State<RdprOnlineWorkList> {
                                                   BorderRadius
                                                       .circular(
                                                       20))),
-                                          child: Column(
+                                          child:Container(
+                                              constraints: BoxConstraints(
+                                                minHeight: 20,
+                                                maxHeight:60 ,
+                                              ),
+                                  child: Row(
                                             children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    width: 10,
-                                                    padding:
-                                                    EdgeInsets.only(
-                                                        top: 10,
-                                                        bottom: 10),
-                                                    child: Text(""),
-                                                    decoration:
-                                                    BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                            begin: Alignment
-                                                                .topLeft,
-                                                            end: Alignment.topRight,
-                                                            colors: [
-                                                              c.colorPrimary,
-                                                              c.colorAccentverylight
-                                                            ]),
-                                                        borderRadius:
-                                                        const BorderRadius
-                                                            .only(
-                                                          topLeft: Radius
-                                                              .circular(
-                                                              20),
-                                                          topRight: Radius
-                                                              .circular(
-                                                              0),
-                                                          bottomLeft:
-                                                          Radius.circular(
-                                                              20),
-                                                          bottomRight:
-                                                          Radius.circular(
-                                                              0),
-                                                        )),
+                                              Container(
+                                                height: MediaQuery.of(context).size.height,
+                                                width: 10,
+                                                padding:
+                                                EdgeInsets.only(
+                                                    top: 10,
+                                                    bottom: 10),
+                                                child: Text(""),
+                                                decoration:
+                                                BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        begin: Alignment
+                                                            .topLeft,
+                                                        end: Alignment.topRight,
+                                                        colors: [
+                                                          c.colorPrimary,
+                                                          c.colorAccentverylight
+                                                        ]),
+                                                    borderRadius:
+                                                    const BorderRadius
+                                                        .only(
+                                                      topLeft: Radius
+                                                          .circular(
+                                                          20),
+                                                      topRight: Radius
+                                                          .circular(
+                                                          0),
+                                                      bottomLeft:
+                                                      Radius.circular(
+                                                          20),
+                                                      bottomRight:
+                                                      Radius.circular(
+                                                          0),
+                                                    )),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Container(
+                                                  alignment: Alignment.centerLeft,
+                                                  height: MediaQuery.of(context).size.height,
+                                                  padding:
+                                                  EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10,left: 10),
+                                                  child: Text(
+                                                    schemelistWithCount[
+                                                    index][
+                                                    key_scheme_name],
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .normal,
+                                                        color:
+                                                        c.grey_9),
+                                                    textAlign:
+                                                    TextAlign
+                                                        .start,
+
                                                   ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      padding:
-                                                      EdgeInsets.only(
-                                                          top: 10,
-                                                          bottom: 10),
-                                                      child: Text(
-                                                        schemelistWithCount[
-                                                        index][
-                                                        key_scheme_name],
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .normal,
-                                                            color:
-                                                            c.black),
-                                                        textAlign:
-                                                        TextAlign
-                                                            .center,
-                                                        overflow:
-                                                        TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      padding:
-                                                      EdgeInsets.only(
-                                                          top: 10,
-                                                          bottom: 10),
-                                                      decoration:
-                                                      BoxDecoration(
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  alignment: Alignment.centerRight,
+                                                  height: MediaQuery.of(context).size.height,
+                                                  padding:
+                                                  EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10,right: 20),
+                                                  decoration:
+                                                  BoxDecoration(
+                                                      color: c
+                                                          .dot_light_screen_lite1,
+                                                      borderRadius:
+                                                      const BorderRadius
+                                                          .only(
+                                                        topLeft: Radius
+                                                            .circular(
+                                                            0),
+                                                        topRight:
+                                                        Radius.circular(
+                                                            20),
+                                                        bottomLeft:
+                                                        Radius.circular(
+                                                            0),
+                                                        bottomRight:
+                                                        Radius.circular(
+                                                            20),
+                                                      )),
+                                                  child: Text(
+                                                      schemelistWithCount[
+                                                      index]
+                                                      [
+                                                      key_total_count]
+                                                          .toString(),
+                                                      style: TextStyle(
                                                           color: c
-                                                              .dot_light_screen_lite1,
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                            topLeft: Radius
-                                                                .circular(
-                                                                0),
-                                                            topRight:
-                                                            Radius.circular(
-                                                                20),
-                                                            bottomLeft:
-                                                            Radius.circular(
-                                                                0),
-                                                            bottomRight:
-                                                            Radius.circular(
-                                                                20),
-                                                          )),
-                                                      child: Text(
-                                                          schemelistWithCount[
-                                                          index]
-                                                          [
-                                                          key_total_count]
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              color: c
-                                                                  .primary_text_color2,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                          textAlign:
-                                                          TextAlign
-                                                              .center,
-                                                          maxLines: 1),
-                                                    ),
-                                                  ),
-                                                ],
+                                                              .primary_text_color2,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,fontSize: 16),
+                                                      textAlign:
+                                                      TextAlign
+                                                          .end,
+                                                      maxLines: 1),
+                                                ),
                                               ),
                                             ],
-                                          ))));
-                            }))),
+                                          )))));
+                            })])
+                    )
+                ),
               ],
             ),
           ),

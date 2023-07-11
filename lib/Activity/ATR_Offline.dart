@@ -922,7 +922,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       defaultWorklist[index]
                                                               [s.key_work_name]
                                                           .toString(),
-                                                      trimLines: 2),
+                                                      trimLines: 2,txtcolor: "2",),
                                                 ),
                                               ),
                                             ),

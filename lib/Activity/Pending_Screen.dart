@@ -337,7 +337,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                                     defaultWorklist[index]
                                                             [s.key_work_name]
                                                         .toString(),
-                                                    trimLines: 2),
+                                                    trimLines: 2,txtcolor: "2",),
                                               ),
                                             ),
                                           ),
@@ -726,7 +726,7 @@ class _PendingScreenState extends State<PendingScreen> {
                     flag: "pending",
                     townType: "",
                     imagelist: [],
-                  )));
+                  ))).then((value) => {initialize()});
     } else {
       Navigator.of(context)
           .push(MaterialPageRoute(

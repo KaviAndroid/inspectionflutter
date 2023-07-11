@@ -417,7 +417,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
               margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Align(
                 alignment: AlignmentDirectional.topStart,
-                child: ExpandableText(value, trimLines: 2),
+                child: ExpandableText(value, trimLines: 2,txtcolor: "2",),
               ),
             ),
           ),

@@ -206,9 +206,9 @@ class SaveDatacontroller with ChangeNotifier {
         maxHeight: 400,
         maxWidth: 400);
     if (pickedFile == null) {
-      Navigator.pop(context);
+      // Navigator.pop(context);
 
-      Utils().showAlert(context, "User Canceled operation");
+      Utils().showToast(context, "User Canceled operation");
     } else {
       List<int> imageBytes = await pickedFile.readAsBytes();
       workmage = base64Encode(imageBytes);
@@ -823,8 +823,9 @@ class SaveDatacontroller with ChangeNotifier {
       }
     }
     if (count > 0 && imageCount > 0) {
+      String msg=widgetflag=="edit"?s.update_data: s.save_success;
       utils
-          .customAlertWidet(context, "Success", s.save_success)
+          .customAlertWidet(context, "Success", msg)
           .then((value) => {Navigator.pop(context)});
     }
   }

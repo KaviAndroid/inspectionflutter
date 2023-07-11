@@ -279,8 +279,15 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        getProfileList();
+                      onTap: () async {
+                        Navigator.pop(context);
+                        var isExists = await dbClient
+                            .rawQuery("SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
+
+                        // print(isExists);
+
+                        isExists[0]['cnt'] > 0 ? utils.customAlertWidet(context, "Error", s.edit_message) :getProfileList();
+
 /*                        Navigator.push(
                             context,
                             MaterialPageRoute(

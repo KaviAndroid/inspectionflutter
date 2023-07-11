@@ -243,7 +243,7 @@ class _WorkListState extends State<WorkList> {
               margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Align(
                 alignment: AlignmentDirectional.topStart,
-                child: ExpandableText(value, trimLines: 2),
+                child: ExpandableText(value, trimLines: 2,txtcolor: "2",),
               ),
             ),
           ),
@@ -283,7 +283,7 @@ class _WorkListState extends State<WorkList> {
     return Visibility(
       visible: isVisible,
       child: Container(
-        margin: EdgeInsets.only(top: 10),
+        margin: EdgeInsets.only(top: 0),
         child: cardElememtWidget(context, title, value, index),
       ),
     );
@@ -319,6 +319,7 @@ class _WorkListState extends State<WorkList> {
             ),
           ),
           body: Container(
+            width: MediaQuery.of(context).size.width,
             color: c.bg_screen,
             child: Column(
               mainAxisSize: MainAxisSize.max,

@@ -28,7 +28,7 @@ class ExpandableTextState extends State<ExpandableText> {
   Widget build(BuildContext context) {
     final DefaultTextStyle defaultTextStyle = DefaultTextStyle.of(context);
     final colorClickableText = Colors.blue;
-    final widgetColor = c.grey_8;
+    final widgetColor = widget.txtcolor=="1"?c.white:c.grey_8;
     TextSpan link = TextSpan(
         text: _readMore ? "... read more" : " read less",
         style: TextStyle(

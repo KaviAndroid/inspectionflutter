@@ -64,6 +64,7 @@ class _HomeState extends State<Home> {
   bool atrFlag = false;
   bool syncFlag = false;
   String isLogin = '';
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -319,52 +320,59 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     Future<bool> showExitPopup() async {
-      return await showDialog(
-            //show confirm dialogue
-            //the return value will be from "Yes" or "No" options
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Exit App'),
-              content: Text('Do you want to exit an App?'),
-              actions: [
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  //return false when click on "NO"
-                  child: Text('No'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => Splash()),
-                        (route) => false);
-                    if (Platform.isIOS) {
-                      try {
-                        exit(0);
-                      } catch (e) {
-                        SystemNavigator
-                            .pop(); // for IOS, not true this, you can make comment this :)
-                      }
-                    } else {
-                      try {
-                        SystemNavigator.pop(); // sometimes it cant exit app
-                      } catch (e) {
-                        exit(0); // so i am giving crash to app ... sad :(
-                      }
+      if (_scaffoldKey.currentState!.isDrawerOpen) {
+        Navigator.of(context).pop();
+        return false;
+      }else{
+        return await showDialog(
+          //show confirm dialogue
+          //the return value will be from "Yes" or "No" options
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Exit App'),
+            content: Text('Do you want to exit an App?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                //return false when click on "NO"
+                child: Text('No'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => Splash()),
+                          (route) => false);
+                  if (Platform.isIOS) {
+                    try {
+                      exit(0);
+                    } catch (e) {
+                      SystemNavigator
+                          .pop(); // for IOS, not true this, you can make comment this :)
                     }
-                  },
-                  //return true when click on "Yes"
-                  child: Text('Yes'),
-                ),
-              ],
-            ),
-          ) ??
-          false; //if showDialouge had returned null, then return false
+                  } else {
+                    try {
+                      SystemNavigator.pop(); // sometimes it cant exit app
+                    } catch (e) {
+                      exit(0); // so i am giving crash to app ... sad :(
+                    }
+                  }
+                },
+                //return true when click on "Yes"
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+            false;
+      }
+ //if showDialouge had returned null, then return false
     }
 
     return WillPopScope(
       onWillPop: showExitPopup, //call function on back button press
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: c.colorPrimary,
           centerTitle: true,
@@ -531,6 +539,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: Card(
                         elevation: 2,
                         shape: RoundedRectangleBorder(

@@ -74,7 +74,11 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
     return Container(
         margin: widget.message == s.select_scheme
             ? EdgeInsets.all(20)
-            : EdgeInsets.only(left: 30, right: 30, bottom: 100, top: 100),
+            : EdgeInsets.only(
+                left: 30,
+                right: 30,
+                top: MediaQuery.of(context).size.height / 4,
+                bottom: MediaQuery.of(context).size.height / 4),
         child: Material(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),

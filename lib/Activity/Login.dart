@@ -58,7 +58,7 @@ class LoginState extends State<Login> {
     if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       var sdkInt = androidInfo.version.sdkInt;
-      sdkInt >= 28 ? versionErrorFlag=true:versionErrorFlag=false;
+      sdkInt < 28 ? versionErrorFlag=true:versionErrorFlag=false;
     }
     setState(() {});
   }
@@ -405,7 +405,7 @@ class LoginState extends State<Login> {
                           )
                         ]),
                         Visibility(
-                          visible:!versionErrorFlag,
+                          visible:versionErrorFlag,
                             child: Container(  child: Text(
                           s.version_error_msg,
                           style: TextStyle(
@@ -541,7 +541,7 @@ class LoginState extends State<Login> {
   }
 
   Future<dynamic> callLogin(BuildContext context) async {
-    if(versionErrorFlag){
+    if(!versionErrorFlag){
       if (await utils.isAutoDatetimeisEnable()) {
         try {
           await login(context);

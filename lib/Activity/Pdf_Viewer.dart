@@ -70,7 +70,13 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
           flag = true;
         }
       }else{
-        flag = true;
+        print("sdk version $sdkInt");
+        status = await Permission.storage.request();
+        if (status != PermissionStatus.granted) {
+          await Utils().showAppSettings(context, s.storage_permission);
+        } else {
+          flag = true;
+        }
       }
 
 
@@ -180,8 +186,8 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   void _openFilePath(String path) async {
-    // final result = await OpenFile.open(path);
-    if (Platform.isAndroid) {
+    final result = await OpenFile.open(path);
+    /*if (Platform.isAndroid) {
       var status = await Permission.manageExternalStorage.status;
       print("asdsdasd $status");
 
@@ -196,7 +202,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
     } else if (Platform.isIOS) {
       final result = await OpenFile.open(path);
-    }
+    }*/
   }
 
   Future<void> showAppSettings(BuildContext context, String msg) async {

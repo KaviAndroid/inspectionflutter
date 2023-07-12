@@ -25,10 +25,10 @@ class ATR_Offline_worklist extends StatefulWidget {
   final Flag;
   ATR_Offline_worklist({this.Flag});
   @override
-  State<ATR_Offline_worklist> createState() => _ATR_Offline_worklistState();
+  State<ATR_Offline_worklist> createState() => ATR_Offline_worklistState();
 }
 
-class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
+class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     with TickerProviderStateMixin {
   Utils utils = Utils();
   late SharedPreferences prefs;
@@ -293,11 +293,7 @@ class _ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             sql += valueSets.join(', ');
 
             await dbHelper.myDb?.execute(sql);
-
-            List<Map> list =
-                await dbClient.rawQuery('SELECT * FROM ${s.table_AtrWorkList}');
-
-            if (list.isNotEmpty) {
+            if (inspection_details.isNotEmpty) {
               utils.customAlertWidet(
                   context, "Success", s.worklist_download_success);
             }

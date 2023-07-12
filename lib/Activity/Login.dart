@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 // import 'package:dio/dio.dart';
 // import 'package:dio/io.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class LoginState extends State<Login> {
   var dbHelper = DbHelper();
   var dbClient;
   bool _passwordVisible = false;
+  bool versionErrorFlag = false;
   @override
   void initState() {
     super.initState();
@@ -53,6 +55,11 @@ class LoginState extends State<Login> {
     prefs = await SharedPreferences.getInstance();
     dbClient = await dbHelper.db;
     version = s.version + " " + await utils.getVersion();
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var sdkInt = androidInfo.version.sdkInt;
+      sdkInt >= 28 ? versionErrorFlag=true:versionErrorFlag=false;
+    }
     setState(() {});
   }
 
@@ -341,6 +348,8 @@ class LoginState extends State<Login> {
                                             Runes('\u0024'));
                                         user_name.text = "9595959595";
                                         user_password.text = "crd44#" + ss;
+                                       /* user_name.text = "9750895078";
+                                        user_password.text = "Test1234#" + ss;*/
                                         if (user_name.text.isNotEmpty) {
                                           if (user_password.text.isNotEmpty) {
                                             // utils.showToast(context, string.success);
@@ -395,6 +404,16 @@ class LoginState extends State<Login> {
                             ),
                           )
                         ]),
+                        Visibility(
+                          visible:!versionErrorFlag,
+                            child: Container(  child: Text(
+                          s.version_error_msg,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.subscription_type_red_color,
+                              fontSize: 13),
+                          textAlign: TextAlign.left,
+                        ))),
                         Container(
                           width: MediaQuery.of(context).size.width,
                           margin: EdgeInsets.only(top: 20, bottom: 20),
@@ -522,21 +541,26 @@ class LoginState extends State<Login> {
   }
 
   Future<dynamic> callLogin(BuildContext context) async {
-    if (await utils.isAutoDatetimeisEnable()) {
-      try {
-        await login(context);
-      } on Exception catch (_) {
-        print('never reached');
-        utils.hideProgress(context);
+    if(versionErrorFlag){
+      if (await utils.isAutoDatetimeisEnable()) {
+        try {
+          await login(context);
+        } on Exception catch (_) {
+          print('never reached');
+          utils.hideProgress(context);
+        }
+      } else {
+        utils
+            .customAlertWidet(
+            context, "Error", "Please Enable Network Provided Time")
+            .then((value) => {
+          if (Platform.isAndroid) {utils.openDateTimeSettings()}
+        });
       }
-    } else {
-      utils
-          .customAlertWidet(
-              context, "Error", "Please Enable Network Provided Time")
-          .then((value) => {
-                if (Platform.isAndroid) {utils.openDateTimeSettings()}
-              });
+    }else {
+      utils.customAlertWidet(context,"Warning", "Please update your android version to login!");
     }
+
   }
 
   Future<dynamic> login(BuildContext context) async {

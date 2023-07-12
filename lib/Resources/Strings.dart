@@ -164,7 +164,7 @@ String please_enter_email = "Please Enter Email";
 String please_upload_image = "Please Upload Profile Image";
 String remark = "Remark";
 String enter_description = "Enter Description";
-String type_text = "Type your description manually";
+String type_text = "If no internet,then type your description manually";
 String work_details = "Work Details";
 String clear_text = "Clear Text";
 String maximum_length_1000 = "(Maximum Length 2000)";
@@ -257,6 +257,7 @@ String logout_alert =
     " then click logout icon in home page to successfully logout the previous session";
 String view_progress = "View Work Progress";
 String select_all = "Select all";
+String version_error_msg = "This application supports only android 9 and above versions";
 
 //Validation
 String please_select_financial_year = "Please Select Financial Year";

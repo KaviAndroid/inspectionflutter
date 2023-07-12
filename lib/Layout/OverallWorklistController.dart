@@ -338,6 +338,7 @@ class OverallWorklistController extends ChangeNotifier {
             utils.customAlertWidet(context, "Error", s.no_data);
           }
         } else {
+          pieChartUI=false;
           print("OverallWroklist responceSignature - Token Not Verified");
           utils.customAlertWidet(context, "Error", s.jsonError);
         }

@@ -280,7 +280,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
                     child: InkWell(
                       onTap: () async {
-                        //Navigator.pop(context);
+                        Navigator.pop(context);
                         var isExists = await dbClient.rawQuery(
                             "SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
 
@@ -831,7 +831,7 @@ class _DrawerAppState extends State<DrawerApp> {
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
           if (res_jsonArray.isNotEmpty) {
-            Navigator.pop(context);
+            // Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(

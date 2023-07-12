@@ -60,8 +60,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     if (Platform.isAndroid) {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       var sdkInt = androidInfo.version.sdkInt;
-
-      if (sdkInt >= 33) {
+      if (sdkInt >= 30) {
         print("sdk version $sdkInt");
         status = await Permission.manageExternalStorage.request();
         if (status != PermissionStatus.granted) {
@@ -69,7 +68,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
         } else {
           flag = true;
         }
-      }else{
+      } else {
         print("sdk version $sdkInt");
         status = await Permission.storage.request();
         if (status != PermissionStatus.granted) {
@@ -78,8 +77,6 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
           flag = true;
         }
       }
-
-
     } else if (Platform.isIOS) {
       flag = true;
     } else {

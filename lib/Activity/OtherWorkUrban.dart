@@ -160,16 +160,17 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
     return true;
   }
 
-  _urban_Card_Design(String title, String town_type, int index, bool townActive,
-      bool munActive, bool corpActive) {
+  _urban_Card_Design(String title, String twn_type, int index, bool town_active,
+      bool mun_active, bool corp_active) {
     return GestureDetector(
       onTap: () async {
-        town_type = town_type;
-        townActive = townActive;
-        munActive = munActive;
-        corpActive = corpActive;
-        await loadTMC();
         setState(() {
+          town_type = twn_type;
+          townActive = town_active;
+          munActive = mun_active;
+          corpActive = corp_active;
+          selectedIndex = index;
+
           schemeFlag = false;
           selectedScheme = "";
           for (int i = 0; i < schemeList.length; i++) {
@@ -186,6 +187,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
           }
           submitFlag = false;
         });
+        await loadTMC();
       },
       child: Container(
           height: 30,

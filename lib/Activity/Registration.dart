@@ -37,6 +37,8 @@ class _RegistrationState extends State<Registration> {
   SharedPreferences? prefs;
   Utils utils = Utils();
   var dbHelper = DbHelper();
+  var dbClient;
+
   late PermissionStatus storagePermission;
   ScrollController scrollController = ScrollController();
 
@@ -134,6 +136,7 @@ class _RegistrationState extends State<Registration> {
   }
 
   Future<void> initialize() async {
+    dbClient = await dbHelper.db;
     prefs = await SharedPreferences.getInstance();
     widget.registerFlag == 2 ? await getProfileList() : setState(() {});
   }
@@ -1705,6 +1708,7 @@ class _RegistrationState extends State<Registration> {
         if (status == s.key_ok && response_value == s.key_ok) {
           print(status);
           print(response_value);
+          dbHelper.deleteAll();
           utils
               .customAlertWidet(context, "Success", s.edit_profile_success)
               .then((value) => Navigator.of(context).pushAndRemoveUntil(

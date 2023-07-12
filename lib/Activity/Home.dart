@@ -323,50 +323,50 @@ class _HomeState extends State<Home> {
       if (_scaffoldKey.currentState!.isDrawerOpen) {
         Navigator.of(context).pop();
         return false;
-      }else{
+      } else {
         return await showDialog(
-          //show confirm dialogue
-          //the return value will be from "Yes" or "No" options
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Exit App'),
-            content: Text('Do you want to exit an App?'),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                //return false when click on "NO"
-                child: Text('No'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => Splash()),
+              //show confirm dialogue
+              //the return value will be from "Yes" or "No" options
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Exit App'),
+                content: Text('Do you want to exit an App?'),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    //return false when click on "NO"
+                    child: Text('No'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => Splash()),
                           (route) => false);
-                  if (Platform.isIOS) {
-                    try {
-                      exit(0);
-                    } catch (e) {
-                      SystemNavigator
-                          .pop(); // for IOS, not true this, you can make comment this :)
-                    }
-                  } else {
-                    try {
-                      SystemNavigator.pop(); // sometimes it cant exit app
-                    } catch (e) {
-                      exit(0); // so i am giving crash to app ... sad :(
-                    }
-                  }
-                },
-                //return true when click on "Yes"
-                child: Text('Yes'),
+                      if (Platform.isIOS) {
+                        try {
+                          exit(0);
+                        } catch (e) {
+                          SystemNavigator
+                              .pop(); // for IOS, not true this, you can make comment this :)
+                        }
+                      } else {
+                        try {
+                          SystemNavigator.pop(); // sometimes it cant exit app
+                        } catch (e) {
+                          exit(0); // so i am giving crash to app ... sad :(
+                        }
+                      }
+                    },
+                    //return true when click on "Yes"
+                    child: Text('Yes'),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ) ??
+            ) ??
             false;
       }
- //if showDialouge had returned null, then return false
+      //if showDialouge had returned null, then return false
     }
 
     return WillPopScope(
@@ -508,16 +508,14 @@ class _HomeState extends State<Home> {
                                                                 context)
                                                             .size
                                                             .width,
-                                                        child: Expanded(
-                                                          child: Image.memory(
-                                                            base64.decode(
-                                                                profile_image
-                                                                    .replaceAll(
-                                                                        RegExp(
-                                                                            r'\s+'),
-                                                                        '')),
-                                                            fit: BoxFit.contain,
-                                                          ),
+                                                        child: Image.memory(
+                                                          base64.decode(
+                                                              profile_image
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r'\s+'),
+                                                                      '')),
+                                                          fit: BoxFit.contain,
                                                         ),
                                                       ),
                                                     ),

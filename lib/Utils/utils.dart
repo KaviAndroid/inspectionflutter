@@ -243,7 +243,6 @@ class Utils {
       bool isNavigateSplash, bool isNavigareWorkList, dynamic sendData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -269,7 +268,7 @@ class Utils {
                   Container(
                     height: 100,
                     decoration: BoxDecoration(
-                        color: type == "Warning"
+                        color: type == "Warning" || type == "Logout"
                             ? c.grey
                             : type == "Success"
                                 ? c.alert_bg
@@ -283,7 +282,9 @@ class Utils {
                             ? imagePath.warning_icon_gif
                             : type == "Success"
                                 ? imagePath.success
-                                : imagePath.error,
+                                : type == "Logout"
+                                    ? imagePath.logout_img
+                                    : imagePath.error,
                         height: 60,
                         width: 60,
                         // fit: BoxFit.cover,
@@ -305,7 +306,9 @@ class Utils {
                                   ? "Warning"
                                   : type == "Success"
                                       ? "Success"
-                                      : "Oops...",
+                                      : type == "Logout"
+                                          ? "Logout ?"
+                                          : "Oops...",
                               style: GoogleFonts.getFont('Prompt',
                                   decoration: TextDecoration.none,
                                   fontWeight: FontWeight.w600,
@@ -386,7 +389,9 @@ class Utils {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: type == "Warning" ? true : false,
+                                  visible: type == "Warning" || type == "Logout"
+                                      ? true
+                                      : false,
                                   child: ElevatedButton(
                                     style: ButtonStyle(
                                         backgroundColor:
@@ -426,7 +431,9 @@ class Utils {
                                           ? "Update"
                                           : msg == s.internet_error
                                               ? "Settings"
-                                              : "Ok",
+                                              : type == "Logout"
+                                                  ? "Yes"
+                                                  : "Ok",
                                       style: GoogleFonts.getFont('Roboto',
                                           decoration: TextDecoration.none,
                                           fontWeight: FontWeight.w800,
@@ -436,12 +443,17 @@ class Utils {
                                   ),
                                 ),
                                 Visibility(
-                                    visible: type == "Warning" ? true : false,
+                                    visible:
+                                        type == "Warning" || type == "Logout"
+                                            ? true
+                                            : false,
                                     child: const SizedBox(
                                       width: 30,
                                     )),
                                 Visibility(
-                                  visible: type == "Warning" ? true : false,
+                                  visible: type == "Warning" || type == "Logout"
+                                      ? true
+                                      : false,
                                   child: ElevatedButton(
                                     style: ButtonStyle(
                                         backgroundColor:
@@ -463,7 +475,9 @@ class Utils {
                                     child: Text(
                                       msg == s.internet_error
                                           ? "Continue With Off-Line"
-                                          : "Cancel",
+                                          : type == "Logout"
+                                              ? "No"
+                                              : "Cancel",
                                       style: GoogleFonts.getFont('Roboto',
                                           decoration: TextDecoration.none,
                                           fontWeight: FontWeight.w800,

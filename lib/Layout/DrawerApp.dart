@@ -594,7 +594,7 @@ class _DrawerAppState extends State<DrawerApp> {
       utils.customAlertWidet(context, "Error", s.logout_message);
     } else {
       if (await utils.isOnline()) {
-        utils.customAlertWidet(context, "Warning", s.logout);
+        utils.customAlertWidet(context, "Logout", s.logout);
       } else {
         utils.customAlertWidet(context, "Warning", s.logout_msg);
       }

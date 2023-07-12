@@ -60,6 +60,8 @@ String delay_works = "assets/images/ins_man.png";
 String home = "assets/images/home.png";
 String warning_ic = "assets/images/warning_ic.png";
 String warning_img = "assets/images/warning.png";
+String logout_img = "assets/images/logout_img.png";
+
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";
 //svg icons
@@ -70,4 +72,4 @@ String mic_loading = "assets/svg_icons/mic_loading.gif";
 String success = "assets/svg_icons/success.gif";
 String error = "assets/svg_icons/error.gif";
 String warning_gif = "assets/svg_icons/warning_gif.gif";
-String warning_icon_gif= "assets/svg_icons/warning_icon_gif.gif";
+String warning_icon_gif = "assets/svg_icons/warning_icon_gif.gif";

@@ -216,18 +216,18 @@ class _HomeState extends State<Home> {
                 ),
               )
             : Expanded(
+                flex: 2,
                 child: Row(children: [
                   Container(
                     height: 12,
                     width: 12,
                     color: boxColor,
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.fromLTRB(0, 10, 4, 0),
+                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Text(""),
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+                    padding: EdgeInsets.fromLTRB(2, 10, 10, 0),
                     child: Text(
                       title1,
                       style: TextStyle(
@@ -237,7 +237,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ]),
-                flex: 2,
               ),
         Expanded(
           flex: 1,
@@ -270,50 +269,43 @@ class _HomeState extends State<Home> {
   }
 
   _rural_urban_selection_Widget(String title, String img_path, int index) {
-    return Expanded(
-      flex: 1,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            flag = index;
-            prefs.setString(s.key_rural_urban, title.substring(0, 1));
-          });
-        },
-        child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Align(
-            alignment: Alignment
-                .centerLeft, // Align however you like (i.e .centerRight, centerLeft)
-            child: Container(
-              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-              alignment: AlignmentDirectional.center,
-              child: Image.asset(
-                img_path,
-                height: 35,
-              ),
-            ),
+    return InkWell(
+      onTap: () {
+        setState(() {
+          flag = index;
+          prefs.setString(s.key_rural_urban, title.substring(0, 1));
+        });
+      },
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+          child: Image.asset(
+            img_path,
+            height: 35,
           ),
-          Container(
-            alignment: AlignmentDirectional.centerStart,
-            decoration: new BoxDecoration(
-                color: flag == index ? c.primary_text_color2 : c.white,
-                border: Border.all(color: c.primary_text_color2, width: 2),
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(10),
-                  topRight: const Radius.circular(10),
-                  bottomLeft: const Radius.circular(10),
-                  bottomRight: const Radius.circular(10),
-                )),
-            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-            child: Text(
-              title,
-              style: TextStyle(
-                  color: flag == index ? c.white : c.primary_text_color2,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13),
-            ),
-          ),
-        ]),
-      ),
+        ),
+        SizedBox(width: 5),
+        Container(
+          height: 30,
+          width: MediaQuery.of(context).size.width / 4,
+          decoration: BoxDecoration(
+              color: flag == index ? c.primary_text_color2 : c.white,
+              border: Border.all(color: c.primary_text_color2, width: 2),
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(10),
+                topRight: const Radius.circular(10),
+                bottomLeft: const Radius.circular(10),
+                bottomRight: const Radius.circular(10),
+              )),
+          child: Center(
+              child: Text(
+            title,
+            style: TextStyle(
+                color: flag == index ? c.white : c.primary_text_color2,
+                fontWeight: FontWeight.bold,
+                fontSize: 13),
+          )),
+        ),
+      ]),
     );
   }
 
@@ -550,7 +542,7 @@ class _HomeState extends State<Home> {
                         clipBehavior: Clip.hardEdge,
                         margin: EdgeInsets.all(10),
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                          margin: EdgeInsets.all(10),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -605,12 +597,11 @@ class _HomeState extends State<Home> {
                                     need_improvement_count_other,
                                     4,
                                     c.need_improvement),
+                                SizedBox(height: 10),
                                 Container(
-                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       _rural_urban_selection_Widget(
                                           s.rural_area, imagePath.rural, 1),

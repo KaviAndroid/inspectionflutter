@@ -188,7 +188,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
         ),
         body: Container(
           alignment: AlignmentDirectional.center,
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          padding: EdgeInsets.fromLTRB(20, 20, 20,20),
           color: c.white,
           height: MediaQuery.of(context).size.height,
           child: Column(

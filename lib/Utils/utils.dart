@@ -32,6 +32,8 @@ import '../DataBase/DbHelper.dart';
 import '../ModelClass/checkBoxModelClass.dart';
 
 class Utils {
+  var dbHelper = DbHelper();
+  var dbClient;
   DateTime? selectedFromDate;
   DateTime? selectedToDate;
   List<DateTime> selectedfromDateRange = [];
@@ -240,7 +242,7 @@ class Utils {
   Future<void> customAlertUIWidet(BuildContext context, String type, String msg,
       bool isNavigateSplash, bool isNavigareWorkList, dynamic sendData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dbHelper = DbHelper();
+
 
     return showDialog<void>(
       context: context,
@@ -278,12 +280,12 @@ class Utils {
                     child: Center(
                       child: Image.asset(
                         type == "Warning"
-                            ? imagePath.warning_gif
+                            ? imagePath.warning_icon_gif
                             : type == "Success"
                                 ? imagePath.success
                                 : imagePath.error,
-                        height: 70,
-                        width: 70,
+                        height: 60,
+                        width: 60,
                         // fit: BoxFit.cover,
                       ),
                     ),
@@ -396,9 +398,10 @@ class Utils {
                                           borderRadius:
                                               BorderRadius.circular(15),
                                         ))),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (msg == s.logout_msg ||
                                           msg == s.logout) {
+                                        dbClient = await dbHelper.db;
                                         dbHelper.deleteAll();
                                         prefs.clear();
                                         Navigator.pushAndRemoveUntil(

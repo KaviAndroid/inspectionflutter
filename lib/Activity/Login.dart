@@ -1151,7 +1151,7 @@ class LoginState extends State<Login> {
                             topRight: Radius.circular(15))),
                     child: Center(
                       child: Image.asset(
-                        imagePath.warning,
+                        imagePath.warning_icon_gif,
                         height: 60,
                         width: 60,
                         fit: BoxFit.cover,

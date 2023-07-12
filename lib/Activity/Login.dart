@@ -339,8 +339,8 @@ class LoginState extends State<Login> {
 
                                         String ss = String.fromCharCodes(
                                             Runes('\u0024'));
-                                        user_name.text = "9750895078";
-                                        user_password.text = "Test1234#" + ss;
+                                        user_name.text = "9595959595";
+                                        user_password.text = "crd44#" + ss;
                                         if (user_name.text.isNotEmpty) {
                                           if (user_password.text.isNotEmpty) {
                                             // utils.showToast(context, string.success);
@@ -1145,7 +1145,7 @@ class LoginState extends State<Login> {
                   Container(
                     height: 100,
                     decoration: BoxDecoration(
-                        color: c.yellow_new,
+                        color: c.grey,
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15))),

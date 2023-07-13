@@ -1078,16 +1078,10 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             if (prefs.getString(s.key_rural_urban) == "U") {
               if (satisfiedWorkList.isNotEmpty) {
                 isSatisfiedActive = true;
-                workList = satisfiedWorkList;
-                print("satisfied>>>" + workList.toString());
               } else if (unSatisfiedWorkList.isNotEmpty) {
                 isUnSatisfiedActive = true;
-                workList = unSatisfiedWorkList;
-                print("unSatisfied>>>" + workList.toString());
               } else if (needImprovementWorkList.isNotEmpty) {
                 isNeedImprovementActive = true;
-                workList = needImprovementWorkList;
-                print("needImprovement>>>" + workList.toString());
               }
             }
             isSpinnerLoading = false;

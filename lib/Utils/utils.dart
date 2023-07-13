@@ -943,7 +943,14 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return Container(
-            margin: EdgeInsets.all(10),
+            margin: MediaQuery.of(context).size.height < 700
+                ? EdgeInsets.all(10)
+                : EdgeInsets.only(
+                    left: 15,
+                    right: 15,
+                    top: MediaQuery.of(context).size.height / 5,
+                    bottom: MediaQuery.of(context).size.height / 5),
+            // margin: EdgeInsets.all(10),
             child: Material(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),

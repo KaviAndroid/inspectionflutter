@@ -283,10 +283,13 @@ class Utils {
                             : type == "Success"
                                 ? imagePath.success
                                 : type == "Logout"
-                                    ? imagePath.logout_img
+                                    ? imagePath.logout_icon
                                     : imagePath.error,
-                        height: 60,
-                        width: 60,
+                        color:type == "Logout"
+                            ? c.white
+                            : null,
+                        height: 50,
+                        width: 50,
                         // fit: BoxFit.cover,
                       ),
                     ),

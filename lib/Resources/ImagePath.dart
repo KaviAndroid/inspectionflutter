@@ -61,6 +61,7 @@ String home = "assets/images/home.png";
 String warning_ic = "assets/images/warning_ic.png";
 String warning_img = "assets/images/warning.png";
 String logout_img = "assets/images/logout_img.png";
+String logout_icon = "assets/images/power.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

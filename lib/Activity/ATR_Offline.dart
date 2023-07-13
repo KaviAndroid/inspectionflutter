@@ -155,12 +155,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                           const SizedBox(
                             width: 10,
                           ),
-                          Expanded(
-                              child: Text(s.download_text,
-                                  style: GoogleFonts.getFont('Roboto',
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w900,
-                                      color: c.primary_text_color2)))
+                          Text(s.download_text,
+                              style: GoogleFonts.getFont('Roboto',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w900,
+                                  color: c.primary_text_color2))
                         ],
                       ),
                     ),
@@ -915,10 +914,12 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: ExpandableText(
-                                                      defaultWorklist[index]
-                                                              [s.key_work_name]
-                                                          .toString(),
-                                                      trimLines: 2,txtcolor: "2",),
+                                                    defaultWorklist[index]
+                                                            [s.key_work_name]
+                                                        .toString(),
+                                                    trimLines: 2,
+                                                    txtcolor: "2",
+                                                  ),
                                                 ),
                                               ),
                                             ),

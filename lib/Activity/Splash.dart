@@ -219,7 +219,9 @@ class _SplashState extends State<Splash> {
       // var decodedData= await json.decode(json.encode(response.body));
       String version = decodedData['version'];
       String app_version = await utils.getVersion();
-      if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
+      int v1Number = getExtendedVersionNumber(version);
+      int v2Number = getExtendedVersionNumber(app_version);
+      if (decodedData[s.key_app_code] == "WI" && (v1Number > v2Number)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);
         /* Navigator.push(
             context,
@@ -242,5 +244,10 @@ class _SplashState extends State<Splash> {
       // then throw an exception.
       throw Exception('Failed');
     }
+  }
+  int getExtendedVersionNumber(String version) {
+    List versionCells = version.split('.');
+    versionCells = versionCells.map((i) => int.parse(i)).toList();
+    return versionCells[0] * 100000 + versionCells[1] * 1000 + versionCells[2];
   }
 }

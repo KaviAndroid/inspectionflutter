@@ -122,7 +122,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          padding: EdgeInsets.all(15),
           color: c.colorAccentverylight,
           child: SingleChildScrollView(
             child: Column(
@@ -131,37 +131,34 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 // Download Text Icon
                 FadeTransition(
                   opacity: controller,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 15.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        utils.ShowCalenderDialog(context).then((value) => {
-                              if (value['flag'])
-                                {
-                                  selectedFromDate = value['fromDate'],
-                                  selectedToDate = value['toDate'],
-                                  dateValidation()
-                                }
-                            });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            imagePath.download,
-                            width: 20,
-                            height: 20,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(s.download_text,
-                              style: GoogleFonts.getFont('Roboto',
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w900,
-                                  color: c.primary_text_color2))
-                        ],
-                      ),
+                  child: GestureDetector(
+                    onTap: () {
+                      utils.ShowCalenderDialog(context).then((value) => {
+                        if (value['flag'])
+                          {
+                            selectedFromDate = value['fromDate'],
+                            selectedToDate = value['toDate'],
+                            dateValidation()
+                          }
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          imagePath.download,
+                          width: 20,
+                          height: 20,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(child: Text(s.download_text,
+                            style: GoogleFonts.getFont('Roboto',
+                                fontSize: 17,
+                                fontWeight: FontWeight.w900,
+                                color: c.primary_text_color2)))
+                      ],
                     ),
                   ),
                 ),
@@ -169,8 +166,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 widget.Flag == "U"
                     ? __Urban_design()
                     : const SizedBox(
-                        height: 10,
-                      ),
+                  height: 10,
+                ),
                 __ATR_Dashboard_Design(),
                 __ATR_WorkList_Loader(),
               ],

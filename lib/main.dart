@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:inspection_flutter_app/Activity/Home.dart';
 import 'package:inspection_flutter_app/Activity/Splash.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(MyApp());
 }
 
@@ -16,5 +22,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

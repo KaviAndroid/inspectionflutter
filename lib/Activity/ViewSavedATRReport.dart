@@ -153,33 +153,14 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           centerTitle: true,
           elevation: 2,
           automaticallyImplyLeading: true,
-          title: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 4,
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Container(
-                    transform: Matrix4.translationValues(80, 2, 15),
-                    alignment: Alignment.center,
-                    child: Visibility(
-                        visible: appBarvisibility,
-                        child: Text(
-                          s.work_list,
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        )),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          title: Visibility(
+              visible: appBarvisibility,
+              child: Text(
+                s.work_list,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              )),
+
           /* actions: <Widget>[
             Padding(padding: EdgeInsets.only(top: 8),)
           ],*/
@@ -781,15 +762,27 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                       left: 10,
                                                       right: 0),
                                                   child: Column(children: [
-                                                    workListItem(s.work_id,workList[index][s.key_work_id].toString()),
+                                                    workListItem(
+                                                        s.work_id,
+                                                        workList[index]
+                                                                [s.key_work_id]
+                                                            .toString()),
                                                     SizedBox(
                                                       height: 10,
                                                     ),
-                                                    workListItem(s.work_name,workList[index][s.key_work_name].toString()),
+                                                    workListItem(
+                                                        s.work_name,
+                                                        workList[index][
+                                                                s.key_work_name]
+                                                            .toString()),
                                                     SizedBox(
                                                       height: 10,
                                                     ),
-                                                    workListItem(s.ATRUploadedDate,workList[index][s.key_action_taken_date].toString()),
+                                                    workListItem(
+                                                        s.ATRUploadedDate,
+                                                        workList[index][s
+                                                                .key_action_taken_date]
+                                                            .toString()),
                                                     SizedBox(
                                                       height: 10,
                                                     ),
@@ -910,29 +903,19 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           ]),
         ));
   }
-  workListItem(String name,String value)
-  {
+
+  workListItem(String name, String value) {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment
-          .spaceBetween,
-      crossAxisAlignment:
-      CrossAxisAlignment
-          .start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 1,
           child: Text(
             name,
             style: TextStyle(
-                fontSize: 15,
-                fontWeight:
-                FontWeight
-                    .normal,
-                color: c.white),
-            overflow:
-            TextOverflow
-                .clip,
+                fontSize: 15, fontWeight: FontWeight.normal, color: c.white),
+            overflow: TextOverflow.clip,
             maxLines: 1,
             softWrap: true,
           ),
@@ -945,14 +928,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           child: Text(
             ':',
             style: TextStyle(
-                fontSize: 15,
-                fontWeight:
-                FontWeight
-                    .normal,
-                color: c.white),
-            overflow:
-            TextOverflow
-                .clip,
+                fontSize: 15, fontWeight: FontWeight.normal, color: c.white),
+            overflow: TextOverflow.clip,
             maxLines: 1,
             softWrap: true,
           ),
@@ -962,14 +939,13 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         ),
         Expanded(
           flex: 2,
-          child: ExpandableText(value, trimLines: 2,txtcolor: "1"),
+          child: ExpandableText(value, trimLines: 2, txtcolor: "1"),
         ),
         SizedBox(
           width: 10,
         ),
       ],
     );
-
   }
 
   Future<void> getWorkDetails(String fromDate, String toDate) async {

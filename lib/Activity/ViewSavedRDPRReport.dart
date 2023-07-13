@@ -1057,6 +1057,9 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               satisfiedWorkList = [];
               unSatisfiedWorkList = [];
               needImprovementWorkList = [];
+              TownWorkList=[];
+              MunicipalityWorkList=[];
+              corporationWorklist=[];
               DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
               RdprWorkList.sort((a, b) {
                 //sorting in ascending order
@@ -1097,16 +1100,13 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               if (prefs.getString(s.key_rural_urban) == "U") {
                 if (satisfiedWorkList.isNotEmpty) {
                   isSatisfiedActive = true;
-                  workList = satisfiedWorkList;
-                  print("satisfied>>>" + workList.toString());
+                  print("satisfied>>>" + satisfiedWorkList.length.toString());
                 } else if (unSatisfiedWorkList.isNotEmpty) {
                   isUnSatisfiedActive = true;
-                  workList = unSatisfiedWorkList;
-                  print("unSatisfied>>>" + workList.toString());
+                  print("unSatisfied>>>" +unSatisfiedWorkList.length.toString());
                 } else if (needImprovementWorkList.isNotEmpty) {
                   isNeedImprovementActive = true;
-                  workList = needImprovementWorkList;
-                  print("needImprovement>>>" + workList.toString());
+                  print("needImprovement>>>"+nimpCount.toString());
                 }
               }
               if (workid.text.isNotEmpty) {

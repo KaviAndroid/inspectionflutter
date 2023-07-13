@@ -420,7 +420,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
     print("saveData_url>>" + url.main_service_jwt.toString());
     print("saveData_request_json>>" + main_dataset.toString());
-    print("saveData_request_encrpt>>" + encrypted_request.toString());
+    print("saveData_request_encrpt>>" + jsonString);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.

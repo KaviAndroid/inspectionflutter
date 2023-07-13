@@ -950,7 +950,6 @@ class Utils {
                     right: 15,
                     top: MediaQuery.of(context).size.height / 5,
                     bottom: MediaQuery.of(context).size.height / 5),
-            // margin: EdgeInsets.all(10),
             child: Material(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),

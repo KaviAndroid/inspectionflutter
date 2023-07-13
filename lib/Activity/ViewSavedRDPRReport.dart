@@ -434,6 +434,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
 
   _DatePicker() {
     return Container(
+      margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
       height: 45,
       child: Container(
         child: Padding(
@@ -505,6 +506,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         ? dateController.text = "$from_Date to $to_Date"
         : dateController.text = "Select Date";
     return Container(
+        margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
         height: 45,
         child: Container(
           child: Padding(

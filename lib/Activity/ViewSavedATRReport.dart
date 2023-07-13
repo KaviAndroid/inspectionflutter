@@ -430,6 +430,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
 
   _DatePicker() {
     return Container(
+      margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
       height: 45,
       child: Container(
         child: Padding(
@@ -501,6 +502,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
         ? dateController.text = "$from_Date to $to_Date"
         : dateController.text = "Select Date";
     return Container(
+        margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
         height: 45,
         child: Container(
           child: Padding(

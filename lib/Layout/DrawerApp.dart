@@ -280,7 +280,7 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
                     child: InkWell(
                       onTap: () async {
-                        Navigator.pop(context);
+                        // Navigator.of(context).pop();
                         var isExists = await dbClient.rawQuery(
                             "SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
 
@@ -783,68 +783,76 @@ class _DrawerAppState extends State<DrawerApp> {
       "Authorization": "Bearer $header_token"
     };
 
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
-
-    print("ProfileData_url>>" + url.main_service_jwt.toString());
-    print("ProfileData_request_json>>" + jsonRequest.toString());
-    print("ProfileData_request_encrpt>>" + encrypted_request.toString());
-
-    utils.hideProgress(context);
-    if (response.statusCode == 200) {
-      utils.showProgress(context, 1);
-
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-      String data = response.body;
-
-      print("ProfileData_response>>" + data);
-
-      String? authorizationHeader = response.headers['authorization'];
-
-      String? token = authorizationHeader?.split(' ')[1];
-
-      print("ProfileData Authorization -  $token");
-
-      String responceSignature = utils.jwt_Decode(key, token!);
-
-      String responceData = utils.generateHmacSha256(data, key, false);
-
-      print("ProfileData responceSignature -  $responceSignature");
-
-      print("ProfileData responceData -  $responceData");
+    try{
+      HttpClient _client = HttpClient(context: await Utils().globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
+      print("ProfileData_url>>" + url.main_service_jwt.toString());
+      print("ProfileData_request_json>>" + jsonRequest.toString());
+      print("ProfileData_request_encrpt>>" + encrypted_request.toString());
 
       utils.hideProgress(context);
+      if (response.statusCode == 200) {
+        utils.showProgress(context, 1);
 
-      if (responceSignature == responceData) {
-        print("ProfileData responceSignature - Token Verified");
-        var userData = jsonDecode(data);
-        var status = userData[s.key_status];
-        var response_value = userData[s.key_response];
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        String data = response.body;
 
-        print(status);
-        print(response_value);
-        if (status == s.key_ok && response_value == s.key_ok) {
-          List<dynamic> res_jsonArray = userData[s.key_json_data];
-          if (res_jsonArray.isNotEmpty) {
-            // Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Registration(
-                          registerFlag: 2,
-                          profileJson: res_jsonArray,
-                        )));
+        print("ProfileData_response>>" + data);
+
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("ProfileData Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("ProfileData responceSignature -  $responceSignature");
+
+        print("ProfileData responceData -  $responceData");
+
+        utils.hideProgress(context);
+
+        if (responceSignature == responceData) {
+          print("ProfileData responceSignature - Token Verified");
+          var userData = jsonDecode(data);
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+
+          print(status);
+          print(response_value);
+          if (status == s.key_ok && response_value == s.key_ok) {
+            List<dynamic> res_jsonArray = userData[s.key_json_data];
+            if (res_jsonArray.isNotEmpty) {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Registration(
+                        registerFlag: 2,
+                        profileJson: res_jsonArray,
+                      )));
+            }
           }
+        } else {
+          print("ProfileData responceSignature - Token Not Verified");
+          utils.customAlertWidet(context, "Error", s.jsonError);
         }
-      } else {
-        print("ProfileData responceSignature - Token Not Verified");
-        utils.customAlertWidet(context, "Error", s.jsonError);
       }
+    } on Exception catch (exception) {
+      utils.hideProgress(context); // only executed if error is of type Exception
+    } catch (error) {
+      utils.hideProgress(context); // executed for errors of all types other than Exception
     }
+
+
+
   }
 }

@@ -405,6 +405,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
   _DatePicker() {
     return Container(
+      margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
       height: 45,
       child: Container(
         child: Padding(
@@ -474,6 +475,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     return Visibility(
         visible: false,
         child: Container(
+            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
             height: 45,
             child: Container(
               child: Padding(

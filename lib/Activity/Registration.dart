@@ -1502,6 +1502,7 @@ class _RegistrationState extends State<Registration> {
   /// ************************** Profile API *****************************/
 
   Future<void> getProfileList() async {
+    utils.showProgress(context, 1);
     List<dynamic> res_jsonArray = widget.profileJson;
     if (res_jsonArray.length > 0) {
       for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1531,6 +1532,7 @@ class _RegistrationState extends State<Registration> {
         officeController.text = edit_office_address!;
         mobileController.text = edit_mobile!;
       });
+      utils.hideProgress(context);
     }
   }
 /*

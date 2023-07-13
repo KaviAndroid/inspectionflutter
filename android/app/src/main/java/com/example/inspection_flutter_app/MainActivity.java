@@ -1,4 +1,4 @@
-package com.example.inspection_flutter_app;
+package com.nic.inspection;
 
 import io.flutter.embedding.android.FlutterFragmentActivity;
 

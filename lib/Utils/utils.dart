@@ -38,6 +38,7 @@ class Utils {
   DateTime? selectedToDate;
   List<DateTime> selectedfromDateRange = [];
   List<DateTime> selectedtoDateRange = [];
+  int calendarSelectedIndex = 0;
 
   Future<bool> isAutoDatetimeisEnable() async {
     bool isAutoDateTimeEnabled = false;
@@ -881,10 +882,7 @@ class Utils {
 
   @override
   Widget calendarWidget(
-    BuildContext context,
-    int index,
-    DateTime initialDate,
-  ) {
+      BuildContext context, int index, DateTime initialDate, setState) {
     //Date Time
     return CalendarDatePicker2(
       config: CalendarDatePicker2Config(
@@ -921,6 +919,8 @@ class Utils {
             selectedToDate = null;
             selectedtoDateRange.clear();
           }
+          calendarSelectedIndex = 1;
+          setState(() {});
         } else {
           selectedToDate = value[0];
           selectedtoDateRange.clear();
@@ -933,8 +933,6 @@ class Utils {
   }
 
   Future<Map<String, dynamic>> ShowCalenderDialog(BuildContext context) async {
-    int currentIndex = 0;
-
     Map<String, dynamic> jsonValue = {
       "fromDate": "",
       "toDate": "",
@@ -962,7 +960,7 @@ class Utils {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      currentIndex = 0;
+                                      calendarSelectedIndex = 0;
                                     });
                                   },
                                   child: Container(
@@ -977,7 +975,7 @@ class Utils {
                                       child: Text(
                                         'From Date',
                                         style: TextStyle(
-                                          color: currentIndex == 0
+                                          color: calendarSelectedIndex == 0
                                               ? Colors.black
                                               : Colors.grey,
                                         ),
@@ -990,9 +988,10 @@ class Utils {
                                   decoration: BoxDecoration(
                                       border: Border(
                                           bottom: BorderSide(
-                                              width:
-                                                  currentIndex == 0 ? 2.0 : 1.0,
-                                              color: currentIndex == 0
+                                              width: calendarSelectedIndex == 0
+                                                  ? 2.0
+                                                  : 1.0,
+                                              color: calendarSelectedIndex == 0
                                                   ? c.primary_text_color2
                                                   : Colors.white))),
                                 ),
@@ -1006,7 +1005,7 @@ class Utils {
                                   onTap: () {
                                     if (selectedFromDate != null) {
                                       setState(() {
-                                        currentIndex = 1;
+                                        calendarSelectedIndex = 1;
                                       });
                                     } else {
                                       customAlertWidet(context, "Error",
@@ -1025,7 +1024,7 @@ class Utils {
                                       child: Text(
                                         'To Date',
                                         style: TextStyle(
-                                          color: currentIndex == 1
+                                          color: calendarSelectedIndex == 1
                                               ? Colors.black
                                               : Colors.grey,
                                         ),
@@ -1038,9 +1037,10 @@ class Utils {
                                   decoration: BoxDecoration(
                                       border: Border(
                                           bottom: BorderSide(
-                                              width:
-                                                  currentIndex == 0 ? 2.0 : 1.0,
-                                              color: currentIndex == 1
+                                              width: calendarSelectedIndex == 0
+                                                  ? 2.0
+                                                  : 1.0,
+                                              color: calendarSelectedIndex == 1
                                                   ? c.primary_text_color2
                                                   : Colors.white))),
                                 ),
@@ -1049,17 +1049,17 @@ class Utils {
                           ),
                         ],
                       ),
-                      currentIndex == 0
-                          ? calendarWidget(
-                              context, 0, selectedFromDate ?? DateTime.now())
+                      calendarSelectedIndex == 0
+                          ? calendarWidget(context, 0,
+                              selectedFromDate ?? DateTime.now(), setState)
                           : AnimatedContainer(
                               duration: Duration(milliseconds: 300),
                               child: Center(
                                   child: calendarWidget(
-                                context,
-                                1,
-                                selectedFromDate ?? DateTime.now(),
-                              )),
+                                      context,
+                                      1,
+                                      selectedFromDate ?? DateTime.now(),
+                                      setState)),
                             ),
                       Expanded(
                         child: Container(
@@ -1070,7 +1070,7 @@ class Utils {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  currentIndex = 0;
+                                  calendarSelectedIndex = 0;
                                   selectedFromDate = null;
                                   selectedToDate = null;
                                   selectedfromDateRange.clear();
@@ -1093,7 +1093,7 @@ class Utils {
                                 onPressed: () {
                                   if (selectedToDate != null &&
                                       selectedFromDate != null) {
-                                    currentIndex = 0;
+                                    calendarSelectedIndex = 0;
                                     jsonValue = {
                                       "fromDate": selectedFromDate,
                                       "toDate": selectedToDate,

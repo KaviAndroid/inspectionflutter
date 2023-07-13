@@ -285,9 +285,7 @@ class Utils {
                                 : type == "Logout"
                                     ? imagePath.logout_icon
                                     : imagePath.error,
-                        color:type == "Logout"
-                            ? c.white
-                            : null,
+                        color: type == "Logout" ? c.white : null,
                         height: 50,
                         width: 50,
                         // fit: BoxFit.cover,
@@ -1077,7 +1075,6 @@ class Utils {
                                   selectedToDate = null;
                                   selectedfromDateRange.clear();
                                   selectedtoDateRange.clear();
-                                  Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(

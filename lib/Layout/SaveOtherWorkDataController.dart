@@ -447,7 +447,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           utils
-              .customAlertWidet(context, "Sucess", s.online_data_save_success)
+              .customAlertWidet(context, "Success", s.online_data_save_success)
               .then((value) => _onWillPop(context));
         } else {
           utils.customAlertWidet(context, "Error", s.failed);

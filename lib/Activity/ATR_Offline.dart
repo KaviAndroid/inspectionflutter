@@ -40,7 +40,6 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   List unSatisfiedWorkList = [];
   List defaultWorklist = [];
   List selectedWorklist = [];
-  List urbanOfflineList = [];
   List<Map> list = [];
 
   // Controller Text
@@ -51,7 +50,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   String SDBText = "";
   String npCount = "0";
   String usCount = "0";
-  String town_type = "";
+  String town_type = "T";
   int selectedIndex = 0;
   // Bool Variables
   bool isWorklistAvailable = false;
@@ -102,6 +101,21 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 ? dateController.text = prefs.getString(s.atr_date_r).toString()
                 : s.select_from_to_date
             : null;
+    if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
+    List<Map>  urbanOfflineList = await dbClient.rawQuery(
+        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
+    print("List >>"+urbanOfflineList.toString());
+     if (urbanOfflineList.isNotEmpty) {
+         //value exists
+        if (urbanOfflineList[0][s.key_town_type] == "T") {
+          town_type="T";
+        } else if (urbanOfflineList[0][s.key_town_type] == "M") {
+          town_type="M";
+        } else if (urbanOfflineList[0][s.key_town_type] == "C") {
+          town_type="C";
+        }
+      }
+      }
 
     await fetchOfflineWorklist();
     setState(() {});
@@ -268,10 +282,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
           if (inspection_details.isNotEmpty) {
             if (widget.Flag == "U") {
-              dbHelper.delete_table_AtrWorkList('U');
+              dbHelper.delete_table_AtrWorkList('U',town_type);
             } else if (widget.Flag == "R") {
-              dbHelper.delete_table_AtrWorkList('R');
+              dbHelper.delete_table_AtrWorkList('R',"");
             }
+            print("List >>"+inspection_details.toString());
 
             String sql =
                 'INSERT INTO ${s.table_AtrWorkList} (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES ';
@@ -411,11 +426,23 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
+    print("town_type" +town_type);
     list = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' ");
+        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' and town_type='${town_type}' ");
+    print("List >>"+list.toString());
 
     if (list.isEmpty) {
       isWorklistAvailable = false;
+      unSatisfiedWorkList = [];
+      needImprovementWorkList = [];
+
+      isWorklistAvailable = false;
+
+      totalWorksCount = "0";
+      npCount = "0";
+      usCount = "0";
+
+      dateController.text = s.select_from_to_date;
     } else {
       totalWorksCount = list.length.toString();
 
@@ -446,13 +473,15 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       }
 
       if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
-        urbanOfflineList = list;
         if (list[0][s.key_town_type] == "T") {
           townActive = true;
+          selectedIndex=0;
         } else if (list[0][s.key_town_type] == "M") {
           munActive = true;
+          selectedIndex=1;
         } else if (list[0][s.key_town_type] == "C") {
           corpActive = true;
+          selectedIndex=2;
         }
       }
 
@@ -1195,16 +1224,16 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
   // *************************** ATR Urban starts here *************************** //
 
-  _urban_Card_Design(String title, String town_type, int index, bool townActive,
-      bool munActive, bool corpActive) {
+  _urban_Card_Design(String title, String tmctype, int index, bool tActive,
+      bool mActive, bool cActive) {
     return Expanded(
       flex: 1,
       child: GestureDetector(
         onTap: () {
-          town_type = town_type;
-          townActive = townActive;
-          munActive = munActive;
-          corpActive = corpActive;
+          town_type = tmctype;
+          townActive = tActive;
+          munActive = mActive;
+          corpActive = cActive;
           selectedIndex = index;
           setState(() {});
           refresh();
@@ -1280,8 +1309,9 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
   void refresh() {
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
-      if (urbanOfflineList.isNotEmpty) {
-        if (urbanOfflineList[0][s.key_town_type] == "T") {
+      fetchOfflineWorklist();
+     /* if (urbanOfflineList.isNotEmpty) {
+        if (town_type == "T") {
           if (townActive) {
             fetchOfflineWorklist();
           } else {
@@ -1300,7 +1330,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             emptyDatas();
           }
         }
-      }
+      }*/
     }
   }
 

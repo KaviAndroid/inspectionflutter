@@ -104,13 +104,13 @@ class DbHelper {
     myDb?.execute("DELETE FROM $table_WorkStages");
   }
 
-  void delete_table_AtrWorkList(String type) {
+  void delete_table_AtrWorkList(String type, String town_type) {
     type == "ALL"
         ? myDb?.execute("DELETE FROM $table_AtrWorkList")
         :
         // you can execute drop table and create table
         myDb?.execute(
-            "DELETE FROM $table_AtrWorkList where rural_urban = '$type'");
+            "DELETE FROM $table_AtrWorkList where rural_urban = '$type' and town_type = '$town_type' ");
   }
 
   void delete_table_RdprWorkList(String type) {
@@ -153,7 +153,7 @@ class DbHelper {
     delete_table_Municipality();
     delete_table_Corporation();
     delete_table_WorkStages();
-    delete_table_AtrWorkList("ALL");
+    delete_table_AtrWorkList("ALL","");
     delete_table_RdprWorkList("ALL");
     delete_table_SchemeList("ALL");
     delete_table_save_work_details();

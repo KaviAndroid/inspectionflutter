@@ -50,7 +50,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   String SDBText = "";
   String npCount = "0";
   String usCount = "0";
-  String town_type = "T";
+  String town_type = "";
   int selectedIndex = 0;
   // Bool Variables
   bool isWorklistAvailable = false;
@@ -101,6 +101,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 ? dateController.text = prefs.getString(s.atr_date_r).toString()
                 : s.select_from_to_date
             : null;
+    widget.Flag == "R"?town_type="" : town_type="T";
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
     List<Map>  urbanOfflineList = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");

@@ -1034,6 +1034,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             satisfiedWorkList = [];
             unSatisfiedWorkList = [];
             needImprovementWorkList = [];
+            TownWorkList=[];
+            MunicipalityWorkList=[];
+            corporationWorklist=[];
             DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
             OtherWorkList.sort((a, b) {
               //sorting in ascending order

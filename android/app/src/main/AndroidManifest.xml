@@ -40,7 +40,7 @@
     <application
         android:label="TNRD Work Inspection"
         android:name="${applicationName}"
-        android:icon="@drawable/logo"
+        android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true">
 
         <activity

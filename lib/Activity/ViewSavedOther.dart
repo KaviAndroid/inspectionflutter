@@ -568,6 +568,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                     child: SfCircularChart(
                       legend: Legend(
                         isVisible: true,
+                        toggleSeriesVisibility: false,
                         alignment: ChartAlignment.near,
                         orientation: LegendItemOrientation.horizontal,
                         position: LegendPosition.bottom,
@@ -634,6 +635,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             Visibility(
               visible: isWorklistAvailable,
               child: AnimationLimiter(
+                key: ValueKey(tappedValue),
                   child: ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,

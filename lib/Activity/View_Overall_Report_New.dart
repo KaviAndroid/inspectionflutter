@@ -1615,6 +1615,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                               child: SfCircularChart(
                                 legend: Legend(
                                   isVisible: true,
+                                  toggleSeriesVisibility: false,
                                   alignment: ChartAlignment.near,
                                   orientation: LegendItemOrientation.horizontal,
                                   position: LegendPosition.bottom,

@@ -579,6 +579,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
                     child: SfCircularChart(
                       legend: Legend(
                         isVisible: true,
+                        toggleSeriesVisibility: false,
                         alignment: ChartAlignment.near,
                         orientation: LegendItemOrientation.horizontal,
                         position: LegendPosition.bottom,
@@ -644,6 +645,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               child: Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: AnimationLimiter(
+                      key: ValueKey(tappedValue),
                       child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,

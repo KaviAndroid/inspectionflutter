@@ -575,6 +575,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     child: SfCircularChart(
                       legend: Legend(
                         isVisible: true,
+                        toggleSeriesVisibility: false,
                         alignment: ChartAlignment.near,
                         orientation: LegendItemOrientation.horizontal,
                         position: LegendPosition.bottom,

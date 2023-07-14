@@ -137,12 +137,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(15),
           color: c.colorAccentverylight,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(
+                  height: 15,
+                ),
                 // Download Text Icon
                 FadeTransition(
                   opacity: controller,
@@ -160,6 +162,9 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const SizedBox(
+                          width: 15,
+                        ),
                         Image.asset(
                           imagePath.download,
                           width: 20,
@@ -172,7 +177,10 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                             style: GoogleFonts.getFont('Roboto',
                                 fontSize: 17,
                                 fontWeight: FontWeight.w900,
-                                color: c.primary_text_color2)))
+                                color: c.primary_text_color2))),
+                        const SizedBox(
+                          width: 15,
+                        ),
                       ],
                     ),
                   ),

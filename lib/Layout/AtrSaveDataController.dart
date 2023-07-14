@@ -735,7 +735,11 @@ class AtrSaveDataController with ChangeNotifier {
 
     var imageDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_images} $conditionParam ");
+
     var workListDelete = await dbClient
         .rawQuery("DELETE FROM ${s.table_save_work_details} $conditionParam");
+
+    var table_AtrWorkListDelete = await dbClient
+        .rawQuery("DELETE FROM ${s.table_AtrWorkList} $conditionParam");
   }
 }

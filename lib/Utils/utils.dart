@@ -357,7 +357,7 @@ class Utils {
                                             MaterialPageRoute(
                                                 builder: (context) => Login()));
                                       } else if (isNavigareWorkList) {
-                                        Navigator.pop(context, true);
+                                        // Navigator.pop(context, true);
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
@@ -1059,7 +1059,8 @@ class Utils {
                           ? calendarWidget(context, 0,
                               selectedFromDate ?? DateTime.now(), setState)
                           : AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
+                              duration:
+                                  const Duration(seconds: 1, milliseconds: 500),
                               child: Center(
                                   child: calendarWidget(
                                       context,

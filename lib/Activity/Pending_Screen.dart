@@ -39,7 +39,7 @@ class _PendingScreenState extends State<PendingScreen> {
   bool isWorklistAvailable = false;
   bool flag = false;
   bool flagTab = false;
-  int flagTaped = 1;
+  int flagTaped = 0;
   String level = "";
 
   List<Map> atr_WorkList = [];
@@ -334,10 +334,12 @@ class _PendingScreenState extends State<PendingScreen> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: ExpandableText(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_name]
-                                                        .toString(),
-                                                    trimLines: 2,txtcolor: "2",),
+                                                  defaultWorklist[index]
+                                                          [s.key_work_name]
+                                                      .toString(),
+                                                  trimLines: 2,
+                                                  txtcolor: "2",
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -777,44 +779,69 @@ class _PendingScreenState extends State<PendingScreen> {
       flagTab = false;
     }
 
-    if (flagTaped == 1) {
-      if (rdpr_WorkList.isEmpty) {
-        setState(() {
+    if (flagTaped == 0) {
+      if (rdpr_WorkList.isNotEmpty) {
+        flagTaped = 1;
+        gotoRDPR_Worklist();
+      } else if (level == "B") {
+        if (atr_WorkList.isNotEmpty) {
+          flagTaped = 2;
+          gotoATR_worklist();
+        } else {
           isWorklistAvailable = false;
-        });
-      } else {
-        defaultWorklist = rdpr_WorkList;
-
-        print("<<<<<<<<< WORKLIST >>>>>>>");
-        print(defaultWorklist);
-
-        setState(() {
-          isWorklistAvailable = true;
-          flag = false;
-        });
+        }
       }
+      setState(() {});
+    } else if (flagTaped == 1) {
+      gotoRDPR_Worklist();
     } else {
-      if (atr_WorkList.isEmpty) {
-        setState(() {
-          isWorklistAvailable = false;
-        });
-      } else {
-        defaultWorklist = atr_WorkList;
-
-        print("<<<<<<<<< WORKLIST >>>>>>>");
-        print(defaultWorklist);
-
-        setState(() {
-          isWorklistAvailable = true;
-          flag = false;
-        });
-      }
+      gotoATR_worklist();
     }
 
     setState(() {});
   }
 
   // *************************** Fetch Offline Worklist ends  Here  *************************** //
+
+  // *************************** gotoRDPR_Worklist  *************************** //
+
+  gotoRDPR_Worklist() {
+    if (rdpr_WorkList.isEmpty) {
+      setState(() {
+        isWorklistAvailable = false;
+      });
+    } else {
+      defaultWorklist = rdpr_WorkList;
+
+      print("<<<<<<<<< WORKLIST >>>>>>>");
+      print(defaultWorklist);
+
+      setState(() {
+        isWorklistAvailable = true;
+        flag = false;
+      });
+    }
+  }
+
+  // *************************** GO TO DELETE   *************************** //
+
+  gotoATR_worklist() {
+    if (atr_WorkList.isEmpty) {
+      setState(() {
+        isWorklistAvailable = false;
+      });
+    } else {
+      defaultWorklist = atr_WorkList;
+
+      print("<<<<<<<<< WORKLIST >>>>>>>");
+      print(defaultWorklist);
+
+      setState(() {
+        isWorklistAvailable = true;
+        flag = false;
+      });
+    }
+  }
 
   // *************************** GO TO DELETE   *************************** //
 

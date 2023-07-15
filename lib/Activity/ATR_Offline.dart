@@ -755,6 +755,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   margin: const EdgeInsets.only(
                       top: 0, bottom: 10, left: 20, right: 20),
                   child: AnimationLimiter(
+                    key: ValueKey(widget.Flag == "U"?town_type:isNeedImprovementActive),
                     child: ListView.builder(
                       shrinkWrap: true,
                       primary: false,
@@ -1266,18 +1267,24 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Image.asset(
+                  Container(
+                    margin: EdgeInsets.only(left: 10,right: 5),
+                    child: Image.asset(
                     imagePath.radio,
                     color: selectedIndex == index ? c.white : c.grey_5,
                     width: 17,
                     height: 17,
                   ),
-                  Text(
+                  ),
+                  Expanded(child: Text(
                     title,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
                     style: GoogleFonts.getFont('Roboto',
                         fontWeight: FontWeight.w800,
                         fontSize: screenWidth * 0.03,
                         color: selectedIndex == index ? c.white : c.grey_6),
+                  ),
                   ),
                 ])),
       ),
@@ -1302,7 +1309,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _urban_Card_Design("Town Pancha...", "T", 0, true, false, false),
+              _urban_Card_Design(s.town_panchayat, "T", 0, true, false, false),
               _urban_Card_Design(s.municipality, "M", 1, false, true, false),
               _urban_Card_Design(s.corporation, "C", 2, false, false, true),
             ],

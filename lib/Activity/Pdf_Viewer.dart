@@ -94,7 +94,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
           downloadDirectory = await getExternalStorageDirectory();
         }
       } else if (Platform.isIOS) {
-        downloadDirectory = await getDownloadsDirectory();
+        downloadDirectory = await getApplicationDocumentsDirectory();
         print("IOS - $downloadDirectory");
       }
 

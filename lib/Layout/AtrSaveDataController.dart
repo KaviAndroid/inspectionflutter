@@ -235,8 +235,10 @@ class AtrSaveDataController with ChangeNotifier {
     print("latitude>>${position.latitude}");
     print("longitude>>${position.longitude}");
     if (position.longitude != null) {
-      TakePhoto(i, position.latitude.toString(), position.longitude.toString(),
-          context);
+      if (await utils.goToCameraPermission(context)) {
+        TakePhoto(i, position.latitude.toString(), position.longitude.toString(),
+            context);
+      }
     } else {
       utils.showAlert(context, "Try Again...");
     }
@@ -244,7 +246,6 @@ class AtrSaveDataController with ChangeNotifier {
 
   Future<void> TakePhoto(
       int i, String latitude, String longitude, BuildContext context) async {
-    if (await utils.goToCameraPermission(context)) {
       final pickedFile = await _picker.pickImage(
           source: ImageSource.camera,
           imageQuality: 80,
@@ -262,7 +263,6 @@ class AtrSaveDataController with ChangeNotifier {
             .update(s.key_image_path, (value) => pickedFile.path.toString());
         _imageFile = File(pickedFile.path);
         notifyListeners();
-      }
     }
 
     // Navigator.pop(context);

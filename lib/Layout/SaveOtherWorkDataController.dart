@@ -243,8 +243,11 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     print("latitude>>" + position.latitude.toString());
     print("longitude>>" + position.longitude.toString());
     if (position.latitude != null && position.longitude != null) {
-      TakePhoto(ImageSource.camera, i, position.latitude.toString(),
-          position.longitude.toString(), context);
+      if (await utils.goToCameraPermission(context)) {
+        TakePhoto(ImageSource.camera, i, position.latitude.toString(),
+            position.longitude.toString(), context);
+      }
+
     } else {
       utils.showAlert(context, "Try Again...");
     }

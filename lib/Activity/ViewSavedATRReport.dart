@@ -574,7 +574,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                     height: 230,
                     child: SfCircularChart(
                       legend: Legend(
-                        isVisible: true,
+                        isVisible: false,
                         toggleSeriesVisibility: false,
                         alignment: ChartAlignment.near,
                         orientation: LegendItemOrientation.horizontal,
@@ -626,6 +626,19 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                             })
                       ],
                     ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        utils.legendLableDesign(1,s.satisfied, c.satisfied_color),
+                        utils.legendLableDesign(1,s.un_satisfied, c.unsatisfied_color),
+                        utils.legendLableDesign(1,s.need_improvement, c.need_improvement_color),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -643,6 +656,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
               child: Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: AnimationLimiter(
+                      key: ValueKey(tappedValue),
                       child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,

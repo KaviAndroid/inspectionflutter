@@ -30,6 +30,7 @@ import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
 import '../ModelClass/checkBoxModelClass.dart';
+import '../Resources/global.dart';
 
 class Utils {
   var dbHelper = DbHelper();
@@ -576,19 +577,33 @@ class Utils {
   }
 
   Future<bool> goToCameraPermission(BuildContext context) async {
-    late PermissionStatus cameraPermission, speechPermission;
+    bool flag = false;
+    late PermissionStatus cameraPermission;
     cameraPermission = await Permission.camera.status;
     print("object$cameraPermission");
+    if (Platform.isAndroid) {
+      if (await cameraPermission.isGranted) {
+        flag = true;
+        print("object$cameraPermission");
+      }else{
+        cameraPermission = await Permission.camera.request();
+      }
+      if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
+        Utils().showAppSettings(context, s.cam_permission);
+      }else{
+        flag = true;
+        print("object$cameraPermission");
+      }
+    } else if (Platform.isIOS) {
+      if (await cameraPermission.isGranted) {
+        flag = true;
+        print("object$cameraPermission");
+      }else {
+        Utils().showAppSettings(context, s.cam_permission);
+      }
+    }
 
-    bool flag = false;
-    if (await Permission.camera.request().isGranted) {
-      cameraPermission = await Permission.camera.status;
-      flag = true;
-      print("object$cameraPermission");
-    }
-    if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
-      Utils().showAppSettings(context, s.cam_permission);
-    }
+
     return flag;
   }
 
@@ -1150,4 +1165,36 @@ class Utils {
     );
     return jsonValue;
   }
+
+  legendLableDesign(int flex_width,String lable,Color color){
+    return  Container(
+        margin: EdgeInsets.only(left: 10,right: 10),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 10,right: 5),
+                  child: Image.asset(
+                    imagePath.filled_circle,
+                    color: color,
+                    width:  9,
+                    height:  9,
+                  ),
+                ),
+                 Text(
+                  lable,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.justify,
+                  style: GoogleFonts.getFont('Roboto',
+                      fontWeight: FontWeight.w800,
+                      fontSize: screenWidth * 0.03,
+                      color: c.grey_9),
+
+                ),
+              ])
+    );
+
+  }
+
 }

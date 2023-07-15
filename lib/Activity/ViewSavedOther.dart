@@ -567,7 +567,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                     height: 230,
                     child: SfCircularChart(
                       legend: Legend(
-                        isVisible: true,
+                        isVisible: false,
                         toggleSeriesVisibility: false,
                         alignment: ChartAlignment.near,
                         orientation: LegendItemOrientation.horizontal,
@@ -617,6 +617,19 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                 }
                               });
                             })
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        utils.legendLableDesign(1,s.satisfied, c.satisfied_color),
+                        utils.legendLableDesign(1,s.un_satisfied, c.unsatisfied_color),
+                        utils.legendLableDesign(1,s.need_improvement, c.need_improvement_color),
                       ],
                     ),
                   )

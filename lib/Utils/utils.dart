@@ -963,8 +963,8 @@ class Utils {
                 : EdgeInsets.only(
                     left: 15,
                     right: 15,
-                    top: MediaQuery.of(context).size.height / 5,
-                    bottom: MediaQuery.of(context).size.height / 5),
+                    top: MediaQuery.of(context).size.height / 6,
+                    bottom: MediaQuery.of(context).size.height / 6),
             child: Material(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -1085,7 +1085,7 @@ class Utils {
                             ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(bottom: 10),
+                          margin: EdgeInsets.only(bottom: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -1102,12 +1102,16 @@ class Utils {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                 ),
-                                child: Text(
-                                  "CANCEL",
-                                  style: TextStyle(
-                                    color: c.colorPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 2,bottom:2),
+                                    child: Text(
+                                      "CANCEL",
+                                      style: TextStyle(
+                                        color: c.colorPrimary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -1141,12 +1145,15 @@ class Utils {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                 ),
-                                child: Text(
-                                  "OK",
-                                  style: TextStyle(
-                                    color: c.colorPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(top: 2,bottom: 2),
+                                    child: Text(
+                                      "OK",
+                                      style: TextStyle(
+                                        color: c.colorPrimary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
                                 ),
                               ),
                               const SizedBox(

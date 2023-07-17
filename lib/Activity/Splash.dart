@@ -59,78 +59,72 @@ class _SplashState extends State<Splash> {
             await auth.getAvailableBiometrics();
         if (availableBiometrics.contains(BiometricType.face) ||
             availableBiometrics.contains(BiometricType.fingerprint)) {
-          bool pass = await auth.authenticate(
-              localizedReason: 'Authenticate with fingerprint/face',
-              biometricOnly: true);
-          if (pass) {
-            msg = "You are Authenicated.";
-            setState(() {});
-            utils.gotoHomePage(context, "Login");
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  "Authentication failed. Please use user name and password to login. "),
-            ));
-            utils.gotoLoginPageFromSplash(context);
-          }
-          print("Mess1>>" + hasbiometrics.toString());
+          print("Messsss>>" + hasbiometrics.toString());
+          checkFaceFingerPrint();
         } else {
           msg = "You are not alowed to access biometrics.";
           print("Mess2>>" + hasbiometrics.toString());
-          try {
-            bool pass = await auth.authenticate(
-                localizedReason: 'Authenticate with pattern/pin/passcode',
-                biometricOnly: false);
-            if (pass) {
-              msg = "You are Authenticated.";
-              setState(() {});
-              utils.gotoHomePage(context, "Splash");
-            }
-          } on PlatformException catch (e) {
-            print("Mess3>>" + hasbiometrics.toString());
-            msg = "Error while opening fingerprint/face scanner";
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  "Authentication failed. Please use user name and password to login. "),
-            ));
-            utils.gotoLoginPageFromSplash(context);
-          }
+          checkPinPatternPasscode();
         }
       } else {
         print("Mess4>>" + hasbiometrics.toString());
         msg = "You are not alowed to access biometrics.";
-        try {
-          bool pass = await auth.authenticate(
-              localizedReason: 'Authenticate with pattern/pin/passcode',
-              biometricOnly: false);
-          if (pass) {
-            msg = "You are Authenticated.";
-            setState(() {});
-            utils.gotoHomePage(context, "Splash");
-          }
-        } on PlatformException catch (e) {
-          print("Mess5>>" + hasbiometrics.toString());
-          msg = "Error while opening fingerprint/face scanner";
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                "Authentication failed. Please use user name and password to login. "),
-          ));
-          utils.gotoLoginPageFromSplash(context);
-        }
+        checkPinPatternPasscode();
       }
     } on PlatformException catch (e) {
       print("Mess6>>" + "hasbiometrics.toString()");
-      msg = "Error while opening fingerprint/face scanner";
       msg = e.toString();
+      checkPinPatternPasscode();
+
+    }
+    print("Mess>>" + msg);
+  }
+
+  Future<void> checkFaceFingerPrint() async {
+    try {
+    bool pass = await auth.authenticate(
+        localizedReason: 'Authenticate with fingerprint/face',
+        biometricOnly: true);
+    print("Mess1>>" + pass.toString());
+
+    if (pass) {
+      msg = "You are Authenicated.";
+      setState(() {});
+      utils.gotoHomePage(context, "Login");
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
             "Authentication failed. Please use user name and password to login. "),
       ));
       utils.gotoLoginPageFromSplash(context);
     }
-    print("Mess>>" + msg);
+    } on PlatformException catch (e) {
+      print("Messpin>>" + e.toString());
+      msg = "Error while opening fingerprint/face scanner";
+     checkPinPatternPasscode();
+    }
   }
+  Future<void> checkPinPatternPasscode() async {
+    try {
+      bool pass = await auth.authenticate(
+          localizedReason: 'Authenticate with pattern/pin/passcode',
+          biometricOnly: false);
+      if (pass) {
+        msg = "You are Authenticated.";
+        setState(() {});
+        utils.gotoHomePage(context, "Splash");
+      }
+    } on PlatformException catch (e) {
+      print("Mess3>>" + e.toString());
+      msg = "Error while opening pattern/pin/passcode";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Authentication failed. Please use user name and password to login. "),
+      ));
+      utils.gotoLoginPageFromSplash(context);
+    }
 
+  }
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;

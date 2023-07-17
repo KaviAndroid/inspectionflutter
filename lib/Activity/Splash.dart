@@ -37,8 +37,7 @@ class _SplashState extends State<Splash> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     if (await utils.isOnline()) {
-      // checkVersion(context);
-      utils.gotoLoginPageFromSplash(context);
+      checkVersion(context);
     } else {
       if (prefs.getString(s.key_user_name) != null &&
           prefs.getString(s.key_user_pwd) != null) {
@@ -55,6 +54,7 @@ class _SplashState extends State<Splash> {
           await auth.canCheckBiometrics; //check if there is authencations,
 
       if (hasbiometrics) {
+        print("Mess>>" + hasbiometrics.toString());
         List<BiometricType> availableBiometrics =
             await auth.getAvailableBiometrics();
         if (availableBiometrics.contains(BiometricType.face) ||
@@ -73,8 +73,10 @@ class _SplashState extends State<Splash> {
             ));
             utils.gotoLoginPageFromSplash(context);
           }
+          print("Mess1>>" + hasbiometrics.toString());
         } else {
           msg = "You are not alowed to access biometrics.";
+          print("Mess2>>" + hasbiometrics.toString());
           try {
             bool pass = await auth.authenticate(
                 localizedReason: 'Authenticate with pattern/pin/passcode',
@@ -85,6 +87,7 @@ class _SplashState extends State<Splash> {
               utils.gotoHomePage(context, "Splash");
             }
           } on PlatformException catch (e) {
+            print("Mess3>>" + hasbiometrics.toString());
             msg = "Error while opening fingerprint/face scanner";
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
@@ -94,6 +97,7 @@ class _SplashState extends State<Splash> {
           }
         }
       } else {
+        print("Mess4>>" + hasbiometrics.toString());
         msg = "You are not alowed to access biometrics.";
         try {
           bool pass = await auth.authenticate(
@@ -105,6 +109,7 @@ class _SplashState extends State<Splash> {
             utils.gotoHomePage(context, "Splash");
           }
         } on PlatformException catch (e) {
+          print("Mess5>>" + hasbiometrics.toString());
           msg = "Error while opening fingerprint/face scanner";
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -114,6 +119,7 @@ class _SplashState extends State<Splash> {
         }
       }
     } on PlatformException catch (e) {
+      print("Mess6>>" + "hasbiometrics.toString()");
       msg = "Error while opening fingerprint/face scanner";
       msg = e.toString();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -217,11 +223,9 @@ class _SplashState extends State<Splash> {
       print("checkVersion_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
-      String version = decodedData['version'];
+      String version = /*decodedData['version']*/"1.0.0";
       String app_version = await utils.getVersion();
-      int v1Number = getExtendedVersionNumber(version);
-      int v2Number = getExtendedVersionNumber(app_version);
-      if (decodedData[s.key_app_code] == "WI" && (v1Number > v2Number)) {
+      if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);
         /* Navigator.push(
             context,
@@ -245,9 +249,5 @@ class _SplashState extends State<Splash> {
       throw Exception('Failed');
     }
   }
-  int getExtendedVersionNumber(String version) {
-    List versionCells = version.split('.');
-    versionCells = versionCells.map((i) => int.parse(i)).toList();
-    return versionCells[0] * 100000 + versionCells[1] * 1000 + versionCells[2];
-  }
+
 }

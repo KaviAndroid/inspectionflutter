@@ -493,6 +493,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(s.need_improvement,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w600,
                                           fontSize: 13,
@@ -500,6 +501,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                               ? c.white
                                               : c.need_improvement)),
                                   Text(npCount,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
@@ -540,6 +542,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(s.un_satisfied,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w600,
                                           fontSize: 13,
@@ -547,6 +550,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                               ? c.white
                                               : c.unsatisfied)),
                                   Text(usCount,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
@@ -785,37 +789,18 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                           const SizedBox(
                                             width: 5,
                                           ),
-                                          SizedBox(
-                                            width: 80,
-                                            /* child:Expanded(
-                                             child: Text(defaultWorklist[index][s.key_name], maxLines: 1,
-                                                 overflow: TextOverflow.ellipsis,
-                                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
-                                                     fontWeight: FontWeight.w600,
-                                                     fontSize: 13,
-                                                    )),
-                                           ),*/
-                                            child: Text(
-                                              defaultWorklist[index][s.key_name]
-                                                          .length >
-                                                      25
-                                                  ? defaultWorklist[index]
-                                                              [s.key_name]
-                                                          .substring(0, 25) +
-                                                      '...'
-                                                  : defaultWorklist[index]
-                                                      [s.key_name],
-                                              /* utils.splitStringByLength(
+                                          Expanded(
+                                            child:  Container(padding:EdgeInsets.only(right: 50) ,
+                                              alignment: Alignment.centerLeft,
+                                              child:Text(
                                                   defaultWorklist[index]
-                                                      [s.key_name],
-                                                  35),*/
+                                                  [s.key_name],
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                   color: c.primary_text_color2),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                             ),
                                           )
                                         ],
@@ -823,23 +808,18 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${"( " + defaultWorklist[index][s.key_desig_name]} )",
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: c.primary_text_color2),
-                                            overflow: TextOverflow.clip,
-                                            maxLines: 1,
-                                            softWrap: true,
-                                          ),
-                                        ],
+                                      Container(padding:EdgeInsets.only(right: 30) ,
+                                        alignment: Alignment.centerLeft,
+                                        child:Text(
+                                        "${"( " + defaultWorklist[index][s.key_desig_name]} )",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: c.primary_text_color2),
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.justify,
+                                        maxLines: 1,
+                                      ),
                                       ),
                                       const SizedBox(
                                         height: 10,

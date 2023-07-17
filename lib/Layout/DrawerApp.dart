@@ -242,6 +242,7 @@ class _DrawerAppState extends State<DrawerApp> {
                               color: c.white,
                               fontSize: 13),
                           textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Container(

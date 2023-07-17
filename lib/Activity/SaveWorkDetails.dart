@@ -38,7 +38,7 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails>{
       if (Platform.isAndroid) {
         micFlag=true;
       } else if (Platform.isIOS) {
-        micFlag=false;
+        micFlag=true;
       }
     });
   }
@@ -419,7 +419,6 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails>{
                     flex: 1,
                     child: InkWell(
                         onTap: () {
-                          refer.speechEnabled = false;
                           refer.lang = 'en_US';
                           refer.speech = true;
                           refer.startListening(refer.descriptionController.text);

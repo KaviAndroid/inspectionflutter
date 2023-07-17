@@ -47,7 +47,6 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   };
 
   SpeechToText _speechToText = SpeechToText();
-  bool speechEnabled = false;
   bool speech = false;
   String _lastWords = '';
   String lang = 'en_US';
@@ -127,19 +126,18 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   }
 
   void initSpeech() async {
-    speechEnabled = false;
     _speechToText.initialize();
     notifyListeners();
   }
 
   /// Each time to start a speech recognition session
   void startListening(String txt) async {
-    speechEnabled = false;
     _lastWords = txt;
     await _speechToText.listen(
         onResult: onSpeechResult,
         localeId: lang,
         listenFor: Duration(minutes: 10));
+
     print("start");
     notifyListeners();
   }
@@ -150,7 +148,6 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   /// listen method.
   void stopListening() async {
     await _speechToText.stop();
-    speechEnabled = true;
     print("stop");
     speech = false;
     notifyListeners();
@@ -161,7 +158,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
   void onSpeechResult(recognition.SpeechRecognitionResult result) {
     // _lastWords = result.recognizedWords;
     descriptionController.text = _lastWords + ' ' + result.recognizedWords;
-    speech = false;
+    _speechToText.isNotListening?speech = false:speech = true;
     notifyListeners();
     print("start" + descriptionController.text);
   }

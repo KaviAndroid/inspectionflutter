@@ -598,6 +598,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(s.need_improvement,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
                                           fontSize: screenWidth * 0.03,
@@ -605,6 +606,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               ? c.white
                                               : c.need_improvement)),
                                   Text(npCount,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
                                           fontSize: screenWidth * 0.03,
@@ -645,6 +647,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(s.un_satisfied,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
                                           fontSize: screenWidth * 0.03,
@@ -652,6 +655,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               ? c.white
                                               : c.unsatisfied)),
                                   Text(usCount,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
                                           fontSize: screenWidth * 0.03,
@@ -805,49 +809,37 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             const SizedBox(
                                               width: 5,
                                             ),
-                                            Text(
-                                              defaultWorklist[index][s
-                                                              .inspection_by_officer]
-                                                          .length >
-                                                      25
-                                                  ? defaultWorklist[index][s
-                                                              .inspection_by_officer]
-                                                          .substring(0, 25) +
-                                                      '...'
-                                                  : defaultWorklist[index]
-                                                      [s.inspection_by_officer],
-                                              /*  defaultWorklist[index]
-                                                  [s.inspection_by_officer],*/
+                                           Expanded(child:Container(padding:EdgeInsets.only(right: 50) ,
+                                             alignment: Alignment.centerLeft,
+                                             child: Text(
+                                                  defaultWorklist[index]
+                                                  [s.inspection_by_officer],
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                   color: c.primary_text_color2),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
+                                              overflow: TextOverflow.ellipsis,
+
+                                            ),
+                                            ),
                                             ),
                                           ],
                                         ),
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.primary_text_color2),
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              softWrap: true,
-                                            ),
-                                          ],
+                                        Container(padding:EdgeInsets.only(right: 30) ,
+                                          alignment: Alignment.centerLeft,
+                                          child:Text(
+                                            "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: c.primary_text_color2),
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.justify,
+                                            maxLines: 1,
+                                          ),
                                         ),
                                         const SizedBox(
                                           height: 10,

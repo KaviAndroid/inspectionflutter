@@ -44,7 +44,6 @@ class AtrSaveDataController with ChangeNotifier {
   bool imageListFlag = false;
   bool noDataFlag = false;
   bool txtFlag = false;
-  bool speechEnabled = false;
   bool speech = false;
   bool isSpinnerLoading = false;
 
@@ -95,7 +94,6 @@ class AtrSaveDataController with ChangeNotifier {
     print("Speech check $speechPermission");
     if (speechPermission.isGranted || speechPermission.isLimited) {
       await _speechToText.initialize();
-      speechEnabled = false;
       _lastWords = txt;
       await _speechToText.listen(
           onResult: onSpeechResult,
@@ -116,7 +114,6 @@ class AtrSaveDataController with ChangeNotifier {
   /// listen method.
   void stopListening() async {
     await _speechToText.stop();
-    speechEnabled = true;
     print("stop");
     speech = false;
     notifyListeners();
@@ -127,7 +124,7 @@ class AtrSaveDataController with ChangeNotifier {
   void onSpeechResult(recognition.SpeechRecognitionResult result) {
     // _lastWords = result.recognizedWords;
     descriptionController.text = '$_lastWords ${result.recognizedWords}';
-    speech = false;
+    _speechToText.isNotListening?speech = false:speech = true;
     notifyListeners();
     print("start${descriptionController.text}");
   }

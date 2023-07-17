@@ -437,7 +437,7 @@ class _HomeState extends State<Home> {
                           ),
                           Column(children: <Widget>[
                             Container(
-                              margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              margin: EdgeInsets.fromLTRB(10, 10, 60, 0),
                               alignment: Alignment.topLeft,
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
@@ -447,6 +447,7 @@ class _HomeState extends State<Home> {
                                     color: c.grey_8,
                                     fontSize: 15),
                                 textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Container(
@@ -460,6 +461,7 @@ class _HomeState extends State<Home> {
                                     color: c.grey_8,
                                     fontSize: 13),
                                 textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Container(
@@ -473,6 +475,7 @@ class _HomeState extends State<Home> {
                                     color: c.grey_8,
                                     fontSize: 13),
                                 textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ]),

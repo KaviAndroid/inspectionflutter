@@ -385,7 +385,6 @@ class _OtherWork_SaveState extends State<OtherWork_Save> {
                 flex: 1,
                 child: InkWell(
                     onTap: () {
-                      refer.speechEnabled = false;
                       refer.lang = 'en_US';
                       refer.speech = true;
                       refer.startListening(refer.descriptionController.text);

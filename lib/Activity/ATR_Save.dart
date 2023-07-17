@@ -41,7 +41,7 @@ class _ATR_SaveState extends State<ATR_Save> {
       if (Platform.isAndroid) {
         micFlag=true;
       } else if (Platform.isIOS) {
-        micFlag=false;
+        micFlag=true;
       }
     });
   }
@@ -336,7 +336,6 @@ class _ATR_SaveState extends State<ATR_Save> {
               flex: 1,
               child: InkWell(
                   onTap: () {
-                    refer.speechEnabled = false;
                     refer.lang = 'en_US';
                     refer.speech = true;
                     refer.startListening(refer.descriptionController.text,context);

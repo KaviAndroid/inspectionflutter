@@ -64,7 +64,6 @@ class SaveDatacontroller with ChangeNotifier {
   };
   TextEditingController remark = TextEditingController();
   SpeechToText _speechToText = SpeechToText();
-  bool speechEnabled = false;
   bool speech = false;
   String lastWords = '';
   String lang = 'en_US';
@@ -140,14 +139,12 @@ class SaveDatacontroller with ChangeNotifier {
 
   /// This has to happen only once per app
   void initSpeech() async {
-    speechEnabled = false;
     _speechToText.initialize();
     notifyListeners();
   }
 
   /// Each time to start a speech recognition session
   void startListening(String txt) async {
-    speechEnabled = false;
     lastWords = txt;
     await _speechToText.listen(
         onResult: onSpeechResult,
@@ -163,7 +160,6 @@ class SaveDatacontroller with ChangeNotifier {
   /// listen method.
   void stopListening() async {
     await _speechToText.stop();
-    speechEnabled = true;
     print("stop");
     speech = false;
     notifyListeners();
@@ -174,7 +170,7 @@ class SaveDatacontroller with ChangeNotifier {
   void onSpeechResult(recognition.SpeechRecognitionResult result) {
     // _lastWords = result.recognizedWords;
     descriptionController.text = lastWords + ' ' + result.recognizedWords;
-    speech = false;
+    _speechToText.isNotListening?speech = false:speech = true;
     notifyListeners();
     print("start" + descriptionController.text);
   }

@@ -495,7 +495,7 @@ class _HomeState extends State<Home> {
                                                       backgroundColor:
                                                           Colors.transparent,
                                                       insetPadding:
-                                                          EdgeInsets.all(2),
+                                                          EdgeInsets.all(5),
                                                       title: Container(
                                                         decoration:
                                                             BoxDecoration(),

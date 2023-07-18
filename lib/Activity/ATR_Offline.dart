@@ -601,7 +601,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: 11,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
@@ -609,7 +609,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: 11,
                                           color: isNeedImprovementActive
                                               ? c.white
                                               : c.need_improvement)),
@@ -650,7 +650,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: 11,
                                           color: isUnSatisfiedActive
                                               ? c.white
                                               : c.unsatisfied)),
@@ -658,7 +658,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.getFont('Montserrat',
                                           fontWeight: FontWeight.w800,
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: 11,
                                           color: isUnSatisfiedActive
                                               ? c.white
                                               : c.unsatisfied)),
@@ -676,7 +676,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: c.need_improvement, width: 1)),
             margin: const EdgeInsets.only(top: 5),
-            width: 200,
+            width: MediaQuery.of(context).size.width /2,
             height: 40,
             child: Row(children: [
               Expanded(
@@ -703,7 +703,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   style: TextStyle(
                     color: c.primary_text_color2,
                     fontWeight: FontWeight.w900,
-                    fontSize: screenWidth * 0.03,
+                    fontSize: 11,
                   ),
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
@@ -711,7 +711,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     isDense: true,
                     hintStyle: TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: screenWidth * 0.03,
+                        fontSize: 11,
                         color: c.primary_text_color2),
                     hintText: s.select_from_to_date,
                     enabledBorder: OutlineInputBorder(
@@ -1274,7 +1274,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     textAlign: TextAlign.justify,
                     style: GoogleFonts.getFont('Roboto',
                         fontWeight: FontWeight.w800,
-                        fontSize: screenWidth * 0.03,
+                        fontSize: 11,
                         color: selectedIndex == index ? c.white : c.grey_6),
                   ),
                   ),

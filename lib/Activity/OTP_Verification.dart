@@ -45,10 +45,13 @@ class _OTPVerificationState extends State<OTPVerification> {
     design_flag = widget.Flag;
     setState(() {});
   }
-
+  Future<bool> _onWillPop() async {
+    Navigator.of(context, rootNavigator: true).pop(context);
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
         backgroundColor: c.white,
         body: SingleChildScrollView(
           child: Column(
@@ -112,8 +115,8 @@ class _OTPVerificationState extends State<OTPVerification> {
                               controller: design_flag == "OTP"
                                   ? otp
                                   : design_flag == "login"
-                                      ? mobileNumber
-                                      : null,
+                                  ? mobileNumber
+                                  : null,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly
@@ -121,46 +124,46 @@ class _OTPVerificationState extends State<OTPVerification> {
                               maxLength: design_flag == "OTP"
                                   ? 6
                                   : design_flag == "login"
-                                      ? 10
-                                      : null,
+                                  ? 10
+                                  : null,
                               autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              AutovalidateMode.onUserInteraction,
                               validator: (value) => design_flag == "OTP"
                                   ? value!.isEmpty
-                                      ? otp_empty_msg
-                                      : null
+                                  ? otp_empty_msg
+                                  : null
                                   : design_flag == "login"
-                                      ? value!.isEmpty
-                                          ? num_empty_msg
-                                          : Utils().isNumberValid(value)
-                                              ? null
-                                              : s.please_enter_valid_num
-                                      : null,
+                                  ? value!.isEmpty
+                                  ? num_empty_msg
+                                  : Utils().isNumberValid(value)
+                                  ? null
+                                  : s.please_enter_valid_num
+                                  : null,
                               decoration: InputDecoration(
                                 hintText: design_flag == "OTP"
                                     ? 'Enter OTP'
                                     : design_flag == "login"
-                                        ? 'Enter Mobile Number'
-                                        : null,
+                                    ? 'Enter Mobile Number'
+                                    : null,
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 15),
                                 filled: true,
                                 fillColor: c.grey_3,
                                 errorBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 1, color: c.red),
+                                    BorderSide(width: 1, color: c.red),
                                     borderRadius: BorderRadius.circular(10.0)),
                                 focusedErrorBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 1, color: c.red),
+                                    BorderSide(width: 1, color: c.red),
                                     borderRadius: BorderRadius.circular(10.0)),
                                 enabledBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 0.1, color: c.white),
+                                    BorderSide(width: 0.1, color: c.white),
                                     borderRadius: BorderRadius.circular(10.0)),
                                 focusedBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 1, color: c.white),
+                                    BorderSide(width: 1, color: c.white),
                                     borderRadius: BorderRadius.circular(10.0)),
                               ),
                             ),
@@ -173,14 +176,14 @@ class _OTPVerificationState extends State<OTPVerification> {
                                 onTap: () async {
                                   if (await utils.isOnline()) {
                                     prefs
-                                            .getString(s.key_mobile)
-                                            .toString()
-                                            .isNotEmpty
+                                        .getString(s.key_mobile)
+                                        .toString()
+                                        .isNotEmpty
                                         ? send_OTP(prefs
-                                            .getString(s.key_mobile)
-                                            .toString())
+                                        .getString(s.key_mobile)
+                                        .toString())
                                         : utils.showAlert(
-                                            context, s.please_enter_otp);
+                                        context, s.please_enter_otp);
                                   } else {
                                     utils.customAlertWidet(
                                         context, "Error", s.no_internet);
@@ -201,7 +204,7 @@ class _OTPVerificationState extends State<OTPVerification> {
                             ),
                             Container(
                               margin:
-                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              const EdgeInsets.only(top: 20, bottom: 20),
                               child: Center(
                                 child: SizedBox(
                                   width: 250,
@@ -210,14 +213,14 @@ class _OTPVerificationState extends State<OTPVerification> {
                                     child: ElevatedButton(
                                       style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  c.colorPrimary),
+                                          MaterialStateProperty.all<Color>(
+                                              c.colorPrimary),
                                           shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
-                                            borderRadius:
+                                                borderRadius:
                                                 BorderRadius.circular(15),
-                                          ))),
+                                              ))),
                                       onPressed: () async {
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
@@ -225,23 +228,23 @@ class _OTPVerificationState extends State<OTPVerification> {
                                         if (await utils.isOnline()) {
                                           design_flag == "login"
                                               ? (utils.isNumberValid(
-                                                          mobileNumber.text
-                                                              .toString()) &&
-                                                      (mobileNumber.text
-                                                          .toString()
-                                                          .isNotEmpty))
-                                                  ? send_OTP(mobileNumber.text
-                                                      .toString())
-                                                  : utils.showAlert(context,
-                                                      s.please_enter_valid_num)
+                                              mobileNumber.text
+                                                  .toString()) &&
+                                              (mobileNumber.text
+                                                  .toString()
+                                                  .isNotEmpty))
+                                              ? send_OTP(mobileNumber.text
+                                              .toString())
+                                              : utils.showAlert(context,
+                                              s.please_enter_valid_num)
                                               : design_flag == "OTP"
-                                                  ? otp.text
-                                                          .toString()
-                                                          .isNotEmpty
-                                                      ? verify_OTP()
-                                                      : utils.showAlert(context,
-                                                          s.please_enter_otp)
-                                                  : null;
+                                              ? otp.text
+                                              .toString()
+                                              .isNotEmpty
+                                              ? verify_OTP()
+                                              : utils.showAlert(context,
+                                              s.please_enter_otp)
+                                              : null;
                                         } else {
                                           utils.customAlertWidet(
                                               context, "Error", s.no_internet);
@@ -268,7 +271,7 @@ class _OTPVerificationState extends State<OTPVerification> {
               ),
             ],
           ),
-        ));
+        )), onWillPop: _onWillPop);
   }
 
   // ************************** Send OTP API *****************************/

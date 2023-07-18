@@ -27,6 +27,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   late SharedPreferences prefs;
   String userPassKey = "";
   String userDecryptKey = "";
+  var appBarvisibility = true;
   var tcVisibility = false;
   var visibility = false;
   var tvisibility = false;
@@ -43,11 +44,30 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   void initState() {
     super.initState();
   }
-
+  Future<bool> _onWillPop() async {
+    Navigator.of(context, rootNavigator: true).pop(context);
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
         backgroundColor: c.white,
+        appBar: AppBar(
+          backgroundColor: c.colorPrimary,
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          title: Visibility(
+              visible: appBarvisibility,
+              child: Text(
+                tcVisibility?"OTP Verification":tvisibility?"Change Password":"Mobile Verification ",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              )),
+
+          /* actions: <Widget>[
+            Padding(padding: EdgeInsets.only(top: 8),)
+          ],*/
+        ),
         body: SingleChildScrollView(
             child: Padding(
                 padding: EdgeInsets.all(25),
@@ -57,7 +77,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     Image.asset(
                       imagePath.otp,
                       width: double.infinity,
-                      height: 300,
+                      height: 250,
                     ),
                     Stack(children: <Widget>[
                       Visibility(
@@ -90,12 +110,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: TextFormField(
                               controller: mobile_number,
                               autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              AutovalidateMode.onUserInteraction,
                               validator: (value) => value!.isEmpty
                                   ? s.mobile_number_must_be_of_10_digits
                                   : Utils().isNumberValid(value)
-                                      ? null
-                                      : s.enter_a_valid_mobile_number,
+                                  ? null
+                                  : s.enter_a_valid_mobile_number,
                               maxLength: 10,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
@@ -104,7 +124,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 fillColor: c.ca1,
                                 enabledBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 0.1, color: c.ca1),
+                                    BorderSide(width: 0.1, color: c.ca1),
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10),
@@ -148,67 +168,67 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             width: double.infinity,
                             child: Container(
                                 child: TextButton(
-                              child: Text(s.send_otp,
-                                  style: TextStyle(color: c.white)),
-                              style: ButtonStyle(
-                                  padding:
+                                  child: Text(s.send_otp,
+                                      style: TextStyle(color: c.white)),
+                                  style: ButtonStyle(
+                                      padding:
                                       MaterialStateProperty.all<EdgeInsets>(
                                           EdgeInsets.all(5)),
-                                  backgroundColor:
+                                      backgroundColor:
                                       MaterialStateProperty.all<Color>(
                                           c.colorPrimary),
-                                  shape: MaterialStateProperty.all<
+                                      shape: MaterialStateProperty.all<
                                           RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(25),
-                                            topRight: Radius.circular(25),
-                                            bottomLeft: Radius.circular(25),
-                                            bottomRight: Radius.circular(25),
-                                          ),
-                                          side:
+                                          RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(25),
+                                                topRight: Radius.circular(25),
+                                                bottomLeft: Radius.circular(25),
+                                                bottomRight: Radius.circular(25),
+                                              ),
+                                              side:
                                               BorderSide(color: Colors.cyan)))),
-                              onPressed: () async {
-                                if (!mobile_number.text.isEmpty) {
-                                  if (mobile_number.text.length != 10) {
-                                    utils.showAlert(context,
-                                        s.mobile_number_must_be_of_10_digits);
-                                  } else {
-                                    if (await utils.isOnline()) {
-                                      // print("Isforgotpassword"+widget.isForgotPassword);
-                                      if (utils
-                                          .isNumberValid(mobile_number.text)) {
-                                        if (widget.isForgotPassword ==
-                                            "forgot_password") {
-                                          print("Isforgotpassword   " +
-                                              widget.isForgotPassword);
-                                          FORGOT_PASSWORD_send_otp();
-                                        } else if (widget.isForgotPassword ==
-                                            "change_password") {
-                                          change_password_send_otpParams();
-                                        } else {
-                                          sendOtp(
-                                              mobile_number.text.toString());
-                                        }
+                                  onPressed: () async {
+                                    if (!mobile_number.text.isEmpty) {
+                                      if (mobile_number.text.length != 10) {
+                                        utils.showAlert(context,
+                                            s.mobile_number_must_be_of_10_digits);
                                       } else {
-                                        utils.customAlertWidet(context, "Error",
-                                            s.please_enter_valid_num);
+                                        if (await utils.isOnline()) {
+                                          // print("Isforgotpassword"+widget.isForgotPassword);
+                                          if (utils
+                                              .isNumberValid(mobile_number.text)) {
+                                            if (widget.isForgotPassword ==
+                                                "forgot_password") {
+                                              print("Isforgotpassword   " +
+                                                  widget.isForgotPassword);
+                                              FORGOT_PASSWORD_send_otp();
+                                            } else if (widget.isForgotPassword ==
+                                                "change_password") {
+                                              change_password_send_otpParams();
+                                            } else {
+                                              sendOtp(
+                                                  mobile_number.text.toString());
+                                            }
+                                          } else {
+                                            utils.customAlertWidet(context, "Error",
+                                                s.please_enter_valid_num);
+                                          }
+                                        }
                                       }
+                                    } else {
+                                      utils.showAlert(
+                                          context, s.enter_a_valid_mobile_number);
                                     }
-                                  }
-                                } else {
-                                  utils.showAlert(
-                                      context, s.enter_a_valid_mobile_number);
-                                }
-                              },
-                            )),
+                                  },
+                                )),
                           ),
                         ),
                       ),
                       //Change Password
                     ]
-                        //OTP VERIFICATION
-                        ),
+                      //OTP VERIFICATION
+                    ),
                     Visibility(
                       visible: tcVisibility,
                       child: Padding(
@@ -285,25 +305,25 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               s.resend_otp,
                               style:
                                   TextStyle(color: c.colorAccent, fontSize: 13),
-                              textAlign: TextAlign.end,
-                            ),
-                            onPressed: () async {
-                              if (await utils.isOnline()) {
-                                if (widget.isForgotPassword ==
-                                    "forgot_password") {
-                                  ResendOtpForgotPasswordParams();
-                                } else if (widget.isForgotPassword ==
-                                    "change_password") {
-                                  change_password_Resend_otpParams(context);
-                                } else {
-                                  resend_otp(context);
-                                }
-                              } else {
-                                utils.customAlertWidet(
-                                    context, "Error", s.no_internet);
-                              }
-                            },
-                          )),
+                                  textAlign: TextAlign.end,
+                                ),
+                                onPressed: () async {
+                                  if (await utils.isOnline()) {
+                                    if (widget.isForgotPassword ==
+                                        "forgot_password") {
+                                      ResendOtpForgotPasswordParams();
+                                    } else if (widget.isForgotPassword ==
+                                        "change_password") {
+                                      change_password_Resend_otpParams(context);
+                                    } else {
+                                      resend_otp(context);
+                                    }
+                                  } else {
+                                    utils.customAlertWidet(
+                                        context, "Error", s.no_internet);
+                                  }
+                                },
+                              )),
                         ),
                       ),
                     ),
@@ -316,50 +336,50 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           width: double.infinity,
                           child: Container(
                               child: TextButton(
-                            child: Text(s.verify,
-                                style: TextStyle(color: c.white, fontSize: 13)),
-                            style: ButtonStyle(
-                                padding: MaterialStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.all(10)),
-                                backgroundColor:
+                                child: Text(s.verify,
+                                    style: TextStyle(color: c.white, fontSize: 13)),
+                                style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(
+                                        EdgeInsets.all(10)),
+                                    backgroundColor:
                                     MaterialStateProperty.all<Color>(
                                         c.colorPrimary),
-                                shape: MaterialStateProperty.all<
+                                    shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(25),
-                                          topRight: Radius.circular(25),
-                                          bottomLeft: Radius.circular(25),
-                                          bottomRight: Radius.circular(25),
-                                        ),
-                                        side: BorderSide(color: Colors.cyan)))),
-                            onPressed: () async {
-                              if (!otp.text.isEmpty) {
-                                if (otp.text.length == 6) {
-                                  if (await utils.isOnline()) {
-                                    if (widget.isForgotPassword ==
-                                        "forgot_password") {
-                                      FORGOT_PASSWORD_OTP_Params();
-                                    } else if (widget.isForgotPassword ==
-                                        "change_password") {
-                                      change_password_OTP_Params();
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(25),
+                                              topRight: Radius.circular(25),
+                                              bottomLeft: Radius.circular(25),
+                                              bottomRight: Radius.circular(25),
+                                            ),
+                                            side: BorderSide(color: Colors.cyan)))),
+                                onPressed: () async {
+                                  if (!otp.text.isEmpty) {
+                                    if (otp.text.length == 6) {
+                                      if (await utils.isOnline()) {
+                                        if (widget.isForgotPassword ==
+                                            "forgot_password") {
+                                          FORGOT_PASSWORD_OTP_Params();
+                                        } else if (widget.isForgotPassword ==
+                                            "change_password") {
+                                          change_password_OTP_Params();
+                                        } else {
+                                          otp_params();
+                                        }
+                                      } else {
+                                        utils.customAlertWidet(
+                                            context, "Error", s.no_internet);
+                                      }
                                     } else {
-                                      otp_params();
+                                      utils.showToast(
+                                          context, s.otp_must_be_6_characters);
                                     }
                                   } else {
-                                    utils.customAlertWidet(
-                                        context, "Error", s.no_internet);
+                                    utils.showToast(context, s.otp_mus_be_filled);
                                   }
-                                } else {
-                                  utils.showToast(
-                                      context, s.otp_must_be_6_characters);
-                                }
-                              } else {
-                                utils.showToast(context, s.otp_mus_be_filled);
-                              }
-                            },
-                          )),
+                                },
+                              )),
                         ),
                       ),
                     ),
@@ -395,12 +415,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: TextFormField(
                               controller: new_password,
                               autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              AutovalidateMode.onUserInteraction,
                               validator: (value) => value!.isEmpty
                                   ? s.please_enter_new_password_and_confirm_password
                                   : Utils().isPasswordValid(value)
-                                      ? null
-                                      : s.enter_a_valid_password,
+                                  ? null
+                                  : s.enter_a_valid_password,
                               maxLength: 15,
                               decoration: InputDecoration(
                                 hintText: s.enter_new_password,
@@ -410,7 +430,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 fillColor: c.ca1,
                                 enabledBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 0.1, color: c.ca1),
+                                    BorderSide(width: 0.1, color: c.ca1),
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10),
@@ -433,12 +453,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: TextFormField(
                               controller: confirm_password,
                               autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              AutovalidateMode.onUserInteraction,
                               validator: (value) => value!.isEmpty
                                   ? s.please_enter_new_password_and_confirm_password
                                   : Utils().isPasswordValid(value)
-                                      ? null
-                                      : s.enter_a_valid_password,
+                                  ? null
+                                  : s.enter_a_valid_password,
                               maxLength: 15,
                               decoration: InputDecoration(
                                 hintText: s.enter_confirm_password,
@@ -448,7 +468,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 fillColor: c.ca1,
                                 enabledBorder: OutlineInputBorder(
                                     borderSide:
-                                        BorderSide(width: 0.1, color: c.ca1),
+                                    BorderSide(width: 0.1, color: c.ca1),
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10),
@@ -471,33 +491,33 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           width: double.infinity,
                           child: Container(
                               child: TextButton(
-                            child: Text(s.submit,
-                                style: TextStyle(color: c.white, fontSize: 13)),
-                            style: ButtonStyle(
-                                padding: MaterialStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.all(15)),
-                                backgroundColor:
+                                child: Text(s.submit,
+                                    style: TextStyle(color: c.white, fontSize: 13)),
+                                style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(
+                                        EdgeInsets.all(15)),
+                                    backgroundColor:
                                     MaterialStateProperty.all<Color>(
                                         c.colorPrimary),
-                                shape: MaterialStateProperty.all<
+                                    shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(25),
-                                          topRight: Radius.circular(25),
-                                          bottomLeft: Radius.circular(25),
-                                          bottomRight: Radius.circular(25),
-                                        ),
-                                        side: BorderSide(color: Colors.cyan)))),
-                            onPressed: () {
-                              ValidatePassword();
-                            },
-                          )),
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(25),
+                                              topRight: Radius.circular(25),
+                                              bottomLeft: Radius.circular(25),
+                                              bottomRight: Radius.circular(25),
+                                            ),
+                                            side: BorderSide(color: Colors.cyan)))),
+                                onPressed: () {
+                                  ValidatePassword();
+                                },
+                              )),
                         ),
                       ),
                     )
                   ],
-                ))));
+                )))), onWillPop: _onWillPop);
   }
 
   Future<dynamic> ValidatePassword() async {

@@ -63,6 +63,7 @@ String warning_img = "assets/images/warning.png";
 String logout_img = "assets/images/logout_img.png";
 String logout_icon = "assets/images/power.png";
 String filled_circle = "assets/images/filled_circle.png";
+String wifi = "assets/images/wifi.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";

@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 // import 'package:dio/dio.dart';
 // import 'package:dio/io.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

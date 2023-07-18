@@ -1700,7 +1700,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                     color: c.need_improvement1,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: c.need_improvement, width: 1)),
-                width: screenWidth * 0.5,
+                width: MediaQuery.of(context).size.width /2,
                 height: 40,
                 child: Row(children: [
                   Expanded(
@@ -1727,7 +1727,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                       style: TextStyle(
                         color: c.primary_text_color2,
                         fontWeight: FontWeight.w900,
-                        fontSize: screenWidth * 0.03,
+                        fontSize: 11,
                       ),
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -1735,7 +1735,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                         isDense: true,
                         hintStyle: TextStyle(
                             fontWeight: FontWeight.w800,
-                            fontSize: screenWidth * 0.03,
+                            fontSize: 11,
                             color: c.primary_text_color2),
                         hintText: s.select_from_to_date,
                         enabledBorder: OutlineInputBorder(

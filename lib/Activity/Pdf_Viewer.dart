@@ -2,7 +2,8 @@
 
 import 'dart:ffi';
 
-import 'package:device_info/device_info.dart';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inspection_flutter_app/Utils/utils.dart';

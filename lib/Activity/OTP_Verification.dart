@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection_flutter_app/Activity/Login.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Activity/Login.dart';
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/url.dart' as url;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Utils/utils.dart';
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
+import 'package:inspection/Resources/url.dart' as url;
 import '../Resources/ColorsValue.dart' as c;
 
 class OTPVerification extends StatefulWidget {

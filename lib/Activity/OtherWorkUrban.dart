@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/url.dart' as url;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
 import '../Resources/Strings.dart';
@@ -941,6 +941,10 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       townList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_townpanchayat_name] =
+              item[s.key_townpanchayat_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_townpanchayat_name]
               .toLowerCase()
@@ -994,6 +998,10 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       municipalityList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_municipality_name] =
+              item[s.key_municipality_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_municipality_name]
               .toLowerCase()
@@ -1047,6 +1055,10 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
       corporationList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_corporation_name] =
+              item[s.key_corporation_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_corporation_name]
               .toLowerCase()

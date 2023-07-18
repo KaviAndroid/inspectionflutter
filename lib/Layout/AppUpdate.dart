@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/utils.dart';

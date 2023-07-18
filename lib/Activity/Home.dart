@@ -9,26 +9,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/OtherWorkUrban.dart';
-import 'package:inspection_flutter_app/Activity/OtherWorkRural.dart';
-import 'package:inspection_flutter_app/Activity/Pending_Screen.dart';
-import 'package:inspection_flutter_app/Activity/RDPRUrbanWorks.dart';
-import 'package:inspection_flutter_app/Activity/RDPR_Offline.dart';
-import 'package:inspection_flutter_app/Activity/RDPR_Online.dart';
-import 'package:inspection_flutter_app/Activity/Splash.dart';
-import 'package:inspection_flutter_app/Layout/DrawerApp.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Activity/OtherWorkUrban.dart';
+import 'package:inspection/Activity/OtherWorkRural.dart';
+import 'package:inspection/Activity/Pending_Screen.dart';
+import 'package:inspection/Activity/RDPRUrbanWorks.dart';
+import 'package:inspection/Activity/RDPR_Offline.dart';
+import 'package:inspection/Activity/RDPR_Online.dart';
+import 'package:inspection/Activity/Splash.dart';
+import 'package:inspection/Layout/DrawerApp.dart';
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/url.dart' as url;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:inspection_flutter_app/Activity/ATR_Offline.dart';
-import 'package:inspection_flutter_app/Activity/ATR_Online.dart';
+import 'package:inspection/Activity/ATR_Offline.dart';
+import 'package:inspection/Activity/ATR_Online.dart';
 
 import 'Login.dart';
 
@@ -1687,6 +1687,11 @@ class _HomeState extends State<Home> {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
+
+          for (var item in res_jsonArray) {
+            item[s.key_other_work_category_name] =
+                item[s.key_other_work_category_name].toString().replaceAll("'", "\'");
+          }
           res_jsonArray.sort((a, b) {
             return a[s.key_other_work_category_name]
                 .toLowerCase()
@@ -1783,6 +1788,10 @@ class _HomeState extends State<Home> {
               .compareTo(b[s.key_townpanchayat_name].toLowerCase());
         });
         if (res_jsonArray.isNotEmpty) {
+          for (var item in res_jsonArray) {
+            item[s.key_townpanchayat_name] =
+                item[s.key_townpanchayat_name].toString().replaceAll("'", "\'");
+          }
           dbHelper.delete_table_TownList();
 
           String sql =
@@ -1858,6 +1867,10 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_municipality_name] =
+              item[s.key_municipality_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_municipality_name]
               .toLowerCase()
@@ -1939,6 +1952,10 @@ class _HomeState extends State<Home> {
       var response_value = userData[s.key_response];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_corporation_name] =
+              item[s.key_corporation_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_corporation_name]
               .toLowerCase()

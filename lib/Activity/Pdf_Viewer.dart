@@ -6,18 +6,18 @@ import 'dart:ffi';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection_flutter_app/Utils/utils.dart';
+import 'package:inspection/Utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:open_file/open_file.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/Strings.dart' as s;
 
 class PDF_Viewer extends StatefulWidget {
   final pdfBytes;

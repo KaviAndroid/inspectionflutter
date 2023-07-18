@@ -1,4 +1,4 @@
-# inspection_flutter_app
+# inspection
 
 Inspection Flutter project.
 

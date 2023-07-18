@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
-import 'package:inspection_flutter_app/Utils/utils.dart';
+import 'package:inspection/Layout/Multiple_CheckBox.dart';
+import 'package:inspection/Utils/utils.dart';
 import '../ModelClass/checkBoxModelClass.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
 
 class FlutterCustomCheckbox extends StatefulWidget {
   List<FlutterLimitedCheckBoxModel> initialValueList;

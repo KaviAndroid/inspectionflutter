@@ -7,26 +7,27 @@ import 'dart:math';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection_flutter_app/Activity/Login.dart';
-import 'package:inspection_flutter_app/Activity/WorkList.dart';
-import 'package:inspection_flutter_app/Layout/Multiple_CheckBox.dart';
+import 'package:inspection/Activity/Login.dart';
+import 'package:inspection/Activity/WorkList.dart';
+import 'package:inspection/Layout/Multiple_CheckBox.dart';
 import 'package:intl/intl.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Activity/Home.dart';
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
 import '../ModelClass/checkBoxModelClass.dart';
@@ -273,8 +274,8 @@ class Utils {
                         color: type == "Warning" || type == "Logout"
                             ? c.grey
                             : type == "Success"
-                                ? c.alert_bg
-                                : c.red_new,
+                            ? c.alert_bg
+                            : c.red_new,
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15))),
@@ -283,10 +284,10 @@ class Utils {
                         type == "Warning"
                             ? imagePath.warning_icon_gif
                             : type == "Success"
-                                ? imagePath.success
-                                : type == "Logout"
-                                    ? imagePath.logout_icon
-                                    : imagePath.error,
+                            ? imagePath.success
+                            : type == "Logout"
+                            ? imagePath.logout_icon
+                            : imagePath.error,
                         color: type == "Logout" ? c.white : null,
                         height: 50,
                         width: 50,
@@ -308,10 +309,10 @@ class Utils {
                               type == "Warning"
                                   ? "Warning"
                                   : type == "Success"
-                                      ? "Success"
-                                      : type == "Logout"
-                                          ? "Logout ?"
-                                          : "Oops...",
+                                  ? "Success"
+                                  : type == "Logout"
+                                  ? "Logout ?"
+                                  : "Oops...",
                               style: GoogleFonts.getFont('Prompt',
                                   decoration: TextDecoration.none,
                                   fontWeight: FontWeight.w600,
@@ -321,11 +322,11 @@ class Utils {
                             height: 10,
                           ),
                           Text(msg,
-                              style: GoogleFonts.getFont('Roboto',
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: c.black)),
+                            style: GoogleFonts.getFont('Roboto',
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: c.black),textAlign: TextAlign.center,),
                           const SizedBox(
                             height: 35,
                           ),
@@ -342,14 +343,14 @@ class Utils {
                                   child: ElevatedButton(
                                     style: ButtonStyle(
                                         backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                c.primary_text_color2),
+                                        MaterialStateProperty.all<Color>(
+                                            c.primary_text_color2),
                                         shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
-                                          borderRadius:
+                                              borderRadius:
                                               BorderRadius.circular(15),
-                                        ))),
+                                            ))),
                                     onPressed: () {
                                       if (isNavigateSplash) {
                                         Navigator.pop(context, true);
@@ -363,20 +364,20 @@ class Utils {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => WorkList(
-                                                      schemeList: sendData[
-                                                          'schemeList'],
-                                                      scheme: sendData['scheme']
-                                                          .toString(),
-                                                      flag: sendData['flag'],
-                                                      finYear: '',
-                                                      dcode: '',
-                                                      bcode: '',
-                                                      pvcode: '',
-                                                      tmccode: '',
-                                                      townType:
-                                                          sendData['townType'],
-                                                      selectedschemeList: [],
-                                                    )));
+                                                  schemeList: sendData[
+                                                  'schemeList'],
+                                                  scheme: sendData['scheme']
+                                                      .toString(),
+                                                  flag: sendData['flag'],
+                                                  finYear: '',
+                                                  dcode: '',
+                                                  bcode: '',
+                                                  pvcode: '',
+                                                  tmccode: '',
+                                                  townType:
+                                                  sendData['townType'],
+                                                  selectedschemeList: [],
+                                                )));
                                       } else {
                                         Navigator.pop(context, true);
                                       }
@@ -396,62 +397,75 @@ class Utils {
                                       ? true
                                       : false,
                                   child: ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                c.green_new.withOpacity(0.7)),
-                                        shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ))),
-                                    onPressed: () async {
-                                      if (msg == s.logout_msg ||
-                                          msg == s.logout) {
-                                        dbClient = await dbHelper.db;
-                                        dbHelper.deleteAll();
-                                        prefs.clear();
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Login()),
-                                            (route) => false);
-                                      } else if (msg == s.download_apk) {
-                                        launchURL(prefs
-                                            .getString(s.download_apk)
-                                            .toString());
-                                        Navigator.pop(context, false);
-                                      } else if (msg == s.internet_error) {
-                                        OpenSettings.openWIFISetting();
-                                        Navigator.pop(context, false);
-                                      } else {
-                                        Navigator.pop(context, true);
-                                      }
-                                    },
-                                    child: Text(
-                                      msg == s.download_apk
-                                          ? "Update"
-                                          : msg == s.internet_error
-                                              ? "Settings"
-                                              : type == "Logout"
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              c.green_new.withOpacity(0.7)),
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(15),
+                                              ))),
+                                      onPressed: () async {
+                                        if (msg == s.logout_msg ||
+                                            msg == s.logout) {
+                                          dbClient = await dbHelper.db;
+                                          dbHelper.deleteAll();
+                                          prefs.clear();
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Login()),
+                                                  (route) => false);
+                                        } else if (msg == s.download_apk) {
+                                          launchURL(prefs
+                                              .getString(s.download_apk)
+                                              .toString());
+                                          Navigator.pop(context, false);
+                                        } else if (msg == s.internet_error) {
+                                          OpenSettings.openWIFISetting();
+                                          Navigator.pop(context, false);
+                                        } else {
+                                          Navigator.pop(context, true);
+                                        }
+                                      },
+                                      child:Row(
+                                        children: [
+                                          Padding(padding: EdgeInsets.only(right: 8),
+                                            child: Text(
+                                              msg == s.download_apk
+                                                  ? "Update"
+                                                  : msg == s.internet_error
+                                                  ? "Turn On"
+                                                  : type == "Logout"
                                                   ? "Yes"
                                                   : "Ok",
-                                      style: GoogleFonts.getFont('Roboto',
-                                          decoration: TextDecoration.none,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 13,
-                                          color: c.white),
-                                    ),
+                                              style: GoogleFonts.getFont('Roboto',
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 13,
+                                                  color: c.white),
+                                            ),),
+                                          Visibility(
+                                              visible: msg==s.internet_error?true:false,
+                                              child: Image.asset(
+                                                imagePath.wifi,
+                                                color:c.white ,
+                                                height: 15,
+                                                width:15 , // fit: BoxFit.cover
+                                              ))
+                                        ],
+                                      )
                                   ),
                                 ),
                                 Visibility(
                                     visible:
-                                        type == "Warning" || type == "Logout"
-                                            ? true
-                                            : false,
-                                    child: const SizedBox(
-                                      width: 30,
+                                    type == "Warning" || type == "Logout"
+                                        ? true
+                                        : false,
+                                    child: SizedBox(
+                                      width: 12,
                                     )),
                                 Visibility(
                                   visible: type == "Warning" || type == "Logout"
@@ -460,14 +474,14 @@ class Utils {
                                   child: ElevatedButton(
                                     style: ButtonStyle(
                                         backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                c.red_new.withOpacity(0.7)),
+                                        MaterialStateProperty.all<Color>(
+                                            c.red_new.withOpacity(0.7)),
                                         shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
-                                          borderRadius:
+                                              borderRadius:
                                               BorderRadius.circular(15),
-                                        ))),
+                                            ))),
                                     onPressed: () {
                                       Navigator.pop(context, false);
                                       if (msg == s.internet_error) {
@@ -479,8 +493,8 @@ class Utils {
                                       msg == s.internet_error
                                           ? "Continue With Off-Line"
                                           : type == "Logout"
-                                              ? "No"
-                                              : "Cancel",
+                                          ? "No"
+                                          : "Cancel",
                                       style: GoogleFonts.getFont('Roboto',
                                           decoration: TextDecoration.none,
                                           fontWeight: FontWeight.w800,
@@ -504,6 +518,7 @@ class Utils {
       },
     );
   }
+
 
   Future<void> customAlertWidet(
       BuildContext context, String type, String msg) async {
@@ -797,7 +812,7 @@ class Utils {
   launchURL(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       throw 'Could not launch $url';
     }
@@ -838,7 +853,7 @@ class Utils {
 
     DateTime currentTime = DateTime.now();
 
-    DateTime expirationTime = currentTime.add(const Duration(hours: 20));
+    DateTime expirationTime = currentTime.add(const Duration(seconds: 20));
 
     String exp = (expirationTime.millisecondsSinceEpoch / 1000).toString();
 

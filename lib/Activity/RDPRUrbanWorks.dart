@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/SaveWorkDetails.dart';
-import 'package:inspection_flutter_app/Activity/WorkList.dart';
+import 'package:inspection/Activity/SaveWorkDetails.dart';
+import 'package:inspection/Activity/WorkList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/url.dart' as url;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../Resources/Strings.dart';
@@ -1276,6 +1276,10 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       townList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_townpanchayat_name] =
+              item[s.key_townpanchayat_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_townpanchayat_name]
               .toLowerCase()
@@ -1327,6 +1331,10 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       municipalityList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_municipality_name] =
+              item[s.key_municipality_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_municipality_name]
               .toLowerCase()
@@ -1378,6 +1386,10 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
       corporationList = [];
       if (status == s.key_ok && response_value == s.key_ok) {
         List<dynamic> res_jsonArray = userData[s.key_json_data];
+        for (var item in res_jsonArray) {
+          item[s.key_corporation_name] =
+              item[s.key_corporation_name].toString().replaceAll("'", "\'");
+        }
         res_jsonArray.sort((a, b) {
           return a[s.key_corporation_name]
               .toLowerCase()
@@ -1480,6 +1492,10 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
           schemeList = [];
           if (status == s.key_ok && responseValue == s.key_ok) {
             List<dynamic> res_jsonArray = userData[s.key_json_data];
+            for (var item in res_jsonArray) {
+              item[s.key_scheme_name] =
+                  item[s.key_scheme_name].toString().replaceAll("'", "\'");
+            }
             res_jsonArray.sort((a, b) {
               return a[s.key_scheme_name]
                   .toLowerCase()

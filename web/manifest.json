@@ -1,6 +1,6 @@
 {
-    "name": "inspection_flutter_app",
-    "short_name": "inspection_flutter_app",
+    "name": "inspection",
+    "short_name": "inspection",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

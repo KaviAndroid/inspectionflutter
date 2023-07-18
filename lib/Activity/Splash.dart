@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Layout/AppUpdate.dart';
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Layout/AppUpdate.dart';
+import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
+import 'package:inspection/Resources/url.dart' as url;
 
 class Splash extends StatefulWidget {
   @override

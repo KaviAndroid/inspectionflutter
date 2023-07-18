@@ -6,17 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection_flutter_app/Activity/ATR_Save.dart';
-import 'package:inspection_flutter_app/Activity/View_Image.dart';
-import 'package:inspection_flutter_app/Layout/ReadMoreLess.dart';
-import 'package:inspection_flutter_app/Resources/global.dart';
+import 'package:inspection/Activity/ATR_Save.dart';
+import 'package:inspection/Activity/View_Image.dart';
+import 'package:inspection/Layout/ReadMoreLess.dart';
+import 'package:inspection/Resources/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
 import '../Resources/ColorsValue.dart' as c;
-import 'package:inspection_flutter_app/Resources/Strings.dart' as s;
+import 'package:inspection/Resources/Strings.dart' as s;
 import '../Utils/utils.dart';
-import 'package:inspection_flutter_app/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection_flutter_app/Resources/url.dart' as url;
+import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:inspection/Resources/url.dart' as url;
 
 import 'SaveWorkDetails.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:inspection_flutter_app/Resources/ColorsValue.dart' as c;
+import 'package:inspection/Resources/ColorsValue.dart' as c;
 
 class ExpandableText extends StatefulWidget {
   const ExpandableText(

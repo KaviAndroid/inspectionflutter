@@ -33,15 +33,15 @@ class ATR_Save extends StatefulWidget {
 class _ATR_SaveState extends State<ATR_Save> {
   Utils utils = Utils();
   late AtrSaveDataController refer;
-  bool micFlag=false;
+  bool micFlagTamil=false;
   @override
   void initState() {
     super.initState();
     setState(() {
       if (Platform.isAndroid) {
-        micFlag=true;
+        micFlagTamil=true;
       } else if (Platform.isIOS) {
-        micFlag=true;
+        micFlagTamil=false;
       }
     });
   }
@@ -309,121 +309,121 @@ class _ATR_SaveState extends State<ATR_Save> {
             ),
           ),
         ),
-            Visibility(
-            visible: micFlag,
-    child: Column(
-    children: [
-      Visibility(
-        visible: refer.txtFlag ? true : false,
-        child: Container(
-          alignment: AlignmentDirectional.center,
-          margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Text(
-            s.type_text,
-            // state.hasError ? state.errorText : '',
-            style: TextStyle(
-                color: c.subscription_type_red_color, fontSize: 12.0),
-          ),
-        ),
-      ),
-      Visibility(
-        visible: !refer.speech,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 1,
-              child: InkWell(
+            Column(
+            children: [
+              Visibility(
+                visible: refer.txtFlag ? true : false,
+                child: Container(
+                  alignment: AlignmentDirectional.center,
+                  margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Text(
+                    s.type_text,
+                    // state.hasError ? state.errorText : '',
+                    style: TextStyle(
+                        color: c.subscription_type_red_color, fontSize: 12.0),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: !refer.speech,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                          onTap: () {
+                            refer.lang = 'en_US';
+                            refer.speech = true;
+                            refer.startListening(refer.descriptionController.text,context);
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                child: refer.speech
+                                    ? Image.asset(
+                                  imagePath.mic_mute_icon,
+                                  color: c.black,
+                                  fit: BoxFit.contain,
+                                  height: 15,
+                                  width: 15,
+                                )
+                                    : Image.asset(
+                                  imagePath.mic,
+                                  color: c.black,
+                                  fit: BoxFit.contain,
+                                  height: 15,
+                                  width: 15,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                s.english,
+                                style: TextStyle(fontSize: 13, color: c.grey_8),
+                              ),
+                            ],
+                          )),
+                    ),
+                    Visibility(
+                        visible: micFlagTamil,
+                        child:Expanded(
+                      flex: 1,
+                      child: InkWell(
+                          onTap: () {
+                            refer.lang = 'ta_IND';
+                            refer.speech = true;
+                            refer.startListening(refer.descriptionController.text,context);
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                child: refer.speech
+                                    ? Image.asset(
+                                  imagePath.mic_mute_icon,
+                                  color: c.black,
+                                  fit: BoxFit.contain,
+                                  height: 15,
+                                  width: 15,
+                                )
+                                    : Image.asset(
+                                  imagePath.mic,
+                                  color: c.black,
+                                  fit: BoxFit.contain,
+                                  height: 15,
+                                  width: 15,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                s.tamil,
+                                style: TextStyle(fontSize: 13, color: c.grey_8),
+                              ),
+                            ],
+                          )),
+                    )),
+                  ],
+                ),
+              ),
+              Visibility(
+                visible: refer.speech,
+                child: InkWell(
                   onTap: () {
-                    refer.lang = 'en_US';
-                    refer.speech = true;
-                    refer.startListening(refer.descriptionController.text,context);
+                    refer.stopListening();
                   },
-                  child: Row(
-                    children: [
-                      Container(
-                        child: refer.speech
-                            ? Image.asset(
-                          imagePath.mic_mute_icon,
-                          color: c.black,
-                          fit: BoxFit.contain,
-                          height: 15,
-                          width: 15,
-                        )
-                            : Image.asset(
-                          imagePath.mic,
-                          color: c.black,
-                          fit: BoxFit.contain,
-                          height: 15,
-                          width: 15,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        s.english,
-                        style: TextStyle(fontSize: 13, color: c.grey_8),
-                      ),
-                    ],
-                  )),
-            ),
-            Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () {
-                    refer.lang = 'ta_IND';
-                    refer.speech = true;
-                    refer.startListening(refer.descriptionController.text,context);
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        child: refer.speech
-                            ? Image.asset(
-                          imagePath.mic_mute_icon,
-                          color: c.black,
-                          fit: BoxFit.contain,
-                          height: 15,
-                          width: 15,
-                        )
-                            : Image.asset(
-                          imagePath.mic,
-                          color: c.black,
-                          fit: BoxFit.contain,
-                          height: 15,
-                          width: 15,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        s.tamil,
-                        style: TextStyle(fontSize: 13, color: c.grey_8),
-                      ),
-                    ],
-                  )),
-            ),
-          ],
-        ),
-      ),
-      Visibility(
-        visible: refer.speech,
-        child: InkWell(
-          onTap: () {
-            refer.stopListening();
-          },
-          child: Image.asset(
-            imagePath.mic_loading,
-            height: 60.0,
-            width: 60.0,
-          ),
-        ),
-      )
-    ]
-    ))
+                  child: Image.asset(
+                    imagePath.mic_loading,
+                    height: 60.0,
+                    width: 60.0,
+                  ),
+                ),
+              )
+            ]
+            )
 
       ]),
     );

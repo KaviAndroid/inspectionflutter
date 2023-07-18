@@ -595,12 +595,13 @@ class Utils {
         print("object$cameraPermission");
       }
     } else if (Platform.isIOS) {
-      if (await cameraPermission.isGranted) {
+      flag = true;
+      /*if (await cameraPermission.isGranted) {
         flag = true;
         print("object$cameraPermission");
       }else {
         Utils().showAppSettings(context, s.cam_permission);
-      }
+      }*/
     }
 
 
@@ -1195,7 +1196,7 @@ class Utils {
                   textAlign: TextAlign.justify,
                   style: GoogleFonts.getFont('Roboto',
                       fontWeight: FontWeight.w800,
-                      fontSize: screenWidth * 0.03,
+                      fontSize: 11,
                       color: c.grey_9),
 
                 ),

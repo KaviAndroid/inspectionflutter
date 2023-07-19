@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:datetime_setting/datetime_setting.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
@@ -43,10 +44,22 @@ class Utils {
   int calendarSelectedIndex = 0;
 
   Future<bool> isAutoDatetimeisEnable() async {
-    bool isAutoDateTimeEnabled = false;
-    isAutoDateTimeEnabled = Platform.environment['AUTO_TIME'] == 'true';
-    // return isAutoDateTimeEnabled;
-    return true;
+    bool isAutoDatetimeisEnable = false;
+
+    if(Platform.isAndroid) {
+      bool timeAuto = await DatetimeSetting.timeIsAuto();
+      bool timezoneAuto = await DatetimeSetting.timeZoneIsAuto();
+      timezoneAuto && timeAuto
+          ? isAutoDatetimeisEnable = true
+          : isAutoDatetimeisEnable = false;
+    } else if(Platform.isIOS) {
+      const MethodChannel _channel = const MethodChannel('ios_device_settings');
+      final int status = await _channel.invokeMethod('com.apple.mobilephone.systemtime.auto');
+      status == 1 ? isAutoDatetimeisEnable = true
+        : isAutoDatetimeisEnable = false;
+    }
+
+    return isAutoDatetimeisEnable;
   }
 
   void openDateTimeSettings() async {
@@ -118,7 +131,6 @@ class Utils {
     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
     DateTime dateTimeNow = inputFormat.parse(formattedDate);
     bool flag = false;
-    double hoursOfMonth = month * 30 * 24;
     // DateTime dateTimeNow = DateTime.now();
 
     final differenceInDays = dateTimeNow.difference(dateTimeLup).inDays;
@@ -126,11 +138,30 @@ class Utils {
 
     final differenceInHours = dateTimeNow.difference(dateTimeLup).inHours;
     print('hours>>' + '$differenceInHours');
-    if (differenceInHours >= hoursOfMonth) {
+   /*     double hoursOfMonth = month * 30 * 24;
+
+   if (differenceInHours >= hoursOfMonth) {
       flag = true;
     } else {
       flag = false;
+    }*/
+
+    double  hoursOfMonth=month*30*24;
+    double  hoursOfnextMonth=((month+3)*30)*24;
+    if(month<12){
+      if(differenceInHours >hoursOfMonth && differenceInHours<=hoursOfnextMonth){
+        flag=true;
+      }else {
+        flag=false;
+      }
+    }else {
+      if(differenceInHours >hoursOfMonth){
+        flag=true;
+      }else {
+        flag=false;
+      }
     }
+
     return flag;
   }
 

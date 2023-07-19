@@ -211,7 +211,7 @@ class _DrawerAppState extends State<DrawerApp> {
                                           radius: 30.0))
                                   : CircleAvatar(
                                       backgroundImage: AssetImage(
-                                        imagePath.user,
+                                        imagePath.regUser,
                                       ),
                                       radius: 30.0)),
                         ),

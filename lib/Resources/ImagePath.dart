@@ -64,13 +64,14 @@ String logout_img = "assets/images/logout_img.png";
 String logout_icon = "assets/images/power.png";
 String filled_circle = "assets/images/filled_circle.png";
 String wifi = "assets/images/wifi.png";
+String user = "assets/images/user.png";
 
 //jpg icons
 String inspection_ic = "assets/images/inspection_ic.jpg";
 //svg icons
 String wave = "assets/svg_icons/wave.svg";
 String ic_user = "assets/svg_icons/ic_user.svg";
-String user = "assets/svg_icons/user.svg";
+// String user = "assets/svg_icons/user.svg";
 String mic_loading = "assets/svg_icons/mic_loading.gif";
 String success = "assets/svg_icons/success.gif";
 String error = "assets/svg_icons/error.gif";

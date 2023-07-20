@@ -53,10 +53,7 @@ class Utils {
           ? isAutoDatetimeisEnable = true
           : isAutoDatetimeisEnable = false;
     } else if(Platform.isIOS) {
-      const MethodChannel _channel = const MethodChannel('ios_device_settings');
-      final int status = await _channel.invokeMethod('com.apple.mobilephone.systemtime.auto');
-      status == 1 ? isAutoDatetimeisEnable = true
-        : isAutoDatetimeisEnable = false;
+      isAutoDatetimeisEnable = true
     }
 
     return isAutoDatetimeisEnable;

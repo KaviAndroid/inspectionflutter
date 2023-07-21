@@ -40,6 +40,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   List unSatisfiedWorkList = [];
   List defaultWorklist = [];
   List selectedWorklist = [];
+  Iterable filteredWorklist = [];
+
   List<Map> list = [];
 
   // Controller Text
@@ -51,6 +53,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   String npCount = "0";
   String usCount = "0";
   String town_type = "";
+  String _searchQuery = '';
+
   int selectedIndex = 0;
   // Bool Variables
   bool isWorklistAvailable = false;
@@ -59,6 +63,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   bool townActive = false;
   bool munActive = false;
   bool corpActive = false;
+  bool searchEnabled = false;
+  bool iconBtnPressed = false;
 
   //Date Time
   DateTime? selectedFromDate;
@@ -101,25 +107,37 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 ? dateController.text = prefs.getString(s.atr_date_r).toString()
                 : s.select_from_to_date
             : null;
-    widget.Flag == "R"?town_type="" : town_type="T";
+    widget.Flag == "R" ? town_type = "" : town_type = "T";
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
-    List<Map>  urbanOfflineList = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
-    print("List >>"+urbanOfflineList.toString());
-     if (urbanOfflineList.isNotEmpty) {
-         //value exists
+      List<Map> urbanOfflineList = await dbClient.rawQuery(
+          "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
+      print("List >>" + urbanOfflineList.toString());
+      if (urbanOfflineList.isNotEmpty) {
+        //value exists
         if (urbanOfflineList[0][s.key_town_type] == "T") {
-          town_type="T";
+          town_type = "T";
         } else if (urbanOfflineList[0][s.key_town_type] == "M") {
-          town_type="M";
+          town_type = "M";
         } else if (urbanOfflineList[0][s.key_town_type] == "C") {
-          town_type="C";
+          town_type = "C";
         }
       }
-      }
+    }
 
     await fetchOfflineWorklist();
     setState(() {});
+  }
+
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query != null && query != ""
+        ? _searchQuery = query.toLowerCase()
+        : _searchQuery = "";
+    filteredWorklist = defaultWorklist.where((item) {
+      final work_id = item[s.key_work_id].toString();
+      final work_name = item[s.key_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
+    });
   }
 
   @override
@@ -132,8 +150,51 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             onPressed: () =>
                 Navigator.of(context, rootNavigator: true).pop(context),
           ),
-          title: Text(s.work_list),
+          title: iconBtnPressed
+              ? Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Center(
+                    child: TextField(
+                      onChanged: (String value) async {
+                        await onSearchQueryChanged(value);
+                        setState(() {});
+                      },
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                searchEnabled = false;
+                                iconBtnPressed = false;
+                              });
+                              /* Clear the search field */
+                            },
+                          ),
+                          hintText: 'Search...',
+                          border: InputBorder.none),
+                    ),
+                  ),
+                )
+              : Text(s.work_list),
           centerTitle: true, // like this!
+          actions: <Widget>[
+            !iconBtnPressed
+                ? IconButton(
+                    icon: Icon(Icons.search,
+                        color: Colors.white), // Search button icon
+                    onPressed: () {
+                      setState(() {
+                        iconBtnPressed = true;
+                      });
+                    },
+                  )
+                : SizedBox(),
+          ],
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
@@ -151,13 +212,13 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   child: GestureDetector(
                     onTap: () {
                       utils.ShowCalenderDialog(context).then((value) => {
-                        if (value['flag'])
-                          {
-                            selectedFromDate = value['fromDate'],
-                            selectedToDate = value['toDate'],
-                            dateValidation()
-                          }
-                      });
+                            if (value['flag'])
+                              {
+                                selectedFromDate = value['fromDate'],
+                                selectedToDate = value['toDate'],
+                                dateValidation()
+                              }
+                          });
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -173,11 +234,12 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                         const SizedBox(
                           width: 10,
                         ),
-                        Expanded(child: Text(s.download_text,
-                            style: GoogleFonts.getFont('Roboto',
-                                fontSize: 17,
-                                fontWeight: FontWeight.w900,
-                                color: c.primary_text_color2))),
+                        Expanded(
+                            child: Text(s.download_text,
+                                style: GoogleFonts.getFont('Roboto',
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w900,
+                                    color: c.primary_text_color2))),
                         const SizedBox(
                           width: 15,
                         ),
@@ -189,8 +251,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 widget.Flag == "U"
                     ? __Urban_design()
                     : const SizedBox(
-                  height: 10,
-                ),
+                        height: 10,
+                      ),
                 __ATR_Dashboard_Design(),
                 __ATR_WorkList_Loader(),
               ],
@@ -291,11 +353,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
           if (inspection_details.isNotEmpty) {
             if (widget.Flag == "U") {
-              dbHelper.delete_table_AtrWorkList('U',town_type);
+              dbHelper.delete_table_AtrWorkList('U', town_type);
             } else if (widget.Flag == "R") {
-              dbHelper.delete_table_AtrWorkList('R',"");
+              dbHelper.delete_table_AtrWorkList('R', "");
             }
-            print("List >>"+inspection_details.toString());
+            print("List >>" + inspection_details.toString());
 
             String sql =
                 'INSERT INTO ${s.table_AtrWorkList} (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES ';
@@ -435,10 +497,10 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
-    print("town_type" +town_type);
+    print("town_type" + town_type);
     list = await dbClient.rawQuery(
         "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' and town_type='${town_type}' ");
-    print("List >>"+list.toString());
+    print("List >>" + list.toString());
 
     if (list.isEmpty) {
       isWorklistAvailable = false;
@@ -484,13 +546,13 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
         if (list[0][s.key_town_type] == "T") {
           townActive = true;
-          selectedIndex=0;
+          selectedIndex = 0;
         } else if (list[0][s.key_town_type] == "M") {
           munActive = true;
-          selectedIndex=1;
+          selectedIndex = 1;
         } else if (list[0][s.key_town_type] == "C") {
           corpActive = true;
-          selectedIndex=2;
+          selectedIndex = 2;
         }
       }
 
@@ -571,6 +633,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                         onTap: () {
                           isUnSatisfiedActive = false;
                           isNeedImprovementActive = true;
+                          searchEnabled = false;
+                          iconBtnPressed = false;
                           defaultWorklist = needImprovementWorkList;
                           setState(() {});
                         },
@@ -621,6 +685,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                         onTap: () {
                           isUnSatisfiedActive = true;
                           isNeedImprovementActive = false;
+                          searchEnabled = false;
+                          iconBtnPressed = false;
                           defaultWorklist = unSatisfiedWorkList;
                           setState(() {});
                         },
@@ -676,7 +742,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: c.need_improvement, width: 1)),
             margin: const EdgeInsets.only(top: 5),
-            width: MediaQuery.of(context).size.width /2,
+            width: MediaQuery.of(context).size.width / 2,
             height: 40,
             child: Row(children: [
               Expanded(
@@ -759,14 +825,21 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   margin: const EdgeInsets.only(
                       top: 0, bottom: 10, left: 20, right: 20),
                   child: AnimationLimiter(
-                    key: ValueKey(widget.Flag == "U"?town_type:isNeedImprovementActive),
+                    key: ValueKey(widget.Flag == "U"
+                        ? town_type
+                        : isNeedImprovementActive),
                     child: ListView.builder(
                       shrinkWrap: true,
                       primary: false,
-                      itemCount: isNeedImprovementActive
-                          ? int.parse(npCount)
-                          : int.parse(usCount),
+                      itemCount: searchEnabled
+                          ? filteredWorklist.length
+                          : isNeedImprovementActive
+                              ? int.parse(npCount)
+                              : int.parse(usCount),
                       itemBuilder: (context, index) {
+                        final item = searchEnabled
+                            ? filteredWorklist.elementAt(index)
+                            : defaultWorklist[index];
                         return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 800),
@@ -809,29 +882,34 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             const SizedBox(
                                               width: 5,
                                             ),
-                                           Expanded(child:Container(padding:EdgeInsets.only(right: 50) ,
-                                             alignment: Alignment.centerLeft,
-                                             child: Text(
-                                                  defaultWorklist[index]
-                                                  [s.inspection_by_officer],
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.primary_text_color2),
-                                              overflow: TextOverflow.ellipsis,
-
-                                            ),
-                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                padding:
+                                                    EdgeInsets.only(right: 50),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  utils.checkNull(item[s.inspection_by_officer]),
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: c
+                                                          .primary_text_color2),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        Container(padding:EdgeInsets.only(right: 30) ,
+                                        Container(
+                                          padding: EdgeInsets.only(right: 30),
                                           alignment: Alignment.centerLeft,
-                                          child:Text(
-                                            "${"( " + defaultWorklist[index][s.inspection_by_officer_designation]} )",
+                                          child: Text(
+                                            "${"( " + utils.checkNull(item[s.inspection_by_officer_designation]) } )",
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
@@ -887,8 +965,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: Text(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_id]
+                                                    item[s.key_work_id]
                                                         .toString(),
                                                   ),
                                                 ),
@@ -942,8 +1019,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: ExpandableText(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_name]
+                                                    item[s.key_work_name]
                                                         .toString(),
                                                     trimLines: 2,
                                                     txtcolor: "2",
@@ -999,8 +1075,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: Text(
-                                                    defaultWorklist[index][s
-                                                            .key_work_type_name]
+                                                    item[s.key_work_type_name]
                                                         .toString(),
                                                   ),
                                                 ),
@@ -1054,8 +1129,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: Text(
-                                                    defaultWorklist[index][s
-                                                            .key_inspection_date]
+                                                    item[s.key_inspection_date]
                                                         .toString(),
                                                   ),
                                                 ),
@@ -1109,8 +1183,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                                       AlignmentDirectional
                                                           .topStart,
                                                   child: Text(
-                                                    defaultWorklist[index]
-                                                            [s.key_status_name]
+                                                    item[s.key_status_name]
                                                         .toString(),
                                                   ),
                                                 ),
@@ -1126,8 +1199,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     child: GestureDetector(
                                       onTap: () {
                                         selectedWorklist.clear();
-                                        selectedWorklist
-                                            .add(defaultWorklist[index]);
+                                        selectedWorklist.add(item);
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                           builder: (context) => ATR_Save(
@@ -1173,11 +1245,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       onTap: () async {
                                         if (await utils.isOnline()) {
                                           get_PDF(
-                                              defaultWorklist[index]
-                                                      [s.key_work_id]
-                                                  .toString(),
-                                              defaultWorklist[index]
-                                                      [s.key_inspection_id]
+                                              item[s.key_work_id].toString(),
+                                              item[s.key_inspection_id]
                                                   .toString());
                                         } else {
                                           utils.customAlertWidet(
@@ -1237,6 +1306,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           munActive = mActive;
           corpActive = cActive;
           selectedIndex = index;
+          searchEnabled = false;
+          iconBtnPressed = false;
           setState(() {});
           refresh();
         },
@@ -1260,23 +1331,24 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 10,right: 5),
+                    margin: EdgeInsets.only(left: 10, right: 5),
                     child: Image.asset(
-                    imagePath.radio,
-                    color: selectedIndex == index ? c.white : c.grey_5,
-                    width: 17,
-                    height: 17,
+                      imagePath.radio,
+                      color: selectedIndex == index ? c.white : c.grey_5,
+                      width: 17,
+                      height: 17,
+                    ),
                   ),
-                  ),
-                  Expanded(child: Text(
-                    title,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                    style: GoogleFonts.getFont('Roboto',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11,
-                        color: selectedIndex == index ? c.white : c.grey_6),
-                  ),
+                  Expanded(
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.justify,
+                      style: GoogleFonts.getFont('Roboto',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 11,
+                          color: selectedIndex == index ? c.white : c.grey_6),
+                    ),
                   ),
                 ])),
       ),
@@ -1318,7 +1390,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   void refresh() {
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
       fetchOfflineWorklist();
-     /* if (urbanOfflineList.isNotEmpty) {
+      /* if (urbanOfflineList.isNotEmpty) {
         if (town_type == "T") {
           if (townActive) {
             fetchOfflineWorklist();

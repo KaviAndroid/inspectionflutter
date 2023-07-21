@@ -35,6 +35,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   List unSatisfiedWorkList = [];
   List defaultWorklist = [];
   List selectedWorklist = [];
+  Iterable filteredWorklist = [];
 
   // Controller Text
   TextEditingController dateController = TextEditingController();
@@ -45,6 +46,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   String npCount = "0";
   String usCount = "0";
   String town_type = "T";
+  String _searchQuery = '';
 
   //BoolVariabless
   bool isNeedImprovementActive = false;
@@ -53,6 +55,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
   bool townActive = true;
   bool munActive = false;
   bool corpActive = false;
+  bool searchEnabled = false;
+  bool iconBtnPressed = false;
   int selectedIndex = 0;
 
   //Date Time
@@ -96,6 +100,18 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
     }
     setState(() {
       SDBText = "Block - ${prefs.getString(s.key_bname)}";
+    });
+  }
+
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query != null && query != ""
+        ? _searchQuery = query.toLowerCase()
+        : _searchQuery = "";
+    filteredWorklist = defaultWorklist.where((item) {
+      final work_id = item[s.key_work_id].toString();
+      final work_name = item[s.key_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
     });
   }
 
@@ -152,8 +168,51 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
             onPressed: () =>
                 Navigator.of(context, rootNavigator: true).pop(context),
           ),
-          title: Text(s.work_list),
-          centerTitle: true, // like this!
+          title: iconBtnPressed
+              ? Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Center(
+                    child: TextField(
+                      onChanged: (String value) async {
+                        await onSearchQueryChanged(value);
+                        setState(() {});
+                      },
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                searchEnabled = false;
+                                iconBtnPressed = false;
+                              });
+                              /* Clear the search field */
+                            },
+                          ),
+                          hintText: 'Search...',
+                          border: InputBorder.none),
+                    ),
+                  ),
+                )
+              : Text(s.work_list), // Title text for the app bar
+          centerTitle: true, // Center the title horizontally
+          actions: <Widget>[
+            !iconBtnPressed
+                ? IconButton(
+                    icon: Icon(Icons.search,
+                        color: Colors.white), // Search button icon
+                    onPressed: () {
+                      setState(() {
+                        iconBtnPressed = true;
+                      });
+                    },
+                  )
+                : SizedBox(),
+          ],
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
@@ -468,6 +527,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                           isUnSatisfiedActive = false;
                           isNeedImprovementActive = true;
                           defaultWorklist = needImprovementWorkList;
+                          searchEnabled = false;
+                          iconBtnPressed = false;
                           setState(() {});
                         },
                         child: Container(
@@ -517,6 +578,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                           isUnSatisfiedActive = true;
                           isNeedImprovementActive = false;
                           defaultWorklist = unSatisfiedWorkList;
+                          searchEnabled = false;
+                          iconBtnPressed = false;
                           setState(() {});
                         },
                         child: Container(
@@ -571,7 +634,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: c.need_improvement, width: 1)),
             margin: const EdgeInsets.only(top: 5),
-            width: MediaQuery.of(context).size.width /2,
+            width: MediaQuery.of(context).size.width / 2,
             height: 40,
             child: Row(children: [
               Expanded(
@@ -670,6 +733,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       ),
     );
   }
+
   _urban_Card_Design(String title, String tmctype, int index, bool tActive,
       bool mActive, bool cActive) {
     return Expanded(
@@ -681,6 +745,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
           munActive = mActive;
           corpActive = cActive;
           selectedIndex = index;
+          searchEnabled = false;
+          iconBtnPressed = false;
           setState(() {});
           refresh();
         },
@@ -704,7 +770,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 10,right: 5),
+                    margin: EdgeInsets.only(left: 10, right: 5),
                     child: Image.asset(
                       imagePath.radio,
                       color: selectedIndex == index ? c.white : c.grey_5,
@@ -712,15 +778,16 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                       height: 17,
                     ),
                   ),
-                  Expanded(child: Text(
-                    title,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                    style: GoogleFonts.getFont('Roboto',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11,
-                        color: selectedIndex == index ? c.white : c.grey_6),
-                  ),
+                  Expanded(
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.justify,
+                      style: GoogleFonts.getFont('Roboto',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 11,
+                          color: selectedIndex == index ? c.white : c.grey_6),
+                    ),
                   ),
                 ])),
       ),
@@ -742,14 +809,20 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                 margin: const EdgeInsets.only(
                     top: 0, bottom: 10, left: 20, right: 20),
                 child: AnimationLimiter(
-                  key: ValueKey(widget.Flag == "U"?town_type:isNeedImprovementActive),
+                  key: ValueKey(
+                      widget.Flag == "U" ? town_type : isNeedImprovementActive),
                   child: ListView.builder(
                     shrinkWrap: true,
                     primary: false,
-                    itemCount: isNeedImprovementActive
-                        ? int.parse(npCount)
-                        : int.parse(usCount),
+                    itemCount: searchEnabled
+                        ? filteredWorklist.length
+                        : isNeedImprovementActive
+                            ? int.parse(npCount)
+                            : int.parse(usCount),
                     itemBuilder: (context, index) {
+                      final item = searchEnabled
+                          ? filteredWorklist.elementAt(index)
+                          : defaultWorklist[index];
                       return AnimationConfiguration.staggeredList(
                         position: index,
                         duration: const Duration(milliseconds: 800),
@@ -790,17 +863,19 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                             width: 5,
                                           ),
                                           Expanded(
-                                            child:  Container(padding:EdgeInsets.only(right: 50) ,
+                                            child: Container(
+                                              padding:
+                                                  EdgeInsets.only(right: 50),
                                               alignment: Alignment.centerLeft,
-                                              child:Text(
-                                                  defaultWorklist[index]
-                                                  [s.key_name],
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.primary_text_color2),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
+                                              child: Text(
+                                                utils.checkNull(item[s.key_name]) ,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        c.primary_text_color2),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           )
                                         ],
@@ -808,18 +883,19 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      Container(padding:EdgeInsets.only(right: 30) ,
+                                      Container(
+                                        padding: EdgeInsets.only(right: 30),
                                         alignment: Alignment.centerLeft,
-                                        child:Text(
-                                        "${"( " + defaultWorklist[index][s.key_desig_name]} )",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: c.primary_text_color2),
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.justify,
-                                        maxLines: 1,
-                                      ),
+                                        child: Text(
+                                          "${"( " + utils.checkNull(item[s.key_desig_name]) } )",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: c.primary_text_color2),
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.justify,
+                                          maxLines: 1,
+                                        ),
                                       ),
                                       const SizedBox(
                                         height: 10,
@@ -865,8 +941,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_work_id]
+                                                  item[s.key_work_id]
                                                       .toString(),
                                                 ),
                                               ),
@@ -918,10 +993,11 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: ExpandableText(
-                                                    defaultWorklist[index]
-                                                            [s.key_work_name]
-                                                        .toString(),
-                                                    trimLines: 2,txtcolor: "2",),
+                                                  item[s.key_work_name]
+                                                      .toString(),
+                                                  trimLines: 2,
+                                                  txtcolor: "2",
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -971,8 +1047,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_work_type_name]
+                                                  item[s.key_work_type_name]
                                                       .toString(),
                                                 ),
                                               ),
@@ -1024,8 +1099,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: Text(
-                                                  defaultWorklist[index][
-                                                          s.key_inspection_date]
+                                                  item[s.key_inspection_date]
                                                       .toString(),
                                                 ),
                                               ),
@@ -1077,8 +1151,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                                 alignment: AlignmentDirectional
                                                     .topStart,
                                                 child: Text(
-                                                  defaultWorklist[index]
-                                                          [s.key_status_name]
+                                                  item[s.key_status_name]
                                                       .toString(),
                                                 ),
                                               ),
@@ -1094,8 +1167,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                   child: GestureDetector(
                                     onTap: () {
                                       selectedWorklist.clear();
-                                      selectedWorklist
-                                          .add(defaultWorklist[index]);
+                                      selectedWorklist.add(item);
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(
                                             builder: (context) => ATR_Save(
@@ -1140,11 +1212,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                     onTap: () async {
                                       if (await utils.isOnline()) {
                                         get_PDF(
-                                            defaultWorklist[index]
-                                                    [s.key_work_id]
-                                                .toString(),
-                                            defaultWorklist[index]
-                                                    [s.key_inspection_id]
+                                            item[s.key_work_id].toString(),
+                                            item[s.key_inspection_id]
                                                 .toString());
                                       }
                                     },

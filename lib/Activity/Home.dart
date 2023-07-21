@@ -524,7 +524,7 @@ class _HomeState extends State<Home> {
                                                 radius: 30.0))
                                         : CircleAvatar(
                                             backgroundImage: AssetImage(
-                                              imagePath.regUser,
+                                              imagePath.user,
                                             ),
                                             radius: 30.0))),
                           ),

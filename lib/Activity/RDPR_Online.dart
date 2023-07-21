@@ -343,8 +343,8 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
 
     json_request = {
       s.key_service_id: s.service_key_get_calculate_distance,
-      s.key_latitude: latitude /*10.6704070583*/,
-      s.key_longitude: longitude /*79.6427229964*/,
+      s.key_latitude: /*latitude*/ 10.6704070583,
+      s.key_longitude: /*longitude*/ 79.6427229964,
       s.key_distance: distance.text,
     };
 

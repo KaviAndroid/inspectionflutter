@@ -444,7 +444,7 @@ class _HomeState extends State<Home> {
                                 name,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: c.white,
+                                    color: c.grey_8,
                                     fontSize: 15),
                                 textAlign: TextAlign.left,
                                 overflow: TextOverflow.ellipsis,

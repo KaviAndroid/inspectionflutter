@@ -43,7 +43,11 @@ class _ViewWorklistState extends State<ViewWorklist> {
   // List
   List defaultWorklist = [];
   List selectedWorklist = [];
-
+  Iterable workListfiltered = [];
+  bool searchEnabled = false;
+  bool searchIconPressed = false;
+  String _searchQuery = '';
+  
   Utils utils = Utils();
   late SharedPreferences prefs;
 
@@ -267,8 +271,48 @@ class _ViewWorklistState extends State<ViewWorklist> {
             onPressed: () =>
                 Navigator.of(context, rootNavigator: true).pop(context),
           ),
-          title: Text(s.work_list),
-          centerTitle: true, // like this!
+          title:searchIconPressed?
+          Container(
+            width: double.infinity,
+            height: 40,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            child: Center(
+              child: TextField(
+                onChanged: (String value) async {
+                  setState(() {
+                    onSearchQueryChanged(value);
+                  });
+
+                },
+                decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchEnabled=false;
+                          searchIconPressed=false;
+                        });
+                        /* Clear the search field */
+                      },
+                    ),
+                    hintText: 'Search...',
+                    border: InputBorder.none),
+              ),
+            ),
+          ): Text(s.work_list),
+          centerTitle: true,
+          actions: [
+            // Navigate to the Search Screen
+            !searchIconPressed?IconButton(
+                onPressed:(){
+                  setState(() {
+                    searchIconPressed=true;
+                  });
+                },
+                icon: const Icon(Icons.search)):SizedBox(),
+          ],// like this!
         ),
         body: Container(
             height: MediaQuery.of(context).size.height,
@@ -441,8 +485,13 @@ class _ViewWorklistState extends State<ViewWorklist> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     primary: false,
-                    itemCount: defaultWorklist.length,
+                    itemCount: searchEnabled
+                        ? workListfiltered.length
+                        : defaultWorklist.length,
                     itemBuilder: (context, index) {
+                      final item = searchEnabled
+                          ? workListfiltered.elementAt(index)
+                          : defaultWorklist[index];
                       return AnimationConfiguration.staggeredList(
                         position: index,
                         duration: const Duration(milliseconds: 800),
@@ -461,10 +510,10 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
                                     fit: BoxFit.contain,
-                                    opacity: defaultWorklist[index]
+                                    opacity: item
                                                     [s.key_status_id] ==
                                                 1 ||
-                                            defaultWorklist[index]
+                                            item
                                                     [s.key_action_status] ==
                                                 "Y"
                                         ? 0.4
@@ -495,7 +544,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                             width: 5,
                                           ),
                                           /*   Expanded(
-                                            child: Text(defaultWorklist[index][s.key_name], maxLines: 3,
+                                            child: Text(item[s.key_name], maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.justify, style: GoogleFonts.getFont('Roboto',
                                                     fontWeight: FontWeight.w600,
@@ -504,17 +553,17 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                     )),
                                           ),*/
                                           Text(
-                                            defaultWorklist[index][s.key_name]
+                                            item[s.key_name]
                                                         .length >
                                                     25
-                                                ? defaultWorklist[index]
+                                                ? item
                                                             [s.key_name]
                                                         .substring(0, 25) +
                                                     '...'
-                                                : defaultWorklist[index]
+                                                : item
                                                     [s.key_name],
                                             /*utils.splitStringByLength(
-                                                defaultWorklist[index]
+                                                item
                                                     [s.key_name],
                                                 30),*/
                                             style: TextStyle(
@@ -537,7 +586,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "${"( " + defaultWorklist[index][s.key_desig_name]} )",
+                                            "${"( " + item[s.key_desig_name]} )",
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500,
@@ -554,34 +603,34 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                       cardElememtWidget(
                                           context,
                                           s.work_id,
-                                          defaultWorklist[index][s.key_work_id]
+                                          item[s.key_work_id]
                                               .toString()),
                                       cardElememtWidget(
                                           context,
                                           s.work_name,
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_work_name]
                                               .toString()),
                                       cardElememtWidget(
                                           context,
                                           s.work_type_name,
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_work_type_name]
                                               .toString()),
                                       cardElememtWidget(
                                           context,
                                           s.inspected_date,
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_inspection_date]
                                               .toString()),
                                       cardElememtWidget(
                                           context,
                                           s.status,
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_status_name]
                                               .toString()),
                                       Visibility(
-                                        visible: defaultWorklist[index]
+                                        visible: item
                                                         [s.key_status_id]
                                                     .toString() ==
                                                 "1"
@@ -633,7 +682,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                           AlignmentDirectional
                                                               .topStart,
                                                       child: Text(
-                                                        defaultWorklist[index][s
+                                                        item[s
                                                                         .key_action_status]
                                                                     .toString() ==
                                                                 "Y"
@@ -642,7 +691,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color: defaultWorklist[index]
+                                                            color: item
                                                                             [
                                                                             s.key_action_status]
                                                                         .toString() ==
@@ -659,7 +708,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                         ),
                                       ),
                                       Visibility(
-                                        visible: defaultWorklist[index]
+                                        visible: item
                                                         [s.key_action_status]
                                                     .toString() ==
                                                 "Y"
@@ -714,7 +763,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                                           AlignmentDirectional
                                                               .topStart,
                                                       child: Text(
-                                                        defaultWorklist[index][s
+                                                        item[s
                                                                     .key_reported_by] !=
                                                                 null
                                                             ? defaultWorklist[
@@ -743,7 +792,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                       if (saveEnable) {
                                         selectedWorklist.clear();
                                         selectedWorklist
-                                            .add(defaultWorklist[index]);
+                                            .add(item);
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                               builder: (context) => ATR_Save(
@@ -791,15 +840,15 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                   child: GestureDetector(
                                     onTap: () {
                                       get_PDF(
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_action_status]
                                               .toString(),
-                                          defaultWorklist[index][s.key_work_id]
+                                          item[s.key_work_id]
                                               .toString(),
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_inspection_id]
                                               .toString(),
-                                          defaultWorklist[index]
+                                          item
                                                   [s.key_action_taken_id]
                                               .toString());
                                     },
@@ -843,4 +892,15 @@ class _ViewWorklistState extends State<ViewWorklist> {
   }
 
   // *************************** ATR Worklist Ends Here  *************************** //
+
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query!=null && query !="" ? _searchQuery = query.toLowerCase():_searchQuery ="";
+    workListfiltered = defaultWorklist.where((item) {
+      final work_id = item[s.key_work_id].toString();
+      final work_name = item[s.key_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
+    });
+  }
+
 }

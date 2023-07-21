@@ -62,6 +62,7 @@ class _WorkListState extends State<WorkList> {
   int flag = 1;
   List workListAll = [];
   List workList = [];
+  Iterable workListfiltered = [];
   List progressList = [];
   List ongoingWorkList = [];
   List completedWorkList = [];
@@ -86,6 +87,9 @@ class _WorkListState extends State<WorkList> {
   bool flagList = false;
   bool sidebarOpen = false;
   bool delaytab = false;
+  bool searchEnabled = false;
+  bool searchIconPressed = false;
+  String _searchQuery = '';
 
   double yOffset = 0;
   double xOffset = 0;
@@ -243,7 +247,11 @@ class _WorkListState extends State<WorkList> {
               margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Align(
                 alignment: AlignmentDirectional.topStart,
-                child: ExpandableText(value, trimLines: 2,txtcolor: "2",),
+                child: ExpandableText(
+                  value,
+                  trimLines: 2,
+                  txtcolor: "2",
+                ),
               ),
             ),
           ),
@@ -298,7 +306,38 @@ class _WorkListState extends State<WorkList> {
             backgroundColor: c.colorPrimary,
             centerTitle: true,
             elevation: 2,
-            title: Center(
+            title: searchIconPressed?
+            Container(
+              width: double.infinity,
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: TextField(
+                  onChanged: (String value) async {
+                    setState(() {
+                      onSearchQueryChanged(value);
+                    });
+
+                  },
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            searchEnabled=false;
+                            searchIconPressed=false;
+                          });
+                          /* Clear the search field */
+                        },
+                      ),
+                      hintText: 'Search...',
+                      border: InputBorder.none),
+                ),
+              ),
+            ):
+            Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -317,6 +356,16 @@ class _WorkListState extends State<WorkList> {
                 ],
               ),
             ),
+            actions: [
+              // Navigate to the Search Screen
+              !searchIconPressed?IconButton(
+                  onPressed:(){
+                    setState(() {
+                      searchIconPressed=true;
+                    });
+                    },
+                  icon: const Icon(Icons.search)):SizedBox(),
+            ],
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,
@@ -761,6 +810,8 @@ class _WorkListState extends State<WorkList> {
                         child: InkWell(
                           onTap: () {
                             setState(() {
+                              searchEnabled=false;
+                              searchIconPressed=false;
                               flag = 1;
                               if (ongoingWorkList.length > 0) {
                                 workList = [];
@@ -818,6 +869,8 @@ class _WorkListState extends State<WorkList> {
                         child: InkWell(
                           onTap: () {
                             setState(() {
+                              searchEnabled=false;
+                              searchIconPressed=false;
                               flag = 2;
                               if (completedWorkList.length > 0) {
                                 workList = [];
@@ -883,8 +936,14 @@ class _WorkListState extends State<WorkList> {
                           margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                           child: AnimationLimiter(
                             child: ListView.builder(
-                              itemCount: workList == null ? 0 : workList.length,
+                              // itemCount: workList == null ? 0 : workList.length,
+                              itemCount: searchEnabled
+                                  ? workListfiltered.length
+                                  : workList.length,
                               itemBuilder: (context, index) {
+                                final item = searchEnabled
+                                    ? workListfiltered.elementAt(index)
+                                    : workList[index];
                                 return AnimationConfiguration.staggeredList(
                                   position: index,
                                   duration: const Duration(milliseconds: 800),
@@ -946,7 +1005,7 @@ class _WorkListState extends State<WorkList> {
                                                                             GestureDetector(
                                                                               onTap: () async {
                                                                                 if (await utils.isOnline()) {
-                                                                                  await getProgressDetails(workList[index][s.key_work_id].toString(), index);
+                                                                                  await getProgressDetails(item[s.key_work_id].toString(), index);
                                                                                 } else {
                                                                                   utils.customAlertWidet(context, "Error", s.no_internet);
                                                                                 }
@@ -975,7 +1034,7 @@ class _WorkListState extends State<WorkList> {
                                                                             InkWell(
                                                                               onTap: () {
                                                                                 selectedworkList.clear();
-                                                                                selectedworkList.add(workList[index]);
+                                                                                selectedworkList.add(item);
                                                                                 print('selectedworkList>>' + selectedworkList.toString());
 
                                                                                 Navigator.push(
@@ -1007,32 +1066,32 @@ class _WorkListState extends State<WorkList> {
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.work_id,
-                                                                            workList[index][s.key_work_id].toString(),
+                                                                            item[s.key_work_id].toString(),
                                                                             index),
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.work_name,
-                                                                            workList[index][s.key_work_name].toString(),
+                                                                            item[s.key_work_name].toString(),
                                                                             index),
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.stage_name,
-                                                                            workList[index][s.key_stage_name].toString(),
+                                                                            item[s.key_stage_name].toString(),
                                                                             index),
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.work_type_name,
-                                                                            workList[index][s.key_work_type_name].toString(),
+                                                                            item[s.key_work_type_name].toString(),
                                                                             index),
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.scheme,
-                                                                            workList[index][s.key_scheme_name].toString(),
+                                                                            item[s.key_scheme_name].toString(),
                                                                             index),
                                                                         cardElememtWidget(
                                                                             context,
                                                                             s.financial_year,
-                                                                            workList[index][s.key_fin_year].toString(),
+                                                                            item[s.key_fin_year].toString(),
                                                                             index),
                                                                       ],
                                                                     ),
@@ -1044,18 +1103,18 @@ class _WorkListState extends State<WorkList> {
                                                                             child:
                                                                                 Column(
                                                                               children: [
-                                                                                cardElememtWidget(context, s.district, workList[index][s.key_dname].toString(), index),
-                                                                                visiblityCardElememtWidget(context, flagB, s.block, workList[index][s.key_bname].toString(), index),
-                                                                                visiblityCardElememtWidget(context, flagV, s.village, workList[index][s.key_pvname].toString(), index),
-                                                                                visiblityCardElememtWidget(context, flagT, s.town_panchayat, workList[index][s.key_townpanchayat_name].toString(), index),
-                                                                                visiblityCardElememtWidget(context, flagM, s.municipality, workList[index][s.key_municipality_name].toString(), index),
-                                                                                visiblityCardElememtWidget(context, flagC, s.corporation, workList[index][s.key_corporation_name].toString(), index),
-                                                                                cardElememtWidget(context, s.as_value, workList[index][s.key_as_value].toString(), index),
-                                                                                cardElememtWidget(context, s.ts_value, workList[index][s.key_ts_value].toString(), index),
-                                                                                cardElememtWidget(context, s.agreement_work_orderdate, workList[index][s.key_work_order_date].toString(), index),
-                                                                                cardElememtWidget(context, s.last_visited_date, workList[index][s.key_upd_date].toString(), index),
-                                                                                cardElememtWidget(context, s.as_date, workList[index][s.key_as_date].toString(), index),
-                                                                                cardElememtWidget(context, s.ts_date, workList[index][s.key_ts_date].toString(), index),
+                                                                                cardElememtWidget(context, s.district, item[s.key_dname].toString(), index),
+                                                                                visiblityCardElememtWidget(context, flagB, s.block, item[s.key_bname].toString(), index),
+                                                                                visiblityCardElememtWidget(context, flagV, s.village, item[s.key_pvname].toString(), index),
+                                                                                visiblityCardElememtWidget(context, flagT, s.town_panchayat, item[s.key_townpanchayat_name].toString(), index),
+                                                                                visiblityCardElememtWidget(context, flagM, s.municipality, item[s.key_municipality_name].toString(), index),
+                                                                                visiblityCardElememtWidget(context, flagC, s.corporation, item[s.key_corporation_name].toString(), index),
+                                                                                cardElememtWidget(context, s.as_value, item[s.key_as_value].toString(), index),
+                                                                                cardElememtWidget(context, s.ts_value, item[s.key_ts_value].toString(), index),
+                                                                                cardElememtWidget(context, s.agreement_work_orderdate, item[s.key_work_order_date].toString(), index),
+                                                                                cardElememtWidget(context, s.last_visited_date, item[s.key_upd_date].toString(), index),
+                                                                                cardElememtWidget(context, s.as_date, item[s.key_as_date].toString(), index),
+                                                                                cardElememtWidget(context, s.ts_date, item[s.key_ts_date].toString(), index),
                                                                               ],
                                                                             ),
                                                                           )
@@ -1135,7 +1194,7 @@ class _WorkListState extends State<WorkList> {
                                                                                 .center,
                                                                         child:
                                                                             Text(
-                                                                          workList[index][s.key_work_id]
+                                                                          item[s.key_work_id]
                                                                               .toString(),
                                                                           style:
                                                                               TextStyle(color: c.sky_blue),
@@ -2338,4 +2397,16 @@ class _WorkListState extends State<WorkList> {
       }
     }
   }
+
+
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query!=null && query !="" ? _searchQuery = query.toLowerCase():_searchQuery ="";
+    workListfiltered = workList.where((item) {
+      final work_id = item[key_work_id].toString();
+      final work_name = item[key_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
+    });
+  }
 }
+

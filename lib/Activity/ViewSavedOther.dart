@@ -106,6 +106,10 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
   bool munActive = false;
   bool corpActive = false;
   bool isWorklistAvailable = false;
+  bool searchEnabled = false;
+  bool searchIconPressed = false;
+  String _searchQuery = '';
+  Iterable workListfiltered = [];
   Uint8List? pdf;
   // Controller Text
   TextEditingController dateController = TextEditingController();
@@ -161,12 +165,50 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
           centerTitle: true,
           elevation: 2,
           automaticallyImplyLeading: true,
-          title: Visibility(
-              visible: appBarvisibility,
-              child: Text(
-                s.other_inspection,
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-              )),
+          title: searchIconPressed? Container(
+            width: double.infinity,
+            height: 40,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            child: Center(
+              child: TextField(
+                onChanged: (String value) async {
+                  setState(() {
+                    onSearchQueryChanged(value);
+                  });
+
+                },
+                decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchEnabled=false;
+                          searchIconPressed=false;
+                        });
+                        /* Clear the search field */
+                      },
+                    ),
+                    hintText: 'Search...',
+                    border: InputBorder.none),
+              ),
+            ),
+          ): Text(
+            s.other_inspection,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            // Navigate to the Search Screen
+            !searchIconPressed?IconButton(
+                onPressed:(){
+                  setState(() {
+                    searchIconPressed=true;
+                  });
+                },
+                icon: const Icon(Icons.search)):SizedBox(),
+          ],
 
           /* actions: <Widget>[
             Padding(padding: EdgeInsets.only(top: 8),)
@@ -258,6 +300,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     townActive = true;
                     town_type = "T";
                     munActive = false;
@@ -308,6 +352,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     town_type = "M";
                     townActive = false;
                     munActive = true;
@@ -354,6 +400,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     town_type = "C";
                     townActive = false;
                     munActive = false;
@@ -652,8 +700,14 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                   child: ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: workList == null ? 0 : workList.length,
+                // itemCount: workList == null ? 0 : workList.length,
+                    itemCount: searchEnabled
+                        ? workListfiltered.length
+                        : workList.length,
                 itemBuilder: (BuildContext context, int index) {
+                  final item = searchEnabled
+                      ? workListfiltered.elementAt(index)
+                      : workList[index];
                   return AnimationConfiguration.staggeredList(
                       position: index,
                       duration: const Duration(milliseconds: 800),
@@ -664,7 +718,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                               onTap: () async {
                                 if (await utils.isOnline()) {
                                   selectedOtherworkList.clear();
-                                  selectedOtherworkList.add(workList[index]);
+                                  selectedOtherworkList.add(item);
                                   print("SELECTED_OTHER_WORKLIST>>>>" +
                                       selectedOtherworkList.toString());
                                   getSavedOtherWorkDetails();
@@ -721,8 +775,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                               onTap: () async {
                                                 if (await utils.isOnline()) {
                                                   get_PDF(
-                                                    workList[index][s
-                                                            .key_other_work_inspection_id]
+                                                    item[s.key_other_work_inspection_id]
                                                         .toString(),
                                                   );
                                                 } else {
@@ -755,23 +808,23 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                   left: 10,
                                                   right: 0),
                                               child: Column(children: [
-                                                workListItem(s.other_work_id,workList[index][s.key_other_work_inspection_id].toString()),
+                                                workListItem(s.other_work_id,item[s.key_other_work_inspection_id].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                workListItem(s.other_work_name,workList[index][s.key_other_work_name].toString()),
+                                                workListItem(s.other_work_name,item[s.key_other_work_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                workListItem(s.other_work_category_name,workList[index][s.key_other_work_category_name].toString()),
+                                                workListItem(s.other_work_category_name,item[s.key_other_work_category_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                workListItem(s.inspected_date,workList[index][s.key_inspection_date].toString()),
+                                                workListItem(s.inspected_date,item[s.key_inspection_date].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                workListItem(s.work_status,workList[index][s.key_status_name].toString()),
+                                                workListItem(s.work_status,item[s.key_status_name].toString()),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
@@ -779,7 +832,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                   children: [
                                                     Visibility(
                                                       visible: utils.editdelayHours(
-                                                          workList[index][s
+                                                          item[s
                                                                   .key_ins_date]
                                                               .toString()),
                                                       child: Row(
@@ -811,9 +864,9 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
                                                                           if (await utils
                                                                               .isAutoDatetimeisEnable()) {
                                                                             if (await utils.isOnline()) {
-                                                                              await getSavedWorkDetails(workList[index][s.key_other_work_inspection_id].toString());
+                                                                              await getSavedWorkDetails(item[s.key_other_work_inspection_id].toString());
                                                                               selectedOtherworkList.clear();
-                                                                              selectedOtherworkList.add(workList[index]);
+                                                                              selectedOtherworkList.add(item);
                                                                               print('selectedOtherworkList>>' + selectedOtherworkList.toString());
                                                                               Navigator.push(
                                                                                   context,
@@ -846,23 +899,23 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
 
                                                                           /*   if(await utils.isOnline())
                                                                               {
-                                                                               inspection_date= workList[index]["inspection_date"];
-                                                                               town_type=workList[index]["town_type"];
-                                                                                area_type=workList[index]["rural_urban"];
+                                                                               inspection_date= item["inspection_date"];
+                                                                               town_type=item["town_type"];
+                                                                                area_type=item["rural_urban"];
                                                                                 if(area_type=="U")
                                                                                   {
-                                                                                    flag_town_type=workList[index]["town_type"];
+                                                                                    flag_town_type=item["town_type"];
                                                                                     if(flag_town_type=="T")
                                                                                       {
-                                                                                        flag_tmc_id=workList[index]["tpcode"].toString();
+                                                                                        flag_tmc_id=item["tpcode"].toString();
                                                                                       }
                                                                                     else if(flag_town_type=="M")
                                                                                     {
-                                                                                      flag_tmc_id=workList[index]["muncode"].toString();
+                                                                                      flag_tmc_id=item["muncode"].toString();
                                                                                     }
                                                                                     else
                                                                                       {
-                                                                                        flag_tmc_id=workList[index]["corcode"].toString();
+                                                                                        flag_tmc_id=item["corcode"].toString();
                                                                                       }
                                                                                   }
                                                                               }*/
@@ -1408,6 +1461,15 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     MunicipalityWorkList = [];
     corporationWorklist = [];
     isWorklistAvailable = false;
+  }
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query!=null && query !="" ? _searchQuery = query.toLowerCase():_searchQuery ="";
+    workListfiltered = workList.where((item) {
+      final work_id = item[key_other_work_inspection_id].toString();
+      final work_name = item[key_other_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
+    });
   }
 }
 

@@ -63,7 +63,6 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
   var dbClient;
-  var appBarvisibility = true;
   var editvisibility = false;
   String WorkId = "";
   String inspectionID = "";
@@ -97,6 +96,10 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
   bool munActive = false;
   bool corpActive = false;
   bool isWorklistAvailable = false;
+  bool searchEnabled = false;
+  bool searchIconPressed = false;
+  String _searchQuery = '';
+  Iterable workListfiltered = [];
   Uint8List? pdf;
   // Controller Text
   TextEditingController dateController = TextEditingController();
@@ -153,17 +156,51 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
           centerTitle: true,
           elevation: 2,
           automaticallyImplyLeading: true,
-          title: Visibility(
-              visible: appBarvisibility,
-              child: Text(
-                s.work_list,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              )),
+          title:
+          searchIconPressed? Container(
+            width: double.infinity,
+            height: 40,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            child: Center(
+              child: TextField(
+                onChanged: (String value) async {
+                  setState(() {
+                    onSearchQueryChanged(value);
+                  });
 
-          /* actions: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 8),)
-          ],*/
+                },
+                decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchEnabled=false;
+                          searchIconPressed=false;
+                        });
+                        /* Clear the search field */
+                      },
+                    ),
+                    hintText: 'Search...',
+                    border: InputBorder.none),
+              ),
+            ),
+          ): Text(
+            s.action_taken_report,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            // Navigate to the Search Screen
+            !searchIconPressed?IconButton(
+                onPressed:(){
+                  setState(() {
+                    searchIconPressed=true;
+                  });
+                },
+                icon: const Icon(Icons.search)):SizedBox(),
+          ],
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -264,6 +301,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     townActive = true;
                     town_type = "T";
                     munActive = false;
@@ -314,6 +353,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     town_type = "M";
                     townActive = false;
                     munActive = true;
@@ -360,6 +401,8 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                 flex: 1,
                 child: GestureDetector(
                   onTap: () {
+                    searchIconPressed=false;
+                    searchEnabled = false;
                     town_type = "C";
                     townActive = false;
                     munActive = false;
@@ -660,8 +703,14 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                       child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: workList == null ? 0 : workList.length,
+                    // itemCount: workList == null ? 0 : workList.length,
+                        itemCount: searchEnabled
+                            ? workListfiltered.length
+                            : workList.length,
                     itemBuilder: (BuildContext context, int index) {
+                      final item = searchEnabled
+                          ? workListfiltered.elementAt(index)
+                          : workList[index];
                       return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 800),
@@ -672,7 +721,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                   onTap: () async {
                                     if (await utils.isOnline()) {
                                       selectedATRworkList.clear();
-                                      selectedATRworkList.add(workList[index]);
+                                      selectedATRworkList.add(item);
                                       print("SELECTED_ATR_WORKLIST>>>>" +
                                           selectedATRworkList.toString());
                                       print("WORK_ID###" +
@@ -736,13 +785,13 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                     if (await utils
                                                         .isOnline()) {
                                                       get_PDF(
-                                                          workList[index][
+                                                          item[
                                                                   s.key_work_id]
                                                               .toString(),
-                                                          workList[index][s
+                                                          item[s
                                                                   .key_inspection_id]
                                                               .toString(),
-                                                          workList[index][s
+                                                          item[s
                                                                   .key_action_taken_id]
                                                               .toString());
                                                     } else {
@@ -779,7 +828,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                   child: Column(children: [
                                                     workListItem(
                                                         s.work_id,
-                                                        workList[index]
+                                                        item
                                                                 [s.key_work_id]
                                                             .toString()),
                                                     SizedBox(
@@ -787,7 +836,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                     ),
                                                     workListItem(
                                                         s.work_name,
-                                                        workList[index][
+                                                        item[
                                                                 s.key_work_name]
                                                             .toString()),
                                                     SizedBox(
@@ -795,7 +844,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                     ),
                                                     workListItem(
                                                         s.ATRUploadedDate,
-                                                        workList[index][s
+                                                        item[s
                                                                 .key_action_taken_date]
                                                             .toString()),
                                                     SizedBox(
@@ -805,7 +854,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                       children: [
                                                         Visibility(
                                                           visible: utils.editdelayHours(
-                                                              workList[index][s
+                                                              item[s
                                                                       .key_ins_date]
                                                                   .toString()),
                                                           child: Row(
@@ -836,9 +885,9 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                                                                                 () async {
                                                                               if (await utils.isAutoDatetimeisEnable()) {
                                                                                 if (await utils.isOnline()) {
-                                                                                  await getSavedWorkDetails(workList[index][s.key_work_id].toString(), workList[index][s.key_inspection_id].toString(), workList[index][s.key_action_taken_id].toString());
+                                                                                  await getSavedWorkDetails(item[s.key_work_id].toString(), item[s.key_inspection_id].toString(), item[s.key_action_taken_id].toString());
                                                                                   selectedATRworkList.clear();
-                                                                                  selectedATRworkList.add(workList[index]);
+                                                                                  selectedATRworkList.add(item);
                                                                                   print('selectedATRworkList>>' + selectedATRworkList.toString());
                                                                                   Navigator.push(
                                                                                       context,
@@ -864,23 +913,23 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
 
                                                                               /*   if(await utils.isOnline())
                                                                               {
-                                                                               inspection_date= workList[index]["inspection_date"];
-                                                                               town_type=workList[index]["town_type"];
-                                                                                area_type=workList[index]["rural_urban"];
+                                                                               inspection_date= item["inspection_date"];
+                                                                               town_type=item["town_type"];
+                                                                                area_type=item["rural_urban"];
                                                                                 if(area_type=="U")
                                                                                   {
-                                                                                    flag_town_type=workList[index]["town_type"];
+                                                                                    flag_town_type=item["town_type"];
                                                                                     if(flag_town_type=="T")
                                                                                       {
-                                                                                        flag_tmc_id=workList[index]["tpcode"].toString();
+                                                                                        flag_tmc_id=item["tpcode"].toString();
                                                                                       }
                                                                                     else if(flag_town_type=="M")
                                                                                     {
-                                                                                      flag_tmc_id=workList[index]["muncode"].toString();
+                                                                                      flag_tmc_id=item["muncode"].toString();
                                                                                     }
                                                                                     else
                                                                                       {
-                                                                                        flag_tmc_id=workList[index]["corcode"].toString();
+                                                                                        flag_tmc_id=item["corcode"].toString();
                                                                                       }
                                                                                   }
                                                                               }*/
@@ -1421,6 +1470,15 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
       print("ATRWorkList responceSignature - Token Not Verified");
       utils.customAlertWidet(context, "Error", s.jsonError);
     }
+  }
+  onSearchQueryChanged(String query) {
+    searchEnabled = true;
+    query!=null && query !="" ? _searchQuery = query.toLowerCase():_searchQuery ="";
+    workListfiltered = workList.where((item) {
+      final work_id = item[key_work_id].toString();
+      final work_name = item[key_work_name].toLowerCase();
+      return work_id.contains(_searchQuery) || work_name.contains(_searchQuery);
+    });
   }
 }
 

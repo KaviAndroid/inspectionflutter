@@ -261,7 +261,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                               Container(
                                 margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
                                 child: Text(
-                                  s.click_here_to_get_villages_through_selection,
+                                  s.click_here_to_get_scheme_wise_works,
                                   style: TextStyle(
                                       color: c.grey_7,
                                       fontWeight: FontWeight.bold,

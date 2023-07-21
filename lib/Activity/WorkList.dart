@@ -515,7 +515,7 @@ class _WorkListState extends State<WorkList> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: GestureDetector(
+                          child: InkWell(
                             onTap: () async {
                               flagTab = true;
                               flagList = true;
@@ -568,7 +568,7 @@ class _WorkListState extends State<WorkList> {
                         ),
                         Expanded(
                           flex: 1,
-                          child: GestureDetector(
+                          child: InkWell(
                             onTap: () {
                               flagTab = false;
                               flagList = false;
@@ -1002,7 +1002,7 @@ class _WorkListState extends State<WorkList> {
                                                                       children: [
                                                                         Row(
                                                                           children: [
-                                                                            GestureDetector(
+                                                                            InkWell(
                                                                               onTap: () async {
                                                                                 if (await utils.isOnline()) {
                                                                                   await getProgressDetails(item[s.key_work_id].toString(), index);

@@ -196,7 +196,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                     width: 40,
                     height: 40,
                     padding: EdgeInsets.all(5),
-                    child: GestureDetector(
+                    child: InkWell(
                         child: Image.asset(
                           imagePath.home,
                           color: c.white,

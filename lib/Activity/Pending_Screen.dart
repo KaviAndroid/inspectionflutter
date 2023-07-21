@@ -219,7 +219,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          GestureDetector(
+                                          InkWell(
                                             onTap: () async {
                                               selectedWorklist.clear();
                                               selectedWorklist
@@ -529,7 +529,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          GestureDetector(
+                                          InkWell(
                                             onTap: () async {
                                               selectedWorklist.clear();
                                               selectedWorklist
@@ -558,7 +558,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                               ),
                                             ),
                                           ),
-                                          GestureDetector(
+                                          InkWell(
                                             onTap: () async {
                                               selectedWorklist.clear();
                                               selectedWorklist
@@ -587,7 +587,7 @@ class _PendingScreenState extends State<PendingScreen> {
                                               ),
                                             ),
                                           ),
-                                          GestureDetector(
+                                          InkWell(
                                             onTap: () async {
                                               selectedWorklist.clear();
                                               selectedWorklist

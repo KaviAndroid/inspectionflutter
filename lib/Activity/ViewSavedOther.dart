@@ -298,7 +298,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             children: [
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -350,7 +350,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -398,7 +398,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;

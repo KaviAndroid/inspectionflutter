@@ -1022,7 +1022,7 @@ class Utils {
                           Expanded(
                             child: Column(
                               children: [
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     setState(() {
                                       calendarSelectedIndex = 0;
@@ -1066,7 +1066,7 @@ class Utils {
                           Expanded(
                             child: Column(
                               children: [
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     if (selectedFromDate != null) {
                                       setState(() {

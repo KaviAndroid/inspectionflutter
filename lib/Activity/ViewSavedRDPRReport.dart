@@ -297,7 +297,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
             children: [
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -355,7 +355,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -403,7 +403,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;

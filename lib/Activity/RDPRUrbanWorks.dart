@@ -357,7 +357,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  GestureDetector(
+                                  InkWell(
                                     onTap: () async {
                                       townActive = true;
                                       town_type = "T";
@@ -424,7 +424,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                                       : c.grey_6)),
                                         ])),
                                   ),
-                                  GestureDetector(
+                                  InkWell(
                                     onTap: () async {
                                       town_type = "M";
                                       townActive = false;
@@ -491,7 +491,7 @@ class _RDPRUrbanWorksState extends State<RDPRUrbanWorks> {
                                                       : c.grey_6)),
                                         ])),
                                   ),
-                                  GestureDetector(
+                                  InkWell(
                                     onTap: () async {
                                       town_type = "C";
                                       townActive = false;

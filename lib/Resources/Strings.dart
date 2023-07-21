@@ -66,8 +66,8 @@ String scheme_list = "Scheme List";
 String work_list = "Work List";
 String click_here_to_get_villages =
     "Click here to get villages located near by you";
-String click_here_to_get_villages_through_selection =
-    "Click here to get villages through selection";
+String click_here_to_get_scheme_wise_works =
+    "Click here to get scheme wise works";
 String enter_distance_in_km = "Enter distance in km";
 String no_village = "No Villages Found!";
 String no_data = "No Data Found !";

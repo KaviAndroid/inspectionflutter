@@ -299,7 +299,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
             children: [
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -351,7 +351,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;
@@ -399,7 +399,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     searchIconPressed=false;
                     searchEnabled = false;

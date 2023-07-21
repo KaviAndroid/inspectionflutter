@@ -66,7 +66,7 @@ class _FlutterSingleCheckboxState extends State<FlutterSingleCheckbox> {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: widget.singleValueList.length,
-      itemBuilder: (context, index) => GestureDetector(
+      itemBuilder: (context, index) => InkWell(
           onTap: () {
             setState(() {
               _onClickFunction(index);

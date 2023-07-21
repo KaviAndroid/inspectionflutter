@@ -219,7 +219,7 @@ class _SplashState extends State<Splash> {
       print("checkVersion_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
-      String version = decodedData['version'];
+      String version = /*decodedData['version']*/"1.8.0";
       String app_version = await utils.getVersion();
       if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);

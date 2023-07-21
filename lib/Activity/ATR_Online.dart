@@ -522,7 +522,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           isUnSatisfiedActive = false;
                           isNeedImprovementActive = true;
@@ -573,7 +573,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                       ),
                     ),
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           isUnSatisfiedActive = true;
                           isNeedImprovementActive = false;
@@ -738,7 +738,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
       bool mActive, bool cActive) {
     return Expanded(
       flex: 1,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           town_type = tmctype;
           townActive = tActive;
@@ -1164,7 +1164,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                 ),
                                 Align(
                                   alignment: AlignmentDirectional.topEnd,
-                                  child: GestureDetector(
+                                  child: InkWell(
                                     onTap: () {
                                       selectedWorklist.clear();
                                       selectedWorklist.add(item);
@@ -1208,7 +1208,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
-                                  child: GestureDetector(
+                                  child: InkWell(
                                     onTap: () async {
                                       if (await utils.isOnline()) {
                                         get_PDF(

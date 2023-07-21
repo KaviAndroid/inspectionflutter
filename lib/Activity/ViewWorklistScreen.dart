@@ -787,7 +787,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                 ),
                                 Align(
                                   alignment: AlignmentDirectional.topEnd,
-                                  child: GestureDetector(
+                                  child: InkWell(
                                     onTap: () {
                                       if (saveEnable) {
                                         selectedWorklist.clear();
@@ -837,7 +837,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
-                                  child: GestureDetector(
+                                  child: InkWell(
                                     onTap: () {
                                       get_PDF(
                                           item

@@ -150,7 +150,7 @@ class _FlutterLimitedCheckboxState extends State<FlutterCustomCheckbox> {
                               itemCount: widget.initialValueList.length,
                               itemBuilder: (context, index) => Column(
                                     children: [
-                                      GestureDetector(
+                                      InkWell(
                                         onTap: () {
                                           setState(() {
                                             _onClickFunction(index, "Single");

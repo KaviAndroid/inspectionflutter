@@ -209,7 +209,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                 // Download Text Icon
                 FadeTransition(
                   opacity: controller,
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
                       utils.ShowCalenderDialog(context).then((value) => {
                             if (value['flag'])
@@ -629,7 +629,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           isUnSatisfiedActive = false;
                           isNeedImprovementActive = true;
@@ -681,7 +681,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                       ),
                     ),
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           isUnSatisfiedActive = true;
                           isNeedImprovementActive = false;
@@ -1196,7 +1196,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                   ),
                                   Align(
                                     alignment: AlignmentDirectional.topEnd,
-                                    child: GestureDetector(
+                                    child: InkWell(
                                       onTap: () {
                                         selectedWorklist.clear();
                                         selectedWorklist.add(item);
@@ -1241,7 +1241,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                   Positioned(
                                     bottom: 0,
                                     right: 0,
-                                    child: GestureDetector(
+                                    child: InkWell(
                                       onTap: () async {
                                         if (await utils.isOnline()) {
                                           get_PDF(
@@ -1299,7 +1299,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       bool mActive, bool cActive) {
     return Expanded(
       flex: 1,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           town_type = tmctype;
           townActive = tActive;

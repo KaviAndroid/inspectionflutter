@@ -162,7 +162,7 @@ class _OtherWorkUrbanState extends State<OtherWorkUrban> {
 
   _urban_Card_Design(String title, String twn_type, int index, bool town_active,
       bool mun_active, bool corp_active) {
-    return GestureDetector(
+    return InkWell(
       onTap: () async {
         setState(() {
           town_type = twn_type;

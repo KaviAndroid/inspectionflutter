@@ -320,7 +320,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                   ? MainAxisAlignment.spaceEvenly
                                   : MainAxisAlignment.center,
                               children: [
-                                GestureDetector(
+                                InkWell(
                                   onTap: () async {
                                     selectedDcode = "";
                                     controllerOverall.districtTableUI = true;
@@ -416,7 +416,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                           duration: const Duration(milliseconds: 800),
                           child: SlideAnimation(
                               horizontalOffset: 200.0,
-                              child: GestureDetector(
+                              child: InkWell(
                                 onTap: () async {
                                   tmcType = item[s.key_town_type];
                                   await controllerOverall
@@ -609,7 +609,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                               children: [
                                 Visibility(
                                   visible: true,
-                                  child: GestureDetector(
+                                  child: InkWell(
                                     onTap: () async {
                                       selectedDcode = "";
                                       selectedDname = "";
@@ -821,7 +821,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                           ),
                                         ),
                                         TableCell(
-                                          child: GestureDetector(
+                                          child: InkWell(
                                             onTap: () async {
                                               gotToTop();
                                               selectedBcode =
@@ -1075,7 +1075,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                           ),
                                         ),
                                         TableCell(
-                                          child: GestureDetector(
+                                          child: InkWell(
                                             onTap: () async {
                                               gotToTop();
 
@@ -1339,7 +1339,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             item[s.key_satisfied] > 0
                                                 ? Navigator.push(
@@ -1404,7 +1404,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             item[s.key_unsatisfied] > 0
                                                 ? Navigator.push(
@@ -1469,7 +1469,7 @@ class _Overall_Report_newState extends State<Overall_Report_new> {
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             item[s.key_need_improvement] > 0
                                                 ? Navigator.push(

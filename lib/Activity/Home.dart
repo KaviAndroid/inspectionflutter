@@ -396,7 +396,7 @@ class _HomeState extends State<Home> {
                 ),
                 Container(
                   alignment: Alignment.centerRight,
-                  child: GestureDetector(
+                  child: InkWell(
                       child: Image.asset(
                         imagePath.log_out,
                         fit: BoxFit.contain,
@@ -492,6 +492,7 @@ class _HomeState extends State<Home> {
                                                 builder: (BuildContext
                                                         context) =>
                                                     AlertDialog(
+                                                      elevation: 0,
                                                       backgroundColor:
                                                           Colors.transparent,
                                                       insetPadding:
@@ -503,6 +504,10 @@ class _HomeState extends State<Home> {
                                                                 context)
                                                             .size
                                                             .width,
+                                                        height: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .height/2,
                                                         child: Image.memory(
                                                           base64.decode(
                                                               profile_image
@@ -510,12 +515,13 @@ class _HomeState extends State<Home> {
                                                                       RegExp(
                                                                           r'\s+'),
                                                                       '')),
-                                                          fit: BoxFit.contain,
+                                                          fit: BoxFit.fill,
                                                         ),
                                                       ),
                                                     ),
                                                 context: context),
                                             child: CircleAvatar(
+                                                backgroundColor: Colors.transparent,
                                                 backgroundImage: MemoryImage(
                                                   base64.decode(
                                                       profile_image.replaceAll(
@@ -523,6 +529,7 @@ class _HomeState extends State<Home> {
                                                 ),
                                                 radius: 30.0))
                                         : CircleAvatar(
+                                      backgroundColor: Colors.transparent,
                                             backgroundImage: AssetImage(
                                               imagePath.user,
                                             ),

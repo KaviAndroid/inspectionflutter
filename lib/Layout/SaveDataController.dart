@@ -249,13 +249,16 @@ class SaveDatacontroller with ChangeNotifier {
       if (await checkImageList(img_jsonArray)) {
         if (!descriptionController.text.isEmpty &&
             descriptionController.text != '') {
-          if (await utils.isOnline()) {
-            onoffType == "online"
-                ? saveData(context)
-                : saveDataOffline(context);
+          if (onoffType == "online") {
+            if (await utils.isOnline()) {
+              saveData(context);
+            } else {
+              utils.customAlertWidet(context, "Error", s.no_internet);
+            }
           } else {
-            utils.customAlertWidet(context, "Error", s.no_internet);
+            saveDataOffline(context);
           }
+
         } else {
           utils.showAlert(context, "Please Enter Description");
         }
@@ -268,12 +271,14 @@ class SaveDatacontroller with ChangeNotifier {
           if (!descriptionController.text.isEmpty &&
               descriptionController.text != '') {
             if (!selectedStatus.isEmpty && selectedStatus != '0') {
-              if (await utils.isOnline()) {
-                onoffType == "online"
-                    ? saveData(context)
-                    : saveDataOffline(context);
+              if (onoffType == "online") {
+                if (await utils.isOnline()) {
+                  saveData(context);
+                } else {
+                  utils.customAlertWidet(context, "Error", s.no_internet);
+                }
               } else {
-                utils.customAlertWidet(context, "Error", s.no_internet);
+                saveDataOffline(context);
               }
             } else {
               utils.showAlert(context, "Please Select Status");

@@ -182,6 +182,7 @@ class _DrawerAppState extends State<DrawerApp> {
                                       onTap: () => showDialog(
                                           builder: (BuildContext context) =>
                                               AlertDialog(
+                                                elevation: 0,
                                                 backgroundColor:
                                                     Colors.transparent,
                                                 insetPadding: EdgeInsets.all(2),
@@ -190,6 +191,10 @@ class _DrawerAppState extends State<DrawerApp> {
                                                   width: MediaQuery.of(context)
                                                       .size
                                                       .width,
+                                                  height: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .height/2,
                                                   child: Expanded(
                                                     child: Image.memory(
                                                       base64.decode(
@@ -198,18 +203,20 @@ class _DrawerAppState extends State<DrawerApp> {
                                                                   RegExp(
                                                                       r'\s+'),
                                                                   '')),
-                                                      fit: BoxFit.fitWidth,
+                                                      fit: BoxFit.fill,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                           context: context),
                                       child: CircleAvatar(
+                                          backgroundColor: Colors.transparent,
                                           backgroundImage: MemoryImage(
                                             base64.decode(profile_image),
                                           ),
                                           radius: 30.0))
                                   : CircleAvatar(
+                                  backgroundColor: Colors.transparent,
                                       backgroundImage: AssetImage(
                                         imagePath.user,
                                       ),

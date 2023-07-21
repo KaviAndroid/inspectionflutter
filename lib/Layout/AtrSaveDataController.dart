@@ -354,12 +354,14 @@ class AtrSaveDataController with ChangeNotifier {
     } else {
       if (await checkImageList(img_jsonArray)) {
         if (descriptionController.text != "") {
-          if (await utils.isOnline()) {
-            widgetonoff_type == "offline"
-                ? await offlineSave(context)
-                : await onlineSave(context);
+          if (widgetonoff_type == "offline") {
+            await offlineSave(context);
           } else {
-            utils.customAlertWidet(context, "Error", s.no_internet);
+            if (await utils.isOnline()) {
+              await onlineSave(context);
+            } else {
+              utils.customAlertWidet(context, "Error", s.no_internet);
+            }
           }
         } else {
           utils.showAlert(context, "Please Enter Discription");

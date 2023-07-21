@@ -6,13 +6,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection/Layout/Multiple_CheckBox.dart';
+import 'package:InspectionAppNew/Layout/Multiple_CheckBox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
-import 'package:inspection/Resources/url.dart' as url;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/Single_CheckBox.dart';
 import '../ModelClass/checkBoxModelClass.dart';

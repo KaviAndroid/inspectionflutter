@@ -1,9 +1,9 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_new
 
 import 'dart:convert';
-import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:flutter/material.dart';
-import 'package:inspection/Resources/global.dart';
+import 'package:InspectionAppNew/Resources/global.dart';
 import '../Resources/ColorsValue.dart' as c;
 import '../DataBase/DbHelper.dart';
 

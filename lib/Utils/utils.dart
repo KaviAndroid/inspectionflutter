@@ -15,20 +15,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection/Activity/Login.dart';
-import 'package:inspection/Activity/WorkList.dart';
-import 'package:inspection/Layout/Multiple_CheckBox.dart';
+import 'package:InspectionAppNew/Activity/Login.dart';
+import 'package:InspectionAppNew/Activity/WorkList.dart';
+import 'package:InspectionAppNew/Layout/Multiple_CheckBox.dart';
 import 'package:intl/intl.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Activity/Home.dart';
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:inspection/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
 import '../ModelClass/checkBoxModelClass.dart';
@@ -53,7 +53,7 @@ class Utils {
           ? isAutoDatetimeisEnable = true
           : isAutoDatetimeisEnable = false;
     } else if(Platform.isIOS) {
-      isAutoDatetimeisEnable = true
+      isAutoDatetimeisEnable = true;
     }
 
     return isAutoDatetimeisEnable;

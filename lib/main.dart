@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:inspection/Activity/Home.dart';
-import 'package:inspection/Activity/Splash.dart';
+import 'package:InspectionAppNew/Activity/Home.dart';
+import 'package:InspectionAppNew/Activity/Splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

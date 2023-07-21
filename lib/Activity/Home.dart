@@ -9,26 +9,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection/Activity/OtherWorkUrban.dart';
-import 'package:inspection/Activity/OtherWorkRural.dart';
-import 'package:inspection/Activity/Pending_Screen.dart';
-import 'package:inspection/Activity/RDPRUrbanWorks.dart';
-import 'package:inspection/Activity/RDPR_Offline.dart';
-import 'package:inspection/Activity/RDPR_Online.dart';
-import 'package:inspection/Activity/Splash.dart';
-import 'package:inspection/Layout/DrawerApp.dart';
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
-import 'package:inspection/Resources/url.dart' as url;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Activity/OtherWorkUrban.dart';
+import 'package:InspectionAppNew/Activity/OtherWorkRural.dart';
+import 'package:InspectionAppNew/Activity/Pending_Screen.dart';
+import 'package:InspectionAppNew/Activity/RDPRUrbanWorks.dart';
+import 'package:InspectionAppNew/Activity/RDPR_Offline.dart';
+import 'package:InspectionAppNew/Activity/RDPR_Online.dart';
+import 'package:InspectionAppNew/Activity/Splash.dart';
+import 'package:InspectionAppNew/Layout/DrawerApp.dart';
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:inspection/Activity/ATR_Offline.dart';
-import 'package:inspection/Activity/ATR_Online.dart';
+import 'package:InspectionAppNew/Activity/ATR_Offline.dart';
+import 'package:InspectionAppNew/Activity/ATR_Online.dart';
 
 import 'Login.dart';
 
@@ -444,7 +444,7 @@ class _HomeState extends State<Home> {
                                 name,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: c.grey_8,
+                                    color: c.white,
                                     fontSize: 15),
                                 textAlign: TextAlign.left,
                                 overflow: TextOverflow.ellipsis,

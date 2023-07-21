@@ -8,13 +8,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection/Activity/SaveWorkDetails.dart';
+import 'package:InspectionAppNew/Activity/SaveWorkDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
 
 import '../DataBase/DbHelper.dart';
 import '../Layout/ReadMoreLess.dart';

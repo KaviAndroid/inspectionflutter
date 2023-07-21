@@ -14,13 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection/Activity/ForgotPassword.dart';
-import 'package:inspection/Activity/OTP_Verification.dart';
-import 'package:inspection/Activity/Registration.dart';
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/url.dart' as url;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Activity/ForgotPassword.dart';
+import 'package:InspectionAppNew/Activity/OTP_Verification.dart';
+import 'package:InspectionAppNew/Activity/Registration.dart';
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -348,7 +348,7 @@ class LoginState extends State<Login> {
                                             Runes('\u0024'));
                                         /*user_name.text = "9595959595";
                                         user_password.text = "crd44#" + ss;*/
-                                        /*user_name.text = "9750895078";
+                                       /* user_name.text = "9750895078";
                                         user_password.text = "Test1234#" + ss;*/
                                         if (user_name.text.isNotEmpty) {
                                           if (user_password.text.isNotEmpty) {

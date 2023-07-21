@@ -3,19 +3,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:inspection/Layout/AppUpdate.dart';
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Layout/AppUpdate.dart';
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:inspection/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
 
 class Splash extends StatefulWidget {
   @override
@@ -38,6 +39,7 @@ class _SplashState extends State<Splash> {
     prefs = await SharedPreferences.getInstance();
     if (await utils.isOnline()) {
       checkVersion(context);
+
     } else {
       if (prefs.getString(s.key_user_name) != null &&
           prefs.getString(s.key_user_pwd) != null) {
@@ -217,7 +219,7 @@ class _SplashState extends State<Splash> {
       print("checkVersion_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
-      String version = /*decodedData['version']*/"1.0.0";
+      String version = /*decodedData['version']*/"1.8.0";
       String app_version = await utils.getVersion();
       if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);

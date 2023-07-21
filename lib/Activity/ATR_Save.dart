@@ -6,19 +6,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:inspection/Activity/ATR_Online.dart';
-import 'package:inspection/Layout/AtrSaveDataController.dart';
+import 'package:InspectionAppNew/Activity/ATR_Online.dart';
+import 'package:InspectionAppNew/Layout/AtrSaveDataController.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../DataBase/DbHelper.dart';
 import '../Resources/ColorsValue.dart' as c;
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../Utils/utils.dart';
 import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
-import 'package:inspection/Resources/global.dart';
-import 'package:inspection/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/global.dart';
+import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:http/io_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -128,6 +128,7 @@ class _ATR_SaveState extends State<ATR_Save> {
             visible: refer.imageListFlag,
             child: Expanded(
               child: GridView.count(
+                shrinkWrap: true,
                 crossAxisCount: 2,
                 children: List.generate(refer.img_jsonArray.length, (index) {
                   return Container(

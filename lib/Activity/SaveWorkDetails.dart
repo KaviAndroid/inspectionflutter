@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inspection/Layout/SaveDataController.dart';
+import 'package:InspectionAppNew/Layout/SaveDataController.dart';
 import 'package:provider/provider.dart';
-import 'package:inspection/Resources/Strings.dart' as s;
-import 'package:inspection/Resources/ColorsValue.dart' as c;
-import 'package:inspection/Resources/url.dart' as url;
-import 'package:inspection/Resources/ImagePath.dart' as imagePath;
+import 'package:InspectionAppNew/Resources/Strings.dart' as s;
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/url.dart' as url;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../Utils/utils.dart';
 import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 

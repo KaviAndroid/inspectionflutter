@@ -1,23 +1,16 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_new, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_types_as_parameter_names, unnecessary_null_comparison, avoid_unnecessary_containers
 
-import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'dart:convert';
-
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/io_client.dart';
-import 'package:InspectionAppNew/Activity/Home.dart';
-import 'package:InspectionAppNew/Activity/Login.dart';
+import 'dart:io';
 import 'package:InspectionAppNew/Activity/ViewSavedATRReport.dart';
 import 'package:InspectionAppNew/Activity/ViewSavedOther.dart';
 import 'package:InspectionAppNew/Activity/ViewSavedRDPRReport.dart';
+import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
+import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
-import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
-import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/ForgotPassword.dart';
 import '../Activity/Registration.dart';
@@ -121,7 +114,7 @@ class _DrawerAppState extends State<DrawerApp> {
         prefs.getString(s.key_rural_urban) == "U") {
       area_type = s.urban_area;
     }
-    version = s.version + " " + await utils.getVersion();
+    version = "${s.version} ${await utils.getVersion()}";
     setState(() {});
   }
 
@@ -191,10 +184,10 @@ class _DrawerAppState extends State<DrawerApp> {
                                                   width: MediaQuery.of(context)
                                                       .size
                                                       .width,
-                                                  height: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .height/2,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      2,
                                                   child: Expanded(
                                                     child: Image.memory(
                                                       base64.decode(
@@ -216,7 +209,7 @@ class _DrawerAppState extends State<DrawerApp> {
                                           ),
                                           radius: 30.0))
                                   : CircleAvatar(
-                                  backgroundColor: Colors.transparent,
+                                      backgroundColor: Colors.transparent,
                                       backgroundImage: AssetImage(
                                         imagePath.user,
                                       ),
@@ -288,22 +281,27 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 5),
                     child: InkWell(
                       onTap: () async {
-                        // Navigator.of(context).pop();
-                        var isExists = await dbClient.rawQuery(
-                            "SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
+                        if (await utils.isOnline()) {
+                          // Navigator.of(context).pop();
+                          var isExists = await dbClient.rawQuery(
+                              "SELECT count(1) as cnt FROM ${s.table_save_work_details} ");
 
-                        // print(isExists);
+                          // print(isExists);
 
-                        isExists[0]['cnt'] > 0
-                            ? utils.customAlertWidet(
-                                context, "Error", s.edit_message)
-                            : getProfileList();
+                          isExists[0]['cnt'] > 0
+                              ? utils.customAlertWidet(
+                                  context, "Error", s.edit_message)
+                              : getProfileList();
 
 /*                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     Registration(registerFlag: 2)));*/
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -331,12 +329,18 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Overall_Report_new(flag: level),
-                        ));
-                        print("### FLAG #### $level");
+                      onTap: () async {
+                        if (await utils.isOnline()) {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                Overall_Report_new(flag: level),
+                          ));
+                          print("### FLAG #### $level");
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -365,11 +369,16 @@ class _DrawerAppState extends State<DrawerApp> {
                   child: Visibility(
                       visible: atrFlag,
                       child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  ViewSavedATRReport(Flag: area_type)));
+                        onTap: () async {
+                          if (await utils.isOnline()) {
+                            Navigator.pop(context);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewSavedATRReport(Flag: area_type)));
+                          } else {
+                            utils.customAlertWidet(
+                                context, "Error", s.no_internet);
+                          }
                         },
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -401,13 +410,18 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              ViewSavedRDPRReport(Flag: area_type),
-                        ));
-                        print("FLAG####$area_type");
+                      onTap: () async {
+                        if (await utils.isOnline()) {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ViewSavedRDPRReport(Flag: area_type),
+                          ));
+                          print("FLAG####$area_type");
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -435,12 +449,18 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ViewSavedOther(Flag: area_type),
-                        ));
-                        print("FLAG####$area_type");
+                      onTap: () async {
+                        if (await utils.isOnline()) {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ViewSavedOther(Flag: area_type),
+                          ));
+                          print("FLAG####$area_type");
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -468,14 +488,19 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ForgotPassword(
-                                      isForgotPassword: "change_password",
-                                    )));
+                      onTap: () async {
+                        if (await utils.isOnline()) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPassword(
+                                        isForgotPassword: "change_password",
+                                      )));
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -504,7 +529,12 @@ class _DrawerAppState extends State<DrawerApp> {
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () async {
-                        await getAll_Stage();
+                        if (await utils.isOnline()) {
+                          await getAll_Stage();
+                        } else {
+                          utils.customAlertWidet(
+                              context, "Error", s.no_internet);
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -752,7 +782,7 @@ class _DrawerAppState extends State<DrawerApp> {
           utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
-    } on Exception catch (exception) {
+    } on Exception {
       utils.hideProgress(context);
       utils.customAlertWidet(context, "Error",
           s.failed); // only executed if error is of type Exception
@@ -791,7 +821,7 @@ class _DrawerAppState extends State<DrawerApp> {
       "Authorization": "Bearer $header_token"
     };
 
-    try{
+    try {
       HttpClient _client = HttpClient(context: await Utils().globalContext);
       _client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
@@ -844,9 +874,9 @@ class _DrawerAppState extends State<DrawerApp> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Registration(
-                        registerFlag: 2,
-                        profileJson: res_jsonArray,
-                      )));
+                            registerFlag: 2,
+                            profileJson: res_jsonArray,
+                          )));
             }
           }
         } else {
@@ -854,13 +884,12 @@ class _DrawerAppState extends State<DrawerApp> {
           utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
-    } on Exception catch (exception) {
-      utils.hideProgress(context); // only executed if error is of type Exception
+    } on Exception {
+      utils
+          .hideProgress(context); // only executed if error is of type Exception
     } catch (error) {
-      utils.hideProgress(context); // executed for errors of all types other than Exception
+      utils.hideProgress(
+          context); // executed for errors of all types other than Exception
     }
-
-
-
   }
 }

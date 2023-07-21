@@ -124,7 +124,7 @@ class AtrSaveDataController with ChangeNotifier {
   void onSpeechResult(recognition.SpeechRecognitionResult result) {
     // _lastWords = result.recognizedWords;
     descriptionController.text = '$_lastWords ${result.recognizedWords}';
-    _speechToText.isNotListening?speech = false:speech = true;
+    _speechToText.isNotListening ? speech = false : speech = true;
     notifyListeners();
     print("start${descriptionController.text}");
   }
@@ -233,8 +233,8 @@ class AtrSaveDataController with ChangeNotifier {
     print("longitude>>${position.longitude}");
     if (position.longitude != null) {
       if (await utils.goToCameraPermission(context)) {
-        TakePhoto(i, position.latitude.toString(), position.longitude.toString(),
-            context);
+        TakePhoto(i, position.latitude.toString(),
+            position.longitude.toString(), context);
       }
     } else {
       utils.showAlert(context, "Try Again...");
@@ -243,23 +243,23 @@ class AtrSaveDataController with ChangeNotifier {
 
   Future<void> TakePhoto(
       int i, String latitude, String longitude, BuildContext context) async {
-      final pickedFile = await _picker.pickImage(
-          source: ImageSource.camera,
-          imageQuality: 80,
-          maxHeight: 400,
-          maxWidth: 400);
-      if (pickedFile == null) {
-        Utils().showAlert(context, "User Canceled operation");
-      } else {
-        List<int> imageBytes = await pickedFile.readAsBytes();
-        workmage = base64Encode(imageBytes);
-        img_jsonArray[i].update(s.key_latitude, (value) => latitude);
-        img_jsonArray[i].update(s.key_longitude, (value) => longitude);
-        img_jsonArray[i].update(s.key_image, (value) => workmage);
-        img_jsonArray[i]
-            .update(s.key_image_path, (value) => pickedFile.path.toString());
-        _imageFile = File(pickedFile.path);
-        notifyListeners();
+    final pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+        maxHeight: 400,
+        maxWidth: 400);
+    if (pickedFile == null) {
+      Utils().showAlert(context, "User Canceled operation");
+    } else {
+      List<int> imageBytes = await pickedFile.readAsBytes();
+      workmage = base64Encode(imageBytes);
+      img_jsonArray[i].update(s.key_latitude, (value) => latitude);
+      img_jsonArray[i].update(s.key_longitude, (value) => longitude);
+      img_jsonArray[i].update(s.key_image, (value) => workmage);
+      img_jsonArray[i]
+          .update(s.key_image_path, (value) => pickedFile.path.toString());
+      _imageFile = File(pickedFile.path);
+      notifyListeners();
     }
 
     // Navigator.pop(context);
@@ -541,21 +541,15 @@ class AtrSaveDataController with ChangeNotifier {
     if (isExists[0]['cnt'] > 0) {
       print("Edit>>>>");
 
-      for (int i = 0; i < selectedwork.length; i++) {
-        count = await dbClient.rawInsert(" UPDATE " +
-            s.table_save_work_details +
-            " SET description = '" +
-            descriptionController.text +
-            "' WHERE rural_urban = '" +
-            selectedwork[i][s.key_rural_urban] +
-            "' AND work_id = '" +
-            selectedwork[i][s.key_work_id].toString() +
-            "'AND inspection_id =  '" +
-            selectedwork[i][s.key_inspection_id].toString() +
-            "'AND dcode =  '" +
-            selectedwork[i][s.key_dcode].toString() +
-            "'");
-      }
+      final description = descriptionController.text;
+      final ruralUrban = selectedwork[0][s.key_rural_urban];
+      final workId = selectedwork[0][s.key_work_id].toString();
+      final inspectionId = selectedwork[0][s.key_inspection_id].toString();
+      final dcode = selectedwork[0][s.key_dcode].toString();
+
+      count = await dbClient.rawUpdate(
+          ' UPDATE save_work_details SET description = ? WHERE rural_urban = ? AND work_id = ? AND inspection_id = ? AND dcode = ?',
+          [description, ruralUrban, workId, inspectionId, dcode]);
     } else {
       print("Insert>>");
       for (int i = 0; i < selectedwork.length; i++) {
@@ -590,7 +584,7 @@ class AtrSaveDataController with ChangeNotifier {
             "')");
       }
     }
-    print(count);
+    print("Details Count $count");
     if (count > 0) {
       var serial_count = 0;
       // print(img_jsonArray_val);
@@ -631,6 +625,8 @@ class AtrSaveDataController with ChangeNotifier {
               "' AND dcode = '" +
               selectedwork[0][s.key_dcode].toString() +
               "'");
+
+          print('imageCount: ${imageCount}');
         } else {
           print("img ins");
 

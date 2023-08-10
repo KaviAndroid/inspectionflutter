@@ -18,7 +18,7 @@ if (flutterVersionCode == null) {
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.8.0'
+    flutterVersionName = '1.9.0'
 }
 
 apply plugin: 'com.android.application'
@@ -79,7 +79,7 @@ android {
     }
     splits {
         abi {
-            enable false
+            enable true
             universalApk false
             include "x86", "armeabi-v7a", "arm64-v8a"
         }

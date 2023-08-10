@@ -1203,6 +1203,7 @@ class _ViewSavedRDPRState extends State<ViewSavedRDPRReport> {
         }
       }
     } else {
+      isPiechartLoading = false;
       utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }

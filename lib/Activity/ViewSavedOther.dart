@@ -1176,6 +1176,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
         utils.customAlertWidet(context, "Error", s.jsonError);
       }
     } else {
+      isPiechartLoading = false;
       utils.customAlertWidet(context, "Error", s.no_internet);
     }
   }

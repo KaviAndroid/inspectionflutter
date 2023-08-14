@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import 'RdprOnlineWorkListFromGeoLocation.dart';
+import 'WorkList.dart';
 
 class RDPR_Online extends StatefulWidget {
   @override
@@ -94,13 +95,13 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           ),
         ),
         body: SingleChildScrollView(
-            reverse: true,
             child: Container(
+              margin: EdgeInsets.only(top: 20),
                 alignment: Alignment.topCenter,
                 height: MediaQuery.of(context).size.height,
                 color: c.white,
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       InkWell(
@@ -219,6 +220,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                                 margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
                                 child: Text(
                                   s.click_here_to_get_villages,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: c.grey_7,
                                       fontWeight: FontWeight.bold,
@@ -262,6 +264,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                                 margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
                                 child: Text(
                                   s.click_here_to_get_scheme_wise_works,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: c.grey_7,
                                       fontWeight: FontWeight.bold,
@@ -305,6 +308,61 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                                 margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
                                 child: Text(
                                   s.delay_work_in_block,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: c.grey_7,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ]),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WorkList(
+                                    schemeList: [],
+                                    scheme: '',
+                                    flag: 'planned_delay_works',
+                                    finYear: '',
+                                    dcode: '',
+                                    bcode: '',
+                                    pvcode: '',
+                                    tmccode: '',
+                                    townType:'',
+                                    selectedschemeList: [],
+                                  )));                        },
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  padding: EdgeInsets.all(1.0),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: c.yello,
+                                      border: Border.all(
+                                          color: c.grey, width: 1.4)),
+                                  child: Image.asset(
+                                    imagePath.plan,
+                                    fit: BoxFit.contain,
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                                child: Text(
+                                  s.planned_work_in_block,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: c.grey_7,
                                       fontWeight: FontWeight.bold,

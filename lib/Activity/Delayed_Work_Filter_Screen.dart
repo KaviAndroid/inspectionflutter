@@ -16,6 +16,8 @@ import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../DataBase/DbHelper.dart';
@@ -25,6 +27,7 @@ import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
+import 'Pdf_Viewer.dart';
 
 class DelayedWorkFilterScreen extends StatefulWidget {
   const DelayedWorkFilterScreen({Key? key}) : super(key: key);
@@ -99,22 +102,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   void initState() {
     super.initState();
     initialize();
-    asController.addListener(() {
-      if (asController
-          .text.isNotEmpty &&
-          int.parse(
-              asController.text) >
-              0) {
-        submitFlag = true;
-      } else {
-        submitFlag = false;
-        utils.customAlertWidet(
-            context,
-            "Error",
-            "Please Enter AS value");
-      }
-
-    });
   }
 
   Future<void> initialize() async {
@@ -788,7 +775,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                               }else{
                                                                 selectedMonth =
                                                                     value.toString();
-                                                                submitFlag = false;
+                                                                asController.text != "0" &&
+                                                                    int.parse(
+                                                                        asController.text) >
+                                                                        0?submitFlag = true:submitFlag = false;
                                                               }
                                                               setState(() {});
                                                             },
@@ -851,6 +841,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                         AlignmentDirectional.center,
                                                         height: 30,
                                                         child: TextFormField(
+                                                          onChanged: (v) async =>validateAs(v),
                                                           style: TextStyle(fontSize: 13),
                                                           maxLines: 1,
                                                           keyboardType:
@@ -1086,8 +1077,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                               Alignment.topLeft,
                                                                               end: Alignment.topRight,
                                                                               colors: [
-                                                                                c.colorAccentlight,
-                                                                                c.colorAccentverylight
+                                                                                c.colorAccent,
+                                                                                c.colorAccent
                                                                               ]),
                                                                           borderRadius:
                                                                           const BorderRadius
@@ -1170,7 +1161,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                           .toString(),
                                                                                       style: TextStyle(
                                                                                           color: c
-                                                                                              .grey_8,
+                                                                                              .white,
                                                                                           fontWeight:
                                                                                           FontWeight
                                                                                               .bold,
@@ -1192,7 +1183,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                       child: Align(
                                                                                         child: Image.asset(
                                                                                           imagePath.arrow_down_icon,
-                                                                                          color: c.grey_7,
+                                                                                          color: c.white,
                                                                                           height: 25,
                                                                                         ),
                                                                                       ),
@@ -1227,7 +1218,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                               selectedBlock,
                                                                                               pvcode: villagelist[
                                                                                               index]
-                                                                                              [s.key_pvcode],
+                                                                                              [s.key_pvcode].toString(),
                                                                                               tmccode:
                                                                                               selectedMonth,
                                                                                               flag:
@@ -1294,15 +1285,22 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                 visible: villagelist.isNotEmpty ? true : false,
                 child: GestureDetector(
                   onTap: () {
-
+                    downloadPlan();
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.all(15),
                       alignment: AlignmentDirectional.bottomCenter,
                       decoration: BoxDecoration(
-                          color: c.colorAccent,
-                          border: Border.all(color: c.colorAccent, width: 2),
+                          gradient: LinearGradient(
+                              begin:
+                              Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
+                                c.colorPrimaryDark,
+                                c.colorPrimaryDark
+                              ]),
+                          border: Border.all(color: c.colorAccent, width: 0),
                           borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(30),
                             topRight: const Radius.circular(30),
@@ -1323,7 +1321,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                             width: 10,
                           ),
                           Image.asset(
-                            imagePath.upload_img,
+                            imagePath.download,
                             fit: BoxFit.contain,
                             color: c.white,
                             height: 18,
@@ -1513,7 +1511,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           villagelist = [];
           if (res_jsonArray.length > 0) {
             for (var item in res_jsonArray) {
-              item[key_flag] = false;
+              item[key_flag] = '0';
               List list=jsonDecode(item['workdetails']);
               list.forEach((item2) {
                 item2[key_flag] = false;
@@ -2070,4 +2068,177 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       },
     );
   }
+
+  void downloadPlan() {
+    List selectedList=[];
+    List work_id_list=[];
+    for (var item in villagelist) {
+      List list=item['workdetails'];
+      for (var item2 in list) {
+        if(item2[key_flag] == true){
+          selectedList.add(item2);
+          work_id_list.add(item2[key_work_id]);
+        }
+        // Additional calculations or logic can be added here if needed
+      }
+      // Additional calculations or logic can be added here if needed
+    }
+    print("selectedList>>"+selectedList.toString());
+    print("work_id_list>>"+work_id_list.toString());
+    downloadDelayedWorkList(work_id_list);
+
+  }
+  Future<void> downloadDelayedWorkList(List<dynamic> work_id_list) async {
+    utils.showProgress(context, 1);
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
+    late Map json_request;
+    Map work_detail = {
+      s.key_dcode: selectedDistrict,
+      s.key_bcode: selectedBlock,
+      s.key_work_id: work_id_list,
+    };
+    json_request = {
+      s.key_service_id: s.service_key_get_inspection_work_details_by_work_id,
+      s.key_inspection_work_details: work_detail,
+
+    };
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+    var response;
+    try {
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+     response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("downloadDelayedWorkList_url>>" + url.main_service_jwt.toString());
+    print("downloadDelayedWorkList_request_encrpt>>" +
+        encrypted_request.toString());
+    } catch (error) {
+      utils.hideProgress(context);
+      print('error (${error.toString()}) has been caught');
+    }
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    utils.hideProgress(context);
+    if (response.statusCode == 200) {
+      String data = response.body;
+
+      print("downloadDelayedWorkList_response>>" + data);
+
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("downloadDelayedWorkList Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("downloadDelayedWorkList responceSignature -  $responceSignature");
+
+      print("downloadDelayedWorkList responceData -  $responceData");
+      if (responceSignature == responceData) {
+        print("downloadDelayedWorkList responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_work_id].compareTo(b[s.key_work_id]);
+          });
+          if (res_jsonArray.length > 0) {
+            dbHelper.delete_table_PlannedDelayWorkList('R');
+            String sql_worklist =
+                'INSERT INTO ${s.table_PlannedDelayWorkList} (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name) VALUES ';
+
+            List<String> valueSets_worklist = [];
+
+            for (var row in res_jsonArray) {
+              String values =
+                  " ( 'R', '0', '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvcode])}', '${row[s.key_pvname]}', '${utils.checkNull(row[s.key_hab_code])}', '${row[s.key_scheme_group_id]}', '${utils.checkNull(row[s.key_scheme_id])}', '${utils.checkNull(row[s.key_scheme_name])}', '${utils.checkNull(row[s.key_work_group_id])}', '${utils.checkNull(row[s.key_work_type_id])}', '${utils.checkNull(row[s.key_fin_year])}', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_as_value])}', '${utils.checkNull(row[s.key_ts_value])}', '${utils.checkNull(row[s.key_current_stage_of_work])}', '${utils.checkNull(row[s.key_is_high_value])}', '${utils.checkNull(row[s.key_stage_name])}', '${utils.checkNull(row[s.key_as_date])}', '${utils.checkNull(row[s.key_ts_date])}', '${utils.checkNull(row[s.key_upd_date])}', '${utils.checkNull(row[s.key_work_order_date])}', '${utils.checkNull(row[s.key_work_type_name])}', '0', '0', '0', '0', '0', '0') ";
+              valueSets_worklist.add(values);
+            }
+
+            sql_worklist += valueSets_worklist.join(', ');
+
+            await dbHelper.myDb?.execute(sql_worklist);
+            List<Map> list = await dbClient
+                .rawQuery('SELECT * FROM ${s.table_PlannedDelayWorkList}');
+            if (list.isNotEmpty) {
+              print("downloadlist_response>>" + list.toString());
+              final pdf = pw.Document();
+
+              pdf.addPage(pw.Page(
+                  pageFormat: PdfPageFormat.a4,
+                  build: (pw.Context context) {
+                    return pw.Center(
+                      child: pw.Text("Hello World"),
+                    ); // Center
+                  })); //
+              Uint8List pdfBytes=await pdf.save();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => PDF_Viewer(
+                      pdfBytes: pdfBytes,
+                      workID: work_id,
+                      inspectionID: inspection_id,
+                      flag: 'planned_delay_works',
+                    )),
+              );// Page Page
+              /*utils.customAlertWithDataPassing(context, "Success",
+                  s.download_success, false, true, 'planned_delay_works');*/
+            }
+          } else {
+            utils.showAlert(context, s.no_data);
+          }
+
+
+        } else {
+            utils.showAlert(context, s.no_data);
+          }
+        } else {
+          utils.showAlert(context, s.no_data);
+        }
+      } else {
+        print(
+            "downloadDelayedWorkList responceSignature - Token Not Verified");
+        utils.customAlertWidet(context, "Error", s.jsonError);
+      }
+    }
+
+  validateAs(String v) {
+    if (asController
+        .text.isNotEmpty &&
+        int.parse(
+            asController.text) >
+            0) {
+      submitFlag = true;
+    } else {
+      selectedMonth != "0"?submitFlag = true:submitFlag = false;
+      /*utils.customAlertWidet(
+          context,
+          "Error",
+          "Please Enter AS value");*/
+    }
+
+  }
+
 }

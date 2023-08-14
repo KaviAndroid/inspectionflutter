@@ -179,6 +179,7 @@ String inspected_by = "Inspected By";
 String inspected_date = "Inspected Date";
 String status = "Status";
 String download = "Download";
+String download_plan = "Download Your Plan";
 String download_text = "Click here to download inspected works… ";
 String inspection_by_officer_designation = "inspection_by_officer_designation";
 String inspection_by_officer = "inspection_by_officer";
@@ -251,7 +252,9 @@ String other_inspection_taken = "Other Inspection Taken";
 String previous_login_alert =
     "Previous login was not logged out properly.So login again with";
 String password_alert = "and ***password";
-String delay_work_in_block = "Plan to inspect only delayed works in the block";
+// String delay_work_in_block = "Plan to inspect only delayed works in the block";
+String delay_work_in_block = "Plan your inspection and download inspection plan report";
+String planned_work_in_block = "Inspect works using your inspection plan";
 String plan_to_inspect = "Plan to inspect delayed works";
 String logout_alert =
     " then click logout icon in home page to successfully logout the previous session";
@@ -485,8 +488,8 @@ String service_key_overall_report = "overall_report";
 String service_key_overall_report_for_atr = "overall_report_for_atr";
 String service_key_other_work_inspection_details_update =
     "other_work_inspection_details_update";
-String service_key_get_inspection_delayed_work_details =
-    "get_inspection_delayed_work_details";
+String service_key_get_inspection_delayed_work_details = "get_inspection_delayed_work_details";
+String service_key_get_inspection_work_details_by_work_id = "get_inspection_work_details_by_work_id";
 
 
 //Table Name
@@ -502,6 +505,7 @@ String table_Corporation = "Corporation";
 String table_WorkStages = "WorkStages";
 String table_AtrWorkList = "atr_work_list";
 String table_RdprWorkList = "rdpr_work_list";
+String table_PlannedDelayWorkList = "planned_delay_work_list";
 String table_SchemeList = "scheme_list";
 String table_save_work_details = "save_work_details";
 String table_save_images = "save_images";

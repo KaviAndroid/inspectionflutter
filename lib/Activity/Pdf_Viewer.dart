@@ -23,7 +23,8 @@ class PDF_Viewer extends StatefulWidget {
   final pdfBytes;
   final workID;
   final inspectionID;
-  PDF_Viewer({this.pdfBytes, this.workID, this.inspectionID});
+  final flag;
+  PDF_Viewer({this.pdfBytes, this.workID, this.inspectionID, this.flag});
 
   @override
   State<PDF_Viewer> createState() => _PDF_ViewerState();
@@ -233,7 +234,10 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   void setPDFDirectory(Directory downloadsDir, Uint8List pdfBytes) async {
     String fileName;
 
-    if (widget.workID != null) {
+    if (widget.flag == 'planned_delay_works') {
+      fileName =
+          "Inspection Plan_${DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now())}";
+    }else if (widget.workID != null) {
       fileName =
           "Inspection${widget.inspectionID}_${widget.workID}_${DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now())}";
     } else {

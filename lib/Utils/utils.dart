@@ -271,7 +271,7 @@ class Utils {
   }
 
   Future<void> customAlertUIWidet(BuildContext context, String type, String msg,
-      bool isNavigateSplash, bool isNavigareWorkList, dynamic sendData) async {
+      bool isNavigateSplash, bool isNavigateWorkList, dynamic sendData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return showDialog<void>(
@@ -386,26 +386,42 @@ class Utils {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => Login()));
-                                      } else if (isNavigareWorkList) {
+                                      } else if (isNavigateWorkList) {
                                         // Navigator.pop(context, true);
+                                        sendData=='planned_delay_works'?
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => WorkList(
-                                                  schemeList: sendData[
-                                                  'schemeList'],
-                                                  scheme: sendData['scheme']
-                                                      .toString(),
-                                                  flag: sendData['flag'],
+                                                  schemeList: [],
+                                                  scheme: '',
+                                                  flag: 'planned_delay_works',
                                                   finYear: '',
                                                   dcode: '',
                                                   bcode: '',
                                                   pvcode: '',
                                                   tmccode: '',
-                                                  townType:
-                                                  sendData['townType'],
+                                                  townType:'',
                                                   selectedschemeList: [],
-                                                )));
+                                                ))):
+                                      Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                      builder: (context) => WorkList(
+                                      schemeList: sendData[
+                                      'schemeList'],
+                                      scheme: sendData['scheme']
+                                          .toString(),
+                                      flag: sendData['flag'],
+                                      finYear: '',
+                                      dcode: '',
+                                      bcode: '',
+                                      pvcode: '',
+                                      tmccode: '',
+                                      townType:
+                                      sendData['townType'],
+                                      selectedschemeList: [],
+                                      )));
                                       } else {
                                         Navigator.pop(context, true);
                                       }

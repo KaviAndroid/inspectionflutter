@@ -181,6 +181,11 @@ class _WorkListState extends State<WorkList> {
       } else {
         utils.customAlertWidet(context, "Error", s.no_internet);
       }
+    }else if (widget.flag == 'planned_delay_works') {
+        delay = false;
+        schemeFlag = false;
+        flagTab = true;
+        await fetchOfflinePlannedWorkList("R");
     }
     monthItems = [];
     monthItems.add(defaultSelectedMonth);
@@ -2224,6 +2229,57 @@ class _WorkListState extends State<WorkList> {
         "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${areatype}' and scheme_id='${scheme}' ");
     print(
         "SELECT * FROM ${s.table_RdprWorkList} where rural_urban='${areatype}' and scheme_id='${scheme}' ");
+    flagTab = true;
+    flagList = true;
+    ongoingWorkList = [];
+    completedWorkList = [];
+    workList = [];
+    workListAll = [];
+    workListAll.addAll(list);
+    for (int i = 0; i < workListAll.length; i++) {
+      if (workListAll[i][s.key_current_stage_of_work] == 11) {
+        completedWorkList.add(workListAll[i]);
+      } else {
+        ongoingWorkList.add(workListAll[i]);
+      }
+    }
+
+    print(workListAll.toString());
+    if (ongoingWorkList.length > 0) {
+      workList.addAll(ongoingWorkList);
+      flag = 1;
+      noDataFlag = false;
+      workListFlag = true;
+    } else if (completedWorkList.length > 0) {
+      workList.addAll(completedWorkList);
+      flag = 2;
+      noDataFlag = false;
+      workListFlag = true;
+    } else {
+      flag = 1;
+      noDataFlag = true;
+      workListFlag = false;
+    }
+    showFlag = [];
+    for (int i = 0; i < workList.length; i++) {
+      showFlag.add(false);
+    }
+    progressFlag = [];
+    for (int i = 0; i < workList.length; i++) {
+      progressFlag.add(false);
+    }
+
+    setState(() {
+      isLoadingScheme = false;
+    });
+    utils.hideProgress(context);
+  }
+  Future<void> fetchOfflinePlannedWorkList(String areatype) async {
+    utils.showProgress(context, 1);
+    List<Map> list = await dbClient.rawQuery(
+        "SELECT * FROM ${s.table_PlannedDelayWorkList} where rural_urban='${areatype}' ");
+    print(
+        "SELECT * FROM ${s.table_PlannedDelayWorkList} where rural_urban='${areatype}' ");
     flagTab = true;
     flagList = true;
     ongoingWorkList = [];

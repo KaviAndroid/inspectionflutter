@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/Home.dart';
@@ -19,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
+import '../Layout/ReadMoreLess.dart';
 import '../ModelClass/checkBoxModelClass.dart';
 import '../Resources/Strings.dart';
 import '../Resources/Strings.dart';
@@ -84,7 +86,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     s.key_dcode: "0",
     s.key_dname: s.selectDistrict
   };
-  Map<String, String> defaultSelectedMonth = {'monthId': "00", 'month': '0'};
+  Map<String, String> defaultSelectedMonth = {'monthId': "0", 'month': '0'};
 
   Utils utils = Utils();
   late SharedPreferences prefs;
@@ -97,6 +99,22 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   void initState() {
     super.initState();
     initialize();
+    asController.addListener(() {
+      if (asController
+          .text.isNotEmpty &&
+          int.parse(
+              asController.text) >
+              0) {
+        submitFlag = true;
+      } else {
+        submitFlag = false;
+        utils.customAlertWidet(
+            context,
+            "Error",
+            "Please Enter AS value");
+      }
+
+    });
   }
 
   Future<void> initialize() async {
@@ -220,352 +238,26 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             // padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             color: c.white,
             height: MediaQuery.of(context).size.height,
-            child: SingleChildScrollView(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                    padding: EdgeInsets.only(left: 20, right: 20),
+              Expanded(
+                child: SingleChildScrollView(
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Text(
-                              s.select_financial_year,
-                              style: GoogleFonts.getFont('Roboto',
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 12,
-                                  color: c.grey_8),
-                            ),
-                          ),
-                          Container(
-                              height: 30,
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                  color: c.grey_out,
-                                  border: Border.all(
-                                      width: finYearError ? 1 : 0.1,
-                                      color: finYearError ? c.red : c.grey_10),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: InkWell(
-                                  onTap: () {
-                                    multiChoiceFinYearSelection(
-                                        finyearList, s.select_financial_year);
-                                  },
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            finList.isNotEmpty
-                                                ? finList.join(', ')
-                                                : s.select_financial_year,
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                color: c.grey_10),
-                                            overflow: TextOverflow.clip,
-                                            maxLines: 1,
-                                            softWrap: true,
-                                          ),
-                                        ),
-                                      ]))
-                              /*child: IgnorePointer(
-                    ignoring: isLoadingFinYear ? true : false,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2(
-                        style: const TextStyle(color: Colors.black),
-                        value: selectedFinYear,
-                        isExpanded: true,
-                        items: finYearItems
-                            .map((item) => DropdownMenuItem<String>(
-                                  value: item[s.key_fin_year].toString(),
-                                  child: Text(
-                                    item[s.key_fin_year].toString(),
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          if (value != s.select_financial_year) {
-                            isLoadingFinYear = false;
-                            finYearError = false;
-                            selectedFinYear = value.toString();
-                            print(">>>>>#################"+selectedFinYear.toString());
-                            setState(() {});
-                          } else {
-                            setState(() {
-                              selectedFinYear = value.toString();
-                              finYearError = true;
-                            });
-                          }
-                        },
-                        buttonStyleData: const ButtonStyleData(
-                          height: 30,
-                          padding: EdgeInsets.only(right: 10),
-                        ),
-                        iconStyleData: IconStyleData(
-                          icon: isLoadingFinYear
-                              ? SpinKitCircle(
-                                  color: c.colorPrimary,
-                                  size: 30,
-                                  duration: const Duration(milliseconds: 1200),
-                                )
-                              : const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                          iconSize: 30,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),*/
-                              ),
-                          const SizedBox(height: 8.0),
-                          Visibility(
-                            visible: sFlag ? true : false,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10),
-                                  child: Text(
-                                    s.selectDistrict,
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12,
-                                        color: c.grey_8),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: c.grey_out,
-                                      border: Border.all(
-                                          width: districtError ? 1 : 0.1,
-                                          color: districtError
-                                              ? c.red
-                                              : c.grey_10),
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  child: IgnorePointer(
-                                    ignoring: isLoadingDistrict ? true : false,
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton2(
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                        value: selectedDistrict,
-                                        isExpanded: true,
-                                        items: districtItems
-                                            .map((item) =>
-                                                DropdownMenuItem<String>(
-                                                  value: item[s.key_dcode]
-                                                      .toString(),
-                                                  child: Text(
-                                                    item[s.key_dname]
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                        onChanged: (value) {
-                                          villagelist = [];
-                                          schIdList = [];
-                                          schList = [];
-                                          SchemeListvalue.clear();
-                                          blockItems = [];
-                                          selectedBlock = defaultSelectedBlock[
-                                              s.key_bcode]!;
-                                          blockError = true;
-                                          schemeError = true;
-                                          selectedMonth = "00";
-                                          asController.text = "0";
-
-                                          if (value != "0") {
-                                            isLoadingDistrict = true;
-                                            loadUIBlock(value.toString());
-                                          } else {
-                                            setState(() {
-                                              selectedDistrict =
-                                                  value.toString();
-                                              districtError = true;
-                                            });
-                                          }
-                                          setState(() {});
-                                        },
-                                        buttonStyleData: const ButtonStyleData(
-                                          height: 30,
-                                          padding: EdgeInsets.only(right: 10),
-                                        ),
-                                        iconStyleData: IconStyleData(
-                                          icon: isLoadingDistrict
-                                              ? SpinKitCircle(
-                                                  color: c.colorPrimary,
-                                                  size: 30,
-                                                  duration: const Duration(
-                                                      milliseconds: 1200),
-                                                )
-                                              : const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: Colors.black45,
-                                                ),
-                                          iconSize: 30,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8.0),
-                                Visibility(
-                                  visible: districtError ? true : false,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      s.please_enter_district,
-                                      style: TextStyle(
-                                          color: Colors.redAccent.shade700,
-                                          fontSize: 12.0),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Visibility(
-                            visible: dFlag ? true : false,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10),
-                                  child: Text(
-                                    s.selectBlock,
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12,
-                                        color: c.grey_8),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: c.grey_out,
-                                      border: Border.all(
-                                          width: blockError ? 1 : 0.1,
-                                          color:
-                                              blockError ? c.red : c.grey_10),
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2(
-                                      value: selectedBlock,
-                                      style:
-                                          const TextStyle(color: Colors.black),
-                                      isExpanded: true,
-                                      items: blockItems
-                                          .map((item) =>
-                                              DropdownMenuItem<String>(
-                                                value: item[s.key_bcode]
-                                                    .toString(),
-                                                child: Text(
-                                                  item[s.key_bname].toString(),
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                      onChanged: (value) async {
-                                        villagelist = [];
-                                        selectedMonth = "00";
-                                        asController.text = "0";
-                                        if (finList.isNotEmpty) {
-                                          schIdList = [];
-                                          schList = [];
-                                          SchemeListvalue.clear();
-                                          schemeError = true;
-                                          selectedBlock = value.toString();
-                                          if (value != "0") {
-                                            print(value);
-                                            blockError = false;
-                                            delay = true;
-                                            await getSchemeList();
-                                          } else {
-                                            blockError = true;
-                                          }
-                                        } else {
-                                          utils.showAlert(
-                                              context, s.select_financial_year);
-                                        }
-                                        setState(() {});
-
-                                        //Do something when changing the item if you want.
-                                      },
-                                      buttonStyleData: const ButtonStyleData(
-                                        height: 30,
-                                        padding: EdgeInsets.only(right: 10),
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                          color: Colors.black45,
-                                        ),
-                                        iconSize: 30,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8.0),
-                                Visibility(
-                                  visible: blockError ? true : false,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      s.please_enter_block,
-                                      // state.hasError ? state.errorText : '',
-                                      style: TextStyle(
-                                          color: Colors.redAccent.shade700,
-                                          fontSize: 12.0),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Visibility(
-                              visible: schemeFlag ? true : false,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Visibility(
+                          visible: villagelist.isEmpty ? true : false,
+                          child: Container(
+                              padding: EdgeInsets.only(left: 20, right: 20),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 5, bottom: 10),
+                                      padding: const EdgeInsets.only(top: 15, bottom: 15),
                                       child: Text(
-                                        s.select_scheme,
+                                        s.select_financial_year,
                                         style: GoogleFonts.getFont('Roboto',
                                             fontWeight: FontWeight.w800,
                                             fontSize: 12,
@@ -573,592 +265,1076 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ),
                                     ),
                                     Container(
-                                      height: 150,
-                                      width: 350,
-                                      padding: EdgeInsets.only(
-                                          top: 5,
-                                          bottom: 5,
-                                          left: 10,
-                                          right: 10),
-                                      decoration: BoxDecoration(
-                                          color: c.grey_out,
-                                          border: Border.all(
-                                              width: schemeError ? 1 : 0.1,
-                                              color: schemeError
-                                                  ? c.red
-                                                  : c.grey_10),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      child: InkWell(
-                                          onTap: () {
-                                            SchemeListvalue.length > 0
-                                                ? multiChoiceSchemeSelection(
-                                                    SchemeListvalue)
-                                                : null;
-                                            print("Schemelist#######" +
-                                                SchemeListvalue.toString());
-                                            setState(() {});
-                                          },
-                                          child: schList.isNotEmpty
-                                              ? ListView.builder(
-                                                  itemCount: schList.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    var s_no = index + 1;
-                                                    return Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                s_no.toString() +
-                                                                    " : ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color: c
-                                                                        .grey_10),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .clip,
-                                                                softWrap: true,
-                                                              ),
-                                                              Expanded(
-                                                                  child: Text(
-                                                                schList[index],
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color: c
-                                                                        .grey_10),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .clip,
-                                                                softWrap: true,
-                                                              )),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          )
-                                                        ]);
-                                                  })
-                                              : Text(
-                                                  s.select_scheme,
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: c.grey_10),
-                                                  overflow: TextOverflow.clip,
-                                                  softWrap: true,
-                                                )
-
-                                          // Text(
-                                          //   schList.isNotEmpty
-                                          //       ? schList.join(',\n\n ')
-                                          //       : s.select_scheme,
-                                          //   style: TextStyle(
-                                          //       fontSize: 13,
-                                          //       fontWeight:
-                                          //           FontWeight.normal,
-                                          //       color: c.grey_10),
-                                          //   overflow: TextOverflow.clip,
-                                          //   softWrap: true,
-                                          // )
-
-                                          ),
+                                        height: 30,
+                                        padding: EdgeInsets.only(left: 10, right: 10),
+                                        decoration: BoxDecoration(
+                                            color: c.grey_out,
+                                            border: Border.all(
+                                                width: finYearError ? 1 : 0.1,
+                                                color: finYearError ? c.red : c.grey_10),
+                                            borderRadius: BorderRadius.circular(10.0)),
+                                        child: InkWell(
+                                            onTap: () {
+                                              multiChoiceFinYearSelection(
+                                                  finyearList, s.select_financial_year);
+                                            },
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      finList.isNotEmpty
+                                                          ? finList.join(', ')
+                                                          : s.select_financial_year,
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.normal,
+                                                          color: c.grey_10),
+                                                      overflow: TextOverflow.clip,
+                                                      maxLines: 1,
+                                                      softWrap: true,
+                                                    ),
+                                                  ),
+                                                ]))
+                                      /*child: IgnorePointer(
+                        ignoring: isLoadingFinYear ? true : false,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2(
+                            style: const TextStyle(color: Colors.black),
+                            value: selectedFinYear,
+                            isExpanded: true,
+                            items: finYearItems
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item[s.key_fin_year].toString(),
+                                      child: Text(
+                                        item[s.key_fin_year].toString(),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              if (value != s.select_financial_year) {
+                                isLoadingFinYear = false;
+                                finYearError = false;
+                                selectedFinYear = value.toString();
+                                print(">>>>>#################"+selectedFinYear.toString());
+                                setState(() {});
+                              } else {
+                                setState(() {
+                                  selectedFinYear = value.toString();
+                                  finYearError = true;
+                                });
+                              }
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 30,
+                              padding: EdgeInsets.only(right: 10),
+                            ),
+                            iconStyleData: IconStyleData(
+                              icon: isLoadingFinYear
+                                  ? SpinKitCircle(
+                                      color: c.colorPrimary,
+                                      size: 30,
+                                      duration: const Duration(milliseconds: 1200),
+                                    )
+                                  : const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black45,
                                     ),
-                                  ])),
-                          Visibility(
-                            visible: delay,
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.only(top: 15, bottom: 15),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: c.grey_out,
-                                          border: Border.all(
-                                              width: 0.1, color: c.grey_10),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),*/
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Visibility(
+                                      visible: sFlag ? true : false,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 5,
-                                                bottom: 5,
-                                                left: 5,
-                                                right: 0),
+                                                top: 10, bottom: 10),
                                             child: Text(
-                                              'Months Delayed',
-                                              style: GoogleFonts.getFont(
-                                                  'Roboto',
+                                              s.selectDistrict,
+                                              style: GoogleFonts.getFont('Roboto',
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 12,
                                                   color: c.grey_8),
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Container(
-                                              height: 30,
-                                              child:
-                                                  DropdownButtonHideUnderline(
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: c.grey_out,
+                                                border: Border.all(
+                                                    width: districtError ? 1 : 0.1,
+                                                    color: districtError
+                                                        ? c.red
+                                                        : c.grey_10),
+                                                borderRadius:
+                                                BorderRadius.circular(10.0)),
+                                            child: IgnorePointer(
+                                              ignoring: isLoadingDistrict ? true : false,
+                                              child: DropdownButtonHideUnderline(
                                                 child: DropdownButton2(
                                                   style: const TextStyle(
                                                       color: Colors.black),
-                                                  value: selectedMonth,
+                                                  value: selectedDistrict,
                                                   isExpanded: true,
-                                                  items: monthItems
+                                                  items: districtItems
                                                       .map((item) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value:
-                                                                item['monthId']
-                                                                    .toString(),
-                                                            child: Text(
-                                                              item['month']
-                                                                  .toString(),
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                          ))
+                                                      DropdownMenuItem<String>(
+                                                        value: item[s.key_dcode]
+                                                            .toString(),
+                                                        child: Text(
+                                                          item[s.key_dname]
+                                                              .toString(),
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ))
                                                       .toList(),
-                                                  onChanged: (value) async {
+                                                  onChanged: (value) {
                                                     villagelist = [];
-                                                    if (value != "00") {
-                                                      selectedMonth =
-                                                          value.toString();
-                                                      submitFlag = true;
+                                                    schIdList = [];
+                                                    schList = [];
+                                                    SchemeListvalue.clear();
+                                                    blockItems = [];
+                                                    selectedBlock = defaultSelectedBlock[
+                                                    s.key_bcode]!;
+                                                    blockError = true;
+                                                    schemeError = true;
+                                                    selectedMonth = "0";
+                                                    asController.text = "0";
+
+                                                    if (value != "0") {
+                                                      isLoadingDistrict = true;
+                                                      loadUIBlock(value.toString());
+                                                    } else {
+                                                      setState(() {
+                                                        selectedDistrict =
+                                                            value.toString();
+                                                        districtError = true;
+                                                      });
                                                     }
                                                     setState(() {});
                                                   },
-                                                  buttonStyleData:
-                                                      const ButtonStyleData(
+                                                  buttonStyleData: const ButtonStyleData(
                                                     height: 30,
-                                                    padding: EdgeInsets.only(
-                                                        right: 0),
+                                                    padding: EdgeInsets.only(right: 10),
                                                   ),
-                                                  dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  iconStyleData: IconStyleData(
+                                                    icon: isLoadingDistrict
+                                                        ? SpinKitCircle(
+                                                      color: c.colorPrimary,
+                                                      size: 30,
+                                                      duration: const Duration(
+                                                          milliseconds: 1200),
+                                                    )
+                                                        : const Icon(
+                                                      Icons.arrow_drop_down,
+                                                      color: Colors.black45,
+                                                    ),
+                                                    iconSize: 30,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
+                                                      BorderRadius.circular(15),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
+                                          const SizedBox(height: 8.0),
+                                          Visibility(
+                                            visible: districtError ? true : false,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Text(
+                                                s.please_enter_district,
+                                                style: TextStyle(
+                                                    color: Colors.redAccent.shade700,
+                                                    fontSize: 12.0),
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                          color: c.grey_out,
-                                          border: Border.all(
-                                              width: 0.1, color: c.grey_10),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                    Visibility(
+                                      visible: dFlag ? true : false,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 0,
-                                                bottom: 0,
-                                                left: 5,
-                                                right: 0),
+                                                top: 10, bottom: 10),
                                             child: Text(
-                                              'AS Value >=',
-                                              style: GoogleFonts.getFont(
-                                                  'Roboto',
+                                              s.selectBlock,
+                                              style: GoogleFonts.getFont('Roboto',
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 12,
                                                   color: c.grey_8),
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  5, 0, 5, 0),
-                                              alignment:
-                                                  AlignmentDirectional.center,
-                                              height: 30,
-                                              child: TextFormField(
-                                                style: TextStyle(fontSize: 13),
-                                                maxLines: 1,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                controller: asController,
-                                                autovalidateMode:
-                                                    AutovalidateMode
-                                                        .onUserInteraction,
-                                                decoration: InputDecoration(
-                                                  hintText: '0',
-                                                  border: InputBorder.none,
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: c.grey_out,
+                                                border: Border.all(
+                                                    width: blockError ? 1 : 0.1,
+                                                    color:
+                                                    blockError ? c.red : c.grey_10),
+                                                borderRadius:
+                                                BorderRadius.circular(10.0)),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2(
+                                                value: selectedBlock,
+                                                style:
+                                                const TextStyle(color: Colors.black),
+                                                isExpanded: true,
+                                                items: blockItems
+                                                    .map((item) =>
+                                                    DropdownMenuItem<String>(
+                                                      value: item[s.key_bcode]
+                                                          .toString(),
+                                                      child: Text(
+                                                        item[s.key_bname].toString(),
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ))
+                                                    .toList(),
+                                                onChanged: (value) async {
+                                                  villagelist = [];
+                                                  selectedMonth = "0";
+                                                  asController.text = "0";
+                                                  if (finList.isNotEmpty) {
+                                                    schIdList = [];
+                                                    schList = [];
+                                                    SchemeListvalue.clear();
+                                                    schemeError = true;
+                                                    selectedBlock = value.toString();
+                                                    if (value != "0") {
+                                                      print(value);
+                                                      blockError = false;
+                                                      delay = true;
+                                                      await getSchemeList();
+                                                    } else {
+                                                      blockError = true;
+                                                    }
+                                                  } else {
+                                                    utils.showAlert(
+                                                        context, s.select_financial_year);
+                                                  }
+                                                  setState(() {});
+
+                                                  //Do something when changing the item if you want.
+                                                },
+                                                buttonStyleData: const ButtonStyleData(
+                                                  height: 30,
+                                                  padding: EdgeInsets.only(right: 10),
+                                                ),
+                                                iconStyleData: const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: Colors.black45,
+                                                  ),
+                                                  iconSize: 30,
+                                                ),
+                                                dropdownStyleData: DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(15),
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          InkWell(
-                                              onTap: () {
-                                                utils.hideSoftKeyBoard(context);
-                                                if (asController
-                                                        .text.isNotEmpty &&
-                                                    int.parse(
-                                                            asController.text) >
-                                                        0) {
-                                                  submitFlag = true;
-                                                } else {
-                                                  utils.customAlertWidet(
-                                                      context,
-                                                      "Error",
-                                                      "Please Enter AS value");
-                                                }
-                                              },
-                                              child: Visibility(
-                                                visible: false,
-                                                child: Container(
-                                                  width: 25,
-                                                  height: 30,
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  decoration: BoxDecoration(
-                                                      color: c.colorPrimary,
-                                                      border: Border.all(
-                                                          width: 0,
-                                                          color: c.grey_10),
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                        topLeft:
-                                                            Radius.circular(0),
-                                                        topRight:
-                                                            Radius.circular(10),
-                                                        bottomLeft:
-                                                            Radius.circular(0),
-                                                        bottomRight:
-                                                            Radius.circular(10),
-                                                      )),
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          5, 5, 5, 5),
-                                                ),
-                                              ))
+                                          const SizedBox(height: 8.0),
+                                          Visibility(
+                                            visible: blockError ? true : false,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Text(
+                                                s.please_enter_block,
+                                                // state.hasError ? state.errorText : '',
+                                                style: TextStyle(
+                                                    color: Colors.redAccent.shade700,
+                                                    fontSize: 12.0),
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            visible: submitFlag,
-                            child: Container(
-                              margin:
-                                  const EdgeInsets.only(top: 10, bottom: 10),
-                              child: Center(
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              c.colorPrimary),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ))),
-                                  onPressed: () async {
-                                    if (finList.isNotEmpty) {
-                                      if (selectedDistrict.isNotEmpty &&
-                                          selectedDistrict != "0") {
-                                        if (selectedBlock.isNotEmpty &&
-                                            selectedBlock != "0") {
-                                          if (schIdList.isNotEmpty) {
-                                            asController.text.isEmpty
-                                                ? asController.text = "0"
-                                                : null;
-                                            if (int.parse(asController.text) >
-                                                    0 ||
-                                                selectedMonth != "00") {
-                                              await fetchDelayedWorkList();
-                                            } else {
-                                              utils.customAlertWidet(
-                                                  context,
-                                                  "Error",
-                                                  "Please Select AS value or Months");
-                                            }
-                                          } else {
-                                            utils.showAlert(
-                                                context, s.select_scheme);
-                                          }
-                                        } else {
-                                          utils.showAlert(
-                                              context, s.selectBlock);
-                                        }
-                                      } else {
-                                        utils.showAlert(
-                                            context, s.selectDistrict);
-                                      }
-                                    } else {
-                                      utils.showAlert(
-                                          context, s.select_financial_year);
-                                    }
-
-                                    // pvTable = true;
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    s.submit,
-                                    style: GoogleFonts.getFont('Roboto',
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                        color: c.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ])),
-                Visibility(
-                    child: Container(
-                        margin: EdgeInsets.only(right: 20, left: 20),
-                        child: Stack(children: [
-                          Visibility(
-                              visible: villagelist.isNotEmpty ? true : false,
-                              child: Container(
-                                  child: Column(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 5, bottom: 5),
-                                    child: Text(
-                                      s.village_list,
-                                      style: GoogleFonts.getFont('Roboto',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: c.primary_text_color2),
-                                    ),
-                                  ),
-                                  ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: villagelist.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return InkWell(
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WorkList(
-                                                            finYear: finList,
-                                                            dcode:
-                                                                selectedDistrict,
-                                                            bcode:
-                                                                selectedBlock,
-                                                            pvcode: villagelist[
-                                                                    index]
-                                                                [s.key_pvcode],
-                                                            tmccode:
-                                                                selectedMonth,
-                                                            flag:
-                                                                "delayed_works",
-                                                            asvalue:
-                                                                asController
-                                                                    .text,
-                                                            selectedschemeList:
-                                                                "",
-                                                            townType: '',
-                                                            scheme: '',
-                                                            schemeList:
-                                                                schIdList,
-                                                          )));
-                                            },
-                                            child: Card(
-                                                elevation: 5,
-                                                margin: EdgeInsets.only(
-                                                    top: 10, bottom: 10),
-                                                color: c.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(20),
-                                                    topLeft:
-                                                        Radius.circular(20),
-                                                    topRight:
-                                                        Radius.circular(20),
-                                                    bottomRight:
-                                                        Radius.circular(20),
-                                                  ),
+                                    Visibility(
+                                        visible: schemeFlag ? true : false,
+                                        child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5, bottom: 10),
+                                                child: Text(
+                                                  s.select_scheme,
+                                                  style: GoogleFonts.getFont('Roboto',
+                                                      fontWeight: FontWeight.w800,
+                                                      fontSize: 12,
+                                                      color: c.grey_8),
                                                 ),
-                                                child: ClipPath(
-                                                    clipper: ShapeBorderClipper(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20))),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              width: 13,
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      top: 10,
-                                                                      bottom:
-                                                                          10),
-                                                              child: Text(""),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                      gradient: LinearGradient(
-                                                                          begin:
-                                                                              Alignment.topLeft,
-                                                                          end: Alignment.topRight,
-                                                                          colors: [
-                                                                            c.colorPrimary,
-                                                                            c.colorAccentverylight
-                                                                          ]),
-                                                                      borderRadius:
-                                                                          const BorderRadius
-                                                                              .only(
-                                                                        topLeft:
-                                                                            Radius.circular(20),
-                                                                        topRight:
-                                                                            Radius.circular(0),
-                                                                        bottomLeft:
-                                                                            Radius.circular(20),
-                                                                        bottomRight:
-                                                                            Radius.circular(0),
-                                                                      )),
-                                                            ),
-                                                            Expanded(
-                                                              child: Container(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 10,
-                                                                        bottom:
-                                                                            10,
-                                                                        left:
-                                                                            20),
-                                                                child: Text(
-                                                                  villagelist[
-                                                                          index]
-                                                                      [
-                                                                      key_pvname],
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                      fontWeight:
+                                              ),
+                                              Container(
+                                                height: 150,
+                                                width: 350,
+                                                padding: EdgeInsets.only(
+                                                    top: 5,
+                                                    bottom: 5,
+                                                    left: 10,
+                                                    right: 10),
+                                                decoration: BoxDecoration(
+                                                    color: c.grey_out,
+                                                    border: Border.all(
+                                                        width: schemeError ? 1 : 0.1,
+                                                        color: schemeError
+                                                            ? c.red
+                                                            : c.grey_10),
+                                                    borderRadius:
+                                                    BorderRadius.circular(10.0)),
+                                                child: InkWell(
+                                                    onTap: () {
+                                                      SchemeListvalue.length > 0
+                                                          ? multiChoiceSchemeSelection(
+                                                          SchemeListvalue)
+                                                          : null;
+                                                      print("Schemelist#######" +
+                                                          SchemeListvalue.toString());
+                                                      setState(() {});
+                                                    },
+                                                    child: schList.isNotEmpty
+                                                        ? ListView.builder(
+                                                        itemCount: schList.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          var s_no = index + 1;
+                                                          return Column(
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                              children: [
+                                                                Row(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      s_no.toString() +
+                                                                          " : ",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                          13,
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .normal,
-                                                                      color: c
-                                                                          .black),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  overflow:
+                                                                          color: c
+                                                                              .grey_10),
+                                                                      overflow:
                                                                       TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Container(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 10,
-                                                                        bottom:
-                                                                            10,
-                                                                        right:
-                                                                            20),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                        color: c
-                                                                            .dot_light_screen_lite1,
-                                                                        borderRadius:
-                                                                            const BorderRadius.only(
-                                                                          topLeft:
-                                                                              Radius.circular(0),
-                                                                          topRight:
-                                                                              Radius.circular(20),
-                                                                          bottomLeft:
-                                                                              Radius.circular(0),
-                                                                          bottomRight:
-                                                                              Radius.circular(20),
+                                                                          .clip,
+                                                                      softWrap: true,
+                                                                    ),
+                                                                    Expanded(
+                                                                        child: Text(
+                                                                          schList[index],
+                                                                          style: TextStyle(
+                                                                              fontSize:
+                                                                              13,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .normal,
+                                                                              color: c
+                                                                                  .grey_10),
+                                                                          overflow:
+                                                                          TextOverflow
+                                                                              .clip,
+                                                                          softWrap: true,
                                                                         )),
-                                                                child: Text(
-                                                                    villagelist[index]
-                                                                            [
-                                                                            key_total_count]
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                )
+                                                              ]);
+                                                        })
+                                                        : Text(
+                                                      s.select_scheme,
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                          FontWeight.normal,
+                                                          color: c.grey_10),
+                                                      overflow: TextOverflow.clip,
+                                                      softWrap: true,
+                                                    )
+
+                                                  // Text(
+                                                  //   schList.isNotEmpty
+                                                  //       ? schList.join(',\n\n ')
+                                                  //       : s.select_scheme,
+                                                  //   style: TextStyle(
+                                                  //       fontSize: 13,
+                                                  //       fontWeight:
+                                                  //           FontWeight.normal,
+                                                  //       color: c.grey_10),
+                                                  //   overflow: TextOverflow.clip,
+                                                  //   softWrap: true,
+                                                  // )
+
+                                                ),
+                                              ),
+                                            ])),
+                                    Visibility(
+                                      visible: delay,
+                                      child: Container(
+                                        padding:
+                                        const EdgeInsets.only(top: 15, bottom: 15),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: c.grey_out,
+                                                    border: Border.all(
+                                                        width: 0.1, color: c.grey_10),
+                                                    borderRadius:
+                                                    BorderRadius.circular(10.0)),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(
+                                                          top: 5,
+                                                          bottom: 5,
+                                                          left: 5,
+                                                          right: 0),
+                                                      child: Text(
+                                                        'Months Delayed >  ',
+                                                        style: GoogleFonts.getFont(
+                                                            'Roboto',
+                                                            fontWeight: FontWeight.w800,
+                                                            fontSize: 12,
+                                                            color: c.grey_8),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Container(
+                                                        height: 30,
+                                                        child:
+                                                        DropdownButtonHideUnderline(
+                                                          child: DropdownButton2(
+                                                            alignment: Alignment.center,
+                                                            buttonStyleData: const ButtonStyleData(
+                                                              padding: EdgeInsets.symmetric(horizontal: 0),
+                                                              height: 30,
+                                                              width: 50,
+                                                            ),
+                                                            menuItemStyleData: const MenuItemStyleData(
+                                                              height: 40,
+                                                            ),
+                                                            style: const TextStyle(
+                                                                color: Colors.black),
+                                                            value: selectedMonth,
+                                                            isExpanded: true,
+                                                            items: monthItems
+                                                                .map((item) =>
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value:
+                                                                  item['monthId']
+                                                                      .toString(),
+                                                                  child: Text(
+                                                                    item['month']
                                                                         .toString(),
-                                                                    style: TextStyle(
-                                                                        color: c
-                                                                            .primary_text_color2,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            18),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .right,
-                                                                    maxLines:
-                                                                        1),
+                                                                    style:
+                                                                    const TextStyle(
+                                                                      fontSize: 14,
+                                                                    ),
+                                                                  ),
+                                                                ))
+                                                                .toList(),
+                                                            onChanged: (value) async {
+                                                              villagelist = [];
+                                                              if (value != "0") {
+                                                                selectedMonth =
+                                                                    value.toString();
+                                                                submitFlag = true;
+                                                              }else{
+                                                                selectedMonth =
+                                                                    value.toString();
+                                                                submitFlag = false;
+                                                              }
+                                                              setState(() {});
+                                                            },
+                                                            dropdownStyleData:
+                                                            DropdownStyleData(
+                                                              width: 50,
+                                                              decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    15),
                                                               ),
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ))));
-                                      })
-                                ],
-                              )))
-                        ])))
-              ],
-            )),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                    color: c.grey_out,
+                                                    border: Border.all(
+                                                        width: 0.1, color: c.grey_10),
+                                                    borderRadius:
+                                                    BorderRadius.circular(10.0)),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(
+                                                          top: 0,
+                                                          bottom: 0,
+                                                          left: 5,
+                                                          right: 0),
+                                                      child: Text(
+                                                        'AS Value >=',
+                                                        style: GoogleFonts.getFont(
+                                                            'Roboto',
+                                                            fontWeight: FontWeight.w800,
+                                                            fontSize: 12,
+                                                            color: c.grey_8),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Container(
+                                                        padding: EdgeInsets.fromLTRB(
+                                                            5, 0, 5, 0),
+                                                        alignment:
+                                                        AlignmentDirectional.center,
+                                                        height: 30,
+                                                        child: TextFormField(
+                                                          style: TextStyle(fontSize: 13),
+                                                          maxLines: 1,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly
+                                                          ],
+                                                          controller: asController,
+                                                          autovalidateMode:
+                                                          AutovalidateMode
+                                                              .onUserInteraction,
+                                                          decoration: InputDecoration(
+                                                            hintText: '0',
+                                                            border: InputBorder.none,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                        onTap: () {
+                                                          utils.hideSoftKeyBoard(context);
+                                                          if (asController
+                                                              .text.isNotEmpty &&
+                                                              int.parse(
+                                                                  asController.text) >
+                                                                  0) {
+                                                            submitFlag = true;
+                                                          } else {
+                                                            utils.customAlertWidet(
+                                                                context,
+                                                                "Error",
+                                                                "Please Enter AS value");
+                                                          }
+                                                        },
+                                                        child: Visibility(
+                                                          visible: false,
+                                                          child: Container(
+                                                            width: 25,
+                                                            height: 30,
+                                                            alignment:
+                                                            Alignment.centerRight,
+                                                            decoration: BoxDecoration(
+                                                                color: c.colorPrimary,
+                                                                border: Border.all(
+                                                                    width: 0,
+                                                                    color: c.grey_10),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft:
+                                                                  Radius.circular(0),
+                                                                  topRight:
+                                                                  Radius.circular(10),
+                                                                  bottomLeft:
+                                                                  Radius.circular(0),
+                                                                  bottomRight:
+                                                                  Radius.circular(10),
+                                                                )),
+                                                            padding:
+                                                            const EdgeInsets.fromLTRB(
+                                                                5, 5, 5, 5),
+                                                          ),
+                                                        ))
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: submitFlag,
+                                      child: Container(
+                                        margin:
+                                        const EdgeInsets.only(top: 10, bottom: 10),
+                                        child: Center(
+                                          child: ElevatedButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                MaterialStateProperty.all<Color>(
+                                                    c.colorPrimary),
+                                                shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                    ))),
+                                            onPressed: () async {
+                                              if (finList.isNotEmpty) {
+                                                if (selectedDistrict.isNotEmpty &&
+                                                    selectedDistrict != "0") {
+                                                  if (selectedBlock.isNotEmpty &&
+                                                      selectedBlock != "0") {
+                                                    if (schIdList.isNotEmpty) {
+                                                      asController.text.isEmpty
+                                                          ? asController.text = "0"
+                                                          : null;
+                                                      if (int.parse(asController.text) >
+                                                          0 ||
+                                                          selectedMonth != "0") {
+                                                        await fetchDelayedWorkList();
+                                                        // await getdelayedWorkListAll();
+                                                      } else {
+                                                        utils.customAlertWidet(
+                                                            context,
+                                                            "Error",
+                                                            "Please Select AS value or Months");
+                                                      }
+                                                    } else {
+                                                      utils.showAlert(
+                                                          context, s.select_scheme);
+                                                    }
+                                                  } else {
+                                                    utils.showAlert(
+                                                        context, s.selectBlock);
+                                                  }
+                                                } else {
+                                                  utils.showAlert(
+                                                      context, s.selectDistrict);
+                                                }
+                                              } else {
+                                                utils.showAlert(
+                                                    context, s.select_financial_year);
+                                              }
+
+                                              // pvTable = true;
+                                              setState(() {});
+                                            },
+                                            child: Text(
+                                              s.submit,
+                                              style: GoogleFonts.getFont('Roboto',
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 15,
+                                                  color: c.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ])),
+                        ),
+                        Visibility(
+                            visible: villagelist.isNotEmpty ? true : false,
+                            child:InkWell(
+                              onTap: (){
+                                setState(() {
+                                  villagelist.clear();
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(10),
+                                child:Container(
+                                  decoration:  BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(color:c.primary_text_color2))
+                                  ),child: Text(
+                                  s.click_to_filter,
+                                  style: GoogleFonts.getFont('Roboto',
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 16,
+                                      color: c.primary_text_color2),
+                                ),
+                                ),
+                              ),
+                            )),
+                        Visibility(
+                            child: Container(
+                                margin: EdgeInsets.only(right: 20, left: 20),
+                                child: Stack(children: [
+                                  Visibility(
+                                      visible: villagelist.isNotEmpty ? true : false,
+                                      child: Container(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 5, bottom: 5),
+                                                child: Text(
+                                                  s.village_list,
+                                                  style: GoogleFonts.getFont('Roboto',
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                      color: c.grey_9),
+                                                ),
+                                              ),
+                                              ListView.builder(
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: villagelist.length,
+                                                  itemBuilder:
+                                                      (BuildContext context, int index) {
+                                                    return InkWell(
+                                                        onTap: () async {
+                                                          setState(() {
+                                                            villagelist[index][key_flag]=="0"?villagelist[index][key_flag]="1":villagelist[index][key_flag]="0";
+                                                          });
+                                                        },
+                                                        child: Card(
+                                                            elevation: 5,
+                                                            margin: EdgeInsets.only(
+                                                                top: 10, bottom: 10),
+                                                            color: c.white,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.only(
+                                                                bottomLeft:
+                                                                Radius.circular(20),
+                                                                topLeft:
+                                                                Radius.circular(20),
+                                                                topRight:
+                                                                Radius.circular(20),
+                                                                bottomRight:
+                                                                Radius.circular(20),
+                                                              ),
+                                                            ),
+                                                            child: ClipPath(
+                                                                clipper: ShapeBorderClipper(
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                            20))),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                          gradient: LinearGradient(
+                                                                              begin:
+                                                                              Alignment.topLeft,
+                                                                              end: Alignment.topRight,
+                                                                              colors: [
+                                                                                c.colorAccentlight,
+                                                                                c.colorAccentverylight
+                                                                              ]),
+                                                                          borderRadius:
+                                                                          const BorderRadius
+                                                                              .only(
+                                                                            topLeft:
+                                                                            Radius.circular(20),
+                                                                            topRight:
+                                                                            Radius.circular(20),
+                                                                            bottomLeft:
+                                                                            Radius.circular(20),
+                                                                            bottomRight:
+                                                                            Radius.circular(20),
+                                                                          )),
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child: Container(
+                                                                              padding: EdgeInsets
+                                                                                  .only(
+                                                                                  top: 10,
+                                                                                  bottom:
+                                                                                  10,
+                                                                                  left:
+                                                                                  20),
+                                                                              child: Text(
+                                                                                villagelist[
+                                                                                index]
+                                                                                [
+                                                                                key_pvname],
+                                                                                style: TextStyle(
+                                                                                    fontSize:
+                                                                                    16,
+                                                                                    fontWeight:
+                                                                                    FontWeight
+                                                                                        .normal,
+                                                                                    color: c
+                                                                                        .white),
+                                                                                textAlign:
+                                                                                TextAlign
+                                                                                    .start,
+                                                                                overflow:
+                                                                                TextOverflow
+                                                                                    .ellipsis,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            child: Container(
+                                                                              alignment: Alignment.centerRight,
+                                                                              padding: EdgeInsets
+                                                                                  .only(
+                                                                                  top: 10,
+                                                                                  bottom:
+                                                                                  10,
+                                                                                  right:
+                                                                                  20),
+/*                                                                decoration:
+                                                                        BoxDecoration(
+                                                                            color: c
+                                                                                .dot_light_screen_lite1,
+                                                                            borderRadius:
+                                                                                const BorderRadius.only(
+                                                                              topLeft:
+                                                                                  Radius.circular(0),
+                                                                              topRight:
+                                                                                  Radius.circular(20),
+                                                                              bottomLeft:
+                                                                                  Radius.circular(0),
+                                                                              bottomRight:
+                                                                                  Radius.circular(20),
+                                                                            )),*/
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  Text(
+                                                                                      villagelist[index]
+                                                                                      [
+                                                                                      key_total_count]
+                                                                                          .toString(),
+                                                                                      style: TextStyle(
+                                                                                          color: c
+                                                                                              .grey_8,
+                                                                                          fontWeight:
+                                                                                          FontWeight
+                                                                                              .bold,
+                                                                                          fontSize:
+                                                                                          16),
+                                                                                      textAlign:
+                                                                                      TextAlign
+                                                                                          .right,
+                                                                                      maxLines:
+                                                                                      1),
+                                                                                  InkWell(
+                                                                                    onTap: () async {
+                                                                                      setState(() {
+                                                                                        villagelist[index][key_flag]=="0"?villagelist[index][key_flag]="1":villagelist[index][key_flag]="0";
+                                                                                      });
+                                                                                    },
+                                                                                    child: Container(
+                                                                                      margin: EdgeInsets.fromLTRB(5, 5, 0, 0),
+                                                                                      child: Align(
+                                                                                        child: Image.asset(
+                                                                                          imagePath.arrow_down_icon,
+                                                                                          color: c.grey_7,
+                                                                                          height: 25,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  )
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Visibility(
+                                                                      visible: villagelist[index][key_flag]=="1",
+                                                                      child: AnimationLimiter(
+                                                                        child: Column(
+                                                                          children: [
+                                                                            SizedBox(height: 5,),
+                                                                            subList(index),
+                                                                            Align(
+                                                                              alignment: Alignment.centerRight,
+                                                                              child: InkWell(
+                                                                                onTap: ()=> Navigator.push(
+                                                                                    context,
+                                                                                    MaterialPageRoute(
+                                                                                        builder: (context) =>
+                                                                                            WorkList(
+                                                                                              finYear: finList,
+                                                                                              dcode:
+                                                                                              selectedDistrict,
+                                                                                              bcode:
+                                                                                              selectedBlock,
+                                                                                              pvcode: villagelist[
+                                                                                              index]
+                                                                                              [s.key_pvcode],
+                                                                                              tmccode:
+                                                                                              selectedMonth,
+                                                                                              flag:
+                                                                                              "delayed_works",
+                                                                                              asvalue:
+                                                                                              asController
+                                                                                                  .text,
+                                                                                              selectedschemeList:
+                                                                                              "",
+                                                                                              townType: '',
+                                                                                              scheme: '',
+                                                                                              schemeList:
+                                                                                              schIdList,
+                                                                                            ))),
+                                                                                child: Container(
+                                                                                  width: MediaQuery.of(context).size.width/3,
+                                                                                  decoration:
+                                                                                  BoxDecoration(
+                                                                                      gradient: LinearGradient(
+                                                                                          begin:
+                                                                                          Alignment.topLeft,
+                                                                                          end: Alignment.topRight,
+                                                                                          colors: [
+                                                                                            c.primary_text_color2,
+                                                                                            c.primary_text_color2
+                                                                                          ]),
+                                                                                      borderRadius:
+                                                                                      const BorderRadius
+                                                                                          .only(
+                                                                                        topLeft:
+                                                                                        Radius.circular(10),
+                                                                                        topRight:
+                                                                                        Radius.circular(10),
+                                                                                        bottomLeft:
+                                                                                        Radius.circular(10),
+                                                                                        bottomRight:
+                                                                                        Radius.circular(10),
+                                                                                      )),
+                                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                                  child: Align(
+                                                                                    alignment: AlignmentDirectional.center,
+                                                                                    child: Text(
+                                                                                      "View Details",
+                                                                                      style: TextStyle(color: c.white,fontSize: 13,fontWeight: FontWeight.bold),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),),
+                                                                  ],
+                                                                ))));
+                                                  })
+                                            ],
+                                          )))
+                                ])))
+                      ],
+                    )),
+              ),
+              Visibility(
+                visible: villagelist.isNotEmpty ? true : false,
+                child: GestureDetector(
+                  onTap: () {
+
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.all(15),
+                      alignment: AlignmentDirectional.bottomCenter,
+                      decoration: BoxDecoration(
+                          color: c.colorAccent,
+                          border: Border.all(color: c.colorAccent, width: 2),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(30),
+                            topRight: const Radius.circular(30),
+                            bottomLeft: const Radius.circular(0),
+                            bottomRight: const Radius.circular(0),
+                          )),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            s.download,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: c.white),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Image.asset(
+                            imagePath.upload_img,
+                            fit: BoxFit.contain,
+                            color: c.white,
+                            height: 18,
+                            width: 18,
+                          ),
+                        ],
+                      )),
+                ),
+              )
+
+            ],),
           )),
     );
   }
@@ -1167,6 +1343,99 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   ***********************************************************************************************
                                               * API CALL *
   */
+  Future<void> getdelayedWorkListAll() async {
+    utils.showProgress(context, 1);
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+
+    late Map json_request;
+
+    Map work_detail = {
+      s.key_dcode: selectedDistrict,
+      s.key_bcode: selectedBlock,
+      s.key_fin_year: finList,
+      s.key_scheme_id: schIdList,
+      if (selectedMonth.isNotEmpty) s.key_month: selectedMonth,
+      if (asController.text.isNotEmpty) s.key_as_value: asController.text,
+      s.key_flag: "2"
+    };
+    json_request = {
+      s.key_service_id: s.service_key_get_inspection_delayed_work_details,
+    };
+    json_request.addAll(work_detail);
+    Map encrypted_request = {
+      s.key_user_name: prefs.getString(s.key_user_name),
+      s.key_data_content: json_request
+    };
+    String jsonString = jsonEncode(encrypted_request);
+
+    String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+    String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+    Map<String, String> header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $header_token"
+    };
+
+    HttpClient _client = HttpClient(context: await utils.globalContext);
+    _client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => false;
+    IOClient _ioClient = new IOClient(_client);
+    var response = await _ioClient.post(url.main_service_jwt,
+        body: jsonEncode(encrypted_request), headers: header);
+
+    print("DelayedWorkListAll_url>>" + url.main_service_jwt.toString());
+    print("DelayedWorkListAll_request_encrpt>>" +
+        encrypted_request.toString());
+    // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+    utils.hideProgress(context);
+    if (response.statusCode == 200) {
+      String data = response.body;
+
+      print("DelayedWorkListAll_response>>" + data);
+
+      String? authorizationHeader = response.headers['authorization'];
+
+      String? token = authorizationHeader?.split(' ')[1];
+
+      print("DelayedWorkListByVillage Authorization -  $token");
+
+      String responceSignature = utils.jwt_Decode(key, token!);
+
+      String responceData = utils.generateHmacSha256(data, key, false);
+
+      print("DelayedWorkListAll responceSignature -  $responceSignature");
+
+      print("DelayedWorkListAll responceData -  $responceData");
+      if (responceSignature == responceData) {
+        print("DelayedWorkListAll responceSignature - Token Verified");
+        var userData = jsonDecode(data);
+
+        var status = userData[s.key_status];
+        var response_value = userData[s.key_response];
+        if (status == s.key_ok && response_value == s.key_ok) {
+          List<dynamic> res_jsonArray = userData[s.key_json_data];
+          res_jsonArray.sort((a, b) {
+            return a[s.key_work_id].compareTo(b[s.key_work_id]);
+          });
+          print("DelayedWorkListAll_response>>" + res_jsonArray.toString());
+
+          if (res_jsonArray.length > 0) {
+
+
+          } else {
+            utils.showAlert(context, s.no_data);
+          }
+        } else {
+          utils.showAlert(context, s.no_data);
+        }
+      } else {
+        print(
+            "DelayedWorkListAll responceSignature - Token Not Verified");
+        utils.customAlertWidet(context, "Error", s.jsonError);
+      }
+    }
+  }
 
   Future<void> fetchDelayedWorkList() async {
     String? key = prefs.getString(s.userPassKey);
@@ -1243,15 +1512,19 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           print(res_jsonArray);
           villagelist = [];
           if (res_jsonArray.length > 0) {
-            for (int i = 0; i < res_jsonArray.length; i++) {
-              Map<String, String> map = {
-                key_total_count: res_jsonArray[i][key_total_count].toString(),
-                key_pvname: res_jsonArray[i][key_pvname],
-                key_pvcode: res_jsonArray[i][key_pvcode].toString()
-              };
-              villagelist.add(map);
-              print("villageList#####" + villagelist[i][key_pvcode].toString());
+            for (var item in res_jsonArray) {
+              item[key_flag] = false;
+              List list=jsonDecode(item['workdetails']);
+              list.forEach((item2) {
+                item2[key_flag] = false;
+                // Additional calculations or logic can be added here if needed
+              });
+              item['workdetails']=list;
+              // Additional calculations or logic can be added here if needed
             }
+            villagelist=res_jsonArray;
+            print(villagelist);
+
           }
         } else {
           utils.showAlert(context, "No Data");
@@ -1332,7 +1605,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                 villagelist = [];
                 schIdList = [];
                 schList = [];
-                selectedMonth = "00";
+                selectedMonth = "0";
                 asController.text = "0";
                 schemeError = true;
                 for (int i = 0; i < list.length; i++) {
@@ -1625,5 +1898,176 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
         utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }
+  }
+
+  Widget subList(int mainIndex) {
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: villagelist[mainIndex]['workdetails'].length,
+      itemBuilder: (context, index) {
+        final item=villagelist[mainIndex]['workdetails'][index];
+        return AnimationConfiguration.staggeredList(
+          position: index,
+          duration: const Duration(milliseconds: 800),
+          child: SlideAnimation(
+            horizontalOffset: 200.0,
+            child: FlipAnimation(
+                child:  Container(
+                    margin: EdgeInsets.fromLTRB(10,5,10,5),
+                    padding: EdgeInsets.fromLTRB(15,0,0,10),
+                    decoration:
+                    BoxDecoration(
+                        color: c
+                            .dot_light_screen_lite1,
+                        borderRadius:
+                        const BorderRadius.only(
+                          topLeft:
+                          Radius.circular(20),
+                          topRight:
+                          Radius.circular(20),
+                          bottomLeft:
+                          Radius.circular(20),
+                          bottomRight:
+                          Radius.circular(20),
+                        )),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          s.work_id+" : "+
+                          item[s.key_work_id].toString(),
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
+                          overflow: TextOverflow.clip,
+                          maxLines: 1,
+                          softWrap: true,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                            padding: EdgeInsets.all(2),
+                            child: Center(
+                              child: Checkbox(
+                                side:
+                                BorderSide(width: 1, color: c.grey_6),
+                                value: item[s.key_flag],
+                                onChanged: (v) async {
+                                  print("cliked");
+                                  print("cliked"+item[key_flag].toString());
+                                  setState(() {
+                                    if (item[key_flag] ==
+                                        false) {
+                                      item[key_flag]=true;
+                                    }else{
+                                      item[key_flag]=false;
+                                    }
+                                  });
+                                  print("cliked"+item[key_flag].toString());
+
+                                },
+                              ),
+                            )),
+                      )
+                    ],
+                  ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                s.work_name,
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.normal, color: c.grey_8),
+                                overflow: TextOverflow.clip,
+                                maxLines: 1,
+                                softWrap: true,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 0,
+                              child: Text(
+                                ' : ',
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.normal, color: c.grey_8),
+                                overflow: TextOverflow.clip,
+                                maxLines: 1,
+                                softWrap: true,
+                              ),
+                            ),
+                            Expanded(
+                              flex:  3,
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Align(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: ExpandableText(
+                                    item[s.key_work_name].toString(),
+                                    trimLines: 2,
+                                    txtcolor: "2",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )   ,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                s.work_type_name,
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.normal, color: c.grey_8),
+                                overflow: TextOverflow.clip,
+                                maxLines: 1,
+                                softWrap: true,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 0,
+                              child: Text(
+                                ' : ',
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.normal, color: c.grey_8),
+                                overflow: TextOverflow.clip,
+                                maxLines: 1,
+                                softWrap: true,
+                              ),
+                            ),
+                            Expanded(
+                              flex:  3,
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Align(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: ExpandableText(
+                                    item[s.key_work_type_name].toString(),
+                                    trimLines: 2,
+                                    txtcolor: "2",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                ],) ),),
+          ),
+        );
+      },
+    );
   }
 }

@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
       }*/
     }
 
-    satisfied_count = prefs.getString(s.satisfied_count)!;
+    satisfied_count = prefs.getString(s.satisfied_count) ?? '';
     un_satisfied_count = prefs.getString(s.un_satisfied_count)!;
     need_improvement_count = prefs.getString(s.need_improvement_count)!;
     satisfied_count_other = prefs.getString(s.satisfied_count_other)!;

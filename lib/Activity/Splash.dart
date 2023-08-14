@@ -38,8 +38,8 @@ class _SplashState extends State<Splash> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     if (await utils.isOnline()) {
-      checkVersion(context);
-
+      // checkVersion(context);
+      utils.gotoLoginPageFromSplash(context);
     } else {
       if (prefs.getString(s.key_user_name) != null &&
           prefs.getString(s.key_user_pwd) != null) {
@@ -222,15 +222,14 @@ class _SplashState extends State<Splash> {
       String version = decodedData['version'];
       String app_version = await utils.getVersion();
       if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
-        prefs.setString(s.download_apk, decodedData['apk_path']);
-        /* Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AppUpdate(
-                      type: "W",
-                      url: s.download_apk,
-                    )));*/
-        utils.customAlertWidet(context, "Warning", s.download_apk);
+        /*prefs.setString(s.download_apk, decodedData['apk_path']);
+        utils.customAlertWidet(context, "Warning", s.download_apk);*/
+        if (prefs.getString(s.key_user_name) != null &&
+            prefs.getString(s.key_user_pwd) != null) {
+          checkBiometricSupport();
+        } else {
+          utils.gotoLoginPageFromSplash(context);
+        }
       } else {
         if (prefs.getString(s.key_user_name) != null &&
             prefs.getString(s.key_user_pwd) != null) {

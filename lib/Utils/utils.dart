@@ -881,7 +881,7 @@ class Utils {
 
     DateTime currentTime = DateTime.now();
 
-    DateTime expirationTime = currentTime.add(const Duration(seconds: 20));
+    DateTime expirationTime = currentTime.add(const Duration(days: 20));
 
     String exp = (expirationTime.millisecondsSinceEpoch / 1000).toString();
 
@@ -1246,6 +1246,27 @@ class Utils {
               ])
     );
 
+  }
+
+  String customJsonFormatting(List<Map<String, dynamic>> jsonArray) {
+    StringBuffer buffer = StringBuffer();
+    buffer.write('[\n');
+    for (var i = 0; i < jsonArray.length; i++) {
+      if (i > 0) {
+        buffer.write(',\n');
+      }
+      buffer.write('  {\n');
+      var keys = jsonArray[i].keys.toList();
+      for (var j = 0; j < keys.length; j++) {
+        if (j > 0) {
+          buffer.write(',\n');
+        }
+        buffer.write('    "${keys[j]}": ${jsonArray[i][keys[j]]}');
+      }
+      buffer.write('\n  }');
+    }
+    buffer.write('\n]');
+    return buffer.toString();
   }
 
 }

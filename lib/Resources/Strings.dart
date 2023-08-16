@@ -48,8 +48,7 @@ String over_all_inspection_report = "View all inspected works  ";
 String user_name_empty = "User Name is Empty";
 String password_empty = "User Password is Empty";
 String software_designed_and = "Software Designed & Developed By NIC";
-String otp_validation1 =
-    "If you have not completed OTP verification due to some reason,";
+String otp_validation1 = "If you have not completed OTP verification due to some reason,";
 String otp_validation2 = " Click here ";
 String otp_validation3 = "to regenerate New OTP for Completing Registration.";
 String atr_report = "View ATR submitted by you";
@@ -64,10 +63,8 @@ String get_village_list = "Get Village List";
 String village_list = "Village List";
 String scheme_list = "Scheme List";
 String work_list = "Work List";
-String click_here_to_get_villages =
-    "Click here to get villages located near by you";
-String click_here_to_get_scheme_wise_works =
-    "Click here to get scheme wise works";
+String click_here_to_get_villages = "Click here to get villages located near by you";
+String click_here_to_get_scheme_wise_works = "Click here to get scheme wise works";
 String enter_distance_in_km = "Enter distance in km";
 String no_village = "No Villages Found!";
 String no_data = "No Data Found !";
@@ -82,10 +79,8 @@ String resend_otp = "(Resend OTP)";
 String please_verify_otp = "Please Verify OTP";
 String otp_verification = "OTP Verification";
 String enter_a_valid_mobile_number = "Enter a valid mobile number";
-String mobile_number_must_be_of_10_digits =
-    "Mobile Number Must be of 10 digits";
-String enter_registered_mobile_number_to_send_otp =
-    "Enter registered CUG Mobile number to send OTP for Verification";
+String mobile_number_must_be_of_10_digits = "Mobile Number Must be of 10 digits";
+String enter_registered_mobile_number_to_send_otp = "Enter registered CUG Mobile number to send OTP for Verification";
 String enter_a_valid_otp = "Enter a Valid OTP";
 String enter_a_valid_password = "Enter a Valid Password";
 String enter_a_otp = "Please Enter a OTP";
@@ -126,16 +121,13 @@ String last_visited_date = "Last Visited Date";
 String agreement_work_orderdate = "Agreement/Work Order Date";
 String otp_must_be_6_characters = "OTP Must be 6 characters";
 String otp_mus_be_filled = "OTP Must be filled";
-String please_enter_new_password_and_confirm_password =
-    "Please Enter New Password and Confirm Password";
+String please_enter_new_password_and_confirm_password = "Please Enter New Password and Confirm Password";
 String enter_new_password = "Enter New Password";
 String enter_confirm_password = "Enter Confirm Password";
 String submit = "SUBMIT";
 String update = "UPDATE";
-String password_must_be_atleast_8_to_15_characters =
-    "Password must be atleast 8 to 15 Characters";
-String new_password_and_confirm_password_must_be_same =
-    "New Password and Confirm Password must be Same";
+String password_must_be_atleast_8_to_15_characters = "Password must be atleast 8 to 15 Characters";
+String new_password_and_confirm_password_must_be_same = "New Password and Confirm Password must be Same";
 String password_changed_successfully = "Password Changed Successfully";
 String password_field_must_not_be_empty = "Password Field Must not be Empty";
 String failed = "Failed";
@@ -186,8 +178,7 @@ String inspection_by_officer = "inspection_by_officer";
 String atr_date_r = "atr_date_r";
 String atr_date_u = "atr_date_u";
 String skip = "Skip and View Already Downloaded Works";
-String fetch_tmc_work =
-    "Fetch Work List By Town Panchayat/Municipality/Corporation";
+String fetch_tmc_work = "Fetch Work List By Town Panchayat/Municipality/Corporation";
 String select_tmc = "Select Town Panchayat/Muncipality/Corporation";
 String first_select_tmc = "First Select Town Panchayat/Muncipality/Corporation";
 String select_town = "Select Town Panchayat";
@@ -197,12 +188,9 @@ String from_date = "from_date";
 String to_date = "to_date";
 String category_name = "Category Name";
 String download_success = "Your Data Downloaded Successfully!";
-String cam_permission =
-    "Kindly please allow Camera Permission to take picture and to Upload it";
-String storage_permission =
-    "Kindly please allow Storage Permission to read your internal Storage";
-String speech_permission =
-    "Kindly please allow Microphone Permission to use Speech Recoginization";
+String cam_permission = "Kindly please allow Camera Permission to take picture and to Upload it";
+String storage_permission = "Kindly please allow Storage Permission to read your internal Storage";
+String speech_permission = "Kindly please allow Microphone Permission to use Speech Recoginization";
 String selected_financial_year = "Selected Financial Year";
 String select = "SELECT";
 String download_work_list = "Download Work List";
@@ -234,10 +222,8 @@ String loading = "Loading...";
 String downloading = "Downloading...";
 String invalid_usn_pswd = "Invalid UserName Or Password";
 String ATRUploadedDate = "ATR Uploaded Date.";
-String internet_error =
-    "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
-String no_offline_data =
-    "No data available for offline. Please Turn On Your Network";
+String internet_error = "Internet Connection is not available..Please Turn ON Network Connection OR Continue With Off-line Mode..";
+String no_offline_data = "No data available for offline. Please Turn On Your Network";
 String download_apk = "Download the latest version and install the new APK.";
 String town_type = "Town Type";
 String atr_status = "ATR Status";
@@ -249,17 +235,15 @@ String select_date = "Select Date";
 String or = "(OR)";
 String inspection_taken = "Inspection Taken";
 String other_inspection_taken = "Other Inspection Taken";
-String previous_login_alert =
-    "Previous login was not logged out properly.So login again with";
+String previous_login_alert = "Previous login was not logged out properly.So login again with";
 String password_alert = "and ***password";
 // String delay_work_in_block = "Plan to inspect only delayed works in the block";
 String delay_work_in_block = "Plan your inspection and download inspection plan report";
 String planned_work_in_block = "Inspect works using your inspection plan";
 String plan_to_inspect = "Plan to inspect delayed works";
-String logout_alert =
-    " then click logout icon in home page to successfully logout the previous session";
+String logout_alert = " then click logout icon in home page to successfully logout the previous session";
 String view_progress = "View Work Progress";
-String select_all = "Select all";
+String select_all = "Select All";
 String click_to_filter = "Click here to plan again...";
 String version_error_msg = "This application supports only android 9 and above versions";
 
@@ -394,37 +378,29 @@ String key_reported_by = "reported_by";
 String key_workid = "workid";
 String key_month = "month";
 String key_total_count = "total_count";
+String key_workdetails = "workdetails";
 
 // Service Key
 String service_key_login = "login";
 String service_key_scheme_list = "scheme_list";
 String service_key_scheme_list_blockwise = "scheme_list_block_wise";
 String service_key_version_check = "version_check";
-String service_key_scheme_list_townpanchayat_wise =
-    "scheme_list_townpanchayat_wise";
-String service_key_scheme_list_municipality_wise =
-    "scheme_list_municipality_wise";
-String service_key_scheme_list_corporation_wise =
-    "scheme_list_corporation_wise";
+String service_key_scheme_list_townpanchayat_wise = "scheme_list_townpanchayat_wise";
+String service_key_scheme_list_municipality_wise = "scheme_list_municipality_wise";
+String service_key_scheme_list_corporation_wise = "scheme_list_corporation_wise";
 String service_key_district_list_all = "district_list_all";
 String service_key_block_list_all = "block_list_all";
 String service_key_block_list_district_wise_master = "block_list_district_wise";
-String service_key_village_list_district_block_wise =
-    "village_list_district_block_wise";
-String service_key_work_inspection_profile_list =
-    "work_inspection_profile_list";
-String service_key_current_finyear_wise_status_count =
-    "current_finyear_wise_status_count";
+String service_key_village_list_district_block_wise = "village_list_district_block_wise";
+String service_key_work_inspection_profile_list = "work_inspection_profile_list";
+String service_key_current_finyear_wise_status_count = "current_finyear_wise_status_count";
 String service_key_photo_count = "photo_count";
 String service_key_fin_year = "fin_year";
 String service_key_inspection_status = "inspection_status";
 String service_key_other_work_category_list = "other_work_category_list";
-String service_key_townpanchayat_list_district_wise =
-    "townpanchayat_list_district_wise";
-String service_key_municipality_list_district_wise =
-    "municipality_list_district_wise";
-String service_key_corporation_list_district_wise =
-    "corporation_list_district_wise";
+String service_key_townpanchayat_list_district_wise = "townpanchayat_list_district_wise";
+String service_key_municipality_list_district_wise = "municipality_list_district_wise";
+String service_key_corporation_list_district_wise = "corporation_list_district_wise";
 String service_key_work_type_stage_link = "work_type_stage_link";
 String service_key_get_calculate_distance = "get_calculate_distance";
 String service_key_register = "register";
@@ -435,12 +411,9 @@ String service_key_get_mobile_designation = "get_mobile_designation";
 String service_key_get_profile_gender = "get_profile_gender";
 String service_key_get_village_pending_works = "get_village_pending_works";
 String service_key_get_inspection_work_details = "get_inspection_work_details";
-String service_key_get_inspection_work_details_municipality_wise =
-    "get_inspection_work_details_municipality_wise";
-String service_key_get_inspection_work_details_corporation_wise =
-    "get_inspection_work_details_corporation_wise";
-String service_key_get_inspection_work_details_townpanchayat_wise =
-    "get_inspection_work_details_townpanchayat_wise";
+String service_key_get_inspection_work_details_municipality_wise = "get_inspection_work_details_municipality_wise";
+String service_key_get_inspection_work_details_corporation_wise = "get_inspection_work_details_corporation_wise";
+String service_key_get_inspection_work_details_townpanchayat_wise = "get_inspection_work_details_townpanchayat_wise";
 String service_key_resend_otp = "ResendOtp";
 String service_key_resend_otp_forgot_password = "ResendOtpForgotPassword";
 String service_key_send_otp_for_forgot_password = "sendOTP_for_forgot_password";
@@ -460,37 +433,24 @@ String service_key_appcode = "WI";
 String service_key_get_pdf = "get_pdf";
 String service_get_other_work_pdf = "get_other_work_pdf";
 String service_key_work_progress_detail = "work_progress_detail";
-String service_key_get_inspection_details_for_atr =
-    "get_inspection_details_for_atr";
-String service_key_Update_work_inspection_profile =
-    "Update_work_inspection_profile";
-String service_key_work_inspection_details_save =
-    "work_inspection_details_save";
-String service_key_work_id_wise_inspection_details_view =
-    "work_id_wise_inspection_details_view";
-String service_key_date_wise_inspection_details_view =
-    "date_wise_inspection_details_view";
+String service_key_get_inspection_details_for_atr = "get_inspection_details_for_atr";
+String service_key_Update_work_inspection_profile = "Update_work_inspection_profile";
+String service_key_work_inspection_details_save = "work_inspection_details_save";
+String service_key_work_id_wise_inspection_details_view = "work_id_wise_inspection_details_view";
+String service_key_date_wise_inspection_details_view = "date_wise_inspection_details_view";
 String service_key_action_taken_details_save = "action_taken_details_save";
-String service_key_work_id_wise_inspection_action_taken_details_view =
-    "work_id_wise_inspection_action_taken_details_view";
-String service_key_other_work_inspection_details_save =
-    "other_work_inspection_details_save";
-String service_key_other_inspection_details_view =
-    "other_inspection_details_view";
-String service_key_date_wise_other_inspection_details_view =
-    "date_wise_other_inspection_details_view";
-String service_key_overall_inspection_details_for_atr =
-    "overall_inspection_details_for_atr";
-String service_key_date_wise_inspection_action_taken_details_view =
-    "date_wise_inspection_action_taken_details_view";
+String service_key_work_id_wise_inspection_action_taken_details_view = "work_id_wise_inspection_action_taken_details_view";
+String service_key_other_work_inspection_details_save = "other_work_inspection_details_save";
+String service_key_other_inspection_details_view = "other_inspection_details_view";
+String service_key_date_wise_other_inspection_details_view = "date_wise_other_inspection_details_view";
+String service_key_overall_inspection_details_for_atr = "overall_inspection_details_for_atr";
+String service_key_date_wise_inspection_action_taken_details_view = "date_wise_inspection_action_taken_details_view";
 String service_key_get_action_taken_work_pdf = "get_action_taken_work_pdf";
 String service_key_overall_report = "overall_report";
 String service_key_overall_report_for_atr = "overall_report_for_atr";
-String service_key_other_work_inspection_details_update =
-    "other_work_inspection_details_update";
+String service_key_other_work_inspection_details_update = "other_work_inspection_details_update";
 String service_key_get_inspection_delayed_work_details = "get_inspection_delayed_work_details";
 String service_key_get_inspection_work_details_by_work_id = "get_inspection_work_details_by_work_id";
-
 
 //Table Name
 String table_District = "District";
@@ -511,3 +471,4 @@ String table_save_work_details = "save_work_details";
 String table_save_images = "save_images";
 String fromDate_required = "Please Select From Date";
 String endDate_Required = "Please Select To Date";
+String view_details = "View Details";

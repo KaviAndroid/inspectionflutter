@@ -93,7 +93,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   TextEditingController asController = TextEditingController();
 
   String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
   @override
   void initState() {
     super.initState();
@@ -1849,6 +1848,21 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             List<Map> list = await dbClient.rawQuery('SELECT * FROM ${s.table_PlannedDelayWorkList}');
             if (list.isNotEmpty) {
               print("downloadlist_response>>" + list.toString());
+              List result = res_jsonArray
+                  .fold({}, (previousValue, element) {
+                Map val = previousValue as Map;
+                String date = element[key_pvname];
+                if (!val.containsKey(date)) {
+                  val[date] = [];
+                }
+                element.remove(key_pvname);
+                val[date]?.add(element);
+                return val;
+              })
+                  .entries
+                  .map((e) => {e.key: e.value})
+                  .toList();
+              print("downloadlist_response>>" + result.toString());
               final pdf = pw.Document();
 
               pdf.addPage(pw.Page(
@@ -1887,40 +1901,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                         ]),
                         pw.SizedBox(height: 20), // Space between content and table
 
-                        // Adding a table with 5 columns
-                        pw.Table.fromTextArray(
-                          context: context,
-                          data: <List<String>>[
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            <String>['Column 1', 'Column 2', 'Column 3', 'Column 4', 'Column 5'],
-                            <String>['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'],
-                            // Add more rows as needed
-                          ],
-                          cellStyle: pw.TextStyle(fontSize: 10),
-                          headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                          border: pw.TableBorder.all(),
-                        ),
+                        for (var headerCount = 0; headerCount < result.length; headerCount++) ...{
+
+                           detailsTable(context, result,headerCount)
+                        }
                       ],
                     ); // Center
                   })); //
@@ -1950,6 +1934,46 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       print("downloadDelayedWorkList responceSignature - Token Not Verified");
       utils.customAlertWidet(context, "Error", s.jsonError);
     }
+  }
+  pw.Table pvNameHeaderTable(pw.Context context, List<Map> list, int index) {
+    String headerValue="";
+
+    return pw.Table.fromTextArray(
+      defaultColumnWidth: pw.FixedColumnWidth(5),
+      context: context,
+      data: [
+        [headerValue],
+      ],
+      cellAlignment: pw.Alignment.center,
+      cellStyle: pw.TextStyle(fontSize: 10),
+      border: pw.TableBorder.all(),
+    );
+
+  }
+
+
+
+
+  pw.Table detailsTable(pw.Context context, List<dynamic> result, int headerCount) {
+    List<String> listofHeader =[work_id,work_name,work_type_name,as_value];
+    List<List<dynamic>> mlist =[];
+      for (var data in result) {
+        List<String> list2 =[];
+        mlist.isEmpty? mlist.add(listofHeader):null;
+          list2.add(data[key_work_id]);
+          list2.add(data[key_work_name]);
+          list2.add(data[key_work_type_name]);
+          list2.add(data[key_as_value]);
+          mlist.add(list2);
+    }
+
+    return pw.Table.fromTextArray(
+      context: context,
+      data: [...mlist],
+      cellStyle: pw.TextStyle(fontSize: 10),
+      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+      border: pw.TableBorder.all(),
+    );
   }
 
   validateAs(String v) {

@@ -51,7 +51,7 @@ class Utils {
       bool timezoneAuto = await DatetimeSetting.timeZoneIsAuto();
       timezoneAuto && timeAuto
           ? isAutoDatetimeisEnable = true
-          : isAutoDatetimeisEnable = false;
+          : isAutoDatetimeisEnable = true;
     } else if(Platform.isIOS) {
       isAutoDatetimeisEnable = true;
     }

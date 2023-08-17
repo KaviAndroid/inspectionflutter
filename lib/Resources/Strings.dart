@@ -244,6 +244,7 @@ String plan_to_inspect = "Plan to inspect delayed works";
 String logout_alert = " then click logout icon in home page to successfully logout the previous session";
 String view_progress = "View Work Progress";
 String select_all = "Select All";
+String clear_all = "Clear All";
 String click_to_filter = "Click here to plan again...";
 String version_error_msg = "This application supports only android 9 and above versions";
 

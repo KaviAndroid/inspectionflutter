@@ -322,7 +322,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => WorkList(

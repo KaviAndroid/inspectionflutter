@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/ForgotPassword.dart';
+import '../Activity/Login.dart';
 import '../Activity/Registration.dart';
 import '../Activity/View_Overall_Report_New.dart';
 import '../DataBase/DbHelper.dart';
@@ -562,6 +563,35 @@ class _DrawerAppState extends State<DrawerApp> {
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
+                      onTap: () async {
+                        deactivateAccount();
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              imagePath.deactivate,
+                              height: 25,
+                              width: 25,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              s.deactivate_account,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: c.darkblue,
+                                  fontSize: 13),
+                              textAlign: TextAlign.center,
+                            ),
+                          ]),
+                    )),
+                Divider(color: c.grey_6),
+                Container(
+                    margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
+                    child: InkWell(
                       onTap: () {
                         // Navigator.of(context).pop(false);
                         // Navigator.push(context,MaterialPageRoute(builder:(context) => Login()));
@@ -779,6 +809,110 @@ class _DrawerAppState extends State<DrawerApp> {
           }
         } else {
           print("RefreshWorkStages responceSignature - Token Not Verified");
+          utils.customAlertWidet(context, "Error", s.jsonError);
+        }
+      }
+    } on Exception {
+      utils.hideProgress(context);
+      utils.customAlertWidet(context, "Error",
+          s.failed); // only executed if error is of type Exception
+    } catch (error) {
+      utils.hideProgress(context);
+      utils.customAlertWidet(context, "Error",
+          s.failed); // executed for errors of all types other than Exception
+    }
+
+    Navigator.pop(context);
+  }
+  Future<void> deactivateAccount() async {
+    String? key = prefs.getString(s.userPassKey);
+    String? userName = prefs.getString(s.key_user_name);
+    utils.showProgress(context, 1);
+    try {
+      late Map json_request;
+
+      json_request = {
+        s.key_service_id: s.service_key_deactivate_account,
+      };
+
+      Map encrypted_request = {
+        s.key_user_name: userName,
+        s.key_data_content: json_request,
+      };
+      String jsonString = jsonEncode(encrypted_request);
+
+      String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
+
+      String header_token = utils.jwt_Encode(key, userName!, headerSignature);
+      Map<String, String> header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $header_token"
+      };
+      // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
+      HttpClient _client = HttpClient(context: await utils.globalContext);
+      _client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => false;
+      IOClient _ioClient = new IOClient(_client);
+      var response = await _ioClient.post(url.main_service_jwt,
+          body: jsonEncode(encrypted_request), headers: header);
+
+      print("deactivateAccount_url>>${url.main_service_jwt}");
+      print("deactivateAccount_request_json>>$json_request");
+      print("deactivateAccount_request_encrpt>>$encrypted_request");
+      utils.hideProgress(context);
+
+      if (response.statusCode == 200) {
+        utils.showProgress(context, 1);
+
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        String data = response.body;
+        print("deactivateAccount_response>>$data");
+        String? authorizationHeader = response.headers['authorization'];
+
+        String? token = authorizationHeader?.split(' ')[1];
+
+        print("deactivateAccount Authorization -  $token");
+
+        String responceSignature = utils.jwt_Decode(key, token!);
+
+        String responceData = utils.generateHmacSha256(data, key, false);
+
+        print("deactivateAccount responceSignature -  $responceSignature");
+
+        print("deactivateAccount responceData -  $responceData");
+
+        utils.hideProgress(context);
+
+        if (responceSignature == responceData) {
+          print("deactivateAccount responceSignature - Token Verified");
+          var userData = jsonDecode(data);
+          var status = userData[s.key_status];
+          var response_value = userData[s.key_response];
+          if (status == s.key_ok && response_value == s.key_ok) {
+            dbClient = await dbHelper.db;
+            dbHelper.deleteAll();
+            prefs.clear();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Login()),
+                    (route) => false);
+            utils.customAlertWidet(context, "Success", userData[s.key_message].toString());
+
+          }else{
+            dbClient = await dbHelper.db;
+            dbHelper.deleteAll();
+            prefs.clear();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Login()),
+                    (route) => false);
+            utils.customAlertWidet(context, "Error", response_value);
+          }
+        } else {
+          print("deactivateAccount responceSignature - Token Not Verified");
           utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }

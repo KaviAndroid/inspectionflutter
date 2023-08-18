@@ -59,6 +59,7 @@ String log_out = "Log Out";
 String refresh_work_stages_success = "Stages Refreshed Successfully!";
 String worklist_download_success = "Work List Downloaded Successfully!";
 String refresh_work_stages_up_to_date = "Refresh Work Stages Up to Date";
+String deactivate_account = "Deactivate Account";
 String get_village_list = "Get Village List";
 String village_list = "Village List";
 String scheme_list = "Scheme List";
@@ -452,6 +453,7 @@ String service_key_overall_report_for_atr = "overall_report_for_atr";
 String service_key_other_work_inspection_details_update = "other_work_inspection_details_update";
 String service_key_get_inspection_delayed_work_details = "get_inspection_delayed_work_details";
 String service_key_get_inspection_work_details_by_work_id = "get_inspection_work_details_by_work_id";
+String service_key_deactivate_account = "deactivate_account";
 
 //Table Name
 String table_District = "District";

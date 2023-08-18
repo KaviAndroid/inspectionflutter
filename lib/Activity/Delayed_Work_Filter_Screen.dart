@@ -514,8 +514,18 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ),
                                     ),
                                     Container(
-                                      height: 150,
-                                      width: 350,
+                                     /* height: 150,
+                                      width: 350,*/
+                                      constraints: BoxConstraints(
+                                        minHeight: 40, //minimum height
+                                        minWidth: MediaQuery.of(context).size.width, // minimum width
+
+                                        maxHeight: 150,
+                                        //maximum height set to 100% of vertical height
+
+                                        maxWidth: MediaQuery.of(context).size.width,
+                                        //maximum width set to 100% of width
+                                      ),
                                       padding: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
                                       decoration: BoxDecoration(
                                           color: c.grey_out, border: Border.all(width: schemeError ? 1 : 0.1, color: schemeError ? c.red : c.grey_10), borderRadius: BorderRadius.circular(10.0)),
@@ -909,109 +919,151 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              Visibility(
-                                                                visible: villagelist[index][key_flag] == "1",
-                                                                child: AnimationLimiter(
-                                                                  child: Column(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        height: 5,
-                                                                      ),
-                                                                      Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                        children: [
-                                                                          Align(
-                                                                            alignment: Alignment.topLeft,
-                                                                            child: InkWell(
-                                                                              onTap: () => Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => WorkList(
-                                                                                            finYear: finList,
-                                                                                            dcode: selectedDistrict,
-                                                                                            bcode: selectedBlock,
-                                                                                            pvcode: villagelist[index][s.key_pvcode].toString(),
-                                                                                            tmccode: selectedMonth,
-                                                                                            flag: "delayed_works",
-                                                                                            asvalue: asController.text,
-                                                                                            selectedschemeList: "",
-                                                                                            townType: '',
-                                                                                            scheme: '',
-                                                                                            schemeList: schIdList,
-                                                                                          ))),
-                                                                              child: Container(
-                                                                                width: MediaQuery.of(context).size.width / 3,
-                                                                                decoration: BoxDecoration(
-                                                                                    gradient: LinearGradient(
-                                                                                        begin: Alignment.topLeft, end: Alignment.topRight, colors: [c.primary_text_color2, c.primary_text_color2]),
-                                                                                    borderRadius: const BorderRadius.only(
-                                                                                      topLeft: Radius.circular(10),
-                                                                                      topRight: Radius.circular(10),
-                                                                                      bottomLeft: Radius.circular(10),
-                                                                                      bottomRight: Radius.circular(10),
-                                                                                    )),
-                                                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                                child: Align(
-                                                                                  alignment: AlignmentDirectional.center,
-                                                                                  child: Text(
-                                                                                    s.view_details,
-                                                                                    style: TextStyle(color: c.white, fontSize: 13, fontWeight: FontWeight.bold),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Align(
-                                                                            alignment: Alignment.topRight,
-                                                                            child: InkWell(
-                                                                              onTap: () async {
-                                                                                await selectAllSublist(index);
-                                                                                setState(() {});
-                                                                              },
-                                                                              child: Container(
-                                                                                width: MediaQuery.of(context).size.width / 3,
-/*                                                                        decoration:
-                                                                       BoxDecoration(
-                                                                       gradient: LinearGradient(
-                                                                       begin:
-                                                                       Alignment.topLeft,
-                                                                       end: Alignment.topRight,
-                                                                       colors: [
-                                                                       c.primary_text_color2,
-                                                                       c.primary_text_color2
-                                                                       ]),
-                                                                       borderRadius:
-                                                                       const BorderRadius
-                                                                       .only(
-                                                                       topLeft:
-                                                                       Radius.circular(10),
-                                                                       topRight:
-                                                                       Radius.circular(10),
-                                                                       bottomLeft:
-                                                                       Radius.circular(10),
-                                                                       bottomRight:
-                                                                       Radius.circular(10),
-                                                                       )),*/
-                                                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                                child: Align(
-                                                                                  alignment: Alignment.centerRight,
-                                                                                  child: Text(
-                                                                                    s.select_all,
-                                                                                    style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      subList(index),
-                                                                    ],
+                                                Visibility(
+                                                  visible: villagelist[index][key_flag] == "1",
+                                                  child: AnimationLimiter(
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: [
+                                                            Align(
+                                                              alignment: Alignment.topLeft,
+                                                              child: InkWell(
+                                                                onTap: () => Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => WorkList(
+                                                                          finYear: finList,
+                                                                          dcode: selectedDistrict,
+                                                                          bcode: selectedBlock,
+                                                                          pvcode: villagelist[index][s.key_pvcode].toString(),
+                                                                          tmccode: selectedMonth,
+                                                                          flag: "delayed_works",
+                                                                          asvalue: asController.text,
+                                                                          selectedschemeList: "",
+                                                                          townType: '',
+                                                                          scheme: '',
+                                                                          schemeList: schIdList,
+                                                                        ))),
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                      gradient: LinearGradient(
+                                                                          begin: Alignment.topLeft, end: Alignment.topRight, colors: [c.primary_text_color2, c.primary_text_color2]),
+                                                                      borderRadius: const BorderRadius.only(
+                                                                        topLeft: Radius.circular(10),
+                                                                        topRight: Radius.circular(10),
+                                                                        bottomLeft: Radius.circular(10),
+                                                                        bottomRight: Radius.circular(10),
+                                                                      )),
+                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                  child: Align(
+                                                                    alignment: AlignmentDirectional.center,
+                                                                    child: Text(
+                                                                      s.view_details,
+                                                                      style: TextStyle(color: c.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
+                                                            ),
+                                                            Align(
+                                                              alignment: Alignment.center,
+                                                              child: InkWell(
+                                                                onTap: () async {
+                                                                  await selectAllSublist(index);
+                                                                  setState(() {});
+                                                                },
+                                                                child: Container(
+/*                                                                        decoration:
+                                                                           BoxDecoration(
+                                                                           gradient: LinearGradient(
+                                                                           begin:
+                                                                           Alignment.topLeft,
+                                                                           end: Alignment.topRight,
+                                                                           colors: [
+                                                                           c.primary_text_color2,
+                                                                           c.primary_text_color2
+                                                                           ]),
+                                                                           borderRadius:
+                                                                           const BorderRadius
+                                                                           .only(
+                                                                           topLeft:
+                                                                           Radius.circular(10),
+                                                                           topRight:
+                                                                           Radius.circular(10),
+                                                                           bottomLeft:
+                                                                           Radius.circular(10),
+                                                                           bottomRight:
+                                                                           Radius.circular(10),
+                                                                           )),*/
+                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                  child: Align(
+                                                                    alignment: Alignment.centerRight,
+                                                                    child: Text(
+                                                                      s.select_all,
+                                                                      style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Align(
+                                                              alignment: Alignment.topRight,
+                                                              child: InkWell(
+                                                                onTap: () async {
+                                                                  await clearAllSublist(index);
+                                                                  setState(() {});
+                                                                },
+                                                                child: Container(
+/*                                                                        decoration:
+                                                                           BoxDecoration(
+                                                                           gradient: LinearGradient(
+                                                                           begin:
+                                                                           Alignment.topLeft,
+                                                                           end: Alignment.topRight,
+                                                                           colors: [
+                                                                           c.primary_text_color2,
+                                                                           c.primary_text_color2
+                                                                           ]),
+                                                                           borderRadius:
+                                                                           const BorderRadius
+                                                                           .only(
+                                                                           topLeft:
+                                                                           Radius.circular(10),
+                                                                           topRight:
+                                                                           Radius.circular(10),
+                                                                           bottomLeft:
+                                                                           Radius.circular(10),
+                                                                           bottomRight:
+                                                                           Radius.circular(10),
+                                                                           )),*/
+                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                  child: Align(
+                                                                    alignment: Alignment.centerRight,
+                                                                    child: Text(
+                                                                      s.clear_all,
+                                                                      style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                        subList(index),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                                             ],
                                                           ))));
                                             })
@@ -1828,9 +1880,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
-          res_jsonArray.sort((a, b) {
+          /*res_jsonArray.sort((a, b) {
             return a[s.key_work_id].compareTo(b[s.key_work_id]);
-          });
+          });*/
           if (res_jsonArray.isNotEmpty) {
             dbHelper.delete_table_PlannedDelayWorkList('R');
             String sql_worklist =
@@ -1977,7 +2029,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   }
 
   pw.Table pvNameHeaderTable(pw.Context context, List<dynamic> list, int index) {
-    String headerValue = list[index].toString();
+    String headerValue = "Village : ${list[index]}";
 
     return pw.Table.fromTextArray(
       defaultColumnWidth: pw.FixedColumnWidth(5),
@@ -2037,6 +2089,11 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   Future<void> selectAllSublist(int index) async {
     for (var sampletaxData in villagelist[index][key_workdetails]) {
       sampletaxData[key_flag] = true;
+    }
+  }
+  Future<void> clearAllSublist(int index) async {
+    for (var sampletaxData in villagelist[index][key_workdetails]) {
+      sampletaxData[key_flag] = false;
     }
   }
 }

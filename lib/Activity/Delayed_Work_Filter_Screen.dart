@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print, non_constant_identifier_names, prefer_interpolation_to_compose_strings, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -62,6 +64,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   String selectedDistrict = "";
   String selectedBlock = "";
   String selectedMonth = "";
+  String tableHeaderName = "";
+  String tempTableHeaderName = "";
 
   //List
   List finYearItems = [];
@@ -74,6 +78,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   List schList = [];
   List schIdList = [];
   List schArray = [];
+  List pvListHeader = [];
   List<FlutterLimitedCheckBoxModel> finyearList = [];
   List<FlutterLimitedCheckBoxModel> SchemeListvalue = [];
 
@@ -178,11 +183,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      child: Text(
-                        s.plan_to_inspect,
-                        style: TextStyle(fontSize: 15),
-                      ),
+                    child: Text(
+                      s.plan_to_inspect,
+                      style: TextStyle(fontSize: 15),
                     ),
                   ),
                   Container(
@@ -518,7 +521,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                           color: c.grey_out, border: Border.all(width: schemeError ? 1 : 0.1, color: schemeError ? c.red : c.grey_10), borderRadius: BorderRadius.circular(10.0)),
                                       child: InkWell(
                                           onTap: () {
-                                            SchemeListvalue.length > 0 ? multiChoiceSchemeSelection(SchemeListvalue) : null;
+                                            SchemeListvalue.isNotEmpty ? multiChoiceSchemeSelection(SchemeListvalue) : null;
                                             print("Schemelist#######" + SchemeListvalue.toString());
                                             setState(() {});
                                           },
@@ -597,7 +600,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                 ),
                                               ),
                                               Expanded(
-                                                child: Container(
+                                                child: SizedBox(
                                                   height: 30,
                                                   child: DropdownButtonHideUnderline(
                                                     child: DropdownButton2(
@@ -798,8 +801,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                               child: Stack(children: [
                                 Visibility(
                                     visible: villagelist.isNotEmpty ? true : false,
-                                    child: Container(
-                                        child: Column(
+                                    child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Container(
@@ -863,20 +865,20 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                         alignment: Alignment.centerRight,
                                                                         padding: EdgeInsets.only(top: 10, bottom: 10, right: 20),
 /*                                                                decoration:
-                                                                        BoxDecoration(
-                                                                            color: c
-                                                                                .dot_light_screen_lite1,
-                                                                            borderRadius:
-                                                                                const BorderRadius.only(
-                                                                              topLeft:
-                                                                                  Radius.circular(0),
-                                                                              topRight:
-                                                                                  Radius.circular(20),
-                                                                              bottomLeft:
-                                                                                  Radius.circular(0),
-                                                                              bottomRight:
-                                                                                  Radius.circular(20),
-                                                                            )),*/
+                                                                    BoxDecoration(
+                                                                        color: c
+                                                                            .dot_light_screen_lite1,
+                                                                        borderRadius:
+                                                                            const BorderRadius.only(
+                                                                          topLeft:
+                                                                              Radius.circular(0),
+                                                                          topRight:
+                                                                              Radius.circular(20),
+                                                                          bottomLeft:
+                                                                              Radius.circular(0),
+                                                                          bottomRight:
+                                                                              Radius.circular(20),
+                                                                        )),*/
                                                                         child: Row(
                                                                           mainAxisAlignment: MainAxisAlignment.end,
                                                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -970,27 +972,27 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                               child: Container(
                                                                                 width: MediaQuery.of(context).size.width / 3,
 /*                                                                        decoration:
-                                                                           BoxDecoration(
-                                                                           gradient: LinearGradient(
-                                                                           begin:
-                                                                           Alignment.topLeft,
-                                                                           end: Alignment.topRight,
-                                                                           colors: [
-                                                                           c.primary_text_color2,
-                                                                           c.primary_text_color2
-                                                                           ]),
-                                                                           borderRadius:
-                                                                           const BorderRadius
-                                                                           .only(
-                                                                           topLeft:
-                                                                           Radius.circular(10),
-                                                                           topRight:
-                                                                           Radius.circular(10),
-                                                                           bottomLeft:
-                                                                           Radius.circular(10),
-                                                                           bottomRight:
-                                                                           Radius.circular(10),
-                                                                           )),*/
+                                                                       BoxDecoration(
+                                                                       gradient: LinearGradient(
+                                                                       begin:
+                                                                       Alignment.topLeft,
+                                                                       end: Alignment.topRight,
+                                                                       colors: [
+                                                                       c.primary_text_color2,
+                                                                       c.primary_text_color2
+                                                                       ]),
+                                                                       borderRadius:
+                                                                       const BorderRadius
+                                                                       .only(
+                                                                       topLeft:
+                                                                       Radius.circular(10),
+                                                                       topRight:
+                                                                       Radius.circular(10),
+                                                                       bottomLeft:
+                                                                       Radius.circular(10),
+                                                                       bottomRight:
+                                                                       Radius.circular(10),
+                                                                       )),*/
                                                                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
                                                                                 padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                                 child: Align(
@@ -1014,7 +1016,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                           ))));
                                             })
                                       ],
-                                    )))
+                                    ))
                               ])))
                     ],
                   )),
@@ -1097,10 +1099,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
     Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
 
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
+    HttpClient client = HttpClient(context: await utils.globalContext);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient ioClient = IOClient(client);
+    var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
     print("DelayedWorkListAll_url>>" + url.main_service_jwt.toString());
     print("DelayedWorkListAll_request_encrpt>>" + encrypted_request.toString());
@@ -1137,7 +1139,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           });
           print("DelayedWorkListAll_response>>" + res_jsonArray.toString());
 
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
           } else {
             utils.showAlert(context, s.no_data);
           }
@@ -1179,10 +1181,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
     Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
 
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
+    HttpClient client = HttpClient(context: await utils.globalContext);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient ioClient = IOClient(client);
+    var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
     print("VillageList_response_url>>${url.main_service_jwt}");
     print("VillageList_response_request_json>> ${jsonEncode(json_request)}");
@@ -1220,7 +1222,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
           print(res_jsonArray);
           villagelist = [];
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
             for (var item in res_jsonArray) {
               item[key_flag] = '0';
               List list = jsonDecode(item[key_workdetails]);
@@ -1252,10 +1254,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       s.key_data_content: utils.encryption(jsonEncode(json_request), prefs.getString(s.userPassKey).toString()),
     };
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = IOClient(_client);
-    var response = await _ioClient.post(url.master_service, body: json.encode(encrpted_request));
+    HttpClient client = HttpClient(context: await utils.globalContext);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient ioClient = IOClient(client);
+    var response = await ioClient.post(url.master_service, body: json.encode(encrpted_request));
     print("BlockList_url>>${url.master_service}");
     print("BlockList_request_json>> ${jsonEncode(json_request)}");
     print("BlockList_request_encrpt>>$encrpted_request");
@@ -1528,10 +1530,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
     Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
     // http.Response response = await http.post(url.master_service, body: json.encode(encrpted_request));
-    HttpClient _client = HttpClient(context: await utils.globalContext);
-    _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
-    var response = await _ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
+    HttpClient client = HttpClient(context: await utils.globalContext);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient ioClient = IOClient(client);
+    var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
     utils.hideProgress(context);
     print("SchemeList_url>>" + url.main_service_jwt.toString());
@@ -1566,7 +1568,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           res_jsonArray.sort((a, b) {
             return a[s.key_scheme_name].toLowerCase().compareTo(b[s.key_scheme_name].toLowerCase());
           });
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
             SchemeListvalue.clear();
             schemeFlag = true;
             for (int i = 0; i < res_jsonArray.length; i++) {
@@ -1787,10 +1789,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
     var response;
     try {
-      HttpClient _client = HttpClient(context: await utils.globalContext);
-      _client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
-      response = await _ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
+      HttpClient client = HttpClient(context: await utils.globalContext);
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+      IOClient ioClient = IOClient(client);
+      response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
       print("downloadDelayedWorkList_url>>" + url.main_service_jwt.toString());
       print("downloadDelayedWorkList_request_encrpt>>" + encrypted_request.toString());
@@ -1829,7 +1831,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           res_jsonArray.sort((a, b) {
             return a[s.key_work_id].compareTo(b[s.key_work_id]);
           });
-          if (res_jsonArray.length > 0) {
+          if (res_jsonArray.isNotEmpty) {
             dbHelper.delete_table_PlannedDelayWorkList('R');
             String sql_worklist =
                 'INSERT INTO ${s.table_PlannedDelayWorkList} (rural_urban,town_type,dcode, dname , bcode, bname , pvcode , pvname, hab_code , scheme_group_id , scheme_id , scheme_name, work_group_id , work_type_id , fin_year, work_id ,work_name , as_value , ts_value , current_stage_of_work , is_high_value , stage_name , as_date , ts_date , upd_date, work_order_date , work_type_name , tpcode   , townpanchayat_name , muncode , municipality_name , corcode , corporation_name) VALUES ';
@@ -1845,69 +1847,84 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             sql_worklist += valueSets_worklist.join(', ');
 
             await dbHelper.myDb?.execute(sql_worklist);
-            List<Map> list = await dbClient.rawQuery('SELECT * FROM ${s.table_PlannedDelayWorkList}');
-            if (list.isNotEmpty) {
-              print("downloadlist_response>>" + list.toString());
+            if (res_jsonArray.isNotEmpty) {
               List result = res_jsonArray
                   .fold({}, (previousValue, element) {
-                Map val = previousValue as Map;
-                String date = element[key_pvname];
-                if (!val.containsKey(date)) {
-                  val[date] = [];
-                }
-                element.remove(key_pvname);
-                val[date]?.add(element);
-                return val;
-              })
+                    Map val = previousValue as Map;
+                    String date = element[key_pvname];
+                    if (!val.containsKey(date)) {
+                      val[date] = [];
+                    }
+                    element.remove(key_pvname);
+                    val[date]?.add(element);
+                    return val;
+                  })
                   .entries
                   .map((e) => {e.key: e.value})
                   .toList();
-              print("downloadlist_response>>" + result.toString());
+
+              pvListHeader = [];
+
+              for (var pvlistCount = 0; pvlistCount < result.length; pvlistCount++) {
+                Map<dynamic, dynamic> data = result[pvlistCount];
+                tableHeaderName = data.keys.first.toString();
+                pvListHeader.add(tableHeaderName);
+              }
+
               final pdf = pw.Document();
 
-              pdf.addPage(pw.Page(
+              pdf.addPage(
+                pw.MultiPage(
                   pageFormat: PdfPageFormat.a4,
                   build: (pw.Context context) {
-                    return pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                          children: [
-                            pw.Container(),
-                            pw.Text(
-                              'Date: $currentDate',
-                              style: pw.TextStyle(fontSize: 10),
-                            ),
-                          ],
+                    List<pw.Widget> pages = [];
+
+                    pages.add(pw.Column(children: [
+                      _buildHeader(context),
+
+                      pw.SizedBox(height: 20), // Space between date and heading
+                      pw.Center(
+                        child: pw.Text(
+                          'Inspection Plan Details',
+                          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
                         ),
-                        pw.SizedBox(height: 20), // Space between date and heading
-                        pw.Center(
-                          child: pw.Text(
-                            'Inspection Plan Details',
-                            style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
-                          ),
-                        ),
-                        pw.SizedBox(height: 20),
-                        pw.Flex(direction: pw.Axis.horizontal, mainAxisAlignment: pw.MainAxisAlignment.spaceAround, crossAxisAlignment: pw.CrossAxisAlignment.center, children: [
+                      ),
+                      pw.SizedBox(height: 20),
+                      pw.Flex(
+                        direction: pw.Axis.horizontal,
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                        children: [
                           pw.Text(
-                            'District : ${list[0][key_dname]}',
+                            'District : ${res_jsonArray[0][key_dname]}',
                             style: pw.TextStyle(fontSize: 10),
                           ),
                           pw.Text(
-                            'Block : ${list[0][key_bname]}',
+                            'Block : ${res_jsonArray[0][key_bname]}',
                             style: pw.TextStyle(fontSize: 10),
                           ),
-                        ]),
-                        pw.SizedBox(height: 20), // Space between content and table
+                        ],
+                      ),
+                    ]));
 
-                        for (var headerCount = 0; headerCount < result.length; headerCount++) ...{
+                    for (var headerCount = 0; headerCount < pvListHeader.length; headerCount++) {
+                      pages.add(
+                        pw.Container(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              _buildContent(context, pvListHeader, result, headerCount),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
 
-                           detailsTable(context, result,headerCount)
-                        }
-                      ],
-                    ); // Center
-                  })); //
+                    return pages;
+                  },
+                ),
+              );
+
               Uint8List pdfBytes = await pdf.save();
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -1935,8 +1952,32 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       utils.customAlertWidet(context, "Error", s.jsonError);
     }
   }
-  pw.Table pvNameHeaderTable(pw.Context context, List<Map> list, int index) {
-    String headerValue="";
+
+  pw.Widget _buildHeader(pw.Context context) {
+    return pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      children: [
+        pw.Container(),
+        pw.Text(
+          'Date: $currentDate',
+          style: pw.TextStyle(fontSize: 10),
+        ),
+      ],
+    );
+  }
+
+  pw.Widget _buildContent(pw.Context context, List<dynamic> pvListHeader, List<dynamic> result, int headerCount) {
+    return pw.Column(
+      children: [
+        pw.SizedBox(height: 20), // Space between content and table
+        pvNameHeaderTable(context, pvListHeader, headerCount),
+        detailsTable(context, result, pvListHeader, headerCount),
+      ],
+    );
+  }
+
+  pw.Table pvNameHeaderTable(pw.Context context, List<dynamic> list, int index) {
+    String headerValue = list[index].toString();
 
     return pw.Table.fromTextArray(
       defaultColumnWidth: pw.FixedColumnWidth(5),
@@ -1948,23 +1989,22 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       cellStyle: pw.TextStyle(fontSize: 10),
       border: pw.TableBorder.all(),
     );
-
   }
 
+  pw.Table detailsTable(pw.Context context, List<dynamic> result, List pvListHeader, int headersCount) {
+    String villageName = pvListHeader[headersCount];
+    List<String> listofHeader = [work_id, work_name, work_type_name, as_value];
 
+    List<List<dynamic>> mlist = [];
 
-
-  pw.Table detailsTable(pw.Context context, List<dynamic> result, int headerCount) {
-    List<String> listofHeader =[work_id,work_name,work_type_name,as_value];
-    List<List<dynamic>> mlist =[];
-      for (var data in result) {
-        List<String> list2 =[];
-        mlist.isEmpty? mlist.add(listofHeader):null;
-          list2.add(data[key_work_id]);
-          list2.add(data[key_work_name]);
-          list2.add(data[key_work_type_name]);
-          list2.add(data[key_as_value]);
-          mlist.add(list2);
+    for (var data in result[headersCount][villageName]) {
+      List<String> list2 = [];
+      mlist.isEmpty ? mlist.add(listofHeader) : null;
+      list2.add(data[key_work_id].toString());
+      list2.add(data[key_work_name]);
+      list2.add(data[key_work_type_name]);
+      list2.add(data[key_as_value].toString());
+      mlist.add(list2);
     }
 
     return pw.Table.fromTextArray(
@@ -1972,6 +2012,12 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       data: [...mlist],
       cellStyle: pw.TextStyle(fontSize: 10),
       headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+      columnWidths: {
+        0: pw.FlexColumnWidth(1),
+        1: pw.FlexColumnWidth(2),
+        2: pw.FlexColumnWidth(1),
+        3: pw.FlexColumnWidth(1),
+      },
       border: pw.TableBorder.all(),
     );
   }

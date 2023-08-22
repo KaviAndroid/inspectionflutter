@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 // import 'package:dio/dio.dart';
 // import 'package:dio/io.dart';
+import 'package:InspectionAppNew/Layout/WebView.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -24,6 +25,7 @@ import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
 
@@ -497,6 +499,47 @@ class LoginState extends State<Login> {
                                   ),
                                   TextSpan(
                                     text: s.otp_validation3,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style:
+                                    TextStyle(fontSize: 15, color: c.d_grey3),
+                                children: [
+                                  TextSpan(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        // await launch("https://tnrd.tn.gov.in/rdpr/");
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  webView(
+                                                    de_Url: "https://tnrd.tn.gov.in/rdpr/",
+                                                  )),
+                                        );
+
+                                      },
+                                    text: s.otp_validation2,
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 15,
+                                        fontWeight:
+                                            FontWeight.bold), //<-- SEE HERE
+                                  ),
+                                  TextSpan(
+                                    text: s.deactivate,
                                     style: TextStyle(fontSize: 15),
                                   ),
                                 ],

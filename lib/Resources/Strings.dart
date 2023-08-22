@@ -51,6 +51,7 @@ String software_designed_and = "Software Designed & Developed By NIC";
 String otp_validation1 = "If you have not completed OTP verification due to some reason,";
 String otp_validation2 = " Click here ";
 String otp_validation3 = "to regenerate New OTP for Completing Registration.";
+String deactivate = "to deactivate your account.";
 String atr_report = "View ATR submitted by you";
 String view_inspected_work = "View Inspected RDPR Work";
 String view_inspected_other_work = "View Inspected Other Work";

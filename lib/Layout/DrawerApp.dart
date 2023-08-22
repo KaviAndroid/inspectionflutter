@@ -560,7 +560,7 @@ class _DrawerAppState extends State<DrawerApp> {
                           ]),
                     )),
                 Divider(color: c.grey_6),
-                Container(
+                /*Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(
                       onTap: () async {
@@ -588,7 +588,7 @@ class _DrawerAppState extends State<DrawerApp> {
                             ),
                           ]),
                     )),
-                Divider(color: c.grey_6),
+                Divider(color: c.grey_6),*/
                 Container(
                     margin: EdgeInsets.fromLTRB(20, 5, 10, 5),
                     child: InkWell(

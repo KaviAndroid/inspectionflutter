@@ -38,14 +38,13 @@ class _SplashState extends State<Splash> {
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
     if (await utils.isOnline()) {
-      // checkVersion(context);
-      utils.gotoLoginPageFromSplash(context);
+      checkVersion(context);
     } else {
       if (prefs.getString(s.key_user_name) != null &&
           prefs.getString(s.key_user_pwd) != null) {
         checkBiometricSupport();
-      } else {
-        utils.gotoLoginPageFromSplash(context);
+      }else{
+        utils.showAlert(context, "No Local Data available.Please Turn On mobile data");
       }
     }
   }
@@ -220,16 +219,20 @@ class _SplashState extends State<Splash> {
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
       String version = decodedData['version'];
+      version=version=="1.8" ? "1.8.0" : version ;
       String app_version = await utils.getVersion();
-      if (decodedData[s.key_app_code] == "WI" && (version != app_version)) {
-        /*prefs.setString(s.download_apk, decodedData['apk_path']);
-        utils.customAlertWidet(context, "Warning", s.download_apk);*/
-        if (prefs.getString(s.key_user_name) != null &&
-            prefs.getString(s.key_user_pwd) != null) {
-          checkBiometricSupport();
-        } else {
-          utils.gotoLoginPageFromSplash(context);
-        }
+      // String v1 = '1.2.3', v2 = '1.2.11';
+      int v1Number = getExtendedVersionNumber(version); // return 102003
+      int v2Number = getExtendedVersionNumber(app_version); // return 102011
+      print(v1Number >= v2Number);
+      print("app_version>>" + app_version.toString());
+      print("v1Number>>" + v1Number.toString());
+      print("v2Number>>" + v2Number.toString());
+
+      if (decodedData[s.key_app_code] == "WI" && (v1Number > v2Number)) {
+        prefs.setString(s.download_apk, decodedData['apk_path']);
+        utils.customAlertWidet(context, "Warning", s.download_apk);
+
       } else {
         if (prefs.getString(s.key_user_name) != null &&
             prefs.getString(s.key_user_pwd) != null) {
@@ -244,5 +247,9 @@ class _SplashState extends State<Splash> {
       throw Exception('Failed');
     }
   }
-
+  int getExtendedVersionNumber(String version) {
+    List versionCells = version.split('.');
+    versionCells = versionCells.map((i) => int.parse(i)).toList();
+    return versionCells[0] * 100000 + versionCells[1] * 1000 + versionCells[2];
+  }
 }

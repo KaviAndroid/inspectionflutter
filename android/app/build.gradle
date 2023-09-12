@@ -13,7 +13,7 @@ if (flutterRoot == null) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '24'
+    flutterVersionCode = '25'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
@@ -79,7 +79,7 @@ android {
     }
     splits {
         abi {
-            enable false
+            enable true
             universalApk false
             include "x86", "armeabi-v7a", "arm64-v8a"
         }

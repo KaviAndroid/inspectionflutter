@@ -51,7 +51,7 @@ class Utils {
       bool timezoneAuto = await DatetimeSetting.timeZoneIsAuto();
       timezoneAuto && timeAuto
           ? isAutoDatetimeisEnable = true
-          : isAutoDatetimeisEnable = true;
+          : isAutoDatetimeisEnable = false;
     } else if(Platform.isIOS) {
       isAutoDatetimeisEnable = true;
     }
@@ -897,7 +897,7 @@ class Utils {
 
     DateTime currentTime = DateTime.now();
 
-    DateTime expirationTime = currentTime.add(const Duration(days: 20));
+    DateTime expirationTime = currentTime.add(const Duration(seconds: 20));
 
     String exp = (expirationTime.millisecondsSinceEpoch / 1000).toString();
 

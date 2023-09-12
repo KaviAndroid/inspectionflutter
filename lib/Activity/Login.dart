@@ -348,14 +348,12 @@ class LoginState extends State<Login> {
 
                                         String ss = String.fromCharCodes(
                                             Runes('\u0024'));
-                                        user_name.text = "9595959595";
-                                        user_password.text = "crd44#" + ss;
-                                        /*user_name.text = "9750895078";
-                                        user_password.text = "Test1234#" + ss;*/
+                                       /* user_name.text = "9595959595";
+                                        user_password.text = "crd44#" + ss;*/
+                                        user_name.text = "9750895078";
+                                        user_password.text = "Test1234#" + ss;
                                         if (user_name.text.isNotEmpty) {
                                           if (user_password.text.isNotEmpty) {
-                                            // utils.showToast(context, string.success);
-
                                             if (await utils.isOnline()) {
                                               utils.hideSoftKeyBoard(context);
                                               if (prefs.getString(
@@ -506,7 +504,7 @@ class LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        Container(
+                       /* Container(
                           margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           alignment: Alignment.center,
                           child: Padding(
@@ -520,16 +518,17 @@ class LoginState extends State<Login> {
                                   TextSpan(
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () async {
-                                        // await launch("https://tnrd.tn.gov.in/rdpr/");
+                                        await launch("https://tnrd.tn.gov.in/project/public_content_forms/user_deactive.php");
+                                        *//*
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   webView(
-                                                    de_Url: "https://tnrd.tn.gov.in/rdpr/",
+                                                    de_Url: "https://tnrd.tn.gov.in/",
                                                   )),
                                         );
-
+*//*
                                       },
                                     text: s.otp_validation2,
                                     style: TextStyle(
@@ -546,7 +545,7 @@ class LoginState extends State<Login> {
                               ),
                             ),
                           ),
-                        ),
+                        ),*/
                       ])),
                 ],
               ),

@@ -1264,6 +1264,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
                       pdfBytes: pdf,
                       workID: work_id,
                       inspectionID: inspection_id,
+                  actionTakenID: action_taken_id,
                     )),
           );
         }

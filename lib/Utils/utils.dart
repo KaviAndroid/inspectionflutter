@@ -4,11 +4,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:app_settings/app_settings.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:datetime_setting/datetime_setting.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +17,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:InspectionAppNew/Activity/Login.dart';
 import 'package:InspectionAppNew/Activity/WorkList.dart';
-import 'package:InspectionAppNew/Layout/Multiple_CheckBox.dart';
 import 'package:intl/intl.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -27,12 +26,9 @@ import '../Activity/Home.dart';
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:location/location.dart' as loc;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 
 import '../DataBase/DbHelper.dart';
-import '../ModelClass/checkBoxModelClass.dart';
-import '../Resources/global.dart';
 
 class Utils {
   var dbHelper = DbHelper();
@@ -241,33 +237,6 @@ class Utils {
         onPressed: () {},
       ),
     ));
-  }
-
-  Future<void> showAppSettings(BuildContext context, String msg) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(msg,
-              style: GoogleFonts.getFont('Roboto',
-                  fontSize: 15, fontWeight: FontWeight.w800, color: c.black)),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Allow Permission',
-                  style: GoogleFonts.getFont('Roboto',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: c.primary_text_color2)),
-              onPressed: () async {
-                await openAppSettings();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> customAlertUIWidet(BuildContext context, String type, String msg,
@@ -635,38 +604,6 @@ class Utils {
     return packageInfo.version;
   }
 
-  Future<bool> goToCameraPermission(BuildContext context) async {
-    bool flag = false;
-    late PermissionStatus cameraPermission;
-    cameraPermission = await Permission.camera.status;
-    print("object$cameraPermission");
-    if (Platform.isAndroid) {
-      if (await cameraPermission.isGranted) {
-        flag = true;
-        print("object$cameraPermission");
-      }else{
-        cameraPermission = await Permission.camera.request();
-      }
-      if (cameraPermission.isDenied || cameraPermission.isPermanentlyDenied) {
-        Utils().showAppSettings(context, s.cam_permission);
-      }else{
-        flag = true;
-        print("object$cameraPermission");
-      }
-    } else if (Platform.isIOS) {
-      flag = true;
-      /*if (await cameraPermission.isGranted) {
-        flag = true;
-        print("object$cameraPermission");
-      }else {
-        Utils().showAppSettings(context, s.cam_permission);
-      }*/
-    }
-
-
-    return flag;
-  }
-
   Future<bool> handleLocationPermission(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -689,9 +626,10 @@ class Utils {
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+      await customAlertWidet(context, "Error", "Location permissions is permanently denied, Please allow permission in App Settings to proceed further.");
+      await AppSettings.openAppSettings(type: AppSettingsType.settings);
+
+
       return false;
     }
     return true;

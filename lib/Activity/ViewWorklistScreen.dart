@@ -407,6 +407,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
                         pdfBytes: pdf,
                         workID: work_id,
                         inspectionID: inspection_id,
+                      actionTakenID:action_status == "Y"?action_taken_id:null ,
                       )),
             );
           }

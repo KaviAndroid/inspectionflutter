@@ -10,7 +10,7 @@ import device_info_plus
 import file_selector_macos
 import geolocator_apple
 import location
-import package_info_plus_macos
+import package_info_plus
 import path_provider_foundation
 import shared_preferences_foundation
 import speech_to_text_macos

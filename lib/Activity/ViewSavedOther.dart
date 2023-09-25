@@ -1250,6 +1250,8 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
             MaterialPageRoute(
                 builder: (context) => PDF_Viewer(
                       pdfBytes: pdf,
+                  otherWorkID: otherwork_id,
+
                     )),
           );
         }

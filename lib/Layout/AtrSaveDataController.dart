@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +30,6 @@ class AtrSaveDataController with ChangeNotifier {
   TextEditingController remark = TextEditingController();
   SpeechToText _speechToText = SpeechToText();
 
-  late PermissionStatus speechPermission;
 
   //image
   final _picker = ImagePicker();
@@ -70,6 +69,7 @@ class AtrSaveDataController with ChangeNotifier {
     widgetflag = flag;
     widgetimagelist.addAll(imagelist);
     initialize();
+    initSpeech();
   }
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
@@ -85,27 +85,35 @@ class AtrSaveDataController with ChangeNotifier {
     await checkData();
     notifyListeners();
   }
-
-  void startListening(String txt, BuildContext context) async {
-    speechPermission = await Permission.speech.status;
-    if (await Permission.speech.request().isGranted) {
-      speechPermission = await Permission.speech.status;
-    }
-    print("Speech check $speechPermission");
-    if (speechPermission.isGranted || speechPermission.isLimited) {
-      await _speechToText.initialize();
+  /// This has to happen only once per app
+  Future<void> initSpeech() async {
+    _speechToText.initialize();
+   /* if(_speechToText.isAvailable) {
+      speech = true;
+    } else {
+      speech = false;
+    }*/
+    notifyListeners();
+  }
+  void startListening(String txt, BuildContext context, String lan) async {
       _lastWords = txt;
-      await _speechToText.listen(
-          onResult: onSpeechResult,
-          localeId: lang,
-          listenFor: Duration(minutes: 10));
-      print("start");
+      try {
+        lang = lan;
+        speech = true;
+        await _speechToText.listen(
+            onResult: onSpeechResult,
+            localeId: lang,
+            listenFor: Duration(minutes: 10));
+        print("start");
+      } catch (e) {
+        if(!_speechToText.isAvailable) {
+          await utils.customAlertWidet(context, "Error", "Microphone permissions is permanently denied, Please allow permission to Record audio.");
+          await !_speechToText.isAvailable ?AppSettings.openAppSettings(type: AppSettingsType.settings):null;
+
+        }
+      }
+
       notifyListeners();
-    } else if (speechPermission.isDenied ||
-        speechPermission.isPermanentlyDenied ||
-        speechPermission.isRestricted) {
-      Utils().showAppSettings(context, s.speech_permission);
-    }
   }
 
   /// Manually stop the active speech recognition session
@@ -232,10 +240,8 @@ class AtrSaveDataController with ChangeNotifier {
     print("latitude>>${position.latitude}");
     print("longitude>>${position.longitude}");
     if (position.longitude != null) {
-      if (await utils.goToCameraPermission(context)) {
         TakePhoto(i, position.latitude.toString(),
             position.longitude.toString(), context);
-      }
     } else {
       utils.showAlert(context, "Try Again...");
     }

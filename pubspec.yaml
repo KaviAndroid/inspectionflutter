@@ -36,7 +36,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^2.2.5
   path_provider: ^2.0.13
-  permission_handler: ^10.2.0
   crypto: ^3.0.0
   http: ^0.13.5
   encrypt: ^5.0.0
@@ -58,6 +57,7 @@ dependencies:
   provider: ^6.0.5
   url_launcher: ^6.1.7
   open_settings: ^2.0.2
+  app_settings: ^5.0.0
   awesome_notifications: ^0.7.4+1
   open_file: ^3.3.1
   dart_jsonwebtoken: ^2.7.1

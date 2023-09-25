@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/io_client.dart';
@@ -138,19 +140,34 @@ class SaveDatacontroller with ChangeNotifier {
   }
 
   /// This has to happen only once per app
-  void initSpeech() async {
+  Future<void> initSpeech() async {
     _speechToText.initialize();
+    /*if(_speechToText.isAvailable) {
+      speech = true;
+    } else {
+      speech = false;
+    }*/
     notifyListeners();
+
   }
 
   /// Each time to start a speech recognition session
-  void startListening(String txt) async {
+  void startListening(BuildContext context, String txt, String lan) async {
     lastWords = txt;
-    await _speechToText.listen(
-        onResult: onSpeechResult,
-        localeId: lang,
-        listenFor: const Duration(minutes: 10));
-    print("start");
+    try{
+      lang = lan;
+      speech = _speechToText.isAvailable;
+      await _speechToText.listen(
+          onResult: onSpeechResult,
+          localeId: lang,
+          listenFor: const Duration(minutes: 10));
+    } catch (e) {
+      print(e.toString());
+      if(!_speechToText.isAvailable) {
+        await utils.customAlertWidet(context, "Error", "Microphone permission is permanently denied, Please allow permission to Record audio.");
+        await !_speechToText.isAvailable ?AppSettings.openAppSettings(type: AppSettingsType.settings):null;
+      }
+    }
     notifyListeners();
   }
 
@@ -184,10 +201,8 @@ class SaveDatacontroller with ChangeNotifier {
     print("latitude>>" + position.latitude.toString());
     print("longitude>>" + position.longitude.toString());
     if (position.latitude != null && position.longitude != null) {
-      if (await utils.goToCameraPermission(context)) {
         TakePhoto(ImageSource.camera, i, position.latitude.toString(),
             position.longitude.toString(), context);
-      }
     } else {
       utils.showAlert(context, "Try Again...");
     }
@@ -196,28 +211,37 @@ class SaveDatacontroller with ChangeNotifier {
   Future<void> TakePhoto(ImageSource source, int i, String latitude,
       String longitude, BuildContext context) async {
     // final pickedFile = await _picker.pickImage(source: source);
-    final pickedFile = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-        maxHeight: 400,
-        maxWidth: 400);
-    if (pickedFile == null) {
-      // Navigator.pop(context);
+    try {
+      final pickedFile = await _picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 80,
+          maxHeight: 400,
+          maxWidth: 400);
+      if (pickedFile == null) {
+        // Navigator.pop(context);
 
-      Utils().showToast(context, "User Canceled operation");
-    } else {
-      List<int> imageBytes = await pickedFile.readAsBytes();
-      workmage = base64Encode(imageBytes);
-      img_jsonArray[i].update('latitude', (value) => latitude);
-      img_jsonArray[i].update('longitude', (value) => longitude);
-      img_jsonArray[i].update('image', (value) => workmage);
-      img_jsonArray[i]
-          .update(s.key_image_path, (value) => pickedFile.path.toString());
-      _imageFile = File(pickedFile.path);
-      print("ImageList>>" + img_jsonArray.toString());
-
-      notifyListeners();
+        Utils().showToast(context, "User Canceled operation");
+      } else {
+        List<int> imageBytes = await pickedFile.readAsBytes();
+        workmage = base64Encode(imageBytes);
+        img_jsonArray[i].update('latitude', (value) => latitude);
+        img_jsonArray[i].update('longitude', (value) => longitude);
+        img_jsonArray[i].update('image', (value) => workmage);
+        img_jsonArray[i]
+            .update(s.key_image_path, (value) => pickedFile.path.toString());
+        _imageFile = File(pickedFile.path);
+        print("ImageList>>" + img_jsonArray.toString());
+        notifyListeners();
+      }
+    }  on PlatformException catch (e) {
+      if (e.code == 'camera_access_denied') {
+        await utils.customAlertWidet(context, "Error", "Camera permission is denied, Please allow permission to capture Image.");
+        await AppSettings.openAppSettings(type: AppSettingsType.settings);
+      }
+    } catch (e) {
+      print(e);
     }
+
     // Navigator.pop(context);
   }
 

@@ -416,10 +416,9 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails>{
                 Expanded(
                   flex: 1,
                   child: InkWell(
-                      onTap: () {
-                        refer.lang = 'en_US';
-                        refer.speech = true;
-                        refer.startListening(refer.descriptionController.text);
+                      onTap: () async {
+                        await refer.initSpeech();
+                        refer.startListening(context, refer.descriptionController.text,'en_US');
                       },
                       child: Row(
                         children: [
@@ -455,10 +454,9 @@ class _SaveWorkDetailsState extends State<SaveWorkDetails>{
                     child: Expanded(
                   flex: 1,
                   child: InkWell(
-                      onTap: () {
-                        refer.lang = 'ta_IND';
-                        refer.speech = true;
-                        refer.startListening(refer.descriptionController.text);
+                      onTap: () async {
+                        await refer.initSpeech();
+                        refer.startListening(context, refer.descriptionController.text,'ta_IND');
                       },
                       child: Row(
                         children: [

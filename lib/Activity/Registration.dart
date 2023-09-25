@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
@@ -15,14 +15,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:InspectionAppNew/Resources/global.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
 import 'package:InspectionAppNew/Resources/url.dart' as url;
 import '../Utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'Login.dart';
 
@@ -40,7 +38,6 @@ class _RegistrationState extends State<Registration> {
   var dbHelper = DbHelper();
   var dbClient;
 
-  late PermissionStatus storagePermission;
   ScrollController scrollController = ScrollController();
 
   //ImagePickers
@@ -1130,52 +1127,12 @@ class _RegistrationState extends State<Registration> {
 
   /// ************************** Check Storage Permission *****************************/
 
-  Future<bool> gotoStorage() async {
-    bool flag = false;
-
-    if (Platform.isAndroid) {
-      var androidInfo = await DeviceInfoPlugin().androidInfo;
-      var sdkInt = androidInfo.version.sdkInt;
-
-      if (sdkInt >= 33) {
-        storagePermission = await Permission.manageExternalStorage.request();
-      } else {
-        storagePermission = await Permission.storage.request();
-      }
-      if (storagePermission.isLimited || storagePermission.isGranted) {
-        flag = true;
-      }
-    } else if (Platform.isIOS) {
-      flag = true;
-    }
-
-    if (!flag) {
-      await Utils().showAppSettings(context, s.storage_permission);
-
-      if (Platform.isAndroid) {
-        var androidInfo = await DeviceInfoPlugin().androidInfo;
-        var sdkInt = androidInfo.version.sdkInt;
-        if (sdkInt >= 33) {
-          storagePermission = await Permission.manageExternalStorage.request();
-        } else {
-          storagePermission = await Permission.storage.request();
-        }
-        if (storagePermission.isLimited || storagePermission.isGranted) {
-          flag = true;
-        }
-      } else if (Platform.isIOS) {
-        flag = true;
-      }
-    }
-
-    return flag;
-  }
 
   /// ************************** Image Picker *****************************/
 
   Future<void> TakePhoto(ImageSource source) async {
-    if (source == ImageSource.camera) {
-      if (await utils.goToCameraPermission(context)) {
+    try {
+      if (source == ImageSource.camera) {
         // final pickedFile = await _picker.pickImage(source: source);
         final pickedFile = await _picker.pickImage(
             source: source, imageQuality: 80, maxHeight: 400, maxWidth: 400);
@@ -1191,9 +1148,8 @@ class _RegistrationState extends State<Registration> {
           });
           Navigator.pop(context);
         }
-      }
-    } else {
-      if (await gotoStorage()) {
+
+      } else {
         // final pickedFile = await _picker.pickImage(source: source);
         final pickedFile = await _picker.pickImage(
             source: source, imageQuality: 80, maxHeight: 400, maxWidth: 400);
@@ -1210,7 +1166,15 @@ class _RegistrationState extends State<Registration> {
           });
           Navigator.pop(context);
         }
+
       }
+    } on PlatformException catch (e) {
+      if (e.code == 'camera_access_denied') {
+        await utils.customAlertWidet(context, "Error", "Camera permissions is denied, Please allow permission to capture Image.");
+        await AppSettings.openAppSettings(type: AppSettingsType.settings);
+      }
+    } catch (e) {
+    print(e);
     }
   }
 

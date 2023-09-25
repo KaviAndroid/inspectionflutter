@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -125,18 +126,32 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     return true;
   }
 
-  void initSpeech() async {
+  Future<void> initSpeech() async {
     _speechToText.initialize();
+   /* if(_speechToText.isAvailable) {
+      speech = true;
+    } else {
+      speech = false;
+    }*/
     notifyListeners();
   }
 
   /// Each time to start a speech recognition session
-  void startListening(String txt) async {
+  void startListening(BuildContext context, String txt, String language) async {
     _lastWords = txt;
-    await _speechToText.listen(
-        onResult: onSpeechResult,
-        localeId: lang,
-        listenFor: Duration(minutes: 10));
+    try {
+      lang = language;
+      speech = true;
+      await _speechToText.listen(
+          onResult: onSpeechResult,
+          localeId: lang,
+          listenFor: Duration(minutes: 10));
+    } catch (e) {
+    if(!_speechToText.isAvailable) {
+      await utils.customAlertWidet(context, "Error", "Microphone permissions is permanently denied, Please allow permission to Record audio.");
+      await !_speechToText.isAvailable ?AppSettings.openAppSettings(type: AppSettingsType.settings):null;
+      }
+    }
 
     print("start");
     notifyListeners();
@@ -240,10 +255,8 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
     print("latitude>>" + position.latitude.toString());
     print("longitude>>" + position.longitude.toString());
     if (position.latitude != null && position.longitude != null) {
-      if (await utils.goToCameraPermission(context)) {
         TakePhoto(ImageSource.camera, i, position.latitude.toString(),
             position.longitude.toString(), context);
-      }
 
     } else {
       utils.showAlert(context, "Try Again...");

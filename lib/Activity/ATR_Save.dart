@@ -1,26 +1,15 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print, library_prefixes, prefer_const_constructors, prefer_interpolation_to_compose_strings, use_build_context_synchronously, unnecessary_null_comparison
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:InspectionAppNew/Activity/ATR_Online.dart';
 import 'package:InspectionAppNew/Layout/AtrSaveDataController.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:speech_to_text/speech_to_text.dart';
-import '../DataBase/DbHelper.dart';
 import '../Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../Utils/utils.dart';
-import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 import 'package:InspectionAppNew/Resources/global.dart';
-import 'package:InspectionAppNew/Resources/url.dart' as url;
-import 'package:http/io_client.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ATR_Save extends StatefulWidget {
   final rural_urban, onoff_type, selectedWorklist, flag, imagelist;
@@ -346,11 +335,10 @@ class _ATR_SaveState extends State<ATR_Save> {
                 Expanded(
                   flex: 1,
                   child: InkWell(
-                      onTap: () {
-                        refer.lang = 'en_US';
-                        refer.speech = true;
+                      onTap: () async {
+                        await refer.initSpeech();
                         refer.startListening(
-                            refer.descriptionController.text, context);
+                            refer.descriptionController.text, context,'en_US');
                       },
                       child: Row(
                         children: [
@@ -386,11 +374,10 @@ class _ATR_SaveState extends State<ATR_Save> {
                     child: Expanded(
                       flex: 1,
                       child: InkWell(
-                          onTap: () {
-                            refer.lang = 'ta_IND';
-                            refer.speech = true;
+                          onTap: () async {
+                            await refer.initSpeech();
                             refer.startListening(
-                                refer.descriptionController.text, context);
+                                refer.descriptionController.text, context,'ta_IND');
                           },
                           child: Row(
                             children: [

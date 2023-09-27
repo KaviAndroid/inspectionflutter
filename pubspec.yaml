@@ -58,8 +58,6 @@ dependencies:
   url_launcher: ^6.1.7
   open_settings: ^2.0.2
   app_settings: ^5.0.0
-  awesome_notifications: ^0.7.4+1
-  open_file: ^3.3.1
   dart_jsonwebtoken: ^2.7.1
   local_auth: ^1.1.0
   calendar_date_picker2: ^0.5.2

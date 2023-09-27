@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -13,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/Home.dart';
 import 'package:InspectionAppNew/Activity/WorkList.dart';
-import 'package:InspectionAppNew/Layout/Single_CheckBox.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
@@ -27,7 +25,6 @@ import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
 import '../Layout/ReadMoreLess.dart';
 import '../ModelClass/checkBoxModelClass.dart';
-import '../Resources/Strings.dart';
 import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 import 'Pdf_Viewer.dart';
@@ -514,7 +511,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                       ),
                                     ),
                                     Container(
-                                     /* height: 150,
+                                      /* height: 150,
                                       width: 350,*/
                                       constraints: BoxConstraints(
                                         minHeight: 40, //minimum height
@@ -919,67 +916,67 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                Visibility(
-                                                  visible: villagelist[index][key_flag] == "1",
-                                                  child: AnimationLimiter(
-                                                    child: Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Align(
-                                                              alignment: Alignment.topLeft,
-                                                              child: InkWell(
-                                                                onTap: () => Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => WorkList(
-                                                                          finYear: finList,
-                                                                          dcode: selectedDistrict,
-                                                                          bcode: selectedBlock,
-                                                                          pvcode: villagelist[index][s.key_pvcode].toString(),
-                                                                          tmccode: selectedMonth,
-                                                                          flag: "delayed_works",
-                                                                          asvalue: asController.text,
-                                                                          selectedschemeList: "",
-                                                                          townType: '',
-                                                                          scheme: '',
-                                                                          schemeList: schIdList,
-                                                                        ))),
-                                                                child: Container(
-                                                                  decoration: BoxDecoration(
-                                                                      gradient: LinearGradient(
-                                                                          begin: Alignment.topLeft, end: Alignment.topRight, colors: [c.primary_text_color2, c.primary_text_color2]),
-                                                                      borderRadius: const BorderRadius.only(
-                                                                        topLeft: Radius.circular(10),
-                                                                        topRight: Radius.circular(10),
-                                                                        bottomLeft: Radius.circular(10),
-                                                                        bottomRight: Radius.circular(10),
-                                                                      )),
-                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                  child: Align(
-                                                                    alignment: AlignmentDirectional.center,
-                                                                    child: Text(
-                                                                      s.view_details,
-                                                                      style: TextStyle(color: c.white, fontSize: 13, fontWeight: FontWeight.bold),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Align(
-                                                              alignment: Alignment.center,
-                                                              child: InkWell(
-                                                                onTap: () async {
-                                                                  await selectAllSublist(index);
-                                                                  setState(() {});
-                                                                },
-                                                                child: Container(
+                                                              Visibility(
+                                                                visible: villagelist[index][key_flag] == "1",
+                                                                child: AnimationLimiter(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          Align(
+                                                                            alignment: Alignment.topLeft,
+                                                                            child: InkWell(
+                                                                              onTap: () => Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                      builder: (context) => WorkList(
+                                                                                            finYear: finList,
+                                                                                            dcode: selectedDistrict,
+                                                                                            bcode: selectedBlock,
+                                                                                            pvcode: villagelist[index][s.key_pvcode].toString(),
+                                                                                            tmccode: selectedMonth,
+                                                                                            flag: "delayed_works",
+                                                                                            asvalue: asController.text,
+                                                                                            selectedschemeList: "",
+                                                                                            townType: '',
+                                                                                            scheme: '',
+                                                                                            schemeList: schIdList,
+                                                                                          ))),
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(
+                                                                                    gradient: LinearGradient(
+                                                                                        begin: Alignment.topLeft, end: Alignment.topRight, colors: [c.primary_text_color2, c.primary_text_color2]),
+                                                                                    borderRadius: const BorderRadius.only(
+                                                                                      topLeft: Radius.circular(10),
+                                                                                      topRight: Radius.circular(10),
+                                                                                      bottomLeft: Radius.circular(10),
+                                                                                      bottomRight: Radius.circular(10),
+                                                                                    )),
+                                                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                                child: Align(
+                                                                                  alignment: AlignmentDirectional.center,
+                                                                                  child: Text(
+                                                                                    s.view_details,
+                                                                                    style: TextStyle(color: c.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Align(
+                                                                            alignment: Alignment.center,
+                                                                            child: InkWell(
+                                                                              onTap: () async {
+                                                                                await selectAllSublist(index);
+                                                                                setState(() {});
+                                                                              },
+                                                                              child: Container(
 /*                                                                        decoration:
                                                                            BoxDecoration(
                                                                            gradient: LinearGradient(
@@ -1002,26 +999,26 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                            bottomRight:
                                                                            Radius.circular(10),
                                                                            )),*/
-                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                  child: Align(
-                                                                    alignment: Alignment.centerRight,
-                                                                    child: Text(
-                                                                      s.select_all,
-                                                                      style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Align(
-                                                              alignment: Alignment.topRight,
-                                                              child: InkWell(
-                                                                onTap: () async {
-                                                                  await clearAllSublist(index);
-                                                                  setState(() {});
-                                                                },
-                                                                child: Container(
+                                                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                                child: Align(
+                                                                                  alignment: Alignment.centerRight,
+                                                                                  child: Text(
+                                                                                    s.select_all,
+                                                                                    style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Align(
+                                                                            alignment: Alignment.topRight,
+                                                                            child: InkWell(
+                                                                              onTap: () async {
+                                                                                await clearAllSublist(index);
+                                                                                setState(() {});
+                                                                              },
+                                                                              child: Container(
 /*                                                                        decoration:
                                                                            BoxDecoration(
                                                                            gradient: LinearGradient(
@@ -1044,26 +1041,25 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                            bottomRight:
                                                                            Radius.circular(10),
                                                                            )),*/
-                                                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                                  child: Align(
-                                                                    alignment: Alignment.centerRight,
-                                                                    child: Text(
-                                                                      s.clear_all,
-                                                                      style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
-                                                                    ),
+                                                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                                                                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                                                child: Align(
+                                                                                  alignment: Alignment.centerRight,
+                                                                                  child: Text(
+                                                                                    s.clear_all,
+                                                                                    style: TextStyle(color: c.primary_text_color2, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      subList(index),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                        subList(index),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
                                                             ],
                                                           ))));
                                             })
@@ -1899,6 +1895,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             sql_worklist += valueSets_worklist.join(', ');
 
             await dbHelper.myDb?.execute(sql_worklist);
+
             if (res_jsonArray.isNotEmpty) {
               List result = res_jsonArray
                   .fold({}, (previousValue, element) {
@@ -1978,17 +1975,16 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
               );
 
               Uint8List pdfBytes = await pdf.save();
+
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PDF_Viewer(
                           pdfBytes: pdfBytes,
-                          workID: work_id,
-                          inspectionID: inspection_id,
-                          flag: 'planned_delay_works',
+                          dcode: selectedDistrict,
+                          bcode: selectedBlock,
+                          workList: work_id_list,
                         )),
-              ); // Page Page
-              /*utils.customAlertWithDataPassing(context, "Success",
-                  s.download_success, false, true, 'planned_delay_works');*/
+              );
             }
           } else {
             utils.showAlert(context, s.no_data);
@@ -2091,6 +2087,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       sampletaxData[key_flag] = true;
     }
   }
+
   Future<void> clearAllSublist(int index) async {
     for (var sampletaxData in villagelist[index][key_workdetails]) {
       sampletaxData[key_flag] = false;

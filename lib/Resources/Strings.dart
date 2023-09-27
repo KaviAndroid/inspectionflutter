@@ -455,6 +455,7 @@ String service_key_other_work_inspection_details_update = "other_work_inspection
 String service_key_get_inspection_delayed_work_details = "get_inspection_delayed_work_details";
 String service_key_get_inspection_work_details_by_work_id = "get_inspection_work_details_by_work_id";
 String service_key_deactivate_account = "deactivate_account";
+String service_key_get_work_details_pdf = "get_work_details_pdf";
 
 //Table Name
 String table_District = "District";

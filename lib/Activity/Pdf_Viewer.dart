@@ -1,25 +1,15 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
-
 import 'dart:convert';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:InspectionAppNew/Utils/utils.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:open_file/open_file.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:InspectionAppNew/Resources/url.dart' as url;
-
 
 class PDF_Viewer extends StatefulWidget {
   final pdfBytes;
@@ -27,8 +17,10 @@ class PDF_Viewer extends StatefulWidget {
   final inspectionID;
   final actionTakenID;
   final otherWorkID;
-  final flag;
-  PDF_Viewer({this.pdfBytes, this.workID, this.actionTakenID,this.otherWorkID,this.inspectionID, this.flag});
+  final workList;
+  final dcode;
+  final bcode;
+  PDF_Viewer({this.pdfBytes, this.workID, this.actionTakenID, this.otherWorkID, this.inspectionID, this.workList, this.dcode, this.bcode});
 
   @override
   State<PDF_Viewer> createState() => _PDF_ViewerState();
@@ -41,9 +33,11 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     super.initState();
     initialize();
   }
+
   Future<void> initialize() async {
     prefs = await SharedPreferences.getInstance();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +50,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
         actions: [
           IconButton(
             icon: const Icon(Icons.file_download_rounded, color: Colors.white),
-            onPressed: () => {downloadPDF(widget.pdfBytes)},
+            onPressed: () => {downloadPDF()},
           )
         ],
         title: const Text("Document"),
@@ -67,25 +61,37 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
   }
 
   // ********************************************* Download PDF Func ***************************************//
-  Future<void> downloadPDF(Uint8List pdfBytes) async {
-    String urlParams ="";
-    if(widget.otherWorkID != null && widget.otherWorkID != ""){
-      urlParams = "other_work_inspection_id=${base64Encode(utf8.encode(widget.workID.toString()))}";
-    }else if(widget.actionTakenID != null && widget.actionTakenID != ""){
-      urlParams = "work_id=${base64Encode(utf8.encode(widget.workID.toString()))}&inspection_id=${base64Encode(utf8.encode(widget.inspectionID))}&action_taken_id=${base64Encode(utf8.encode(widget.actionTakenID))}";
-    }else if(widget.inspectionID != null && widget.inspectionID != ""){
-      urlParams = "work_id=${base64Encode(utf8.encode(widget.workID.toString()))}&inspection_id=${base64Encode(utf8.encode(widget.inspectionID))}";
+  Future<void> downloadPDF() async {
+    String urlParams = "";
+
+    if (widget.otherWorkID != null && widget.otherWorkID != "") {
+      urlParams = "${s.key_service_id}=${base64Encode(utf8.encode(s.service_get_other_work_pdf))}&${s.key_other_work_inspection_id}=${base64Encode(utf8.encode(widget.otherWorkID.toString()))}";
+    } else if (widget.actionTakenID != null && widget.actionTakenID != "") {
+      urlParams =
+          "${s.key_service_id}=${base64Encode(utf8.encode(s.service_key_get_action_taken_work_pdf))}&${s.key_work_id}=${base64Encode(utf8.encode(widget.workID.toString()))}&${s.key_inspection_id}=${base64Encode(utf8.encode(widget.inspectionID))}&${s.key_action_taken_id}=${base64Encode(utf8.encode(widget.actionTakenID))}";
+    } else if (widget.inspectionID != null && widget.inspectionID != "") {
+      urlParams =
+          "${s.key_service_id}=${base64Encode(utf8.encode(s.service_key_get_pdf))}&${s.key_work_id}=${base64Encode(utf8.encode(widget.workID.toString()))}&${s.key_inspection_id}=${base64Encode(utf8.encode(widget.inspectionID))}";
+    } else if (widget.workList != null && widget.workList != "") {
+      urlParams =
+          "${s.key_service_id}=${base64Encode(utf8.encode(s.service_key_get_work_details_pdf))}&${s.key_dcode}=${base64Encode(utf8.encode(widget.dcode))}&${s.key_bcode}=${base64Encode(utf8.encode(widget.bcode))}&${s.key_work_id}=${base64Encode(utf8.encode(widget.workList.toString()))}";
     }
 
-    String? key = prefs.getString(s.userPassKey);
+    String key = "45af1c702e5c46acb5f4192cbeaba27c";
 
-    String Signature = Utils().generateHmacSha256(urlParams, key!, true);
+    String Signature = Utils().generateHmacSha256(urlParams, key, true);
 
-    String encodedParams = "${url.main_service_jwt}?$urlParams&sign=$Signature";
+    print('Signature: $Signature');
 
-    await launch(encodedParams.toString());
-    launchUrlString("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf");
+    String encodedParams = "${url.pdf_URL}?$urlParams&sign=$Signature";
+
+    print('encodedParams: $encodedParams');
+
+    await launchUrl(Uri.parse(encodedParams), mode: LaunchMode.externalApplication);
+
+    // await launch(encodedParams.toString());
   }
+
   /*Future<void> downloadPDF(Uint8List pdfBytes) async {
     bool flag = false;
     PermissionStatus status;
@@ -169,7 +175,7 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
   // ********************************************* Notification PDF Func ***************************************//
 
-  Future<void> showNotification(
+  /* Future<void> showNotification(
       String title, String message, String payload) async {
     await AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
@@ -239,5 +245,5 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
     await pdfFile.writeAsBytes(pdfBytes);
 
     showNotification(s.appName, "File Path : ${pdfFile.path}", pdfFile.path);
-  }
+  } */
 }

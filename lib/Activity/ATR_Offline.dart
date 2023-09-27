@@ -28,8 +28,7 @@ class ATR_Offline_worklist extends StatefulWidget {
   State<ATR_Offline_worklist> createState() => ATR_Offline_worklistState();
 }
 
-class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
-    with TickerProviderStateMixin {
+class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerProviderStateMixin {
   Utils utils = Utils();
   late SharedPreferences prefs;
   var dbHelper = DbHelper();
@@ -109,9 +108,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             : null;
     widget.Flag == "R" ? town_type = "" : town_type = "T";
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
-      List<Map> urbanOfflineList = await dbClient.rawQuery(
-          "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
-      print("List >>" + urbanOfflineList.toString());
+      List<Map> urbanOfflineList = await dbClient.rawQuery("SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
+      print("List >>$urbanOfflineList");
       if (urbanOfflineList.isNotEmpty) {
         //value exists
         if (urbanOfflineList[0][s.key_town_type] == "T") {
@@ -130,9 +128,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
   onSearchQueryChanged(String query) {
     searchEnabled = true;
-    query != null && query != ""
-        ? _searchQuery = query.toLowerCase()
-        : _searchQuery = "";
+    query != "" ? _searchQuery = query.toLowerCase() : _searchQuery = "";
     filteredWorklist = defaultWorklist.where((item) {
       final work_id = item[s.key_work_id].toString();
       final work_name = item[s.key_work_name].toLowerCase();
@@ -147,16 +143,13 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           backgroundColor: c.colorPrimary,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () =>
-                Navigator.of(context, rootNavigator: true).pop(context),
+            onPressed: () => Navigator.of(context, rootNavigator: true).pop(context),
           ),
           title: iconBtnPressed
               ? Container(
                   width: double.infinity,
                   height: 40,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5)),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
                   child: Center(
                     child: TextField(
                       onChanged: (String value) async {
@@ -185,15 +178,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           actions: <Widget>[
             !iconBtnPressed
                 ? IconButton(
-                    icon: Icon(Icons.search,
-                        color: Colors.white), // Search button icon
+                    icon: const Icon(Icons.search, color: Colors.white), // Search button icon
                     onPressed: () {
                       setState(() {
                         iconBtnPressed = true;
                       });
                     },
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
         body: Container(
@@ -212,12 +204,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   child: InkWell(
                     onTap: () {
                       utils.ShowCalenderDialog(context).then((value) => {
-                            if (value['flag'])
-                              {
-                                selectedFromDate = value['fromDate'],
-                                selectedToDate = value['toDate'],
-                                dateValidation()
-                              }
+                            if (value['flag']) {selectedFromDate = value['fromDate'], selectedToDate = value['toDate'], dateValidation()}
                           });
                     },
                     child: Row(
@@ -234,12 +221,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                         const SizedBox(
                           width: 10,
                         ),
-                        Expanded(
-                            child: Text(s.download_text,
-                                style: GoogleFonts.getFont('Roboto',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w900,
-                                    color: c.primary_text_color2))),
+                        Expanded(child: Text(s.download_text, style: GoogleFonts.getFont('Roboto', fontSize: 17, fontWeight: FontWeight.w900, color: c.primary_text_color2))),
                         const SizedBox(
                           width: 15,
                         ),
@@ -274,12 +256,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
       isUnSatisfiedActive = false;
     });
 
-    Map jsonRequest = {
-      s.key_service_id: s.service_key_get_inspection_details_for_atr,
-      s.key_from_date: fromDate,
-      s.key_to_date: toDate,
-      s.key_rural_urban: prefs.getString(s.key_rural_urban)
-    };
+    Map jsonRequest = {s.key_service_id: s.service_key_get_inspection_details_for_atr, s.key_from_date: fromDate, s.key_to_date: toDate, s.key_rural_urban: prefs.getString(s.key_rural_urban)};
 
     if (widget.Flag == "U") {
       Map urbanRequest = {s.key_town_type: town_type};
@@ -298,28 +275,22 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
     String header_token = utils.jwt_Encode(key, userName!, headerSignature);
 
-    Map<String, String> header = {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": "Bearer $header_token"
-    };
+    Map<String, String> header = {"Content-Type": "application/json", "Accept": "application/json", "Authorization": "Bearer $header_token"};
 
-    HttpClient _client = HttpClient(context: await Utils().globalContext);
-    _client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => false;
-    IOClient _ioClient = new IOClient(_client);
+    HttpClient client = HttpClient(context: await Utils().globalContext);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+    IOClient ioClient = IOClient(client);
 
-    var response = await _ioClient.post(url.main_service_jwt,
-        body: jsonEncode(encrypted_request), headers: header);
+    var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
-    print("Online_Work_List_url>>" + url.main_service_jwt.toString());
-    print("Online_Work_List_request_encrpt>>" + encrypted_request.toString());
+    print("Online_Work_List_url>>${url.main_service_jwt}");
+    print("Online_Work_List_request_encrpt>>$encrypted_request");
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       String data = response.body;
 
-      print("Online_Work_List_response>>" + data);
+      print("Online_Work_List_response>>$data");
 
       String? authorizationHeader = response.headers['authorization'];
 
@@ -344,12 +315,9 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         var response_value = userData[s.key_response];
 
         if (status == s.key_ok && response_value == s.key_ok) {
-          widget.Flag == "U"
-              ? prefs.setString(s.atr_date_u, dateController.text)
-              : prefs.setString(s.atr_date_r, dateController.text);
+          widget.Flag == "U" ? prefs.setString(s.atr_date_u, dateController.text) : prefs.setString(s.atr_date_r, dateController.text);
           Map res_jsonArray = userData[s.key_json_data];
-          List<dynamic> inspection_details =
-              res_jsonArray[s.key_inspection_details];
+          List<dynamic> inspection_details = res_jsonArray[s.key_inspection_details];
 
           if (inspection_details.isNotEmpty) {
             if (widget.Flag == "U") {
@@ -357,7 +325,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             } else if (widget.Flag == "R") {
               dbHelper.delete_table_AtrWorkList('R', "");
             }
-            print("List >>" + inspection_details.toString());
+            print("List >>$inspection_details");
 
             String sql =
                 'INSERT INTO ${s.table_AtrWorkList} (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES ';
@@ -365,8 +333,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             List<String> valueSets = [];
 
             for (var row in inspection_details) {
-              String description =
-                  row[s.key_description]?.replaceAll("'", "''") ?? '';
+              String description = row[s.key_description]?.replaceAll("'", "''") ?? '';
               String values =
                   " ( '${utils.checkNull(row[s.key_dcode])}', '${utils.checkNull(row[s.key_bcode])}', '${utils.checkNull(row[s.key_pvcode])}', '${utils.checkNull(row[s.key_inspection_id])}', '${row[s.key_inspection_date]}', '${row[s.key_status_id]}', '${row[s.key_status_name]}', '$description', '${utils.checkNull(row[s.key_work_id])}', '${utils.checkNull(row[s.key_work_name])}', '${utils.checkNull(row[s.key_name])}', '${utils.checkNull(row[s.key_desig_name])}', '${utils.checkNull(row[s.key_work_type_name])}', '${utils.checkNull(row[s.key_dname])}', '${utils.checkNull(row[s.key_bname])}', '${utils.checkNull(row[s.key_pvname])}', '${utils.checkNull(row[s.key_rural_urban])}', '${utils.checkNull(row[s.key_town_type])}', '${utils.checkNull(row[s.key_tpcode])}', '${utils.checkNull(row[s.key_townpanchayat_name])}', '${utils.checkNull(row[s.key_muncode])}', '${utils.checkNull(row[s.key_municipality_name])}', '${utils.checkNull(row[s.key_corcode])}', '${utils.checkNull(row[s.key_corporation_name])}') ";
               valueSets.add(values);
@@ -376,14 +343,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
             await dbHelper.myDb?.execute(sql);
             if (inspection_details.isNotEmpty) {
-              utils.customAlertWidet(
-                  context, "Success", s.worklist_download_success);
+              utils.customAlertWidet(context, "Success", s.worklist_download_success);
             }
             await fetchOfflineWorklist();
           }
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
           setState(() {
-            utils.showAlert(context, s.no_data);
+            utils.customAlertWidet(context, "Error", s.no_data);
+
             isWorklistAvailable = false;
             totalWorksCount = "0";
             npCount = "0";
@@ -420,21 +387,16 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
       String header_token = utils.jwt_Encode(key, userName!, headerSignature);
 
-      Map<String, String> header = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $header_token"
-      };
+      Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
 
-      HttpClient _client = HttpClient(context: await Utils().globalContext);
-      _client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => false;
-      IOClient _ioClient = new IOClient(_client);
+      HttpClient client = HttpClient(context: await Utils().globalContext);
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
+      IOClient ioClient = IOClient(client);
 
-      var response = await _ioClient.post(url.main_service_jwt,
-          body: jsonEncode(encrypted_request), headers: header);
+      var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
-      print("Get_PDF_url>>" + url.main_service_jwt.toString());
-      print("Get_PDF_request_encrpt>>" + encrypted_request.toString());
+      print("Get_PDF_url>>${url.main_service_jwt}");
+      print("Get_PDF_request_encrpt>>$encrypted_request");
 
       utils.hideProgress(context);
 
@@ -443,7 +405,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
         String data = response.body;
 
-        print("Get_PDF_response>>" + data);
+        print("Get_PDF_response>>$data");
 
         String? authorizationHeader = response.headers['authorization'];
 
@@ -497,10 +459,9 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
   // *************************** Fetch Offline Worklist starts  Here  *************************** //
 
   Future<void> fetchOfflineWorklist() async {
-    print("town_type" + town_type);
-    list = await dbClient.rawQuery(
-        "SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' and town_type='${town_type}' ");
-    print("List >>" + list.toString());
+    print("town_type$town_type");
+    list = await dbClient.rawQuery("SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' and town_type='$town_type' ");
+    print("List >>$list");
 
     if (list.isEmpty) {
       isWorklistAvailable = false;
@@ -556,9 +517,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
         }
       }
 
-      dateController.text = widget.Flag == "U"
-          ? prefs.getString(s.atr_date_u).toString()
-          : prefs.getString(s.atr_date_r).toString();
+      dateController.text = widget.Flag == "U" ? prefs.getString(s.atr_date_u).toString() : prefs.getString(s.atr_date_r).toString();
       setState(() {
         isWorklistAvailable = true;
       });
@@ -577,9 +536,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
     String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
 
     dateController.text = "$startDate  To  $endDate";
-    await utils.isOnline()
-        ? fetchOnlineATRWroklist(startDate, endDate)
-        : utils.customAlertWidet(context, "Error", s.no_internet);
+    await utils.isOnline() ? fetchOnlineATRWroklist(startDate, endDate) : utils.customAlertWidet(context, "Error", s.no_internet);
   }
 
   // *************************** Date  Functions Ends here *************************** //
@@ -595,36 +552,24 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           Container(
             width: screenWidth * 0.9,
             height: 200,
-            margin:
-                const EdgeInsets.only(top: 25, bottom: 10, left: 20, right: 20),
+            margin: const EdgeInsets.only(top: 25, bottom: 10, left: 20, right: 20),
             padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-            decoration: BoxDecoration(
-                color: c.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 5.0,
-                  ),
-                ]),
+            decoration: BoxDecoration(color: c.white, borderRadius: BorderRadius.circular(20), boxShadow: const [
+              BoxShadow(
+                color: Colors.grey,
+                offset: Offset(0.0, 1.0), //(x,y)
+                blurRadius: 5.0,
+              ),
+            ]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(SDBText,
-                      style: GoogleFonts.getFont('Montserrat',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 13,
-                          color: c.text_color)),
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(SDBText, style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 13, color: c.text_color)),
                 ),
-                Text(s.total_inspection_works + totalWorksCount,
-                    style: GoogleFonts.getFont('Montserrat',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
-                        color: c.text_color)),
+                Text(s.total_inspection_works + totalWorksCount, style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 13, color: c.text_color)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -643,11 +588,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                             margin: const EdgeInsets.all(5),
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                color: isNeedImprovementActive
-                                    ? c.need_improvement
-                                    : c.white,
-                                border: Border.all(
-                                    width: 2, color: c.need_improvement),
+                                color: isNeedImprovementActive ? c.need_improvement : c.white,
+                                border: Border.all(width: 2, color: c.need_improvement),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: const [
                                   BoxShadow(
@@ -656,28 +598,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     blurRadius: 5.0,
                                   ),
                                 ]),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(s.need_improvement,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 11,
-                                          color: isNeedImprovementActive
-                                              ? c.white
-                                              : c.need_improvement)),
-                                  Text(npCount,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 11,
-                                          color: isNeedImprovementActive
-                                              ? c.white
-                                              : c.need_improvement)),
-                                ])),
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                              Text(s.need_improvement,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 11, color: isNeedImprovementActive ? c.white : c.need_improvement)),
+                              Text(npCount,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 11, color: isNeedImprovementActive ? c.white : c.need_improvement)),
+                            ])),
                       ),
                     ),
                     Expanded(
@@ -695,11 +623,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                             margin: const EdgeInsets.all(5),
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                color: isUnSatisfiedActive
-                                    ? c.unsatisfied
-                                    : c.white,
-                                border:
-                                    Border.all(width: 2, color: c.unsatisfied),
+                                color: isUnSatisfiedActive ? c.unsatisfied : c.white,
+                                border: Border.all(width: 2, color: c.unsatisfied),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: const [
                                   BoxShadow(
@@ -708,27 +633,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     blurRadius: 5.0,
                                   ),
                                 ]),
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(s.un_satisfied,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 11,
-                                          color: isUnSatisfiedActive
-                                              ? c.white
-                                              : c.unsatisfied)),
-                                  Text(usCount,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.getFont('Montserrat',
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 11,
-                                          color: isUnSatisfiedActive
-                                              ? c.white
-                                              : c.unsatisfied)),
-                                ])),
+                            child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                              Text(s.un_satisfied,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 11, color: isUnSatisfiedActive ? c.white : c.unsatisfied)),
+                              Text(usCount,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.getFont('Montserrat', fontWeight: FontWeight.w800, fontSize: 11, color: isUnSatisfiedActive ? c.white : c.unsatisfied)),
+                            ])),
                       ),
                     ),
                   ],
@@ -737,10 +649,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-                color: c.need_improvement1,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: c.need_improvement, width: 1)),
+            decoration: BoxDecoration(color: c.need_improvement1, borderRadius: BorderRadius.circular(30), border: Border.all(color: c.need_improvement, width: 1)),
             margin: const EdgeInsets.only(top: 5),
             width: MediaQuery.of(context).size.width / 2,
             height: 40,
@@ -752,20 +661,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                       iconSize: 18,
                       onPressed: () async {
                         utils.ShowCalenderDialog(context).then((value) => {
-                              if (value['flag'])
-                                {
-                                  selectedFromDate = value['fromDate'],
-                                  selectedToDate = value['toDate'],
-                                  dateValidation()
-                                }
+                              if (value['flag']) {selectedFromDate = value['fromDate'], selectedToDate = value['toDate'], dateValidation()}
                             });
                       },
                       icon: const Icon(Icons.calendar_month_rounded))),
               Expanded(
                 flex: 7,
                 child: TextField(
-                  controller:
-                      dateController, //editing controller of this TextField
+                  controller: dateController, //editing controller of this TextField
                   style: TextStyle(
                     color: c.primary_text_color2,
                     fontWeight: FontWeight.w900,
@@ -773,32 +676,17 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                   ),
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(top: 10),
+                    contentPadding: const EdgeInsets.only(top: 10),
                     isDense: true,
-                    hintStyle: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11,
-                        color: c.primary_text_color2),
+                    hintStyle: TextStyle(fontWeight: FontWeight.w800, fontSize: 11, color: c.primary_text_color2),
                     hintText: s.select_from_to_date,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 0, color: c.need_improvement1),
-                        borderRadius: BorderRadius.circular(30.0)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 0, color: c.need_improvement1),
-                        borderRadius: BorderRadius.circular(30.0)),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 0, color: c.need_improvement1), borderRadius: BorderRadius.circular(30.0)),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 0, color: c.need_improvement1), borderRadius: BorderRadius.circular(30.0)),
                   ),
-                  readOnly:
-                      true, //set it true, so that user will not able to edit text
+                  readOnly: true, //set it true, so that user will not able to edit text
                   onTap: () async {
                     utils.ShowCalenderDialog(context).then((value) => {
-                          if (value['flag'])
-                            {
-                              selectedFromDate = value['fromDate'],
-                              selectedToDate = value['toDate'],
-                              dateValidation()
-                            }
+                          if (value['flag']) {selectedFromDate = value['fromDate'], selectedToDate = value['toDate'], dateValidation()}
                         });
                   },
                 ),
@@ -822,12 +710,9 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             Visibility(
                 visible: isWorklistAvailable,
                 child: Container(
-                  margin: const EdgeInsets.only(
-                      top: 0, bottom: 10, left: 20, right: 20),
+                  margin: const EdgeInsets.only(top: 0, bottom: 10, left: 20, right: 20),
                   child: AnimationLimiter(
-                    key: ValueKey(widget.Flag == "U"
-                        ? town_type
-                        : isNeedImprovementActive),
+                    key: ValueKey(widget.Flag == "U" ? town_type : isNeedImprovementActive),
                     child: ListView.builder(
                       shrinkWrap: true,
                       primary: false,
@@ -837,9 +722,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                               ? int.parse(npCount)
                               : int.parse(usCount),
                       itemBuilder: (context, index) {
-                        final item = searchEnabled
-                            ? filteredWorklist.elementAt(index)
-                            : defaultWorklist[index];
+                        final item = searchEnabled ? filteredWorklist.elementAt(index) : defaultWorklist[index];
                         return AnimationConfiguration.staggeredList(
                           position: index,
                           duration: const Duration(milliseconds: 800),
@@ -847,34 +730,24 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                             horizontalOffset: 200.0,
                             child: FlipAnimation(
                               child: Card(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 0),
+                                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                                 elevation: 2,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 child: Stack(children: [
                                   Container(
-                                    margin: const EdgeInsets.only(
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10,
-                                        top: 15),
+                                    margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 15),
                                     color: c.white,
                                     child: Column(
                                       children: [
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               s.inspected_by,
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: c.grey_8),
+                                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                               overflow: TextOverflow.clip,
                                               maxLines: 1,
                                               softWrap: true,
@@ -884,19 +757,12 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             ),
                                             Expanded(
                                               child: Container(
-                                                padding:
-                                                    EdgeInsets.only(right: 50),
+                                                padding: const EdgeInsets.only(right: 50),
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
                                                   utils.checkNull(item[s.inspection_by_officer]),
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: c
-                                                          .primary_text_color2),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.primary_text_color2),
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ),
@@ -906,14 +772,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Container(
-                                          padding: EdgeInsets.only(right: 30),
+                                          padding: const EdgeInsets.only(right: 30),
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            "${"( " + utils.checkNull(item[s.inspection_by_officer_designation]) } )",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: c.primary_text_color2),
+                                            "${"( ${utils.checkNull(item[s.inspection_by_officer_designation])}"} )",
+                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: c.primary_text_color2),
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.justify,
                                             maxLines: 1,
@@ -923,19 +786,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 s.work_id,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -945,10 +803,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               flex: 0,
                                               child: Text(
                                                 ' : ',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -957,16 +812,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             Expanded(
                                               flex: 3,
                                               child: Container(
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 0, 5, 0),
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                                 child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topStart,
+                                                  alignment: AlignmentDirectional.topStart,
                                                   child: Text(
-                                                    item[s.key_work_id]
-                                                        .toString(),
+                                                    item[s.key_work_id].toString(),
                                                   ),
                                                 ),
                                               ),
@@ -977,19 +827,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 s.work_name,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -999,10 +844,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               flex: 0,
                                               child: Text(
                                                 ' : ',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1011,16 +853,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             Expanded(
                                               flex: 3,
                                               child: Container(
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 0, 5, 0),
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                                 child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topStart,
+                                                  alignment: AlignmentDirectional.topStart,
                                                   child: ExpandableText(
-                                                    item[s.key_work_name]
-                                                        .toString(),
+                                                    item[s.key_work_name].toString(),
                                                     trimLines: 2,
                                                     txtcolor: "2",
                                                   ),
@@ -1033,19 +870,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 s.work_type_name,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1055,10 +887,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               flex: 0,
                                               child: Text(
                                                 ' : ',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1067,16 +896,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             Expanded(
                                               flex: 3,
                                               child: Container(
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 0, 5, 0),
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                                 child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topStart,
+                                                  alignment: AlignmentDirectional.topStart,
                                                   child: Text(
-                                                    item[s.key_work_type_name]
-                                                        .toString(),
+                                                    item[s.key_work_type_name].toString(),
                                                   ),
                                                 ),
                                               ),
@@ -1087,19 +911,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 s.inspected_date,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1109,10 +928,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               flex: 0,
                                               child: Text(
                                                 ' : ',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1121,16 +937,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             Expanded(
                                               flex: 3,
                                               child: Container(
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 0, 5, 0),
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                                 child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topStart,
+                                                  alignment: AlignmentDirectional.topStart,
                                                   child: Text(
-                                                    item[s.key_inspection_date]
-                                                        .toString(),
+                                                    item[s.key_inspection_date].toString(),
                                                   ),
                                                 ),
                                               ),
@@ -1141,19 +952,14 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                           height: 10,
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 s.status,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1163,10 +969,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                               flex: 0,
                                               child: Text(
                                                 ' : ',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: c.grey_8),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: c.grey_8),
                                                 overflow: TextOverflow.clip,
                                                 maxLines: 1,
                                                 softWrap: true,
@@ -1175,16 +978,11 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                             Expanded(
                                               flex: 3,
                                               child: Container(
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 0, 5, 0),
+                                                margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                                 child: Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topStart,
+                                                  alignment: AlignmentDirectional.topStart,
                                                   child: Text(
-                                                    item[s.key_status_name]
-                                                        .toString(),
+                                                    item[s.key_status_name].toString(),
                                                   ),
                                                 ),
                                               ),
@@ -1200,14 +998,12 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       onTap: () {
                                         selectedWorklist.clear();
                                         selectedWorklist.add(item);
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
+                                        Navigator.of(context).push(MaterialPageRoute(
                                           builder: (context) => ATR_Save(
                                             rural_urban: widget.Flag,
-                                            onoff_type:
-                                                prefs.getString(s.onOffType),
+                                            onoff_type: prefs.getString(s.onOffType),
                                             selectedWorklist: selectedWorklist,
-                                            imagelist: [],
+                                            imagelist: const [],
                                             flag: "",
                                           ),
                                         ));
@@ -1215,18 +1011,10 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                       child: Container(
                                         height: 55,
                                         width: 55,
-                                        decoration: BoxDecoration(
-                                            color: c.colorPrimary,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topRight:
-                                                        Radius.circular(10.0),
-                                                    bottomLeft:
-                                                        Radius.circular(50))),
+                                        decoration: BoxDecoration(color: c.colorPrimary, borderRadius: const BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(50))),
                                         child: Center(
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 5, bottom: 5),
+                                            padding: const EdgeInsets.only(left: 5, bottom: 5),
                                             child: Image.asset(
                                               imagePath.forword,
                                               width: 25,
@@ -1244,18 +1032,13 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                                     child: InkWell(
                                       onTap: () async {
                                         if (await utils.isOnline()) {
-                                          get_PDF(
-                                              item[s.key_work_id].toString(),
-                                              item[s.key_inspection_id]
-                                                  .toString());
+                                          get_PDF(item[s.key_work_id].toString(), item[s.key_inspection_id].toString());
                                         } else {
-                                          utils.customAlertWidet(
-                                              context, "Error", s.no_internet);
+                                          utils.customAlertWidet(context, "Error", s.no_internet);
                                         }
                                       },
                                       child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 10, right: 5),
+                                        padding: const EdgeInsets.only(bottom: 10, right: 5),
                                         child: Image.asset(
                                           imagePath.pdf,
                                           width: 30,
@@ -1278,7 +1061,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
               child: Align(
                 alignment: AlignmentDirectional.center,
                 child: Container(
-                  margin: EdgeInsets.only(top: 40),
+                  margin: const EdgeInsets.only(top: 40),
                   alignment: Alignment.center,
                   child: Text(
                     s.no_data,
@@ -1295,8 +1078,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
 
   // *************************** ATR Urban starts here *************************** //
 
-  _urban_Card_Design(String title, String tmctype, int index, bool tActive,
-      bool mActive, bool cActive) {
+  _urban_Card_Design(String title, String tmctype, int index, bool tActive, bool mActive, bool cActive) {
     return Expanded(
       flex: 1,
       child: InkWell(
@@ -1316,9 +1098,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
                 color: selectedIndex == index ? c.colorAccentlight : c.white,
-                border: Border.all(
-                    width: selectedIndex == index ? 0 : 2,
-                    color: c.colorPrimary),
+                border: Border.all(width: selectedIndex == index ? 0 : 2, color: c.colorPrimary),
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: const [
                   BoxShadow(
@@ -1327,30 +1107,25 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
                     blurRadius: 5.0,
                   ),
                 ]),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 10, right: 5),
-                    child: Image.asset(
-                      imagePath.radio,
-                      color: selectedIndex == index ? c.white : c.grey_5,
-                      width: 17,
-                      height: 17,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      title,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.justify,
-                      style: GoogleFonts.getFont('Roboto',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 11,
-                          color: selectedIndex == index ? c.white : c.grey_6),
-                    ),
-                  ),
-                ])),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 5),
+                child: Image.asset(
+                  imagePath.radio,
+                  color: selectedIndex == index ? c.white : c.grey_5,
+                  width: 17,
+                  height: 17,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.justify,
+                  style: GoogleFonts.getFont('Roboto', fontWeight: FontWeight.w800, fontSize: 11, color: selectedIndex == index ? c.white : c.grey_6),
+                ),
+              ),
+            ])),
       ),
     );
   }
@@ -1364,11 +1139,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist>
           Container(
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.all(3),
-            child: Text(s.select_tmc,
-                style: GoogleFonts.getFont('Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                    color: c.grey_10)),
+            child: Text(s.select_tmc, style: GoogleFonts.getFont('Poppins', fontWeight: FontWeight.w500, fontSize: 13, color: c.grey_10)),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

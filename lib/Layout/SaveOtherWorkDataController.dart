@@ -148,7 +148,7 @@ class SaveOtherWorkDatacontroller with ChangeNotifier {
           listenFor: Duration(minutes: 10));
     } catch (e) {
     if(!_speechToText.isAvailable) {
-      await utils.customAlertWidet(context, "Error", "Microphone permissions is permanently denied, Please allow permission to Record audio.");
+      await utils.customAlertWidet(context, "Warning", "Please allow microphone permission to Record audio.Ignore this message if you already allowed this permission");
       await !_speechToText.isAvailable ?AppSettings.openAppSettings(type: AppSettingsType.settings):null;
       }
     }

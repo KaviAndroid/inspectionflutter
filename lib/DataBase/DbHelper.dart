@@ -18,7 +18,7 @@ class DbHelper {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "inspection.db");
     var theDb = await openDatabase(path,
-        version: 1, onCreate: onCreate, onUpgrade: _onUpgrade);
+        version: 15, onCreate: onCreate, onUpgrade: _onUpgrade);
     return theDb;
   }
 

@@ -108,12 +108,22 @@ class _SplashState extends State<Splash> {
   Future<void> checkPinPatternPasscode() async {
     try {
       bool pass = await auth.authenticate(
+          useErrorDialogs: false,
+          sensitiveTransaction: false,
+          stickyAuth: true,
           localizedReason: 'Authenticate with pattern/pin/passcode',
           biometricOnly: false);
       if (pass) {
         msg = "You are Authenticated.";
         setState(() {});
         utils.gotoHomePage(context, "Splash");
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Authentication failed. Please use user name and password to login. "),
+        ));
+        utils.gotoLoginPageFromSplash(context);
       }
     } on PlatformException catch (e) {
       print("Mess3>>" + e.toString());

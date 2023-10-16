@@ -1,1 +1,7 @@
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+DART_OBFUSCATION=true
+SPLIT_DEBUG_INFO=obj_maps
+TREE_SHAKE_ICONS=true
+EXTRA_GEN_SNAPSHOT_OPTIONS=--obfuscate

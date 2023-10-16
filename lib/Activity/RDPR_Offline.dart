@@ -2,17 +2,14 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Layout/Multiple_CheckBox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
-import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Layout/Single_CheckBox.dart';
 import '../ModelClass/checkBoxModelClass.dart';
@@ -78,7 +75,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
           isSelected: false,
           selectTitle: list[i][s.key_fin_year],
           selectId: i));
-      print(list.toString());
+      // print(list.toString());
     }
 
     if (level == "S") {
@@ -100,7 +97,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             selectTitle: list[i][s.key_dname],
             selectId: int.parse(list[i][s.key_dcode])));
       }
-      print(list.toString());
+      // print(list.toString());
     } else if (level == "D") {
       dFlag = false;
       bFlag = true;
@@ -121,7 +118,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             selectId: int.parse(list[i][s.key_bcode])));
       }
 
-      print(list.toString());
+      // print(list.toString());
     } else if (level == "B") {
       dFlag = false;
       bFlag = false;
@@ -140,7 +137,7 @@ class _RDPR_OfflineState extends State<RDPR_Offline> {
             isSelected: false,
             selectTitle: list[i][s.key_pvname],
             selectId: int.parse(list[i][s.key_pvcode])));
-        print(list.toString());
+        // print(list.toString());
       }
     }
     List<Map> list_urban = await dbClient.rawQuery(

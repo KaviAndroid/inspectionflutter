@@ -1,20 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/WorkList.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:InspectionAppNew/Resources/url.dart' as url;
-import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
-import '../Layout/ReadMoreLess.dart';
 import '../Utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class VillageListFromGeoLocation extends StatefulWidget {
   final villageList;
@@ -35,6 +26,7 @@ class _VillageListFromGeoLocationState
 
   @override
   void initState() {
+    super.initState();
     initialize();
   }
 

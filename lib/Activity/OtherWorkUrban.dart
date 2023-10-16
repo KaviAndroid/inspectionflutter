@@ -11,11 +11,9 @@ import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataBase/DbHelper.dart';
-import '../Resources/Strings.dart';
 import '../Utils/utils.dart';
 import '../Resources/ColorsValue.dart' as c;
 import 'OtherWorks_Save.dart';
-import 'WorkList.dart';
 
 class OtherWorkUrban extends StatefulWidget {
   @override

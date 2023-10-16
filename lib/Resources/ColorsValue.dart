@@ -68,6 +68,7 @@ Color primary_text_color2 = Color(0xFF1e9bff);
 Color blue_background = Color(0xFF242b35);
 Color border_line = Color(0xFF252b34);
 Color account_status_green_color = Color(0xFF45c240);
+Color account_status_green_color_lite = Color(0xff74c571);
 Color subscription_type_red_color = Color(0xFFfc4b5f);
 Color background_light_gray = Color(0xFFf1f1f1);
 Color sky_blue = Color(0xFF61BEE1);

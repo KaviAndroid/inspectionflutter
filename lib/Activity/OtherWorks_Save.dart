@@ -3,25 +3,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:InspectionAppNew/Layout/SaveOtherWorkDataController.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/io_client.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
-import 'package:speech_to_text/speech_to_text.dart';
-import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
-import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 
 class OtherWork_Save extends StatefulWidget {
   final category;

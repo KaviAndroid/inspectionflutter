@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, camel_case_types, prefer_const_constructors, use_build_context_synchronously
 
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';

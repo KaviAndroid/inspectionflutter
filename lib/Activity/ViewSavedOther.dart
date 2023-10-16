@@ -1,43 +1,26 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/OtherWorks_Save.dart';
-import 'package:InspectionAppNew/Activity/RdprOnlineWorkListFromFilter.dart';
 import 'package:InspectionAppNew/Activity/Work_detailed_ViewScreen.dart';
 import 'package:InspectionAppNew/Layout/ReadMoreLess.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart' as loc;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
-import '../ModelClass/ModelClass.dart';
 import '../Resources/ColorsValue.dart';
-import '../Resources/ImagePath.dart';
 import '../Resources/Strings.dart';
-import '../Resources/global.dart';
 import '../Utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
-
-import 'Home.dart';
 import 'Pdf_Viewer.dart';
-import 'RdprOnlineWorkListFromGeoLocation.dart';
-import 'SaveWorkDetails.dart';
-import '../Utils/utils.dart';
 
 class ViewSavedOther extends StatefulWidget {
   @override

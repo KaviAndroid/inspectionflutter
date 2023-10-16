@@ -4,14 +4,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:InspectionAppNew/Activity/Login.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../Utils/utils.dart';
 import '../Resources/ColorsValue.dart' as c;
 
@@ -41,8 +38,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   TextEditingController new_password = TextEditingController();
   TextEditingController confirm_password = TextEditingController();
 
+  @override
   void initState() {
     super.initState();
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    prefs = await SharedPreferences.getInstance();
   }
   Future<bool> _onWillPop() async {
     Navigator.of(context, rootNavigator: true).pop(context);
@@ -200,8 +203,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                               .isNumberValid(mobile_number.text)) {
                                             if (widget.isForgotPassword ==
                                                 "forgot_password") {
-                                              print("Isforgotpassword   " +
-                                                  widget.isForgotPassword);
+                                            /*  print("Isforgotpassword   " +
+                                                  widget.isForgotPassword);*/
                                               FORGOT_PASSWORD_send_otp();
                                             } else if (widget.isForgotPassword ==
                                                 "change_password") {
@@ -777,7 +780,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var KEY;
     if (STATUS.toString() == s.key_ok && RESPONSE.toString() == s.key_ok) {
       utils.customAlertWithDataPassing(
-          context, "Sucess", decodedData[s.key_message], true, false, {});
+          context, "Success", decodedData[s.key_message], true, false, {});
 
       /* mobilenumber = mobile_number.text.toString();
       Otp = otp.text.toString();*/

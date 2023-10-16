@@ -293,25 +293,25 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
     utils.hideProgress(context);
 
-    print("Online_Worklist_url>>" + url.main_service_jwt.toString());
-    print("Online_Worklist_request_encrpt>>" + encrypted_request.toString());
+    // print("Online_Worklist_url>>" + url.main_service_jwt.toString());
+    // print("Online_Worklist_request_encrpt>>" + encrypted_request.toString());
 
     if (response.statusCode == 200) {
       String data = response.body;
 
-      print("Online_Worklist_response>>" + data);
+      // print("Online_Worklist_response>>" + data);
 
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];
 
-      print("Online_Worklist Authorization -  $token");
+      // print("Online_Worklist Authorization -  $token");
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
       String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("Online_Worklist responceSignature -  $responceSignature");
+      // print("Online_Worklist responceSignature -  $responceSignature");
 
       print("Online_Worklist responceData -  $responceData");
 

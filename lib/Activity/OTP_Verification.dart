@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/io_client.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:InspectionAppNew/Activity/Login.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Utils/utils.dart';
-import 'package:InspectionAppNew/Resources/url.dart' as url;
 import '../Resources/ColorsValue.dart' as c;
 
 class OTPVerification extends StatefulWidget {

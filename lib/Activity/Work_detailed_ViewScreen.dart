@@ -1,14 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:http/io_client.dart';
-import 'package:location/location.dart' as loc;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:InspectionAppNew/Resources/url.dart' as url;
 import '../Layout/ReadMoreLess.dart';
 import '../Resources/ColorsValue.dart';
 import '../Utils/utils.dart';
@@ -36,7 +29,6 @@ class Work_detailed_ViewScreen extends StatefulWidget {
 class Work_detailed_ViewScreenState extends State<Work_detailed_ViewScreen> {
   var appBarvisibility = true;
   bool isWorklistAvailable = false;
-  late SharedPreferences prefs;
   Utils utils = Utils();
   bool noDataFlag = false;
   bool imageListFlag = false;

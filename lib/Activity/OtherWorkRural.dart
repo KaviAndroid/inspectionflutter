@@ -3,23 +3,16 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/OtherWorks_Save.dart';
-import 'package:InspectionAppNew/Activity/SaveWorkDetails.dart';
-import 'package:InspectionAppNew/Activity/WorkList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
-import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
-import '../Layout/ReadMoreLess.dart';
 import '../Utils/utils.dart';
 
 class OtherWorksRural extends StatefulWidget {

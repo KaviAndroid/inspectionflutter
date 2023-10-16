@@ -8,10 +8,8 @@ import 'package:InspectionAppNew/Layout/SaveDataController.dart';
 import 'package:provider/provider.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
-import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../Utils/utils.dart';
-import 'package:speech_to_text/speech_recognition_result.dart' as recognition;
 
 class SaveWorkDetails extends StatefulWidget {
   final rural_urban, onoff_type,selectedworkList,townType,flag,imagelist;

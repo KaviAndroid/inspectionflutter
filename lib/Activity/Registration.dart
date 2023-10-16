@@ -2,8 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-
-
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +19,6 @@ import 'package:InspectionAppNew/Resources/url.dart' as url;
 import '../Utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'Login.dart';
 
 class Registration extends StatefulWidget {

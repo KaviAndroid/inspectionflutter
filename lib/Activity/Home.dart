@@ -2,12 +2,9 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
 import 'package:InspectionAppNew/Activity/OtherWorkUrban.dart';
 import 'package:InspectionAppNew/Activity/OtherWorkRural.dart';
@@ -23,14 +20,10 @@ import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../DataBase/DbHelper.dart';
-import '../Resources/global.dart';
 import '../Utils/utils.dart';
 import 'package:InspectionAppNew/Activity/ATR_Offline.dart';
 import 'package:InspectionAppNew/Activity/ATR_Online.dart';
-
-import 'Login.dart';
 
 class Home extends StatefulWidget {
   final isLogin;
@@ -85,13 +78,13 @@ class _HomeState extends State<Home> {
     }*/
     if (isLogin == "Login") {
       if (await utils.isOnline()) {
-        print(">>>>enter");
+        // print(">>>>enter");
         try {
           utils.showProgress(context, 1);
           await callApis();
           utils.hideProgress(context);
         } on Exception catch (_) {
-          print('never reached');
+          // print('never reached');
           utils.hideProgress(context);
         }
       } /*else {

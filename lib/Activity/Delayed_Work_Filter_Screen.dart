@@ -20,6 +20,7 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../DataBase/DbHelper.dart';
 import '../Layout/Multiple_CheckBox.dart';
@@ -108,14 +109,14 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     List<Map> list = await dbClient.rawQuery('SELECT * FROM ' + s.table_FinancialYear);
     for (int i = 0; i < list.length; i++) {
       finyearList.add(FlutterLimitedCheckBoxModel(isSelected: false, selectTitle: list[i][s.key_fin_year], selectId: i));
-      print(list.toString());
+      // print(list.toString());
     }
     selectedLevel = prefs.getString(s.key_level)!;
-    print("#############" + finYearItems.toString());
+    // print("#############" + finYearItems.toString());
     if (selectedLevel == 'S') {
       sFlag = true;
       List<Map> list = await dbClient.rawQuery('SELECT * FROM ${s.table_District}');
-      print(list.toString());
+      // print(list.toString());
       districtItems.add(defaultSelectedDistrict);
       districtItems.addAll(list);
       selectedDistrict = defaultSelectedDistrict[s.key_dcode]!;
@@ -124,7 +125,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     } else if (selectedLevel == 'D') {
       dFlag = true;
       List<Map> list = await dbClient.rawQuery('SELECT * FROM ${s.table_Block}');
-      print(list.toString());
+      // print(list.toString());
       blockItems.add(defaultSelectedBlock);
       blockItems.addAll(list);
       selectedDistrict = prefs.getString(s.key_dcode)!;
@@ -144,8 +145,8 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
       mymap['month'] = (i * 3).toString(); // Now mymap = { name: 'test0' };
       monthItems.add(mymap);
     }
-    print("selectedBlock>>$selectedBlock");
-    print("months>>$monthItems");
+    // print("selectedBlock>>$selectedBlock");
+    // print("months>>$monthItems");
     selectedMonth = defaultSelectedMonth['monthId']!;
 
     setState(() {});
@@ -830,7 +831,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                     });
                                                   },
                                                   child: Card(
-                                                      elevation: 5,
+                                                      elevation: 3,
                                                       margin: EdgeInsets.only(top: 10, bottom: 10),
                                                       color: c.white,
                                                       shape: RoundedRectangleBorder(
@@ -847,13 +848,16 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                             children: [
                                                               Container(
                                                                 decoration: BoxDecoration(
-                                                                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.topRight, colors: [c.colorAccent, c.colorAccent]),
-                                                                    borderRadius: const BorderRadius.only(
+                                                                   /* gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.topRight,
+                                                                        colors: villagelist[index][key_flag_selected]?[c.account_status_green_color_lite, c.account_status_green_color_lite]:[c.grey_6, c.grey_6]),
+                                                                */    borderRadius: const BorderRadius.only(
                                                                       topLeft: Radius.circular(20),
                                                                       topRight: Radius.circular(20),
                                                                       bottomLeft: Radius.circular(20),
                                                                       bottomRight: Radius.circular(20),
-                                                                    )),
+                                                                    ),
+                                                                  color: villagelist[index][key_flag_selected]?c.account_status_green_color_lite:c.grey_3,
+                                                                ),
                                                                 child: Row(
                                                                   children: [
                                                                     Expanded(
@@ -861,7 +865,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                         padding: EdgeInsets.only(top: 10, bottom: 10, left: 20),
                                                                         child: Text(
                                                                           villagelist[index][key_pvname],
-                                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: c.white),
+                                                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: villagelist[index][key_flag_selected]?c.white:c.grey_9),
                                                                           textAlign: TextAlign.start,
                                                                           overflow: TextOverflow.ellipsis,
                                                                         ),
@@ -871,27 +875,12 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                       child: Container(
                                                                         alignment: Alignment.centerRight,
                                                                         padding: EdgeInsets.only(top: 10, bottom: 10, right: 20),
-/*                                                                decoration:
-                                                                    BoxDecoration(
-                                                                        color: c
-                                                                            .dot_light_screen_lite1,
-                                                                        borderRadius:
-                                                                            const BorderRadius.only(
-                                                                          topLeft:
-                                                                              Radius.circular(0),
-                                                                          topRight:
-                                                                              Radius.circular(20),
-                                                                          bottomLeft:
-                                                                              Radius.circular(0),
-                                                                          bottomRight:
-                                                                              Radius.circular(20),
-                                                                        )),*/
                                                                         child: Row(
                                                                           mainAxisAlignment: MainAxisAlignment.end,
                                                                           crossAxisAlignment: CrossAxisAlignment.center,
                                                                           children: [
                                                                             Text(villagelist[index][key_total_count].toString(),
-                                                                                style: TextStyle(color: c.white, fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.right, maxLines: 1),
+                                                                                style: TextStyle(color: villagelist[index][key_flag_selected]?c.white:c.grey_9, fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.right, maxLines: 1),
                                                                             InkWell(
                                                                               onTap: () async {
                                                                                 setState(() {
@@ -902,9 +891,10 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                 margin: EdgeInsets.fromLTRB(5, 5, 0, 0),
                                                                                 child: Align(
                                                                                   child: Image.asset(
-                                                                                    imagePath.arrow_down_icon,
-                                                                                    color: c.white,
+                                                                                    villagelist[index][key_flag] == "0" ?imagePath.arrow_down_icon:imagePath.arrow_up_ic,
+                                                                                    color: villagelist[index][key_flag_selected]?c.white:c.grey_9,
                                                                                     height: 25,
+                                                                                    width: 25,
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -977,28 +967,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                 setState(() {});
                                                                               },
                                                                               child: Container(
-/*                                                                        decoration:
-                                                                           BoxDecoration(
-                                                                           gradient: LinearGradient(
-                                                                           begin:
-                                                                           Alignment.topLeft,
-                                                                           end: Alignment.topRight,
-                                                                           colors: [
-                                                                           c.primary_text_color2,
-                                                                           c.primary_text_color2
-                                                                           ]),
-                                                                           borderRadius:
-                                                                           const BorderRadius
-                                                                           .only(
-                                                                           topLeft:
-                                                                           Radius.circular(10),
-                                                                           topRight:
-                                                                           Radius.circular(10),
-                                                                           bottomLeft:
-                                                                           Radius.circular(10),
-                                                                           bottomRight:
-                                                                           Radius.circular(10),
-                                                                           )),*/
                                                                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
                                                                                 padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                                 child: Align(
@@ -1019,28 +987,6 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                                                                 setState(() {});
                                                                               },
                                                                               child: Container(
-/*                                                                        decoration:
-                                                                           BoxDecoration(
-                                                                           gradient: LinearGradient(
-                                                                           begin:
-                                                                           Alignment.topLeft,
-                                                                           end: Alignment.topRight,
-                                                                           colors: [
-                                                                           c.primary_text_color2,
-                                                                           c.primary_text_color2
-                                                                           ]),
-                                                                           borderRadius:
-                                                                           const BorderRadius
-                                                                           .only(
-                                                                           topLeft:
-                                                                           Radius.circular(10),
-                                                                           topRight:
-                                                                           Radius.circular(10),
-                                                                           bottomLeft:
-                                                                           Radius.circular(10),
-                                                                           bottomRight:
-                                                                           Radius.circular(10),
-                                                                           )),*/
                                                                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
                                                                                 padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                                                                                 child: Align(
@@ -1273,6 +1219,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
           if (res_jsonArray.isNotEmpty) {
             for (var item in res_jsonArray) {
               item[key_flag] = '0';
+              item[key_flag_selected] = false;
               List list = jsonDecode(item[key_workdetails]);
               list.forEach((item2) {
                 item2[key_flag] = false;
@@ -1282,7 +1229,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
               // Additional calculations or logic can be added here if needed
             }
             villagelist = res_jsonArray;
-            print(villagelist);
+            print("villagelist"+villagelist.toString());
           }
         } else {
           utils.showAlert(context, "No Data");
@@ -1689,16 +1636,20 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
                                     side: BorderSide(width: 1, color: c.grey_6),
                                     value: item[s.key_flag],
                                     onChanged: (v) async {
-                                      print("cliked");
-                                      print("cliked" + item[key_flag].toString());
                                       setState(() {
                                         if (item[key_flag] == false) {
                                           item[key_flag] = true;
                                         } else {
                                           item[key_flag] = false;
                                         }
+                                        villagelist[mainIndex][key_flag_selected]=false;
+                                        for (var item3 in villagelist[mainIndex][key_workdetails]) {
+                                          if (item3[key_flag] == true) {
+                                            villagelist[mainIndex][key_flag_selected]=true;
+                                          }
+                                          // Additional calculations or logic can be added here if needed
+                                        }
                                       });
-                                      print("cliked" + item[key_flag].toString());
                                     },
                                   ),
                                 )),
@@ -1795,25 +1746,33 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   }
 
   void downloadPlan() {
-    List selectedList = [];
+    List selectedPVList = [];
     List work_id_list = [];
     for (var item in villagelist) {
       List list = item[key_workdetails];
-      for (var item2 in list) {
-        if (item2[key_flag] == true) {
-          selectedList.add(item2);
-          work_id_list.add(item2[key_work_id]);
+      if (item[key_flag_selected] == true) {
+        for (var item2 in list) {
+          if (item2[key_flag] == true) {
+            !selectedPVList.contains(item[key_pvcode])?selectedPVList.add(item[key_pvcode]):null;
+            work_id_list.add(item2[key_work_id]);
+          }
+          // Additional calculations or logic can be added here if needed
         }
-        // Additional calculations or logic can be added here if needed
+
       }
       // Additional calculations or logic can be added here if needed
     }
-    print("selectedList>>" + selectedList.toString());
+    print("selectedPVList>>" + selectedPVList.toString());
     print("work_id_list>>" + work_id_list.toString());
-    downloadDelayedWorkList(work_id_list);
+    if(work_id_list.isNotEmpty) {
+      downloadDelayedWorkList(work_id_list,selectedPVList);
+    }else{
+      utils.showAlert(context, s.select_works);
+    }
+
   }
 
-  Future<void> downloadDelayedWorkList(List<dynamic> work_id_list) async {
+  Future<void> downloadDelayedWorkList(List<dynamic> work_id_list, List<dynamic> selectedPVList) async {
     utils.showProgress(context, 1);
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
@@ -1822,6 +1781,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     Map work_detail = {
       s.key_dcode: selectedDistrict,
       s.key_bcode: selectedBlock,
+      s.key_pvcode: selectedPVList,
       s.key_work_id: work_id_list,
     };
     json_request = {
@@ -1837,13 +1797,14 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     Map<String, String> header = {"Content-Type": "application/json", "Authorization": "Bearer $header_token"};
     var response;
     try {
+      print("downloadDelayedWorkList_url>>" + url.main_service_jwt.toString());
+      print("downloadDelayedWorkList_request_encrpt>>" + encrypted_request.toString());
       HttpClient client = HttpClient(context: await utils.globalContext);
       client.badCertificateCallback = (X509Certificate cert, String host, int port) => false;
       IOClient ioClient = IOClient(client);
       response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
+      print("downloadDelayedWorkList_response>>" + response.toString());
 
-      print("downloadDelayedWorkList_url>>" + url.main_service_jwt.toString());
-      print("downloadDelayedWorkList_request_encrpt>>" + encrypted_request.toString());
     } catch (error) {
       utils.hideProgress(context);
       print('error (${error.toString()}) has been caught');
@@ -1853,7 +1814,7 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     if (response.statusCode == 200) {
       String data = response.body;
 
-      print("downloadDelayedWorkList_response>>" + data);
+      print("downloadDelayedWorkList_responseBody>>" + data);
 
       String? authorizationHeader = response.headers['authorization'];
 
@@ -1876,9 +1837,9 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
         var response_value = userData[s.key_response];
         if (status == s.key_ok && response_value == s.key_ok) {
           List<dynamic> res_jsonArray = userData[s.key_json_data];
-          /*res_jsonArray.sort((a, b) {
-            return a[s.key_work_id].compareTo(b[s.key_work_id]);
-          });*/
+          res_jsonArray.sort((a, b) {
+            return a[s.key_pvcode].compareTo(b[s.key_pvcode]);
+          });
           if (res_jsonArray.isNotEmpty) {
             dbHelper.delete_table_PlannedDelayWorkList('R');
             String sql_worklist =
@@ -1897,95 +1858,94 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
             await dbHelper.myDb?.execute(sql_worklist);
 
             if (res_jsonArray.isNotEmpty) {
-              List result = res_jsonArray
-                  .fold({}, (previousValue, element) {
-                    Map val = previousValue as Map;
-                    String date = element[key_pvname];
-                    if (!val.containsKey(date)) {
-                      val[date] = [];
-                    }
-                    element.remove(key_pvname);
-                    val[date]?.add(element);
-                    return val;
-                  })
-                  .entries
-                  .map((e) => {e.key: e.value})
-                  .toList();
+              pvListHeader.clear();
 
-              pvListHeader = [];
+              for (var headerCount = 0; headerCount < res_jsonArray.length; headerCount++) {
+                if(pvListHeader.isEmpty || !pvListHeader.contains(res_jsonArray[headerCount][key_pvcode])){
+                  pvListHeader.add(res_jsonArray[headerCount][key_pvcode]);
+                }
+              }
+              downloadPDF(work_id_list);
+            }
+           /*
+            if (res_jsonArray.isNotEmpty) {
+              try{
+                final pdf = pw.Document();
 
-              for (var pvlistCount = 0; pvlistCount < result.length; pvlistCount++) {
-                Map<dynamic, dynamic> data = result[pvlistCount];
-                tableHeaderName = data.keys.first.toString();
-                pvListHeader.add(tableHeaderName);
+                pdf.addPage(
+                  pw.MultiPage(
+                    pageFormat: PdfPageFormat.a4,
+                    build: (pw.Context context) {
+                      List<pw.Widget> pages = [];
+
+                      pages.add(pw.Column(children: [
+                        _buildHeader(context),
+
+                        pw.SizedBox(height: 20), // Space between date and heading
+                        pw.Center(
+                          child: pw.Text(
+                            'Inspection Plan Details',
+                            style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+                          ),
+                        ),
+                        pw.SizedBox(height: 20),
+                        pw.Flex(
+                          direction: pw.Axis.horizontal,
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'District : ${res_jsonArray[0][key_dname]}',
+                              style: pw.TextStyle(fontSize: 10),
+                            ),
+                            pw.Text(
+                              'Block : ${res_jsonArray[0][key_bname]}',
+                              style: pw.TextStyle(fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ]));
+                      pvListHeader.clear();
+                      for (var headerCount = 0; headerCount < res_jsonArray.length; headerCount++) {
+                        pages.add(
+                          pw.Container(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                _buildContent(context, res_jsonArray, headerCount),
+                              ],
+                            ),
+                          ),
+                        );
+                        if(pvListHeader.isEmpty || !pvListHeader.contains(res_jsonArray[headerCount][key_pvcode])){
+                          pvListHeader.add(res_jsonArray[headerCount][key_pvcode]);
+                        }
+
+                      }
+                      print("pages >>" +pages.length.toString());
+
+                      return pages;
+                    },
+                  ),
+                );
+                Uint8List pdfBytes = await pdf.save();
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => PDF_Viewer(
+                        pdfBytes: pdfBytes,
+                        dcode: selectedDistrict,
+                        bcode: selectedBlock,
+                        workList: work_id_list,
+                      )),
+                );
+              } on PlatformException catch (e) {
+                print("Exception>>" + e.toString());
+                utils.showAlert(context,e.toString());
               }
 
-              final pdf = pw.Document();
-
-              pdf.addPage(
-                pw.MultiPage(
-                  pageFormat: PdfPageFormat.a4,
-                  build: (pw.Context context) {
-                    List<pw.Widget> pages = [];
-
-                    pages.add(pw.Column(children: [
-                      _buildHeader(context),
-
-                      pw.SizedBox(height: 20), // Space between date and heading
-                      pw.Center(
-                        child: pw.Text(
-                          'Inspection Plan Details',
-                          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
-                        ),
-                      ),
-                      pw.SizedBox(height: 20),
-                      pw.Flex(
-                        direction: pw.Axis.horizontal,
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: pw.CrossAxisAlignment.center,
-                        children: [
-                          pw.Text(
-                            'District : ${res_jsonArray[0][key_dname]}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                          pw.Text(
-                            'Block : ${res_jsonArray[0][key_bname]}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ]));
-
-                    for (var headerCount = 0; headerCount < pvListHeader.length; headerCount++) {
-                      pages.add(
-                        pw.Container(
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              _buildContent(context, pvListHeader, result, headerCount),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-
-                    return pages;
-                  },
-                ),
-              );
-
-              Uint8List pdfBytes = await pdf.save();
-
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => PDF_Viewer(
-                          pdfBytes: pdfBytes,
-                          dcode: selectedDistrict,
-                          bcode: selectedBlock,
-                          workList: work_id_list,
-                        )),
-              );
             }
+*/
           } else {
             utils.showAlert(context, s.no_data);
           }
@@ -2014,18 +1974,18 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     );
   }
 
-  pw.Widget _buildContent(pw.Context context, List<dynamic> pvListHeader, List<dynamic> result, int headerCount) {
+  pw.Widget _buildContent(pw.Context context, List<dynamic> result, int headerCount) {
     return pw.Column(
       children: [
-        pw.SizedBox(height: 20), // Space between content and table
-        pvNameHeaderTable(context, pvListHeader, headerCount),
-        detailsTable(context, result, pvListHeader, headerCount),
+        if(!pvListHeader.contains(result[headerCount][key_pvcode]))pw.SizedBox(height: 20), // Space between content and table
+        if(!pvListHeader.contains(result[headerCount][key_pvcode]))pvNameHeaderTable(context, result, headerCount),
+        detailsTable(context, result, headerCount),
       ],
     );
   }
 
   pw.Table pvNameHeaderTable(pw.Context context, List<dynamic> list, int index) {
-    String headerValue = "Village : ${list[index]}";
+    String headerValue = "Village : ${list[index][key_pvname]}";
 
     return pw.Table.fromTextArray(
       defaultColumnWidth: pw.FixedColumnWidth(5),
@@ -2039,25 +1999,21 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
     );
   }
 
-  pw.Table detailsTable(pw.Context context, List<dynamic> result, List pvListHeader, int headersCount) {
-    String villageName = pvListHeader[headersCount];
+  pw.Table detailsTable(pw.Context context, List<dynamic> result, int headersCount) {
     List<String> listofHeader = [work_id, work_name, work_type_name, as_value];
-
     List<List<dynamic>> mlist = [];
-
-    for (var data in result[headersCount][villageName]) {
-      List<String> list2 = [];
-      mlist.isEmpty ? mlist.add(listofHeader) : null;
-      list2.add(data[key_work_id].toString());
-      list2.add(data[key_work_name]);
-      list2.add(data[key_work_type_name]);
-      list2.add(data[key_as_value].toString());
-      mlist.add(list2);
-    }
+    !pvListHeader.contains(result[headersCount][key_pvcode])?mlist.add(listofHeader) : null;
+    List<String> list2 = [];
+    list2.add(result[headersCount][key_work_id].toString());
+    list2.add(result[headersCount][key_work_name]);
+    list2.add(result[headersCount][key_work_type_name]);
+    list2.add(result[headersCount][key_as_value].toString());
+    mlist.add(list2);
 
     return pw.Table.fromTextArray(
       context: context,
       data: [...mlist],
+      cellAlignment: pw.Alignment.center,
       cellStyle: pw.TextStyle(fontSize: 10),
       headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
       columnWidths: {
@@ -2083,14 +2039,39 @@ class _DelayedWorkFilterScreenState extends State<DelayedWorkFilterScreen> {
   }
 
   Future<void> selectAllSublist(int index) async {
+    villagelist[index][key_flag_selected]=true;
     for (var sampletaxData in villagelist[index][key_workdetails]) {
       sampletaxData[key_flag] = true;
     }
   }
 
   Future<void> clearAllSublist(int index) async {
+    villagelist[index][key_flag_selected]=false;
     for (var sampletaxData in villagelist[index][key_workdetails]) {
       sampletaxData[key_flag] = false;
     }
+  }
+
+  Future<void> downloadPDF(List<dynamic> work_id_list) async {
+    try{
+      String urlParams = "";
+      urlParams =
+      "${s.key_service_id}=${base64Encode(utf8.encode(s.service_key_get_work_details_pdf))}&${s.key_dcode}=${base64Encode(utf8.encode(selectedDistrict))}&${s.key_bcode}=${base64Encode(utf8.encode(selectedBlock))}&${s.key_work_id}=${base64Encode(utf8.encode(work_id_list.toString()))}";
+      String key = "45af1c702e5c46acb5f4192cbeaba27c";
+
+      String Signature = Utils().generateHmacSha256(urlParams, key, true);
+
+      print('Signature: $Signature');
+
+      String encodedParams = "${url.pdf_URL}?$urlParams&sign=$Signature";
+
+      print('encodedParams: $encodedParams');
+
+      await launchUrl(Uri.parse(encodedParams), mode: LaunchMode.externalApplication);
+    } on PlatformException catch (e) {
+      print("Exception>>" + e.toString());
+      utils.showAlert(context,e.toString());
+    }
+
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/io_client.dart';
@@ -14,9 +13,6 @@ import 'package:InspectionAppNew/Resources/url.dart' as url;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import '../DataBase/DbHelper.dart';
 import '../Utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-
 import 'RdprOnlineWorkListFromGeoLocation.dart';
 import 'WorkList.dart';
 
@@ -377,6 +373,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
   }
 
   Future<void> getLocation() async {
+    utils.showProgress(context, 1);
     final hasPermission = await utils.handleLocationPermission(context);
 
     if (!hasPermission) return;
@@ -384,6 +381,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
         desiredAccuracy: LocationAccuracy.high);
     print("latitude>>" + position.latitude.toString());
     print("longitude>>" + position.longitude.toString());
+    utils.hideProgress(context);
     if (await utils.isOnline()) {
       getVillageListOfLocation(
           position.latitude.toString(), position.longitude.toString());
@@ -394,9 +392,9 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
 
   Future<void> getVillageListOfLocation(
       String latitude, String longitude) async {
+    utils.showProgress(context, 1);
     String? key = prefs.getString(s.userPassKey);
     String? userName = prefs.getString(s.key_user_name);
-    utils.showProgress(context, 1);
     late Map json_request;
 
     json_request = {

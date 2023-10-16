@@ -29,6 +29,7 @@ String otp = "assets/images/otp.png";
 String regUser = "assets/images/regUser.png";
 String action = "assets/images/action.png";
 String arrow_down_icon = "assets/images/arrow_down_icon.png";
+String arrow_up_ic = "assets/images/arrow_up_ic.png";
 String camera = "assets/images/camera.png";
 String ic_camera = "assets/images/ic_camera.png";
 String back_arrow = "assets/images/back_arrow.png";

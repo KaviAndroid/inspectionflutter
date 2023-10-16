@@ -247,6 +247,7 @@ String logout_alert = " then click logout icon in home page to successfully logo
 String view_progress = "View Work Progress";
 String select_all = "Select All";
 String clear_all = "Clear All";
+String select_works = "Please select Works from village list";
 String click_to_filter = "Click here to plan again...";
 String version_error_msg = "This application supports only android 9 and above versions";
 
@@ -373,6 +374,7 @@ String key_date = "date";
 String key_days = "days";
 String key_image_path = "image_path";
 String key_flag = "flag";
+String key_flag_selected = "flag_selected";
 String key_inspection_image = "inspection_image";
 String key_action_status = "action_status";
 String key_action_taken_date = "action_taken_date";

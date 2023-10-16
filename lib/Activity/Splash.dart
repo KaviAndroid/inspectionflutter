@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/io_client.dart';
-import 'package:InspectionAppNew/Layout/AppUpdate.dart';
 import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:InspectionAppNew/Resources/ColorsValue.dart' as c;
@@ -228,8 +224,10 @@ class _SplashState extends State<Splash> {
       print("checkVersion_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
-      String version = decodedData['version'];
-      version=version=="1.8" ? "1.8.0" : version ;
+      String version = /*decodedData['version']*/"1.8";
+      version=containsNDots(version);
+      print("app__api_version>>" + version.toString());
+
       String app_version = await utils.getVersion();
       // String v1 = '1.2.3', v2 = '1.2.11';
       int v1Number = getExtendedVersionNumber(version); // return 102003
@@ -262,4 +260,15 @@ class _SplashState extends State<Splash> {
     versionCells = versionCells.map((i) => int.parse(i)).toList();
     return versionCells[0] * 100000 + versionCells[1] * 1000 + versionCells[2];
   }
+  String containsNDots(String input) {
+    int charCount = 0;
+
+    for( int i = 0; i < input.length; i++ )
+    {
+      input[i] == '.'?charCount++:null;
+    }
+    charCount==0? input=input+".0.0":charCount==1?input=input+".0":null;
+    return input;
+  }
+
 }

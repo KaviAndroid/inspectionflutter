@@ -104,6 +104,7 @@ class _WorkListState extends State<WorkList> {
 
   @override
   void initState() {
+    super.initState();
     initialize();
   }
 

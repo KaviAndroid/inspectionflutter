@@ -1,7 +1,6 @@
 // ignore_for_file: unused_local_variable, non_constant_identifier_names, file_names, camel_case_types, prefer_typing_uninitialized_variables, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:InspectionAppNew/Utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,11 +80,11 @@ class _PDF_ViewerState extends State<PDF_Viewer> {
 
     String Signature = Utils().generateHmacSha256(urlParams, key, true);
 
-    print('Signature: $Signature');
+    // print('Signature: $Signature');
 
     String encodedParams = "${url.pdf_URL}?$urlParams&sign=$Signature";
 
-    print('encodedParams: $encodedParams');
+    // print('encodedParams: $encodedParams');
 
     await launchUrl(Uri.parse(encodedParams), mode: LaunchMode.externalApplication);
 

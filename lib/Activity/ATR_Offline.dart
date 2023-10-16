@@ -109,7 +109,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
     widget.Flag == "R" ? town_type = "" : town_type = "T";
     if (prefs.getString(s.onOffType) == "offline" && widget.Flag == "U") {
       List<Map> urbanOfflineList = await dbClient.rawQuery("SELECT * FROM ${s.table_AtrWorkList} where rural_urban='${widget.Flag}' order by town_type desc");
-      print("List >>$urbanOfflineList");
+      // print("List >>$urbanOfflineList");
       if (urbanOfflineList.isNotEmpty) {
         //value exists
         if (urbanOfflineList[0][s.key_town_type] == "T") {
@@ -283,31 +283,31 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
 
     var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
-    print("Online_Work_List_url>>${url.main_service_jwt}");
-    print("Online_Work_List_request_encrpt>>$encrypted_request");
+    // print("Online_Work_List_url>>${url.main_service_jwt}");
+    // print("Online_Work_List_request_encrpt>>$encrypted_request");
     utils.hideProgress(context);
 
     if (response.statusCode == 200) {
       String data = response.body;
 
-      print("Online_Work_List_response>>$data");
+      // print("Online_Work_List_response>>$data");
 
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];
 
-      print("Online_Work_List Authorization -  $token");
+      // print("Online_Work_List Authorization -  $token");
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
       String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("Online_Work_List responceSignature -  $responceSignature");
+      // print("Online_Work_List responceSignature -  $responceSignature");
 
-      print("Online_Work_List responceData -  $responceData");
+      // print("Online_Work_List responceData -  $responceData");
 
       if (responceSignature == responceData) {
-        print("Online_Work_List responceSignature - Token Verified");
+        // print("Online_Work_List responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
 
@@ -325,7 +325,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
             } else if (widget.Flag == "R") {
               dbHelper.delete_table_AtrWorkList('R', "");
             }
-            print("List >>$inspection_details");
+            // print("List >>$inspection_details");
 
             String sql =
                 'INSERT INTO ${s.table_AtrWorkList} (dcode, bcode , pvcode, inspection_id  , inspection_date , status_id, status , description , work_id, work_name  , inspection_by_officer , inspection_by_officer_designation, work_type_name  , dname , bname, pvname , rural_urban, town_type, tpcode, townpanchayat_name, muncode, municipality_name, corcode, corporation_name) VALUES ';
@@ -359,7 +359,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
         }
       } else {
         utils.customAlertWidet(context, "Error", s.jsonError);
-        print("Online_Work_List responceSignature - Token Not Verified");
+        // print("Online_Work_List responceSignature - Token Not Verified");
       }
     }
   }
@@ -395,8 +395,8 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
 
       var response = await ioClient.post(url.main_service_jwt, body: jsonEncode(encrypted_request), headers: header);
 
-      print("Get_PDF_url>>${url.main_service_jwt}");
-      print("Get_PDF_request_encrpt>>$encrypted_request");
+      // print("Get_PDF_url>>${url.main_service_jwt}");
+      // print("Get_PDF_request_encrpt>>$encrypted_request");
 
       utils.hideProgress(context);
 
@@ -405,7 +405,7 @@ class ATR_Offline_worklistState extends State<ATR_Offline_worklist> with TickerP
 
         String data = response.body;
 
-        print("Get_PDF_response>>$data");
+        // print("Get_PDF_response>>$data");
 
         String? authorizationHeader = response.headers['authorization'];
 

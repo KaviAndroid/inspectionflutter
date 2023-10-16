@@ -17,7 +17,6 @@ import 'package:InspectionAppNew/Resources/Strings.dart' as s;
 import '../Utils/utils.dart';
 import 'package:InspectionAppNew/Resources/ImagePath.dart' as imagePath;
 import 'package:InspectionAppNew/Resources/url.dart' as url;
-
 import 'SaveWorkDetails.dart';
 
 class PendingScreen extends StatefulWidget {

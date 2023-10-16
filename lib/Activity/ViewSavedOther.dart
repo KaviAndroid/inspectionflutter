@@ -113,7 +113,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     prefs.setString(s.onOffType, "online");
     dbClient = await dbHelper.db;
     loadWorkList();
-    print("FLAG#####>>>>>>>>" + widget.Flag);
+    // print("FLAG#####>>>>>>>>" + widget.Flag);
   }
 
   Future<void> loadWorkList() async {
@@ -125,7 +125,7 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     from_Date = "$startDate";
     to_Date = "$toDate";
     dateController.text = "$from_Date to $to_Date";
-    print("date>>>>" + dateController.text);
+    // print("date>>>>" + dateController.text);
     await getOtherWorkDetails(startDate, toDate);
     setState(() {
       isSpinnerLoading = false;
@@ -487,13 +487,13 @@ class _ViewSavedOtherState extends State<ViewSavedOther> {
     workList.clear();
     workid.clear();
     String startDate = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
-    print("Start_date" + startDate);
+    // print("Start_date" + startDate);
     String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
-    print("End_date" + endDate);
+    // print("End_date" + endDate);
     from_Date = startDate;
     to_Date = endDate;
-    print("Startdate>>>>>" + from_Date);
-    print("Todate>>>>>" + to_Date);
+    // print("Startdate>>>>>" + from_Date);
+    // print("Todate>>>>>" + to_Date);
 
     dateController.text = "$startDate  To  $endDate";
     await getOtherWorkDetails(from_Date, to_Date);

@@ -379,8 +379,8 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
     if (!hasPermission) return;
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    print("latitude>>" + position.latitude.toString());
-    print("longitude>>" + position.longitude.toString());
+    // print("latitude>>" + position.latitude.toString());
+    // print("longitude>>" + position.longitude.toString());
     utils.hideProgress(context);
     if (await utils.isOnline()) {
       getVillageListOfLocation(
@@ -426,32 +426,32 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
         body: jsonEncode(encrypted_request), headers: header);
 
     // http.Response response = await http.post(url.main_service, body: json.encode(encrpted_request));
-    print("VillageListOfLocation_url>>" + url.main_service_jwt.toString());
-    print("VillageListOfLocation_request_json>>" + json_request.toString());
-    print("VillageListOfLocation_request_encrpt>>" +
-        encrypted_request.toString());
+    // print("VillageListOfLocation_url>>" + url.main_service_jwt.toString());
+    // print("VillageListOfLocation_request_json>>" + json_request.toString());
+    /*print("VillageListOfLocation_request_encrpt>>" +
+        encrypted_request.toString());*/
     utils.hideProgress(context);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
-      print("VillageListOfLocation_response>>" + data);
+      // print("VillageListOfLocation_response>>" + data);
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];
 
-      print("VillageListOfLocation Authorization -  $token");
+      // print("VillageListOfLocation Authorization -  $token");
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
       String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("VillageListOfLocation responceSignature -  $responceSignature");
+      // print("VillageListOfLocation responceSignature -  $responceSignature");
 
-      print("VillageListOfLocation responceData -  $responceData");
+      // print("VillageListOfLocation responceData -  $responceData");
 
       if (responceSignature == responceData) {
-        print("VillageListOfLocation responceSignature - Token Verified");
+        // print("VillageListOfLocation responceSignature - Token Verified");
         var userData = jsonDecode(data);
         var status = userData[s.key_status];
         var response_value = userData[s.key_response];
@@ -474,7 +474,7 @@ class _RDPR_OnlineState extends State<RDPR_Online> {
           utils.showAlert(context, s.no_village);
         }
       } else {
-        print("VillageListOfLocation responceSignature - Token Not Verified");
+        // print("VillageListOfLocation responceSignature - Token Not Verified");
         utils.customAlertWidet(context, "Error", s.jsonError);
       }
     }

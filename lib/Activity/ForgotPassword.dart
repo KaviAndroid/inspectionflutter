@@ -562,10 +562,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     var response =
         await _ioClient.post(url.open_service, body: json.encode(request));
     // http.Response response = await http.post(url.open_service, body:jsonEncode(request));
-    print("send_otp_url>>" + url.open_service.toString());
-    print("otp>>" + request.toString());
+    // print("send_otp_url>>" + url.open_service.toString());
+    // print("otp>>" + request.toString());
     String data = response.body;
-    print("otp_response>>" + data);
+    // print("otp_response>>" + data);
     utils.hideProgress(context);
     var decodedData = json.decode(data);
     var STATUS = decodedData[s.key_status];

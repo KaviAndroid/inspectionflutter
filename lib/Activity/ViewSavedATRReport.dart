@@ -105,7 +105,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     prefs.setString(s.onOffType, "online");
     dbClient = await dbHelper.db;
     loadWorkList();
-    print("FLAG#####>>>>>>>>" + widget.Flag);
+    // print("FLAG#####>>>>>>>>" + widget.Flag);
   }
 
   Future<void> loadWorkList() async {
@@ -117,7 +117,7 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     from_Date = "$startDate";
     to_Date = "$toDate";
     dateController.text = "$from_Date to $to_Date";
-    print("date>>>>" + dateController.text);
+    // print("date>>>>" + dateController.text);
     await getWorkDetails(startDate, toDate);
     setState(() {
       isSpinnerLoading = false;
@@ -489,13 +489,13 @@ class _ViewSavedATRState extends State<ViewSavedATRReport> {
     workList.clear();
     workid.clear();
     String startDate = DateFormat('dd-MM-yyyy').format(selectedFromDate!);
-    print("Start_date" + startDate);
+    // print("Start_date" + startDate);
     String endDate = DateFormat('dd-MM-yyyy').format(selectedToDate!);
-    print("End_date" + endDate);
+    // print("End_date" + endDate);
     from_Date = startDate;
     to_Date = endDate;
-    print("Startdate>>>>>" + from_Date);
-    print("Todate>>>>>" + to_Date);
+    // print("Startdate>>>>>" + from_Date);
+    // print("Todate>>>>>" + to_Date);
 
     if (startDate.compareTo(endDate) > 0) {
       dateController.text = s.select_from_to_date;

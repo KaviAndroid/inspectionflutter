@@ -68,7 +68,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
       }
     }
 
-    print("object >>>> $myWorklist");
+    // print("object >>>> $myWorklist");
 
     await fetchOnlineOverallWroklist(widget.fromDate, widget.toDate);
 
@@ -124,7 +124,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
 
       String header_token = utils.jwt_Encode(key, userName!, headerSignature);
 
-      print("OverallWroklist_request_encrpt>>" + jsonEncode(encrypted_request));
+      // print("OverallWroklist_request_encrpt>>" + jsonEncode(encrypted_request));
 
       Map<String, String> header = {
         "Content-Type": "application/json",
@@ -137,32 +137,32 @@ class _ViewWorklistState extends State<ViewWorklist> {
       var response = await _ioClient.post(url.main_service_jwt,
           body: jsonEncode(encrypted_request), headers: header);
 
-      print("OverallWroklist_url>>" + url.main_service_jwt.toString());
-      print("OverallWroklist_request_json>>" + jsonRequest.toString());
-      print("OverallWroklist_request_encrpt>>" + encrypted_request.toString());
+      // print("OverallWroklist_url>>" + url.main_service_jwt.toString());
+      // print("OverallWroklist_request_json>>" + jsonRequest.toString());
+      // print("OverallWroklist_request_encrpt>>" + encrypted_request.toString());
 
       utils.hideProgress(context);
       if (response.statusCode == 200) {
         String data = response.body;
 
-        print("OverallWroklist_response>>" + data);
+        // print("OverallWroklist_response>>" + data);
 
         String? authorizationHeader = response.headers['authorization'];
 
         String? token = authorizationHeader?.split(' ')[1];
 
-        print("OverallWroklist Authorization -  $token");
+        // print("OverallWroklist Authorization -  $token");
 
         String responceSignature = utils.jwt_Decode(key, token!);
 
         String responceData = utils.generateHmacSha256(data, key, false);
 
-        print("OverallWroklist responceSignature -  $responceSignature");
+        // print("OverallWroklist responceSignature -  $responceSignature");
 
-        print("OverallWroklist responceData -  $responceData");
+        // print("OverallWroklist responceData -  $responceData");
 
         if (responceSignature == responceData) {
-          print("OverallWroklist responceSignature - Token Verified");
+          // print("OverallWroklist responceSignature - Token Verified");
           var userData = jsonDecode(data);
           var status = userData[s.key_status];
           var response_value = userData[s.key_response];
@@ -181,7 +181,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
             utils.customAlertWidet(context, "Error", s.no_data);
           }
         } else {
-          print("OverallWroklist responceSignature - Token Not Verified");
+          // print("OverallWroklist responceSignature - Token Not Verified");
           utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
@@ -189,7 +189,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
       if (e is FormatException) {
         utils.customAlertWidet(context, "Error", s.jsonError);
       }
-      print(e);
+      // print(e);
     }
   }
 
@@ -198,7 +198,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
 
     List<dynamic> work_details = global.workDetails;
 
-    print("Controller WOrklist $work_details");
+    // print("Controller WOrklist $work_details");
 
     var rural_urban = prefs.getString(s.key_rural_urban);
     String Status_ID = "";
@@ -351,7 +351,7 @@ class _ViewWorklistState extends State<ViewWorklist> {
         s.key_data_content: jsonRequest
       };
 
-      print(" ENC Request >>> $encrypted_request");
+      // print(" ENC Request >>> $encrypted_request");
       String jsonString = jsonEncode(encrypted_request);
       String headerSignature = utils.generateHmacSha256(jsonString, key!, true);
 
@@ -367,32 +367,32 @@ class _ViewWorklistState extends State<ViewWorklist> {
       var response = await _ioClient.post(url.main_service_jwt,
           body: jsonEncode(encrypted_request), headers: header);
 
-      print("get_pdf_url>>" + url.main_service_jwt.toString());
-      print("get_pdf_request_encrpt>>" + encrypted_request.toString());
+      // print("get_pdf_url>>" + url.main_service_jwt.toString());
+      // print("get_pdf_request_encrpt>>" + encrypted_request.toString());
 
       utils.hideProgress(context);
 
       if (response.statusCode == 200) {
         String data = response.body;
 
-        print("ProgressDetails_response>>" + data);
+        // print("ProgressDetails_response>>" + data);
 
         String? authorizationHeader = response.headers['authorization'];
 
         String? token = authorizationHeader?.split(' ')[1];
 
-        print("ProgressDetails Authorization -  $token");
+        // print("ProgressDetails Authorization -  $token");
 
         String responceSignature = utils.jwt_Decode(key, token!);
 
         String responceData = utils.generateHmacSha256(data, key, false);
 
-        print("ProgressDetails responceSignature -  $responceSignature");
+        // print("ProgressDetails responceSignature -  $responceSignature");
 
-        print("ProgressDetails responceData -  $responceData");
+        // print("ProgressDetails responceData -  $responceData");
 
         if (responceSignature == responceData) {
-          print("ProgressDetails responceSignature - Token Verified");
+          // print("ProgressDetails responceSignature - Token Verified");
           var userData = jsonDecode(data);
 
           var status = userData[s.key_status];
@@ -412,13 +412,13 @@ class _ViewWorklistState extends State<ViewWorklist> {
             );
           }
         } else {
-          print("ProgressDetails responceSignature - Token Not Verified");
+          // print("ProgressDetails responceSignature - Token Not Verified");
           utils.customAlertWidet(context, "Error", s.jsonError);
         }
       }
     } catch (e) {
       if (e is FormatException) {
-        print(e);
+        // print(e);
 
         utils.customAlertWidet(context, "Error", s.jsonError);
       }

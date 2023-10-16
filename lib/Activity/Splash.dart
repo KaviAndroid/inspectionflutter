@@ -51,30 +51,30 @@ class _SplashState extends State<Splash> {
           await auth.canCheckBiometrics; //check if there is authencations,
 
       if (hasbiometrics) {
-        print("Mess>>" + hasbiometrics.toString());
+        // print("Mess>>" + hasbiometrics.toString());
         List<BiometricType> availableBiometrics =
             await auth.getAvailableBiometrics();
         if (availableBiometrics.contains(BiometricType.face) ||
             availableBiometrics.contains(BiometricType.fingerprint)) {
-          print("Messsss>>" + hasbiometrics.toString());
+          // print("Messsss>>" + hasbiometrics.toString());
           checkFaceFingerPrint();
         } else {
           msg = "You are not alowed to access biometrics.";
-          print("Mess2>>" + hasbiometrics.toString());
+          // print("Mess2>>" + hasbiometrics.toString());
           checkPinPatternPasscode();
         }
       } else {
-        print("Mess4>>" + hasbiometrics.toString());
+        // print("Mess4>>" + hasbiometrics.toString());
         msg = "You are not alowed to access biometrics.";
         checkPinPatternPasscode();
       }
     } on PlatformException catch (e) {
-      print("Mess6>>" + "hasbiometrics.toString()");
+      // print("Mess6>>" + "hasbiometrics.toString()");
       msg = e.toString();
       checkPinPatternPasscode();
 
     }
-    print("Mess>>" + msg);
+    // print("Mess>>" + msg);
   }
 
   Future<void> checkFaceFingerPrint() async {
@@ -82,7 +82,7 @@ class _SplashState extends State<Splash> {
     bool pass = await auth.authenticate(
         localizedReason: 'Authenticate with fingerprint/face',
         biometricOnly: true);
-    print("Mess1>>" + pass.toString());
+    // print("Mess1>>" + pass.toString());
 
     if (pass) {
       msg = "You are Authenicated.";
@@ -96,7 +96,7 @@ class _SplashState extends State<Splash> {
       utils.gotoLoginPageFromSplash(context);
     }
     } on PlatformException catch (e) {
-      print("Messpin>>" + e.toString());
+      // print("Messpin>>" + e.toString());
       msg = "Error while opening fingerprint/face scanner";
      checkPinPatternPasscode();
     }
@@ -122,7 +122,7 @@ class _SplashState extends State<Splash> {
         utils.gotoLoginPageFromSplash(context);
       }
     } on PlatformException catch (e) {
-      print("Mess3>>" + e.toString());
+      // print("Mess3>>" + e.toString());
       msg = "Error while opening pattern/pin/passcode";
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
@@ -215,27 +215,27 @@ class _SplashState extends State<Splash> {
     IOClient _ioClient = IOClient(_client);
     var response = await _ioClient.post(url.login, body: request);
     // http.Response response = await http.post(url.login, body: request);
-    print("checkVersion_url>>" + url.login.toString());
-    print("checkVersion_request>>" + request.toString());
+    // print("checkVersion_url>>" + url.login.toString());
+    // print("checkVersion_request>>" + request.toString());
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       String data = response.body;
-      print("checkVersion_response>>" + data);
+      // print("checkVersion_response>>" + data);
       var decodedData = json.decode(data);
       // var decodedData= await json.decode(json.encode(response.body));
       String version = /*decodedData['version']*/"1.8";
       version=containsNDots(version);
-      print("app__api_version>>" + version.toString());
+      // print("app__api_version>>" + version.toString());
 
       String app_version = await utils.getVersion();
       // String v1 = '1.2.3', v2 = '1.2.11';
       int v1Number = getExtendedVersionNumber(version); // return 102003
       int v2Number = getExtendedVersionNumber(app_version); // return 102011
-      print(v1Number >= v2Number);
-      print("app_version>>" + app_version.toString());
-      print("v1Number>>" + v1Number.toString());
-      print("v2Number>>" + v2Number.toString());
+      // print(v1Number >= v2Number);
+      // print("app_version>>" + app_version.toString());
+      // print("v1Number>>" + v1Number.toString());
+      // print("v2Number>>" + v2Number.toString());
 
       if (decodedData[s.key_app_code] == "WI" && (v1Number > v2Number)) {
         prefs.setString(s.download_apk, decodedData['apk_path']);

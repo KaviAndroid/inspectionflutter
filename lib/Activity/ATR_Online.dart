@@ -313,10 +313,10 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
       // print("Online_Worklist responceSignature -  $responceSignature");
 
-      print("Online_Worklist responceData -  $responceData");
+      // print("Online_Worklist responceData -  $responceData");
 
       if (responceSignature == responceData) {
-        print("Online_Worklist responceSignature - Token Verified");
+        // print("Online_Worklist responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
 
@@ -351,8 +351,8 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
               defaultWorklist = [];
             }
             isWorklistAvailable = true;
-            print("WORKLIST >>>>>");
-            print(defaultWorklist);
+            // print("WORKLIST >>>>>");
+            // print(defaultWorklist);
           });
         } else if (status == s.key_ok && response_value == s.key_noRecord) {
           utils.showAlert(context, s.no_data);
@@ -364,7 +364,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
         }
       } else {
         utils.customAlertWidet(context, "Error", s.jsonError);
-        print("Online_Worklist responceSignature - Token Not Verified");
+        // print("Online_Worklist responceSignature - Token Not Verified");
       }
     }
   }
@@ -412,26 +412,26 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
       String data = response.body;
 
-      print("Get_PDF_response>>" + data);
+      // print("Get_PDF_response>>" + data);
 
       String? authorizationHeader = response.headers['authorization'];
 
       String? token = authorizationHeader?.split(' ')[1];
 
-      print("Get_PDF Authorization -  $token");
+      // print("Get_PDF Authorization -  $token");
 
       String responceSignature = utils.jwt_Decode(key, token!);
 
       String responceData = utils.generateHmacSha256(data, key, false);
 
-      print("Get_PDF responceSignature -  $responceSignature");
+      // print("Get_PDF responceSignature -  $responceSignature");
 
-      print("Get_PDF responceData -  $responceData");
+      // print("Get_PDF responceData -  $responceData");
 
       utils.hideProgress(context);
 
       if (responceSignature == responceData) {
-        print("Get_PDF responceSignature - Token Verified");
+        // print("Get_PDF responceSignature - Token Verified");
 
         var userData = jsonDecode(data);
         var status = userData[s.key_status];
@@ -439,7 +439,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
 
         if (status == s.key_ok && response_value == s.key_ok) {
           var pdftoString = userData[s.key_json_data];
-          print("Get_PDF responceSignature - $pdftoString");
+          // print("Get_PDF responceSignature - $pdftoString");
 
           pdf = const Base64Codec().decode(pdftoString['pdf_string']);
           Navigator.of(context).push(
@@ -453,7 +453,7 @@ class _ATR_WorklistState extends State<ATR_Worklist> {
         }
       } else {
         utils.customAlertWidet(context, "Error", s.jsonError);
-        print("Get_PDF responceSignature - Token Not Verified");
+        // print("Ge\t_PDF responceSignature - Token Not Verified");
       }
     }
   }
